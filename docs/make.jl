@@ -1,6 +1,7 @@
 using Documenter, BifurcationKit, Setfield
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
+@show ENV
 
 makedocs(doctest = false,
 	sitename = "Bifurcation Analysis in Julia",
@@ -58,5 +59,5 @@ makedocs(doctest = false,
 	)
 
 deploydocs(
-	repo = "github.com/rveltz/BifurcationKit.jl.git",
+	repo = "github.com/bifurcationkit/BifurcationKitDocs.jl.git",
 )
