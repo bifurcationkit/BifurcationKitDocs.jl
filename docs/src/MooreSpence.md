@@ -17,7 +17,7 @@ It can be interpreted as a PALC in which the hyperplane is adapted at every step
 
 ## Predictor
 
-The possible predictors `pred::AbstractTangentPredictor` are listed in [Predictors - Correctors](@ref). They can be use to create a Moore Spence algorithm  like `MoorePenrosePred(pred)`
+The possible predictors `pred::AbstractTangentPredictor` are listed in [Predictors - Correctors](@ref). They can be used to create a Moore-Penrose algorithm  like `MoorePenrosePred(pred)`
 
 ## Corrector
 
