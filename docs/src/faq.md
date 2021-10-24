@@ -17,7 +17,7 @@ This requires some precise computations. Have you tried passing the expression o
 
 ### What is the parameter `theta` about in `ContinuationPar`?
 
-See the description of [continuation](https://rveltz.github.io/BifurcationKit.jl/dev/library/#Continuation-1) on the page [Library](https://rveltz.github.io/BifurcationKit.jl/dev/library/).
+See the description of [continuation](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/library/#Continuation-1) on the page [Library](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/library/).
 
 ### How can I change the preconditioner during computations?
 

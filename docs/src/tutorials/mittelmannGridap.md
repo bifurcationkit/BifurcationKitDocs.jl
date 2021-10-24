@@ -5,7 +5,7 @@ Pages = ["mittelmannGridap.md"]
 Depth = 3
 ```
 
-We re-consider the problem of Mittelmann treated in the previous [tutorial](https://rveltz.github.io/BifurcationKit.jl/dev/mittelmannAuto/#Automatic-diagram-of-2d-Bratu–Gelfand-problem-(Intermediate)-1) but using a finite elements method (FEM) implemented in the package [Gridap.jl](https://github.com/gridap/Gridap.jl).
+We re-consider the problem of Mittelmann treated in the previous [tutorial](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/mittelmannAuto/#Automatic-diagram-of-2d-Bratu–Gelfand-problem-(Intermediate)-1) but using a finite elements method (FEM) implemented in the package [Gridap.jl](https://github.com/gridap/Gridap.jl).
 
 Recall that the problem is defined by solving
 

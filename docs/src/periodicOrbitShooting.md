@@ -91,7 +91,7 @@ The functional is encoded in the composite type [`PoincareShootingProblem`](@ref
 ### Standard shooting
 The Floquet multipliers are computed as the eigenvalues of $M_M\cdots M_1$.
 
-> Unlike the case with [Finite differences](https://rveltz.github.io/BifurcationKit.jl/dev/periodicOrbitTrapeze/), the matrices $M_i$ are not sparse.
+> Unlike the case with [Finite differences](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/periodicOrbitTrapeze/), the matrices $M_i$ are not sparse.
 
 ### Poincaré shooting
 The (non trivial) Floquet exponents are eigenvalues of the Poincare return map $\Pi:\Sigma_1\to\Sigma_1$. We have $\Pi = \Pi_M\circ\Pi_{M-1}\circ\cdots\circ\Pi_2\circ\Pi_1$. Its differential is thus

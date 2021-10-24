@@ -20,7 +20,7 @@ If you choose `detectEvent = 2`, a bisection algorithm is used to locate the eve
 
 ## Different event types
 
-The set of possible events `DiscreteEvent, ContinuousEvent, SetOfEvents, PairOfEvents` is detailed in the [Library](https://rveltz.github.io/BifurcationKit.jl/dev/library/#Events-1).
+The set of possible events `DiscreteEvent, ContinuousEvent, SetOfEvents, PairOfEvents` is detailed in the [Library](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/library/#Events-1).
 
 ## Built-in events
 
