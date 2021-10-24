@@ -1,5 +1,10 @@
 # Library
 
+```@contents
+Pages = ["library.md"]
+Depth = 3
+```
+
 ## Parameters
 
 ```@docs
@@ -26,6 +31,8 @@ DeflationOperator
 DeflatedProblem
 ```
 
+### Periodic orbits
+
 ```@docs
 PeriodicOrbitTrapProblem
 ```
@@ -42,6 +49,7 @@ ShootingProblem
 PoincareShootingProblem
 ```
 
+### Waves
 ## Newton
 
 ```@docs

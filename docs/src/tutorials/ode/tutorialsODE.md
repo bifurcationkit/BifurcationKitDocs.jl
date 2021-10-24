@@ -143,7 +143,7 @@ Mt = 30 # number of time sections
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Collocation method to locate PO, with polynomial degree 5
-	PeriodicOrbitOCollProblem(Mt, 5, 3);
+	PeriodicOrbitOCollProblem(Mt, 5);
 	# regular continuation options
 	verbosity = 2,	plot = true,
 	args_po...)
