@@ -50,6 +50,11 @@ PoincareShootingProblem
 ```
 
 ### Waves
+
+```@docs
+TWProblem
+```
+
 ## Newton
 
 ```@docs

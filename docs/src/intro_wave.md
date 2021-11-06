@@ -18,4 +18,4 @@ where $T$ is a generator of the Lie algebra associated to $G$, $x_{ref}$ is a re
 
 ## Freezing symmetries
 
-The method of freezing is handled by the type `TWProblem`. It allows to compute and continue waves as function of a parameter.
+The method of freezing is handled by the type `TWProblem`. 

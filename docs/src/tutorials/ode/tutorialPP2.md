@@ -132,7 +132,7 @@ Let us now plot an orbit
 
 ```@example TUTPP2
 # extract the different components
-orbit  = BK.getTrajectory(br_po, 10)
+orbit  = BK.getPeriodicOrbit(br_po, 10)
 plot(orbit.t, orbit.u[1,:]; label = "u1", markersize = 2)
 plot!(orbit.t, orbit.u[2,:]; label = "u2", xlabel = "time", title = "period = $(orbit.t[end])")
 ```

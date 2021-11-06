@@ -1,9 +1,6 @@
 # Periodic orbits based on the shooting method
 
-A set of shooting algorithms is provided which are called either *Simple Shooting (SS)* if a single shooting is used and *Multiple Shooting (MS)* otherwise. 
-
-!!! unknown "References"
-    For the exposition, we follow the PhD thesis **Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations**, *Lust, Kurt*, 1997. 
+A set of shooting algorithms is provided which are called either *Simple Shooting (SS)* if a single shooting is used and *Multiple Shooting (MS)* otherwise. For the exposition, we follow the PhD thesis[^Lust]
 
 We aim at finding periodic orbits for the Cauchy problem 
 
@@ -134,3 +131,7 @@ newton(prob:: AbstractShootingProblem, orbitguess, par0, options::NewtonPar, def
 Have a look at the [Continuation of periodic orbits (Standard Shooting)](@ref) example for the Brusselator.
 
 The docs for this specific `newton` are located at [`continuation`](@ref).
+
+## References
+
+[^Lust]:> **Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations**, Lust Kurt, 1997. 

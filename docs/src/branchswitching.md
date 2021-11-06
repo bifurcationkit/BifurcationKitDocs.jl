@@ -30,9 +30,10 @@ An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
 
 ## Branch switching from Hopf point to periodic orbits
 
-In order to compute the bifurcated branch of periodic solutions at a Hopf bifurcation point, you need to choose a method. Indeed, we provide two methods to compute periodic orbits:
+In order to compute the bifurcated branch of periodic solutions at a Hopf bifurcation point, you need to choose a method. Indeed, we provide three methods to compute periodic orbits:
 
 - [Periodic orbits based on trapezoidal rule](@ref)
+- [Periodic orbits based on orthogonal collocation](@ref)
 - [Periodic orbits based on the shooting method](@ref)
 
 Once you have decided which method you want, you can call the following method.
@@ -55,7 +56,7 @@ Several examples are provided like [1d Brusselator (automatic)](@ref) or [2d Gin
 
 We do not provide (for now) the associated normal forms to these bifurcations of periodic orbits. As a consequence, the user is asked to provide the amplitude of the bifurcated solution.
 
-We provide the branching method for all methods to compute periodic orbits, *i.e.* for [`PeriodicOrbitTrapProblem`](@ref),[`ShootingProblem`](@ref),[`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching. 
+We provide the branching method for the following methods to compute periodic orbits: [`PeriodicOrbitTrapProblem`](@ref),[`ShootingProblem`](@ref) and [`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching. 
 
 An example of use is provided in [Period doubling in Lur'e problem (PD aBS)](@ref).
 

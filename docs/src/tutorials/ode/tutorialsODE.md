@@ -94,12 +94,12 @@ opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0.
 	nev = 3, precisionStability = 1e-8, detectBifurcation = 3, plotEveryStep = 10, saveSolEveryStep=1)
 
 # arguments for periodic orbits
-args_po = (	recordFromSolution = (x, p) -> (xtt = BK.getTrajectory(p.prob, x, p.p);
+args_po = (	recordFromSolution = (x, p) -> (xtt = BK.getPeriodicOrbit(p.prob, x, p.p);
 		return (max = maximum(xtt.u[1,:]),
 				min = minimum(xtt.u[1,:]),
 				period = x[end])),
 	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getTrajectory(p.prob, x, p.p)
+		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 		plot!(xtt.t, xtt.u[1,:]; label = "E", k...)
 		plot!(xtt.t, xtt.u[2,:]; label = "x", k...)
 		plot!(xtt.t, xtt.u[3,:]; label = "u", k...)
@@ -156,7 +156,7 @@ We plot the maximum (resp. minimum) of the limit cycle. We can see that the min 
 
 ## Periodic orbits with Parallel Standard Shooting
 
-We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the previous one. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the previous method.
+We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the Trapezoid method. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the two previous methods.
 
 ```@example TUTODE
 using DifferentialEquations
@@ -186,7 +186,7 @@ br_posh, = @time continuation(jet...,
 	recordFromSolution = (x, p) -> (return (max = getMaximum(p.prob, x, @set par_tm.E0 = p.p), period = getPeriod(p.prob, x, @set par_tm.E0 = p.p))),
 	plotSolution = (x, p; k...) ->
 		begin
-			xtt = BK.getTrajectory(p.prob, x, @set par_tm.E0 = p.p)
+			xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm.E0 = p.p)
 			plot!(xtt; legend = false, k...);
 			plot!(br, subplot=1, putspecialptlegend = false)
 		end,

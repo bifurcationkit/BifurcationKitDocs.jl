@@ -141,14 +141,14 @@ br_po, = continuation(jet..., br, 1, opts_po_cont, probSH; plot = true, verbosit
 	# branch of periodic orbits
 	δp = 0.001,
 	recordFromSolution = (u, p) -> begin
-		outt = BK.getTrajectory(p.prob, u, (@set  par_Colpitts.μ=p.p))
+		outt = BK.getPeriodicOrbit(p.prob, u, (@set  par_Colpitts.μ=p.p))
 		m = maximum(outt[1,:])
 		return (s = m, period = u[end])
 	end,
 	updateSectionEveryStep = 1,
 	# plotting of a solution
 	plotSolution = (x, p; k...) -> begin
-		outt = BK.getTrajectory(p.prob, x, (@set  par_Colpitts.μ=p.p))
+		outt = BK.getPeriodicOrbit(p.prob, x, (@set  par_Colpitts.μ=p.p))
 		plot!(outt, vars = [2], subplot = 3)
 		plot!(br, vars = (:param, :x1), subplot = 1)
 	end,

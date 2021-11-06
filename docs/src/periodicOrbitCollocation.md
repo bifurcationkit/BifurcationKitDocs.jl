@@ -2,9 +2,6 @@
 
 We have implemented a method where we compute `Ntst` time slices of a periodic orbit. This is done by the structure `PeriodicOrbitOCollProblem` for which the problem of finding periodic orbits is discretized using orthogonal collocation.
 
-!!! danger "WIP"
-    This is work in progress and only the docs are available for now. This warning will be removed when the functionality is available.
-
 !!! warning "Large scale"
     The current implementation is not very optimized for large scale problems. This will be improved in the future.    
 
@@ -52,7 +49,7 @@ In order to have a unique solution, we need to remove the phase freedom. This is
 
 ## Mesh adaptation
 
-The mesh adaptation method is based on [^Russell]. It can be triggered by passing the option `adaptMeshEveryStep = nb` where `nb` is a positive integer which sets the continuation steps for which the mesh adaptation occurs.
+Work in progress.
 
 ## Encoding of the functional
 

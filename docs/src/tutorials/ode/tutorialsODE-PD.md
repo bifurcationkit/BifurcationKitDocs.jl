@@ -94,7 +94,7 @@ Mt = 90 # number of time sections
 	verbosity = 2,	plot = true,
 	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],3,Mt); return (max = maximum(xtt[1,:]), min = minimum(xtt[1,:]), period = x[end])),
 	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getTrajectory(p.prob, x, p.p)
+		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 		plot!(xtt.t, xtt.u[1,:]; markersize = 2, k...)
 		plot!(xtt.t, xtt.u[2,:]; k...)
 		plot!(xtt.t, xtt.u[3,:]; legend = false, k...)
@@ -121,7 +121,7 @@ br_po_pd, = continuation(br_po, 1, setproperties(br_po.contparams, detectBifurca
 	linearPO = :Dense,
 	updateSectionEveryStep = 1,
 	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getTrajectory(br_po.functional, x, (@set par_lur.β = p))
+		xtt = BK.getPeriodicOrbit(br_po.functional, x, (@set par_lur.β = p))
 		plot!(xtt.t, xtt.u[1,:]; markersize = 2, k...)
 		plot!(xtt.t, xtt.u[2,:]; k...)
 		plot!(xtt.t, xtt.u[3,:]; legend = false, k...)
@@ -147,7 +147,7 @@ using DifferentialEquations
 
 # plotting function
 plotSH = (x, p; k...) -> begin
-	xtt = BK.getTrajectory(p.prob, x, @set par_lur.β = p.p)
+	xtt = BK.getPeriodicOrbit(p.prob, x, @set par_lur.β = p.p)
 	plot!(xtt.t, xtt[1,:]; markersize = 2, k...)
 	plot!(xtt.t, xtt[2,:]; k...)
 	plot!(xtt.t, xtt[3,:]; legend = false, k...)

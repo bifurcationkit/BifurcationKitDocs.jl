@@ -243,13 +243,13 @@ br_po, = continuation(
 	# regular parameters for the continuation
 	# a few parameters saved during run
 	recordFromSolution = (u, p) -> begin
-		outt = BK.getTrajectory(p.prob, u, (@set  par_cat_wave.a=p))
+		outt = BK.getPeriodicOrbit(p.prob, u, (@set  par_cat_wave.a=p))
 		m = maximum(outt.u[end,:])
 		return (s = m, period = u[end])
 	end,
 	# plotting of a section
 	plotSolution = (x, p; k...) -> begin
-		outt = BK.getTrajectory(p.prob, x, (@set  par_cat_wave.a=p.p))
+		outt = BK.getPeriodicOrbit(p.prob, x, (@set  par_cat_wave.a=p.p))
 		plot!(outt.t, outt.u[end, :]; label = "", subplot=3)
 		plot!(br, subplot=1)
 	end,
@@ -265,7 +265,7 @@ plot(br);plot!(br_po, label = "modulated fronts")
 Let us plot one modulated front:
 
 ```@example TUTAUTOCAT
-modfront = BK.getTrajectory(br_po, length(br_po))
+modfront = BK.getPeriodicOrbit(br_po, length(br_po))
 plot(plot(modfront.t, modfront.u[end,:], xlabel = "t", ylabel = "s", label = ""),
 	contour(modfront.t, X, modfront.u[1:N,:], color = :viridis, xlabel = "t", title = "u for a = $(round(br_po.sol[length(br_po)].p,digits=4))", fill = true, ylims=(-10,10)))
 ```

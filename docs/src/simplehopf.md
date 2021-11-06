@@ -1,7 +1,7 @@
 # Simple Hopf point
 
 
-At a Hopf branch point $(x_0,p_0)$ for the problem $F(x,p)=0$, we have $\Sigma\ dF(x_0,p_0) = \{\pm i\omega \},\ \omega > 0$. At such point, we can compute the **normal form** to transform the initial Cauchy problem
+At a Hopf branch point $(x_0,p_0)$ for the problem $F(x,p)=0$, the spectrum of the linear operator $dF(x_0,p_0)$ contains two purely imaginary $\pm i\omega,\ \omega > 0$ which are simple. At such point, we can compute the **normal form** to transform the initial Cauchy problem
 
 $$\dot x = F(x,p)$$
 
@@ -23,7 +23,7 @@ computeNormalForm(F, dF, d2F, d3F, br::ContResult, ind_bif::Int ; δ = 1e-8,
 	nev = 5, Jᵗ = nothing, verbose = false, ζs = nothing, lens = br.param_lens)
 ```
 
-where `dF, d2F,d3F` are the differentials of `F`. `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`computeNormalForm`](@ref). The above call returns a point with information needed to compute the bifurcated branch.
+where `dF, d2F,d3F` are the differentials of `F`. `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`computeNormalForm`](@ref). The above call returns a point with information needed to compute the bifurcated branch.
 
 ```julia
 mutable struct Hopf{Tv, T, Tω, Tevr, Tevl, Tnf} <: BifurcationPoint
