@@ -184,10 +184,10 @@ However `BifurcationKit` does not provide a generalized eigenvalue solver for no
 struct EigenWave <: BK.AbstractEigenSolver end
 
 # implementation of the solver for the generalized Eigen problem
-function (eig::EigenWave)(J, nev; k...)
+function (eig::EigenWave)(Jac, nev; k...)
 	N = size(J,1)
 	B = diagm(vcat(ones(N-1),0))
-	F = eigen(Array(J), B)
+	F = eigen(Array(Jac), B)
 	I = sortperm(F.values, by = real, rev = true)
 	nev2 = min(nev, length(I))
 	J = findall( abs.(F.values[I]) .< 100000)

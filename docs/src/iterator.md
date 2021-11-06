@@ -4,8 +4,10 @@ The iterator interface gives the possibility of stepping through the numerical s
 
 The general method `continuation` is built upon this iterator interface and we refer to the source code for a complete example of use.
 
-> The iterator provided below does not compute eigenvalues nor perform bifurcations detection. 
 
+!!! warning "Warning"
+    The iterator provided below does not compute eigenvalues nor perform bifurcations detection. 
+    
 ## Initialization
 
 > More information about **iterators** can be found on the [page](https://docs.julialang.org/en/v1/base/collections/#Collections-and-Data-Structures-1) of [julialang](https://docs.julialang.org/en/v1/).

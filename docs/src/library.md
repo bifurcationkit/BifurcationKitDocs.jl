@@ -52,7 +52,7 @@ PoincareShootingProblem
 ### Waves
 
 ```@docs
-TWProblem
+BifurcationKit.TWProblem
 ```
 
 ## Newton
