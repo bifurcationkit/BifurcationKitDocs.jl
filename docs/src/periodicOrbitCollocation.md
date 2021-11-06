@@ -1,11 +1,11 @@
 # Periodic orbits based on orthogonal collocation
 
-We have implemented a method where we compute `Ntst` time slices of a periodic orbit. This is done by the structure `PeriodicOrbitOCollProblem` for which the problem of finding periodic orbits is discretized using orthogonal collocation.
+We compute `Ntst` time slices of a periodic orbit using orthogonal collocation. This is implemented in the structure `PeriodicOrbitOCollProblem`.
 
 !!! warning "Large scale"
-    The current implementation is not very optimized for large scale problems. This will be improved in the future.    
+    The current implementation is not yet optimized for large scale problems. This will be improved in the future.    
 
-The general method is very well exposed in [^Dankowicz],[^Doedel]. We adopt the notations of [^Dankowicz] but use the implementation of [^Doedel] because it is more economical (less equations) when it forces the continuity of the solution.
+The general method is very well exposed in [^Dankowicz],[^Doedel] and we adopt the notations of [^Dankowicz]. However our implementation is based on [^Doedel] because it is more economical (less equations) when it enforces the continuity of the solution.
 
 We look for periodic orbits as solutions $(x(0), T)$ of
 
@@ -27,11 +27,11 @@ with the continuity equation $x^{(j+1)}(-1) = x^{(j)}(1)$.
 
 We now aim at  solving $(E_j)$ by using an approximation with a polynomial of degree $m$. Following [^Dankowicz], we define a (uniform) partition:
 
-$$-1=\sigma_{1}<\cdots<\sigma_{i}<\cdots<\sigma_{m+1}=1$$
+$$-1=\sigma_{1}<\cdots<\sigma_{i}<\cdots<\sigma_{m+1}=1.$$
 
-The points $\tau_{i,j} = \tau^{(I)}(\sigma_j)$ are called the **base points**: they will serve as collocation points.
+The points $\tau_{i,j} = \tau^{(i)}(\sigma_j)$ are called the **base points**: they serve as collocation points.
 
-and the associated $m+1$ Lagrange polynomials of degree $m$:
+The associated $m+1$ Lagrange polynomials of degree $m$ are:
 
 $$\mathcal{L}_{i}(\sigma):=\prod_{k=1, k \neq i}^{m+1} \frac{\sigma-\sigma_{k}}{\sigma_{i}-\sigma_{k}}, i=1, \ldots, m+1.$$
 
@@ -64,13 +64,9 @@ The method allows, nevertheless, to detect bifurcations of periodic orbits. It s
 
 ## Computation with `newton`
 
-We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `linearalgo` to select one of the many ways to deal with the above linear problem. The default solver `linearalgo` is `:autodiffDense`.
+We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `jacobianPO` to select one of the many ways to deal with the above linear problem. The default solver `jacobianPO` is `:autodiffDense`.
 
 The docs for this specific `newton` are located at [`newton`](@ref).
-
-## Computation with `newton` and deflation
-
-We also provide a simplified call to `newton` to locate the periodic orbit with a deflation operator.
 
 ## Continuation
 

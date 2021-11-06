@@ -1,8 +1,6 @@
-# Periodic orbits based on trapezoidal rule
+# Periodic orbits based on Trapezoidal rule
 
-We have implemented a method where we compute `M` slices of a periodic orbit. This is done by the structure `PeriodicOrbitTrapProblem` for which the problem of finding periodic orbits is discretized using Finite Differences based on a trapezoidal rule.
-
-The general method is very well exposed in [^Uecker],[^Lust] We adopt the notations of the first reference.
+The method described here allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule. We not `M` the number of time slices of the periodic orbit. The method is implemented in the structure `PeriodicOrbitTrapProblem`. The general method is very well exposed in [^Uecker],[^Lust] and we adopt the notations of the first reference.
 
 We look for periodic orbits as solutions $(x(0),T)$ of
 

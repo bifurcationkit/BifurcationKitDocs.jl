@@ -21,11 +21,11 @@ F(x, p) - \sum\limits_{i=1}^N\ s_i\cdot T_i\cdot x=0 \\
 
 ## Encoding of the functional for the freezed problem
 
-The freezing method is encoded in the composite type [`TWProblem`](@ref) which we loosely refer to ass a Travelling Wave (TW) problem.
+The freezing method is encoded in the composite type [`TWProblem`](@ref) which we loosely refer to as a Travelling Wave (TW) problem.
 
 ## Computation with `newton`
 
-We provide a simplified call to `newton` to locate the freezed solution (*e.g.* a travelling wave)
+We provide a simplified call to `newton` to locate the freezed solution
 
 ```
 newton(prob::TWProblem, orbitguess, par0, options::NewtonPar; kwargs...)
@@ -39,7 +39,7 @@ We also provide a simplified call to `continuation` to continue the freezed solu
 continuation(prob::TWProblem, orbitguess, par, lens::Lens, contParams::ContinuationPar; jacobian = :MatrixFree, kwargs...)
 ```
 
-Note that in this case, the eigen solver passed in `contParams` is converted into an appropriate generalized eigenvector.
+Note that in this case, the eigen solver passed in `contParams` is converted into an appropriate generalized eigensolver.
 
 ## References
 

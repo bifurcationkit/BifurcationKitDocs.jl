@@ -29,7 +29,7 @@ Depth = 1
 
 ### Automatic bifurcation diagram
 ```@contents
-Pages = ["Swift-Hohenberg1d.md", "mittelmannAuto.md", "tutorialCarrier.md", "ks1d.md", "ks2d.md"]
+Pages = ["Swift-Hohenberg1d.md", "tutorialCarrier.md", "ks1d.md", "mittelmannAuto.md", "ks2d.md"]
 Depth = 1
 ```
 

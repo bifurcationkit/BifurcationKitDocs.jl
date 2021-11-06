@@ -1,4 +1,4 @@
-# Modulated fronts in 1d autocatalytic model
+# Modulated fronts in 1d autocatalytic model (Manual)
 
 We consider the following model [^Balmforth][^Malham] which is also treated in [^Beyn]
 
