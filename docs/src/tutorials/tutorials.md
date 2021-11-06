@@ -48,6 +48,6 @@ Depth = 1
 ## Symmetries, freezing, waves, fronts
 
 ```@contents
-Pages = ["autocatalytic.md"]
+Pages = ["autocatalyticAuto.md", "autocatalytic.md", "cgl1dwave.md", "detonationEngine.md"]
 Depth = 1
 ```
