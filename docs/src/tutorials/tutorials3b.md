@@ -230,7 +230,7 @@ For convenience, we provide a simplified newton / continuation methods for perio
 # we use the linear solver LSFromBLS to speed up the computations
 opt_po = NewtonPar(tol = 1e-10, verbose = true, maxIter = 14, linsolver = BK.LSFromBLS())
 	outpo_f, _, flag = @time newton(poTrap, orbitguess_f, (@set par_bru.l = l_hopf + 0.01), 		opt_po, normN = norminf,
-		linearPO = :FullSparseInplace,
+		jacobianPO = :FullSparseInplace,
 		)
 flag && printstyled(color=:red, "--> T = ", outpo_f[end], ", amplitude = ", BK.amplitude(outpo_f, n, M; ratio = 2),"\n")
 # plot of the periodic orbit
@@ -265,7 +265,7 @@ opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.03, ds= 0.01,
 br_po, = continuation(poTrap,
 	outpo_f, (@set par_bru.l = l_hopf + 0.01), (@lens _.l),
 	opts_po_cont;
-	linearPO = :FullSparseInplace,
+	jacobianPO = :FullSparseInplace,
 	verbosity = 2,	plot = true,
 	plotSolution = (x, p;kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
 	normC = norminf)
@@ -284,7 +284,7 @@ which allows to find periodic orbits different from `orbitguess_f `. Note that t
 
 ```Julia
 outpo_f, hist, flag = @time newton(poTrap,
-	orbitguess_f, (@set par_bru.l = l_hopf + 0.01), opt_po, deflationOp; linearPO = :FullSparseInplace, normN = norminf)
+	orbitguess_f, (@set par_bru.l = l_hopf + 0.01), opt_po, deflationOp; jacobianPO = :FullSparseInplace, normN = norminf)
 ```
 
 ## Floquet coefficients
@@ -297,7 +297,7 @@ opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds= -0.01, pMax = 3.
 br_po, = @time continuation(poTrap,
 	outpo_f, (@set par_bru.l = l_hopf + 0.01), (@lens _.l),
 	opts_po_cont; verbosity = 3, plot = true,
-	linearPO = :FullSparseInplace,
+	jacobianPO = :FullSparseInplace,
 	plotSolution = (x, p;kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...), normC = norminf)
 ```
 

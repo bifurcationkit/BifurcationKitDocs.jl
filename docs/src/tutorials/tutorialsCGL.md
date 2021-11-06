@@ -268,7 +268,7 @@ opt_po = @set opt_newton.verbose = true
 outpo_f, _, flag = @time newton(poTrap,
    orbitguess_f, (@set par_cgl.r = r_hopf - 0.01),
    (@set opt_po.linsolver = ls);
-   linearPO = :FullMatrixFree, normN = norminf)
+   jacobianPO = :FullMatrixFree, normN = norminf)
 flag && printstyled(color=:red, "--> T = ", outpo_f[end], ", amplitude = ", BK.getAmplitude(poTrap, outpo_f, par_cgl; ratio = 2),"\n")
 BK.plotPeriodicPOTrap(outpo_f, M, Nx, Ny; ratio = 2);
 ```
@@ -319,7 +319,7 @@ We can now use newton
 outpo_f, _, flag = @time newton(poTrapMF,
 	orbitguess_f, (@set par_cgl.r = r_hopf - 0.01),
 	(@set opt_po.linsolver = ls);
-	linearPO = :FullMatrixFree, normN = norminf)
+	jacobianPO = :FullMatrixFree, normN = norminf)
 flag && printstyled(color=:red, "--> T = ", outpo_f[end], ", amplitude = ", BK.getAmplitude(poTrapMF, outpo_f, par_cgl; ratio = 2),"\n")
 ```
 
@@ -424,7 +424,7 @@ and run the `newton` method:
 ```julia
 outpo_f, _, flag = @time newton(poTrapMFi,
 	orbitguess_f, (@set par_cgl.r = r_hopf - 0.01),	(@set opt_po.linsolver = ls);
-	linearPO = :FullMatrixFree, normN = norminf)
+	jacobianPO = :FullMatrixFree, normN = norminf)
 ```
 It gives
 
@@ -459,7 +459,7 @@ ls2 = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, N = size(Jpo2,1), re
 opt_po = @set opt_newton.verbose = true
 outpo_f, hist, flag = @time newton(
 	poTrapMF,	orbitguess_f, (@set par_cgl.r = r_hopf - 0.1),
-	(@set opt_po.linsolver = ls2), linearPO = :BorderedMatrixFree,
+	(@set opt_po.linsolver = ls2), jacobianPO = :BorderedMatrixFree,
 	normN = norminf)
 ```
 
@@ -495,7 +495,7 @@ opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds = 0.001, pMax = 
 	nev = 5, precisionStability = 1e-7, detectBifurcation = 0)
 
 br_po, = @time continuation(poTrapMF, outpo_f,
-	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, linearPO = :FullMatrixFree;
+	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, jacobianPO = :FullMatrixFree;
 	verbosity = 2,	plot = true,
 	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicPOTrap(x, M, Nx, Ny; ratio = 2, kwargs...),
 	recordFromSolution = (u, p) -> BK.getAmplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)
@@ -525,7 +525,7 @@ function callbackPO(x, f, J, res, iteration, itlinear, linsolver = ls, prob = po
 end
 
 br_po, = @time continuation(poTrapMF, outpo_f,
-	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, linearPO = :FullMatrixFree;
+	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, jacobianPO = :FullMatrixFree;
 	verbosity = 2,	plot = true,
 	callbackN = callbackPO,
 	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicPOTrap(x, M, Nx, Ny; ratio = 2, kwargs...),
@@ -722,7 +722,7 @@ You can also perform continuation, here is a simple example:
 opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds= 0.001, pMax = 2.2, maxSteps = 250, plotEveryStep = 3, newtonOptions = (@set opt_po.linsolver = lsgpu))
 br_po, upo , _= @time continuation(poTrapMFGPU,
    orbitguess_cu, (@set par_cgl_gpu.r = r_hopf - 0.01), (@lens _.r = p),
-   opts_po_cont, linearPO = :FullMatrixFree;
+   opts_po_cont, jacobianPO = :FullMatrixFree;
    verbosity = 2,
    recordFromSolution = (u,p) -> getAmplitude(poTrapMFGPU, u, par_cgl_gpu), normC = x->maximum(abs.(x)))
 ```

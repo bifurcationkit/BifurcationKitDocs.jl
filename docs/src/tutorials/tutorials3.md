@@ -216,7 +216,7 @@ br_po, = continuation(
 	# specific method for solving linear system
 	# of Periodic orbits with trapeze method
 	# You could use the default one :FullLU (slower here)
-	linearPO = :FullSparseInplace,
+	jacobianPO = :FullSparseInplace,
 	# regular options for continuation
 	verbosity = 3,	plot = true,
 	plotSolution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
@@ -238,7 +238,7 @@ br_po2, = continuation(
 	# arguments for branch switching
 	br_po, 1,
 	# arguments for continuation
-	opts_po_cont; linearPO = :FullSparseInplace,
+	opts_po_cont; jacobianPO = :FullSparseInplace,
 	ampfactor = 1., δp = 0.01,
 	verbosity = 3,	plot = true,
 	plotSolution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),

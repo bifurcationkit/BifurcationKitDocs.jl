@@ -238,7 +238,7 @@ br_po, = continuation(
 	tangentAlgo = BorderedPred(),
 	# linear solver for the periodic orbit problem
 	# OPTIONAL, one could use the default
-	linearPO = :BorderedLU,
+	jacobianPO = :BorderedLU,
 	updateSectionEveryStep = 1,
 	# regular parameters for the continuation
 	# a few parameters saved during run

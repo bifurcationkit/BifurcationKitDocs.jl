@@ -113,7 +113,7 @@ Mt = 101 # number of time sections
 	# help branching from Hopf
 	usedeflation = true,
 	# specific linear solver for ODEs
-	linearPO = :Dense,
+	jacobianPO = :Dense,
 	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],2,Mt); 
 		return (max = maximum(xtt[1,:]), 
 			min = minimum(xtt[1,:]), 

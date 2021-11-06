@@ -90,7 +90,7 @@ Mt = 90 # number of time sections
 	PeriodicOrbitTrapProblem(M = Mt);
 	ampfactor = 1., δp = 0.01,
 	updateSectionEveryStep = 1,
-	linearPO = :Dense,
+	jacobianPO = :Dense,
 	verbosity = 2,	plot = true,
 	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],3,Mt); return (max = maximum(xtt[1,:]), min = minimum(xtt[1,:]), period = x[end])),
 	plotSolution = (x, p; k...) -> begin
@@ -118,7 +118,7 @@ br_po_pd, = continuation(br_po, 1, setproperties(br_po.contparams, detectBifurca
 	verbosity = 3, plot = true,
 	ampfactor = .1, δp = -0.005,
 	usedeflation = false,
-	linearPO = :Dense,
+	jacobianPO = :Dense,
 	updateSectionEveryStep = 1,
 	plotSolution = (x, p; k...) -> begin
 		xtt = BK.getPeriodicOrbit(br_po.functional, x, (@set par_lur.β = p))
@@ -171,7 +171,7 @@ br_po, = continuation(
 	δp = 0.0051,
 	# method for solving newton linear system
 	# specific to ODE
-	linearPO = :autodiffDense,
+	jacobianPO = :autodiffDense,
 	verbosity = 3,	plot = true,
 	recordFromSolution = (x, p) -> (return (max = getMaximum(p.prob, x, @set par_lur.β = p.p), period = getPeriod(p.prob, x, @set par_lur.β = p.p))),
 	plotSolution = plotSH,
@@ -189,7 +189,7 @@ We do not provide Automatic Branch Switching as we do not have the PD normal for
 br_po_pd, = BK.continuation(br_po, 1, setproperties(br_po.contparams, detectBifurcation = 3, maxSteps = 50, ds = 0.01, plotEveryStep = 1);
 	verbosity = 3, plot = true,
 	ampfactor = .3, δp = -0.005,
-	linearPO = :autodiffDense,
+	jacobianPO = :autodiffDense,
 	plotSolution = (x, p; k...) -> begin
 		plotSH(x, p; k...)
 		plot!(br_po; subplot = 1)

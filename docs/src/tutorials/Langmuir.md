@@ -230,7 +230,7 @@ br_potrap, utrap = continuation(
 	# use deflated Newton to find non-trivial solutions
 	usedeflation = true,
 	# algorithm to solve linear associated with periodic orbit problem
-	linearPO = :FullSparseInplace,
+	jacobianPO = :FullSparseInplace,
 	# tangent algorithm along the branch
 	tangentAlgo = BorderedPred(),
 	verbosity = 3, plot = true,

@@ -116,7 +116,7 @@ Mt = 200 # number of time sections
 	# this jacobian is specific to ODEs
 	# it is computed using AD and
 	# updated inplace
-	linearPO = :Dense,
+	jacobianPO = :Dense,
 	# regular continuation options
 	verbosity = 2,	plot = true,
 	args_po...)
@@ -178,7 +178,7 @@ br_posh, = @time continuation(jet...,
 	# this linear solver is specific to ODEs
 	# it is computed using AD of the flow and
 	# updated inplace
-	linearPO = :autodiffDense,
+	jacobianPO = :autodiffDense,
 	# we update the section along the branches
 	updateSectionEveryStep = 2,
 	# regular continuation parameters

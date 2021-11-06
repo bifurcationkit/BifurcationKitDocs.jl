@@ -136,7 +136,7 @@ probSH = ShootingProblem(5, probFreez_ode, Rodas4(); reltol = 1e-10, abstol = 1e
 # automatic branching from the Hopf point
 br_po, = continuation(jet..., br, 1, opts_po_cont, probSH; plot = true, verbosity = 3,
 	linearAlgo = MatrixBLS(),
-	linearPO = :autodiffDense,
+	jacobianPO = :autodiffDense,
 	# δp is use to parametrise the first parameter point on the
 	# branch of periodic orbits
 	δp = 0.001,
