@@ -95,14 +95,14 @@ opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0.
 
 # arguments for periodic orbits
 args_po = (	recordFromSolution = (x, p) -> (xtt = BK.getPeriodicOrbit(p.prob, x, p.p);
-		return (max = maximum(xtt.u[1,:]),
-				min = minimum(xtt.u[1,:]),
+		return (max = maximum(xtt[1,:]),
+				min = minimum(xtt[1,:]),
 				period = x[end])),
 	plotSolution = (x, p; k...) -> begin
 		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
-		plot!(xtt.t, xtt.u[1,:]; label = "E", k...)
-		plot!(xtt.t, xtt.u[2,:]; label = "x", k...)
-		plot!(xtt.t, xtt.u[3,:]; label = "u", k...)
+		plot!(xtt.t, xtt[1,:]; label = "E", k...)
+		plot!(xtt.t, xtt[2,:]; label = "x", k...)
+		plot!(xtt.t, xtt[3,:]; label = "u", k...)
 		plot!(br,subplot=1, putbifptlegend = false)
 		end,
 	normC = norminf)
@@ -147,8 +147,8 @@ Mt = 30 # number of time sections
 	# regular continuation options
 	verbosity = 2,	plot = true,
 	args_po...)
-	
-Scene = title!("")	
+
+Scene = title!("")
 ```
 
 
@@ -183,14 +183,7 @@ br_posh, = @time continuation(jet...,
 	updateSectionEveryStep = 2,
 	# regular continuation parameters
 	verbosity = 2,	plot = true,
-	recordFromSolution = (x, p) -> (return (max = getMaximum(p.prob, x, @set par_tm.E0 = p.p), period = getPeriod(p.prob, x, @set par_tm.E0 = p.p))),
-	plotSolution = (x, p; k...) ->
-		begin
-			xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm.E0 = p.p)
-			plot!(xtt; legend = false, k...);
-			plot!(br, subplot=1, putspecialptlegend = false)
-		end,
-	normC = norminf)
+	args_po...)
 
 Scene = title!("")
 ```
