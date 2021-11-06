@@ -94,16 +94,18 @@ opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0.
 	nev = 3, precisionStability = 1e-8, detectBifurcation = 3, plotEveryStep = 10, saveSolEveryStep=1)
 
 # arguments for periodic orbits
-args_po = (	recordFromSolution = (x, p) -> (xtt = BK.getPeriodicOrbit(p.prob, x, p.p);
+args_po = (	recordFromSolution = (x, p) -> begin
+		xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm.E0 = p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
-				period = x[end])),
+				period = getPeriod(p.prob, x, @set par_tm.E0 = p.p))
+	end,
 	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
+		xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm.E0 = p.p)
 		plot!(xtt.t, xtt[1,:]; label = "E", k...)
 		plot!(xtt.t, xtt[2,:]; label = "x", k...)
 		plot!(xtt.t, xtt[3,:]; label = "u", k...)
-		plot!(br,subplot=1, putbifptlegend = false)
+		plot!(br; subplot = 1, putspecialptlegend = false)
 		end,
 	normC = norminf)
 
@@ -172,7 +174,7 @@ br_posh, = @time continuation(jet...,
 	# with 15 time sections
 	ShootingProblem(15, probsh, Rodas4(), parallel = true);
 	# this to help branching
-	ampfactor = 1.0, δp = 0.0005,
+	δp = 0.0005,
 	# deflation helps not converging to an equilibrium instead of a PO
 	usedeflation = true,
 	# this linear solver is specific to ODEs
