@@ -138,7 +138,7 @@ ls(Jpo, rand(ls.N))</code></pre><p>This converges in <code>7</code> iterations w
 outpo_f, _, flag = @time newton(poTrap,
    orbitguess_f, (@set par_cgl.r = r_hopf - 0.01),
    (@set opt_po.linsolver = ls);
-   linearPO = :FullMatrixFree, normN = norminf)
+   jacobianPO = :FullMatrixFree, normN = norminf)
 flag &amp;&amp; printstyled(color=:red, &quot;--&gt; T = &quot;, outpo_f[end], &quot;, amplitude = &quot;, BK.getAmplitude(poTrap, outpo_f, par_cgl; ratio = 2),&quot;\n&quot;)
 BK.plotPeriodicPOTrap(outpo_f, M, Nx, Ny; ratio = 2);</code></pre><p>which gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton Iterations      f(x)      Linear Iterations  │
@@ -167,7 +167,7 @@ poTrapMF = PeriodicOrbitTrapProblem(
 	M, 2n, ls0)</code></pre><p>We can now use newton</p><pre><code class="language-julia hljs">outpo_f, _, flag = @time newton(poTrapMF,
 	orbitguess_f, (@set par_cgl.r = r_hopf - 0.01),
 	(@set opt_po.linsolver = ls);
-	linearPO = :FullMatrixFree, normN = norminf)
+	jacobianPO = :FullMatrixFree, normN = norminf)
 flag &amp;&amp; printstyled(color=:red, &quot;--&gt; T = &quot;, outpo_f[end], &quot;, amplitude = &quot;, BK.getAmplitude(poTrapMF, outpo_f, par_cgl; ratio = 2),&quot;\n&quot;)</code></pre><p>which gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton Iterations      f(x)      Linear Iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
@@ -245,7 +245,7 @@ poTrapMFi = PeriodicOrbitTrapProblem(
 	hopfpt.u,
 	M, 2n, ls0; isinplace = true)</code></pre><p>and run the <code>newton</code> method:</p><pre><code class="language-julia hljs">outpo_f, _, flag = @time newton(poTrapMFi,
 	orbitguess_f, (@set par_cgl.r = r_hopf - 0.01),	(@set opt_po.linsolver = ls);
-	linearPO = :FullMatrixFree, normN = norminf)</code></pre><p>It gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
+	jacobianPO = :FullMatrixFree, normN = norminf)</code></pre><p>It gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton Iterations      f(x)      Linear Iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       6.5432e-03     │        0       │
@@ -257,14 +257,14 @@ poTrapMFi = PeriodicOrbitTrapProblem(
 │       6     │       2.9713e-10     │       12       │
 │       7     │       2.2143e-13     │       14       │
 └─────────────┴──────────────────────┴────────────────┘
-  1.179854 seconds (902 allocations: 151.500 MiB)</code></pre><p>Notice the small speed boost but the reduced allocations. At this stage, further improvements could target the use of <code>BlockBandedMatrices.jl</code> for the Laplacian operator, etc.</p><h3 id="Other-linear-formulation"><a class="docs-heading-anchor" href="#Other-linear-formulation">Other linear formulation</a><a id="Other-linear-formulation-1"></a><a class="docs-heading-anchor-permalink" href="#Other-linear-formulation" title="Permalink"></a></h3><p>We could use another way to &quot;invert&quot; jacobian of the functional based on bordered technics. We try to use an ILU preconditioner on the cyclic matrix <span>$J_c$</span> (see <a href="../../periodicOrbitTrapeze/#Periodic-orbits-based-on-trapezoidal-rule">Periodic orbits based on trapezoidal rule</a>) which has a smaller memory footprint:</p><pre><code class="language-julia hljs">Jpo2 = poTrap(Val(:JacCyclicSparse), orbitguess_f, @set par_cgl.r = r_hopf - 0.1)
+  1.179854 seconds (902 allocations: 151.500 MiB)</code></pre><p>Notice the small speed boost but the reduced allocations. At this stage, further improvements could target the use of <code>BlockBandedMatrices.jl</code> for the Laplacian operator, etc.</p><h3 id="Other-linear-formulation"><a class="docs-heading-anchor" href="#Other-linear-formulation">Other linear formulation</a><a id="Other-linear-formulation-1"></a><a class="docs-heading-anchor-permalink" href="#Other-linear-formulation" title="Permalink"></a></h3><p>We could use another way to &quot;invert&quot; jacobian of the functional based on bordered technics. We try to use an ILU preconditioner on the cyclic matrix <span>$J_c$</span> (see <a href="tutorials/@ref">Periodic orbits based on trapezoidal rule</a>) which has a smaller memory footprint:</p><pre><code class="language-julia hljs">Jpo2 = poTrap(Val(:JacCyclicSparse), orbitguess_f, @set par_cgl.r = r_hopf - 0.1)
 Precilu = @time ilu(Jpo2, τ = 0.005)
 ls2 = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, N = size(Jpo2,1), restart = 30, maxiter = 50, Pl = Precilu, log=true)
 
 opt_po = @set opt_newton.verbose = true
 outpo_f, hist, flag = @time newton(
 	poTrapMF,	orbitguess_f, (@set par_cgl.r = r_hopf - 0.1),
-	(@set opt_po.linsolver = ls2), linearPO = :BorderedMatrixFree,
+	(@set opt_po.linsolver = ls2), jacobianPO = :BorderedMatrixFree,
 	normN = norminf)</code></pre><p>but it gives:</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton Iterations      f(x)      Linear Iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
@@ -284,7 +284,7 @@ opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds = 0.001, pMax = 
 	nev = 5, precisionStability = 1e-7, detectBifurcation = 0)
 
 br_po, = @time continuation(poTrapMF, outpo_f,
-	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, linearPO = :FullMatrixFree;
+	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, jacobianPO = :FullMatrixFree;
 	verbosity = 2,	plot = true,
 	plotSolution = (x, p; kwargs...) -&gt; BK.plotPeriodicPOTrap(x, M, Nx, Ny; ratio = 2, kwargs...),
 	recordFromSolution = (u, p) -&gt; BK.getAmplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)</code></pre><p>This gives the following bifurcation diagram:</p><p><img src="../cgl2d-po-cont.png" alt/></p><div class="admonition is-success"><header class="admonition-header">Improved performances</header><div class="admonition-body"><p>Although it would be &quot;cheating&quot; for fair comparisons with existing packages, there is a trick to compute the bifurcation diagram without using preconditionners. We will not detail it here but it allows to handle the case <code>Nx = 200; Ny = 110; M = 30</code> and above.</p></div></div><p>We did not change the preconditioner in the previous example as it does not seem needed. Let us show how to do this nevertheless:</p><pre><code class="language-julia hljs"># callback which will be sent to newton.
@@ -301,7 +301,7 @@ function callbackPO(x, f, J, res, iteration, itlinear, linsolver = ls, prob = po
 end
 
 br_po, = @time continuation(poTrapMF, outpo_f,
-	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, linearPO = :FullMatrixFree;
+	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, jacobianPO = :FullMatrixFree;
 	verbosity = 2,	plot = true,
 	callbackN = callbackPO,
 	plotSolution = (x, p; kwargs...) -&gt; BK.plotPeriodicPOTrap(x, M, Nx, Ny; ratio = 2, kwargs...),
@@ -392,6 +392,6 @@ lsgpu = GMRESKrylovKit(verbose = 2, Pl = Precilu_gpu, rtol = 1e-3, dim  = 20)
 		normN = x-&gt;maximum(abs.(x)))</code></pre><p>The computing time is <code>6.914367 seconds (2.94 M allocations: 130.348 MiB, 1.10% gc time)</code>. The same computation on the CPU, runs in <code>13.972836 seconds (551.41 k allocations: 1.300 GiB, 1.05% gc time)</code>.</p><p>You can also perform continuation, here is a simple example:</p><pre><code class="language-julia hljs">opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds= 0.001, pMax = 2.2, maxSteps = 250, plotEveryStep = 3, newtonOptions = (@set opt_po.linsolver = lsgpu))
 br_po, upo , _= @time continuation(poTrapMFGPU,
    orbitguess_cu, (@set par_cgl_gpu.r = r_hopf - 0.01), (@lens _.r = p),
-   opts_po_cont, linearPO = :FullMatrixFree;
+   opts_po_cont, jacobianPO = :FullMatrixFree;
    verbosity = 2,
-   recordFromSolution = (u,p) -&gt; getAmplitude(poTrapMFGPU, u, par_cgl_gpu), normC = x-&gt;maximum(abs.(x)))</code></pre><div class="admonition is-info"><header class="admonition-header">Preconditioner update</header><div class="admonition-body"><p>For now, the preconditioner has been precomputed on the CPU which forbids its (efficient) update during continuation of a branch of periodic orbits. This could be improved using <code>ilu0!</code> and friends in <code>CuArrays</code>.</p></div></div></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.10 on <span class="colophon-date" title="Tuesday 26 October 2021 18:18">Tuesday 26 October 2021</span>. Using Julia version 1.6.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+   recordFromSolution = (u,p) -&gt; getAmplitude(poTrapMFGPU, u, par_cgl_gpu), normC = x-&gt;maximum(abs.(x)))</code></pre><div class="admonition is-info"><header class="admonition-header">Preconditioner update</header><div class="admonition-body"><p>For now, the preconditioner has been precomputed on the CPU which forbids its (efficient) update during continuation of a branch of periodic orbits. This could be improved using <code>ilu0!</code> and friends in <code>CuArrays</code>.</p></div></div></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.10 on <span class="colophon-date" title="Tuesday 9 November 2021 09:19">Tuesday 9 November 2021</span>. Using Julia version 1.6.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
