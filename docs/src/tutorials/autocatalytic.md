@@ -215,7 +215,7 @@ We have detected a Hopf instability in front dynamics, this will give rise of mo
 To branch from the Hopf bifurcation point, we just have to pass the mass matrix as follows:
 
 ```@example TUTAUTOCAT
-# we group the differential together
+# we group the differentials together
 jet = BK.getJet(FcatWave, JcatWave)
 
 # we compute the periodic solutions using Mt time steps and a Trapezoidal time stepper
