@@ -75,7 +75,27 @@ We note the Hopf bifurcation point which we shall investigate now.
 
 ## Branch of periodic orbits with finite differences
 
-We compute the branch of periodic orbits from the Hopf bifurcation point. We use finite differences to discretize the problem of finding periodic orbits. We appeal to automatic branch switching as follows
+We compute the branch of periodic orbits from the Hopf bifurcation point.
+We first define a plotting function and record function which are used for all cases below:
+
+```@example TUTLURE
+# plotting function
+function plotPO(x, p; k...)
+	xtt = BK.getPeriodicOrbit(p.prob, x, @set par_lur.β = p.p)
+	plot!(xtt.t, xtt[1,:]; markersize = 2, k...)
+	plot!(xtt.t, xtt[2,:]; k...)
+	plot!(xtt.t, xtt[3,:]; legend = false, k...)
+end
+
+# record function
+function recordPO(x, p)
+	xtt = BK.getPeriodicOrbit(p.prob, x, @set par_lur.β = p.p)
+	period = BK.getPeriod(p.prob, x, p.p)
+	return (max = maximum(xtt[1,:]), min = minimum(xtt[1,:]), period = period)
+end
+```
+
+We use finite differences to discretize the problem of finding periodic orbits. We appeal to automatic branch switching as follows
 
 ```@example TUTLURE
 # newton parameters
@@ -92,12 +112,10 @@ Mt = 90 # number of time sections
 	updateSectionEveryStep = 1,
 	jacobianPO = :Dense,
 	verbosity = 2,	plot = true,
-	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],3,Mt); return (max = maximum(xtt[1,:]), min = minimum(xtt[1,:]), period = x[end])),
+	recordFromSolution = recordPO,
 	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
-		plot!(xtt.t, xtt.u[1,:]; markersize = 2, k...)
-		plot!(xtt.t, xtt.u[2,:]; k...)
-		plot!(xtt.t, xtt.u[3,:]; legend = false, k...)
+		plotPO(x, p; k...)
+		## add previous branch
 		plot!(br, subplot=1, putbifptlegend = false)
 		end,
 	finaliseSolution = (z, tau, step, contResult; prob = nothing, kwargs...) -> begin
@@ -121,14 +139,12 @@ br_po_pd, = continuation(br_po, 1, setproperties(br_po.contparams, detectBifurca
 	jacobianPO = :Dense,
 	updateSectionEveryStep = 1,
 	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getPeriodicOrbit(br_po.functional, x, (@set par_lur.β = p))
-		plot!(xtt.t, xtt.u[1,:]; markersize = 2, k...)
-		plot!(xtt.t, xtt.u[2,:]; k...)
-		plot!(xtt.t, xtt.u[3,:]; legend = false, k...)
+		plotPO(x, p; k...)
+		## add previous branch
 		plot!(br_po; legend=false, subplot=1)
 	end,
 
-	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],3,Mt); return (max = maximum(xtt[1,:]), min = minimum(xtt[1,:]), period = x[end])),
+	recordFromSolution = recordPO,
 	normC = norminf
 	)
 Scene = title!("")
@@ -144,15 +160,6 @@ We use a different method to compute periodic orbits: we rely on a fixed point o
 
 ```@example TUTLURE
 using DifferentialEquations
-
-# plotting function
-plotSH = (x, p; k...) -> begin
-	xtt = BK.getPeriodicOrbit(p.prob, x, @set par_lur.β = p.p)
-	plot!(xtt.t, xtt[1,:]; markersize = 2, k...)
-	plot!(xtt.t, xtt[2,:]; k...)
-	plot!(xtt.t, xtt[3,:]; legend = false, k...)
-	plot!(br, subplot=1, putbifptlegend = false)
-end
 
 # ODE problem for using DifferentialEquations
 probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; atol = 1e-10, rtol = 1e-7)
@@ -173,8 +180,8 @@ br_po, = continuation(
 	# specific to ODE
 	jacobianPO = :autodiffDense,
 	verbosity = 3,	plot = true,
-	recordFromSolution = (x, p) -> (return (max = getMaximum(p.prob, x, @set par_lur.β = p.p), period = getPeriod(p.prob, x, @set par_lur.β = p.p))),
-	plotSolution = plotSH,
+	recordFromSolution = recordPO,
+	plotSolution = plotPO,
 	# limit the residual, useful to help DifferentialEquations
 	callbackN = BK.cbMaxNorm(10),
 	normC = norminf)
@@ -191,10 +198,11 @@ br_po_pd, = BK.continuation(br_po, 1, setproperties(br_po.contparams, detectBifu
 	ampfactor = .3, δp = -0.005,
 	jacobianPO = :autodiffDense,
 	plotSolution = (x, p; k...) -> begin
-		plotSH(x, p; k...)
+		plotPO(x, p; k...)
+		## add previous branch
 		plot!(br_po; subplot = 1)
 	end,
-	recordFromSolution = (x, p) -> (return (max = getMaximum(p.prob, x, @set par_lur.β = p.p), period = getPeriod(p.prob, x, @set par_lur.β = p.p))),
+	recordFromSolution = recordPO,
 	normC = norminf,
 	callbackN = BK.cbMaxNorm(10),
 	)

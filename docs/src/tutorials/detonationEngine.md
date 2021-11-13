@@ -29,7 +29,7 @@ norminf(x) = norm(x, Inf)
 ω(u, p) = p.k * exp((u - p.uc) / p.α)
 β(u, p) = p.s * p.up /(1 + exp(p.r * (u - p.up)) )
 
-# utilities ffor plotting solutions
+# utilities for plotting solutions
 function plotsol!(x; k...)
 	n = length(x) ÷ 2
 	u = @view x[1:n]
@@ -64,8 +64,8 @@ end
 # function which encodes the right hand side of the PDE
 @views function Fdet!(f, u, p, t = 0)
 	N = p.N
-	NL!(f, u, p) 							# nonlinearity
-	mul!(f, p.Δ, u, p.ν1, 1) 				# put Laplacian
+	NL!(f, u, p) 						# nonlinearity
+	mul!(f, p.Δ, u, p.ν1, 1) 			# put Laplacian
 	f[1:p.N] .-= (p.D * u[1:N].^2) ./ 2	# add drift a la Burger
 	return f
 end
@@ -115,14 +115,17 @@ jet = BK.getJet(Fdet, JdetAD)
 nothing #hide
 ```
 
-We are now ready to coompute the bifurcation if the trivial (constant in space) solution:
+We are now ready to compute the bifurcation of the trivial (constant in space) solution:
 
 ```@example DETENGINE
 # iterative eigen solver
 eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
+# newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)
 solhomo, = newton(Fdet, Jdet, U0, (@set par_det.up = 0.56), optnew; normN = norminf)
-optcont = ContinuationPar(newtonOptions = setproperties(optnew, verbose = false), detectBifurcation = 3, nev = 50, nInversion = 8, dsmax = 0.01, ds = 0.01, maxBisectionSteps = 25, pMax = 1.4, maxSteps = 1000, plotEveryStep = 50)
+optcont = ContinuationPar(newtonOptions = setproperties(optnew, verbose = false), 
+	detectBifurcation = 3, nev = 50, nInversion = 8, maxBisectionSteps = 25,
+	dsmax = 0.01, ds = 0.01, pMax = 1.4, maxSteps = 1000, plotEveryStep = 50)
 br, = continuation(Fdet, JdetAD, solhomo, setproperties(par_det; q = 0.5), (@lens _.up), optcont; plot = true,
 plotSolution = (x, p; k...) -> plotsol!(x; k...),
 recordFromSolution = (x, p) -> (u∞ = norminf(x[1:N]), n2 = norm(x)),)
