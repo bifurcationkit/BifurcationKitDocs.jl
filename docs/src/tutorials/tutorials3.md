@@ -286,7 +286,7 @@ u0 = sol0 .+ 0.01 .* rand(2n)
 
 # this is the ODE time stepper when used with `solve`
 prob = ODEProblem(FOde, u0, (0., 1000.), par_bru;
-	atol = 1e-10, rtol = 1e-8, jac = (J,u,p,t) -> J .= Jbru_sp(u, p), jac_prototype = Jbru_sp(u0, par_bru))
+	abstol = 1e-10, reltol = 1e-8, jac = (J,u,p,t) -> J .= Jbru_sp(u, p), jac_prototype = Jbru_sp(u0, par_bru))
 ```
 
 !!! tip "Performance"

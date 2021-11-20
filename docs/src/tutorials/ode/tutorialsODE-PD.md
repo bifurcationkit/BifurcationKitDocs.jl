@@ -162,7 +162,7 @@ We use a different method to compute periodic orbits: we rely on a fixed point o
 using DifferentialEquations
 
 # ODE problem for using DifferentialEquations
-probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; atol = 1e-10, rtol = 1e-7)
+probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; abstol = 1e-10, reltol = 1e-7)
 
 # newton parameters
 optn_po = NewtonPar(verbose = true, tol = 1e-8, maxIter = 25)
