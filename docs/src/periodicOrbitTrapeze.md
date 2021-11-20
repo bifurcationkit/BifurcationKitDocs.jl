@@ -1,6 +1,6 @@
 # Periodic orbits based on Trapezoidal rule
 
-The method described here allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule. We not `M` the number of time slices of the periodic orbit. The method is implemented in the structure `PeriodicOrbitTrapProblem`. The general method is very well exposed in [^Uecker],[^Lust] and we adopt the notations of the first reference.
+The Trapezoid method allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule	. The method is implemented in the structure `PeriodicOrbitTrapProblem`. The general method is very well exposed in [^Uecker],[^Lust] and we adopt the notations of the first reference.
 
 We look for periodic orbits as solutions $(x(0),T)$ of
 
@@ -8,16 +8,20 @@ $$M_a\dot x = T\cdot F(x),\ x(0)=x(1)$$
 
 where $M_a$ is a mass matrix (default is the identity one).
 
-In order to have a unique solution, we need to remove the phase freedom. This is done by imposing a *phase* condition $\sum_i\langle x_{i} - x_{\pi,i}, \phi_{i}\rangle = 0$ for some $x_\pi,\phi$ which are chosen (wisely).
+In order to have a unique solution, we need to remove the phase freedom. This is done by imposing a *phase* condition
+ 
+$$\frac1T\int_0^T\langle x(s)-x_\pi(s), \phi(s)\rangle ds\approx \frac{1}{m}\sum\limits_{i=1}^m\langle x_{i} - x_{\pi,i}, \phi_{i}\rangle = 0$$ 
 
-By discretizing the above problem, we obtain
+for some $x_\pi,\phi$ which are chosen (wisely).
+
+We note `m` the number of time slices of the periodic orbit. By discretizing the above problem, we obtain
 
 $$\begin{array}{l}
 		0= M_a\left(x_{j}-x_{j-1}\right)-\frac{h}{2} \left(F\left(x_{j}\right)+F\left(x_{j-1}\right)\right)\equiv G_j(x),\quad j=1,\cdots,m-1 \\
 0= x_m-x_1 \equiv G_m(x) \\
-0= \sum_i\langle x_{i} - x_{\pi,i}, \phi_{i}\rangle=0
+0=\sum\limits_{i=1}^m\langle x_{i} - x_{\pi,i}, \phi_{i}\rangle=0
 \end{array}$$
-where $x_0=x_m$ and $h=T/m$. The Jacobian of the system of equations *w.r.t.* $(x_0,T)$ is given by
+where $x_0=x_m$ and $h=T/m$. In view of the Newton method, we study the jacobian of the above system. The Jacobian *w.r.t.* $(x_0,T)$ is given by
 
 $$\mathcal{J}=\left(\begin{array}{cc}{A_1} & {\partial_TG} \\ {\star} & {d}\end{array}\right)$$
 
@@ -46,7 +50,7 @@ $$J_c:=\left(\begin{array}{ccccccc}
 {0} & {\cdots} & {\cdots} & {0} & {-H_{m-1}} & {M_{m-1}} \\
 \end{array}\right)$$
 
-Our code thus provides methods to invert $J_c$ and $A_\gamma$ using a sparse solver or a Matrix-Free solver. A preconditioner can be used.
+Our code thus provides methods to invert $J_c$ and $A_\gamma$ using a sparse solver or a Matrix-Free one. A preconditioner can be used.
 
 ## Encoding of the functional
 
