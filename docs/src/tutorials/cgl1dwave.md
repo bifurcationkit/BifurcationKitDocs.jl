@@ -9,7 +9,7 @@ We look at the Ginzburg-Landau equations in 1d with periodic boundary condition.
 
 The equations are as follows
 
-$$\partial_{t} u=\Delta u+(r+\mathrm{i} v) u-\left(c_{3}+\mathrm{i} \mu\right)|u|^{2} u-c_{5}|u|^{4} u+\gamma, \quad u=u(t, x) \in \mathbb{C},\quad \gamma\in\mathbb R$$
+$$\partial_{t} u=\Delta u+(r+\mathrm{i} v) u-\left(c_{3}+\mathrm{i} \mu\right)|u|^{2} u-c_{5}|u|^{4} u, \quad u=u(t, x) \in \mathbb{C},$$
 
 with periodic boundary conditions. We discretize the circle $\Omega = (-\pi,\pi)$ with $n$ points. We start by writing the Laplacian:
 
@@ -41,7 +41,7 @@ end
 
 # add the nonlinearity to f
 @views function NL!(f, u, p)
-	@unpack r, μ, ν, c3, c5, γ = p
+	@unpack r, μ, ν, c3, c5 = p
 	n = div(length(u), 2)
 	u1 = u[1:n]
 	u2 = u[n+1:2n]
@@ -51,7 +51,7 @@ end
 	f1 = f[1:n]
 	f2 = f[n+1:2n]
 
-	f1 .+= @. r * u1 - ν * u2 - ua * (c3 * u1 - μ * u2) - c5 * ua^2 * u1 + γ
+	f1 .+= @. r * u1 - ν * u2 - ua * (c3 * u1 - μ * u2) - c5 * ua^2 * u1
 	f2 .+= @. r * u2 + ν * u1 - ua * (c3 * u2 + μ * u1) - c5 * ua^2 * u2
 
 	return f
@@ -104,7 +104,7 @@ l = pi
 Δ, D = Laplacian1D(n, l)
 
 # model parameters
-par_cgl = (r = 0.0, μ = 0.5, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, Δ), Db = blockdiag(D, D), γ = 0.0, δ = 1.0, N = 2n)
+par_cgl = (r = 0.0, μ = 0.5, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, Δ), Db = blockdiag(D, D), δ = 1.0, N = 2n)
 
 # initial guess
 sol0 = zeros(par_cgl.N)

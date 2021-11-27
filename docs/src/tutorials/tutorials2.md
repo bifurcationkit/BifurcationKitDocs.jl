@@ -32,7 +32,7 @@ function Laplacian2D(Nx, Ny, lx, ly)
 	D2y = CenteredDifference(2, 2, hy, Ny)
 	Qx = Neumann0BC(hx)
 	Qy = Neumann0BC(hy)
-	
+
 	A = kron(sparse(I, Ny, Ny), sparse(D2x * Qx)[1]) + kron(sparse(D2y * Qy)[1], sparse(I, Nx, Nx))
 	return A, D2x
 end
@@ -105,7 +105,7 @@ with `sol_hexa` being
 
 ## Continuation and bifurcation points
 
-We can now continue this solution as follows. We want to detect bifurcations along the branches. We thus need an eigensolver. However, if we use an iterative eigensolver, like `eig = EigArpack()`, it has trouble computing the eigenvalues. One can see that using 
+We can now continue this solution as follows. We want to detect bifurcations along the branches. We thus need an eigensolver. However, if we use an iterative eigensolver, like `eig = EigArpack()`, it has trouble computing the eigenvalues. One can see that using
 
 ```julia
 # compute the jacobian
@@ -128,7 +128,7 @@ We are now ready to compute the branches:
 ```julia
 optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, pMax = 0.00, pMin = -1.0,
 	newtonOptions = setproperties(optnewton; tol = 1e-9, maxIter = 15), maxSteps = 125,
-	detectBifurcation = 3, nev = 40, detectFold = false, 
+	detectBifurcation = 3, nev = 40, detectFold = false,
 	dsminBisection =1e-7, saveSolEveryStep = 4)
 	optcont = @set optcont.newtonOptions.eigsolver = EigArpack(0.1, :LM)
 
@@ -185,7 +185,7 @@ which penalizes `sol_hexa`.
 ```julia
 # this define the above penalizing factor with p=2, sigma=1, norm associated to dot
 # and the set of sol_{hexa} is of length ns=1
-deflationOp = DeflationOperator(2.0,dot,1.0,[sol_hexa])
+deflationOp = DeflationOperator(2, 1.0, [sol_hexa])
 optnewton = @set optnewton.maxIter = 250
 outdef, _, flag, _ = @time newton(F_sh, dF_sh,
 				0.2vec(sol_hexa) .* vec([exp.(-(x+lx)^2/25) for x in X, y in Y]),
@@ -220,7 +220,7 @@ We can now continue the solutions located in `deflationOp.roots`
 ```julia
 br1, = @time continuation(F_sh, dF_sh,
 	deflationOp[2], par, (@lens _.l), optcont;
-	plot = true, 
+	plot = true,
 	plotSolution = (x, p; kwargs...) -> (heatmap!(X,Y,reshape(x,Nx,Ny)'; color=:viridis, label="", kwargs...)))
 ```
 
