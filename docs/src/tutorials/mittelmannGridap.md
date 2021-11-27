@@ -22,7 +22,7 @@ using Gridap.FESpaces
 using GridapBifurcationKit, BifurcationKit
 
 # custom plot function to deal with Gridap
-plotgridap!(x; k...) = (n=Int(sqrt(length(x)));heatmap!(reshape(x,n,n); color=:viridis, k...))
+plotgridap!(x; k...) = (n=isqrt(length(x));heatmap!(reshape(x,n,n); color=:viridis, k...))
 plotgridap(x; k...) =( plot();plotgridap!(x; k...))
 ```
 We are now ready to specify the problem using the setting of **Gridap.jl**: it allows to write the equations very closely to the mathematical formulation:
