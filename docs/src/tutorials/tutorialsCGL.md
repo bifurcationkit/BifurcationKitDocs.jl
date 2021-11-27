@@ -567,7 +567,7 @@ outfold, hist, flag = @time BK.newtonFold(
 	# defined above
 	options = (@set opt_po.linsolver = ls),
 	d2F = (x, p, dx1, dx2) -> d2Fcglpb(z -> poTrap(z, p), x, dx1, dx2))
-flag && printstyled(color=:red, "--> We found a Fold Point at α = ", outfold.p," from ", br_po.foldpoint[indfold].param,"\n")
+flag && printstyled(color=:red, "--> We found a Fold Point at α = ", outfold.p," from ", br_po.specialpoint[indfold].param,"\n")
 ```
 
 and this gives
@@ -711,7 +711,7 @@ So we can expect a pretty descent x2 speed up in computing the periodic orbits. 
 opt_po = @set opt_newton.verbose = true
 	outpo_f, hist, flag = @time newton(poTrapMFGPU,
 		orbitguess_cu, (@set par_cgl_gpu.r = r_hopf - 0.01),
-		(@set opt_po.linsolver = lsgpu), :FullMatrixFree;
+		(@set opt_po.linsolver = lsgpu); jacobianPO = :FullMatrixFree,
 		normN = x->maximum(abs.(x)))
 ```
 The computing time is `6.914367 seconds (2.94 M allocations: 130.348 MiB, 1.10% gc time)`. The same computation on the CPU, runs in `13.972836 seconds (551.41 k allocations: 1.300 GiB, 1.05% gc time)`.

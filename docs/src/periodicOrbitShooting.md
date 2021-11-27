@@ -52,8 +52,6 @@ and $M_i=\partial_x\phi^{\delta s_i T}(x_i)$.
 The periodic orbits solutions of (SS) or (MS) are not uniquely defined because of the phase invariance. A section $s(x,T)=0$ (resp. $s(x_1,T)=0$) for (SS) (resp. (MS)) must be provided. The default is the same for both
 $$ s(x,T) = T\cdot \langle x-x_\pi, \phi\rangle.$$
 
-> For the jacobian, the differential of $s(x,T)$ is computed by finite differences.
-
 ### Encoding of the functional
 
 The functional is encoded in the composite type [`ShootingProblem`](@ref). In particular, the user can pass its own time stepper or one can use the different ODE solvers in  [DifferentialEquations.jl](https://github.com/JuliaDiffEq/DifferentialEquations.jl) which makes it very easy to choose a solver tailored for the a specific problem. See the link [`ShootingProblem`](@ref) for more information ;  for example on how to access the underlying functional, its jacobian...

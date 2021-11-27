@@ -25,7 +25,7 @@ The easiest way to achieve this is by using the callbacks provided by `newton` a
 
 ### How can I implement my own bifurcation detection method?
 
-You can use the callback `finaliseSolution` but the best way is probably to use the [Iterator Interface](@ref) to inject your code anywhere in the continuation procedure. 
+You can use the callback `finaliseSolution` but the best way is probably to use the [Iterator Interface](@ref) to inject your code anywhere in the continuation procedure.
 
 ### How do I dissociate the computation of eigenvalues from the jacobian that I passed?
 
@@ -44,7 +44,7 @@ finaliseSolution = (z, tau, step, contResult; k...) -> begin
 
 ### How can I reject a Newton Step?
 
-You can reject a newton step by passing to `continuation` the argument `callbackN` 
+You can reject a newton step by passing to `continuation` the argument `callbackN`
 
 ```julia
 function mycallback(x, f, J, res, iteration, itlinear, options; kwargs...)
@@ -64,3 +64,27 @@ Using the argument `finaliseSolution` in `continuation`. Simply make this functi
 ### How do I compute both sides of a branch?
 
 Instead of using two calls to `continuation`, you can pass the keyword `bothside=true` to `continuation`
+
+### How do I compute period orbits for non-autonomous problems
+
+The package does not yet allow to compute periodic orbits solutions of non-autonomous Cauchy problems like
+
+$$\frac{du}{dt}  = F(u, par, t).$$
+
+On certains cases, on can still go away with the following trick. Say one is interested (dummy example!) to study
+
+$$\dot u = cos(u) + cos(\omega \cdot t).$$
+
+Then one can use the following autonomous vector field
+
+```julia
+function vectorField(U, par)
+	u, x, y = U
+	out = similar(U)
+	out[1] = cos(u) + x
+	x2 = x^2+y^2
+	out[2] = x + par.ω * y - x * x2
+	out[3] = y - par.ω * x - y * x2
+	out
+end
+```

@@ -88,7 +88,6 @@ Z = -lz .+ 2lz/(Nz) * collect(0:Nz-1)
 sol0 = [(cos(x) .* cos(y )) for x in X, y in Y, z in Z]
 	sol0 .= sol0 .- minimum(vec(sol0))
 	sol0 ./= maximum(vec(sol0))
-	sol0 = sol0 .- 0.0
 	sol0 .*= 1.7
 
 # parameters for PDE

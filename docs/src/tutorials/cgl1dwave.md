@@ -119,8 +119,13 @@ The first bifurcation point is a regular Hopf bifurcation in the zero mode, *i.e
 
 ## Computation of the travelling wave
 
-We focus on the $O(2)$-Hopf (second bifurcation point in `br`), with frequency $\omega>0$, for which no normal form is currently implemented in `BifurcationKit.jl`. We write $\{\zeta_0,\zeta_1\}$ two eigenvectors associated with the eigenvalue $i\omega$ such that $T_z\cdot\zeta_0 = e^{im z}\zeta_0$, $T_z\cdot\zeta_1 = e^{-im z}\zeta_1$, $S\cdot\zeta_0 =
-\zeta_1$ and $S\cdot\zeta_1 = \zeta_0$. By the center manifold theory[^Haragus], one has $u = A(t)\zeta_0+B(t)\zeta_1+\overline{A(t)\zeta_0}+\overline{B(t)\zeta_1}+\text{small terms}$.
+We focus on the $O(2)$-Hopf (second bifurcation point in `br`), with frequency $\omega>0$, for which no normal form is currently implemented in `BifurcationKit.jl`. We write $\zeta_0,\zeta_1$ two eigenvectors associated with the eigenvalue $i\omega$ such that
+
+$$T_z\cdot\zeta_0 = e^{im z}\zeta_0,\quad T_z\cdot\zeta_1 = e^{-im z}\zeta_1,\quad S\cdot\zeta_0 = \zeta_1,\quad S\cdot\zeta_1 = \zeta_0.$$ 
+
+By the center manifold theory[^Haragus], one has 
+
+$$u = A(t)\zeta_0+B(t)\zeta_1+\overline{A(t)\zeta_0}+\overline{B(t)\zeta_1}+\text{small terms}$$
 
 Using the normal form, one finds standing waves $(A(t),B(t)) = (r_0e^{i\omega t}, r_0e^{i\omega t})$ with $r_0\geq 0$ and travelling waves $(A(t),B(t)) = (r_0e^{i\omega t}, 0)$ at first order in $A,B$. This provides us with a way to compute the initial guess for the travelling waves as written in the following function:
 
