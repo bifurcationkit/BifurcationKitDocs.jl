@@ -5,14 +5,10 @@ Pages = ["BrusselatorFF.md"]
 Depth = 3
 ```
 
-
-!!! unknown "References"
-    This example is taken from [^Tzou].
-
 !!! info "Acknowledgment"
     The example was done in collaboration with Navid C. Constantinou.    
 
-We look at the Brusselator in 1d. The equations are as follows
+We look at the Brusselator in 1d, see [^Tzou]. The equations are
 
 $$\begin{aligned} \frac { \partial u } { \partial t } & = D \frac { \partial ^ { 2 } u } { \partial z ^ { 2 } } + u ^ { 2 } v - ( B + 1 ) u + E \\ \frac { \partial v } { \partial t } & = \frac { \partial ^ { 2 } v} { \partial z ^ { 2 } } + B u - u ^ { 2 } v \end{aligned}\tag{E}$$
 

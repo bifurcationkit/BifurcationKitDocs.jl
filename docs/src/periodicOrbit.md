@@ -2,9 +2,9 @@
 
 We provide two methods for computing periodic orbits (PO):
 
-1. one (Trapezoid) based on finite differences to discretize a Cauchy problem
-2. one (Collocation) based on orthogonal collocation to discretize a Cauchy problem
-3. two (Shooting) based on the flow associated to a Cauchy problem
+1. one (Trapezoid) based on finite differences to discretize a Cauchy problem,
+2. one (Collocation) based on orthogonal collocation to discretize a Cauchy problem,
+3. two (Shooting) based on the flow associated to a Cauchy problem.
 
 It is important to understand the pro and cons of each method to compute PO in large dimensions.
 

@@ -17,7 +17,7 @@ We start by installing the package [GridapBifurcationKit.jl](https://github.com/
 
 ```julia
 using Revise
-using Plots, Gridap,Setfield
+using Plots, Gridap, Setfield
 using Gridap.FESpaces
 using GridapBifurcationKit, BifurcationKit
 
@@ -30,19 +30,19 @@ We are now ready to specify the problem using the setting of **Gridap.jl**: it a
 ```julia
 # discretisation
 n = 40
-domain = (0,1,0,1)
+domain = (0, 1, 0, 1)
 cells = (n,n)
 model = CartesianDiscreteModel(domain,cells)
 
 # function spaces
 order = 1
-reffe = ReferenceFE(lagrangian,Float64,order)
-V = TestFESpace(model,reffe,conformity=:H1,)#dirichlet_tags="boundary")
+reffe = ReferenceFE(lagrangian, Float64, order)
+V = TestFESpace(model, reffe, conformity=:H1,)#dirichlet_tags="boundary")
 U = TrialFESpace(V)
 
 Ω = Triangulation(model)
 degree = 2*order
-dΩ = Measure(Ω,degree)
+const dΩ = Measure(Ω, degree) # we make it const because it is used in res
 
 # nonlinearity
 NL(u) = exp(u)

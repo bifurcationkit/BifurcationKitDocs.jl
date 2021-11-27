@@ -1,6 +1,6 @@
 # [Branch switching](@id Branch-switching-page)
 
-The precise definition of the methods are given [Branch switching (branch point)](@ref) and [Branch switching (Hopf point)](@ref).
+The precise definition of the methods are given in [Branch switching (branch point)](@ref) and [Branch switching (Hopf point)](@ref).
 
 ## Branch switching from simple branch point to equilibria
 
@@ -17,7 +17,7 @@ where `br` is a branch computed after a call to `continuation` with detection of
 
 ## Branch switching from non simple branch point to equilibria
 
-We provide an *experimental* automatic branch switching method in this case. The method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and use it to compute the nearby solutions. These solutions are seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method in this case. The method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and use it to compute the nearby solutions. These solutions are seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
 continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, optionsCont::ContinuationPar;
@@ -30,20 +30,26 @@ An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
 
 ## Branch switching from Hopf point to periodic orbits
 
-In order to compute the bifurcated branch of periodic solutions at a Hopf bifurcation point, you need to choose a method. Indeed, we provide three methods to compute periodic orbits:
+In order to compute the bifurcated branch of periodic solutions at a Hopf bifurcation point, you need to choose a method to compute periodic orbits among:
 
 - [Periodic orbits based on trapezoidal rule](@ref)
 - [Periodic orbits based on orthogonal collocation](@ref)
 - [Periodic orbits based on the shooting method](@ref)
 
-Once you have decided which method you want, you can call the following method.
+Once you have decided which method to use, you can call the following method.
 
 ```julia
 continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, _contParams::ContinuationPar, prob::AbstractPeriodicOrbitProblem ;
 	Jᵗ = nothing, δ = 1e-8, δp = nothing, ampfactor = 1, kwargs...)
 ```
 
-We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `prob::AbstractPeriodicOrbitProblem`. For [Periodic orbits based on trapezoidal rule](@ref), you can pass `prob = PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit. For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `prob = ShootingProblem(2, par, prob, Euler())` or `prob = PoincareShootingProblem(2, par, prob, Euler())` where `prob::ODEProblem` is an ODE problem to specify the Cauchy problem and `par` is the set of parameters passed to the vector field and which must be the same as `br.params`.
+We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `prob::AbstractPeriodicOrbitProblem`. 
+
+- For [Periodic orbits based on trapezoidal rule](@ref), you can pass `prob = PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit. 
+
+- For [Periodic orbits based on orthogonal collocation](@ref), you can pass `prob = PeriodicOrbitOCollProblem(Mt, m)` where `Mt` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials. 
+
+- For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `prob = ShootingProblem(2, prob, Euler())` or `prob = PoincareShootingProblem(, prob, Euler())` where `prob::ODEProblem` is an ODE problem to specify the Cauchy problem.
 
 Several examples are provided like [1d Brusselator (automatic)](@ref) or [2d Ginzburg-Landau equation (finite differences)](@ref).
 
