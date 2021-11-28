@@ -136,14 +136,14 @@ function ϕ(x, p, t)
 	updatevars!(pb)
 	out = similar(x)
 	_update!(out, pb, N)
-	return out
+	return (t=t, u=out)
 end
 
 # differential of the flow by FD
 function dϕ(x, p, dx, t; δ = 1e-8)
-		phi = ϕ(x, p, t)
-		dphi = (ϕ(x .+ δ .* dx, p, t) .- phi) ./ δ
-		return (t=t, u=phi, du=dphi)
+	phi = ϕ(x, p, t).u
+	dphi = (ϕ(x .+ δ .* dx, p, t).u .- phi) ./ δ
+	return (t=t, u=phi, du=dphi)
 end
 ```
 
@@ -151,20 +151,20 @@ We also need the vector field
 
 ```julia
 function vf(x, p)
-		@unpack pb, D, N = p
-		# set parameter in prob
-		pb.eqn.L[:, 1] .*= D / pb.params.D
-		pb.params.D = D
-		u = @view x[1:N]
-		v = @view x[N+1:end]
-		# set initial condition
-		set_uv!(pb, u, v)
-		rhs = Brusselator.get_righthandside(pb)
-		# rhs is in Fourier space, put back to real space
-		out = similar(x)
-		ldiv!((@view out[1:N]), pb.grid.rfftplan, rhs[:, 1])
-		ldiv!((@view out[N+1:end]), pb.grid.rfftplan, rhs[:, 2])
-		return out
+	@unpack pb, D, N = p
+	# set parameter in prob
+	pb.eqn.L[:, 1] .*= D / pb.params.D
+	pb.params.D = D
+	u = @view x[1:N]
+	v = @view x[N+1:end]
+	# set initial condition
+	set_uv!(pb, u, v)
+	rhs = Brusselator.get_righthandside(pb)
+	# rhs is in Fourier space, put back to real space
+	out = similar(x)
+	ldiv!((@view out[1:N]), pb.grid.rfftplan, rhs[:, 1])
+	ldiv!((@view out[N+1:end]), pb.grid.rfftplan, rhs[:, 2])
+	return out
 end
 ```
 
