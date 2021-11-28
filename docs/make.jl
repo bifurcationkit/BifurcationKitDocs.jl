@@ -52,6 +52,13 @@ makedocs(doctest = false,
 			"Eigen Solvers" => "eigensolver.md",
 			"Bordered arrays" => "Borderedarrays.md",
 		],
+		"Contributing" => [
+			"Interfaces" => [
+				"Linear/Eigen Solvers" => "interfaceLS.md",
+				"Predictor/Corrector" => "interfacePred.md",
+				"Flow" => "interfaceFlow.md",
+				]
+		],
 		"Frequently Asked Questions" => "faq.md",
 		"Library" => "library.md"
 	]
