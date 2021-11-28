@@ -32,7 +32,7 @@ An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
 
 In order to compute the bifurcated branch of periodic solutions at a Hopf bifurcation point, you need to choose a method to compute periodic orbits among:
 
-- [Periodic orbits based on trapezoidal rule](@ref)
+- [Periodic orbits based on Trapezoidal rule](@ref)
 - [Periodic orbits based on orthogonal collocation](@ref)
 - [Periodic orbits based on the shooting method](@ref)
 
@@ -45,7 +45,7 @@ continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, _contParams::Continu
 
 We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `prob::AbstractPeriodicOrbitProblem`. 
 
-- For [Periodic orbits based on trapezoidal rule](@ref), you can pass `prob = PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit. 
+- For [Periodic orbits based on Trapezoidal rule](@ref), you can pass `prob = PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit. 
 
 - For [Periodic orbits based on orthogonal collocation](@ref), you can pass `prob = PeriodicOrbitOCollProblem(Mt, m)` where `Mt` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials. 
 
