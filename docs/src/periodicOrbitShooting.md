@@ -123,20 +123,25 @@ The docs for this specific `newton` are located at [`newton`](@ref).
 
 We also provide a simplified call to `newton` to locate the periodic orbit with a deflation operator:
 
-```
-newton(prob:: AbstractShootingProblem, orbitguess, par0, options::NewtonPar; kwargs...)
+```@docs
+newton(prob::BifurcationKit.AbstractShootingProblem, orbitguess, par, options::NewtonPar; jacobianPO = :MatrixFree, kwargs...)
 ```
 
 and
 
 ```
-newton(prob:: AbstractShootingProblem, orbitguess, par0, options::NewtonPar, defOp::DeflationOperator; kwargs...)```
+newton(prob::BifurcationKit.AbstractShootingProblem, orbitguess, par0, options::NewtonPar, defOp::DeflationOperator; kwargs...)
+```
 
 ## Continuation
 
 Have a look at the [Continuation of periodic orbits (Standard Shooting)](@ref) example for the Brusselator.
 
 The docs for this specific `newton` are located at [`continuation`](@ref).
+
+```@docs
+continuation(prob::BifurcationKit.AbstractPeriodicOrbitProblem, orbitguess, par, lens::Lens, _contParams::ContinuationPar; linearAlgo = nothing, kwargs...)
+```
 
 ## References
 

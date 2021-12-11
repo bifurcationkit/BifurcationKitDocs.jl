@@ -68,6 +68,11 @@ We provide a simplified call to `newton` to locate the periodic orbits. Compared
 
 The docs for this specific `newton` are located at [`newton`](@ref).
 
+```@docs
+newton(prob::PeriodicOrbitOCollProblem, orbitguess, par, options::NewtonPar;
+		jacobianPO = :autodiffDense, kwargs...)
+```
+
 ## Continuation
 
 We refer to [`continuation`](@ref) for more information regarding the arguments.

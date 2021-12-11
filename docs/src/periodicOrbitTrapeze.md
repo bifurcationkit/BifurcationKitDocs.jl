@@ -9,8 +9,8 @@ $$M_a\dot x = T\cdot F(x),\ x(0)=x(1)$$
 where $M_a$ is a mass matrix (default is the identity one).
 
 In order to have a unique solution, we need to remove the phase freedom. This is done by imposing a *phase* condition
- 
-$$\frac1T\int_0^T\langle x(s)-x_\pi(s), \phi(s)\rangle ds\approx \frac{1}{m}\sum\limits_{i=1}^m\langle x_{i} - x_{\pi,i}, \phi_{i}\rangle = 0$$ 
+
+$$\frac1T\int_0^T\langle x(s)-x_\pi(s), \phi(s)\rangle ds\approx \frac{1}{m}\sum\limits_{i=1}^m\langle x_{i} - x_{\pi,i}, \phi_{i}\rangle = 0$$
 
 for some $x_\pi,\phi$ which are chosen (wisely).
 
@@ -65,7 +65,7 @@ We strongly advise you to use a preconditioner to deal with the above linear pro
 
 A **not very precise** algorithm for computing the Floquet multipliers is provided. The method, dubbed Quick and Dirty (QaD), is not numerically very precise for large / small Floquet exponents.
 
-It amounts to computing the eigenvalues of 
+It amounts to computing the eigenvalues of
 
 $$\mathcal{M}=M_{1}^{-1} H_{1} M_{m-1}^{-1} H_{m-1} \cdots M_{2}^{-1} H_{2}.$$
 
@@ -89,7 +89,7 @@ The docs for this specific `newton` are located at [`newton`](@ref).
 We also provide a simplified call to `newton` to locate the periodic orbit with a deflation operator.
 
 ```@docs
-newton(probPO::PeriodicOrbitTrapProblem, orbitguess, options::NewtonPar, defOp::DeflationOperator, jacobianPO = :BorderedLU; kwargs...)
+newton(probPO::PeriodicOrbitTrapProblem, orbitguess, options::NewtonPar, defOp::DeflationOperator; jacobianPO = :BorderedLU, kwargs...)
 ```
 
 
@@ -97,8 +97,12 @@ newton(probPO::PeriodicOrbitTrapProblem, orbitguess, options::NewtonPar, defOp::
 
 Have a look at the [Continuation of periodic orbits (Finite differences)](@ref) example for the Brusselator. We refer to [`continuation`](@ref) for more information regarding the arguments.
 
+```@docs
+continuation(prob::PeriodicOrbitTrapProblem, orbitguess, par, lens::Lens, _contParams::ContinuationPar; kwargs...)
+```
+
 ## References
 
-[^Uecker]:> Uecker, Hannes. Hopf Bifurcation and Time Periodic Orbits with Pde2path – Algorithms and Applications. Communications in Computational Physics 25, no. 3 (2019) 
+[^Uecker]:> Uecker, Hannes. Hopf Bifurcation and Time Periodic Orbits with Pde2path – Algorithms and Applications. Communications in Computational Physics 25, no. 3 (2019)
 
-[^Lust]:> Lust, Kurt, Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations, PhD thesis, 1997. 
+[^Lust]:> Lust, Kurt, Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations, PhD thesis, 1997.

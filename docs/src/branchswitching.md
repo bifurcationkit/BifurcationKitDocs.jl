@@ -8,7 +8,7 @@ You can perform automatic branch switching by calling `continuation` with the fo
 
 ```julia
 continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, optionsCont::ContinuationPar;
-	Jᵗ = nothing, δ = 1e-8, nev = 5, verbose = false, kwargs...)
+	kwargs...)
 ```
 
 where `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled. This call computes the branch bifurcating from the `ind_bif `th bifurcation point in `br`. An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
@@ -21,7 +21,7 @@ We provide an automatic branch switching method in this case. The method is to f
 
 ```julia
 continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, optionsCont::ContinuationPar;
-	Jᵗ = nothing, δ = 1e-8, nev = 5, verbose = false, kwargs...)
+	kwargs...)
 ```
 
 An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
@@ -39,15 +39,16 @@ In order to compute the bifurcated branch of periodic solutions at a Hopf bifurc
 Once you have decided which method to use, you can call the following method.
 
 ```julia
-continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, _contParams::ContinuationPar, prob::AbstractPeriodicOrbitProblem ;
-	Jᵗ = nothing, δ = 1e-8, δp = nothing, ampfactor = 1, kwargs...)
+continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, _contParams::ContinuationPar,
+	prob::AbstractPeriodicOrbitProblem ;
+	δp = nothing, ampfactor = 1, kwargs...)
 ```
 
-We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `prob::AbstractPeriodicOrbitProblem`. 
+We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `prob::AbstractPeriodicOrbitProblem`.
 
-- For [Periodic orbits based on Trapezoidal rule](@ref), you can pass `prob = PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit. 
+- For [Periodic orbits based on Trapezoidal rule](@ref), you can pass `prob = PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit.
 
-- For [Periodic orbits based on orthogonal collocation](@ref), you can pass `prob = PeriodicOrbitOCollProblem(Mt, m)` where `Mt` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials. 
+- For [Periodic orbits based on orthogonal collocation](@ref), you can pass `prob = PeriodicOrbitOCollProblem(Mt, m)` where `Mt` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials.
 
 - For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `prob = ShootingProblem(2, prob, Euler())` or `prob = PoincareShootingProblem(, prob, Euler())` where `prob::ODEProblem` is an ODE problem to specify the Cauchy problem.
 
@@ -57,18 +58,16 @@ Several examples are provided like [1d Brusselator (automatic)](@ref) or [2d Gin
 
 !!! tip "Precise options"
     Although very convenient, the automatic branch switching does not allow the very fine tuning of parameters. It must be used as a first attempt before recurring to manual branch switching
-    
+
 ## Branch switching from Branch / Period-doubling point of curve of periodic orbits
 
 We do not provide (for now) the associated normal forms to these bifurcations of periodic orbits. As a consequence, the user is asked to provide the amplitude of the bifurcated solution.
 
-We provide the branching method for the following methods to compute periodic orbits: [`PeriodicOrbitTrapProblem`](@ref),[`ShootingProblem`](@ref) and [`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching. 
+We provide the branching method for the following methods to compute periodic orbits: [`PeriodicOrbitTrapProblem`](@ref),[`ShootingProblem`](@ref) and [`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching.
 
 An example of use is provided in [Period doubling in Lur'e problem (PD aBS)](@ref).
 
 ```julia
-continuation(br::AbstractBranchResult, ind_bif::Int, contParams::ContinuationPar; 
+continuation(br::AbstractBranchResult, ind_bif::Int, contParams::ContinuationPar;
 	δp = 0.1, ampfactor = 1, usedeflation = false, kwargs...)
 ```
-
-
