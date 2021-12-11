@@ -35,6 +35,14 @@ where $w,v$ are chosen in order to have a non-singular matrix $(M_f)$. More prec
 
 !!! warning "Linear Method"
     You can pass the bordered linear solver to solve $(M_f)$ using the option `bdlinsolver ` (see below). Note that the choice `bdlinsolver = BorderingBLS()` can lead to singular systems. Indeed, in this case, $(M_f)$ is solved by inverting `dF(u,p)` which is singular at Fold points.
+    
+### Detection of codim 2 bifurcation points
+
+You can detect the following codim 2 bifurcation points by using the option `detectCodim2Bifurcation` in the method `continuation` (see [Codim 2 continuation](@ref)). Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
+
+- the detection of Cusp (Cusp) is done by the detection of Fold bifurcation points along the curve of Folds by monitoring the parameter component of the tangent.
+- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = \langle w(p),v(p)\rangle$
+- the detection of Bautin (GH) 
 
 ## Hopf continuation
 
@@ -57,11 +65,19 @@ where $w,v$ are chosen in order to have a non-singular matrix $(M_h)$. More prec
 
 !!! warning "Linear Method"
     You can pass the bordered linear solver to solve $(M_h)$ using the option `bdlinsolver ` (see below). Note that the choice `bdlinsolver = BorderingBLS()` can lead to singular systems. Indeed, in this case, $(M_h)$ is solved by inverting `dF(u,p)-iω I_n` which is singular at Hopf points.
+    
+### Detection of codim 2 bifurcation points
 
+You can detect the following codim 2 bifurcation points by using the option `detectCodim2Bifurcation` in the method `continuation` (see [Codim 2 continuation](@ref)). Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
+
+- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = 	\langle w(p),v(p)\rangle$
+- the detection of Bautin (GH) is based on the test function $\psi_{GH}(p) = \Re(l_1(p))$ where $l_1$ is the Lyapunov coefficient defined in [Simple Hopf point](@ref).
+
+> The continuation of Hopf points is stopped at BT and when $\omega<100\epsilon$ where $\epsilon$ is the newton tolerance. 
 
 ## Newton refinement
 
-Once a Fold/Hopf point has been detected after a call to `br, = continuation(...)`, it can be refined using `newton` iterations. Let us say that `ind_bif` is the index in `br.specialpoint` of a Fold/Hopf point. This guess can be refined as follows:
+Once a Fold / Hopf point has been detected after a call to `br, = continuation(...)`, it can be refined using `newton` iterations. Let us say that `ind_bif` is the index in `br.specialpoint` of a Fold / Hopf point. This guess can be refined as follows:
 
 ```julia
 outfold, hist, flag =  newton(F, J, br::AbstractBranchResult, ind_bif::Int; 
@@ -77,7 +93,7 @@ It is important to note that for improved performances, a function implementing 
 
 ## Codim 2 continuation
 
-To compute the codim 2 curve of Fold/Hopf points, one can call [`continuation`](@ref) with the following options
+To compute the codim 2 curve of Fold / Hopf points, one can call [`continuation`](@ref) with the following options
 
 ```@docs
  continuation(F, J,
@@ -115,4 +131,10 @@ continuationHopf
 ## References
 
 [^Govaerts]: > Govaerts, Willy J. F. Numerical Methods for Bifurcations of Dynamical Equilibria. Philadelphia, Pa: Society for Industrial and Applied Mathematics, 2000.
+
+[^Blank]: > Blank, H. J. de, Yu. A. Kuznetsov, M. J. Pekkér, and D. W. M. Veldman. “Degenerate Bogdanov–Takens Bifurcations in a One-Dimensional Transport Model of a Fusion Plasma.” Physica D: Nonlinear Phenomena 331 (September 15, 2016): 13–26. https://doi.org/10.1016/j.physd.2016.05.008.
+
+[^Bindel]: > Bindel, D., M. Friedman, W. Govaerts, J. Hughes, and Yu.A. Kuznetsov. “Numerical Computation of Bifurcations in Large Equilibrium Systems in Matlab.” Journal of Computational and Applied Mathematics 261 (May 2014): 232–48. https://doi.org/10.1016/j.cam.2013.10.034.
+
+
 

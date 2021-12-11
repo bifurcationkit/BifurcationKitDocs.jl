@@ -17,10 +17,13 @@ For the sequel, it is convenient to use the following formalism [^Kuz]
 
 > More information is available at [Predictors - Correctors](@ref)
 
-We just use this simple continuation method to exemplify the  formalism.
+We just use this simple continuation method to give a **trivial** example of the formalism.
 Knowing $(x_0, p_0)$, we form the predictor $(x_0, p_0+ds)$ for some $ds$ and use it as a guess for a Newton corrector applied to $x\to F(x, p_0+ds)$. The corrector is thus the newton algorithm.
 
 This continuation method is set by the option `tangentAlgo = NaturalPred()` in `continuation`.
+
+!!! danger "Usage"
+    You should almost never use this predictor for computations. It fails at turning points, is not adaptive, ... 
 
 ## Step size control
 

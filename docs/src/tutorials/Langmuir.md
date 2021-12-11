@@ -144,7 +144,7 @@ opts_cont = ContinuationPar(
 	nev = 10, saveEigenvectors = true, precisionStability = 1e-5, detectBifurcation = 3,
 	dsminBisection = 1e-8, maxBisectionSteps = 15, nInversion = 6, tolBisectionEigenvalue = 1e-9, saveSolEveryStep = 50)
 
-# we opt for a fastt Shift-Invert eigen solver
+# we opt for a fast Shift-Invert eigen solver
 @set! opts_cont.newtonOptions.eigsolver = EigArpack(0.1, :LM)
 
 br, u1, = @time continuation(
