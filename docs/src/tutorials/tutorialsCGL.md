@@ -22,7 +22,7 @@ $$\partial_{t} u=\Delta u+(r+\mathrm{i} v) u-\left(c_{3}+\mathrm{i} \mu\right)|u
 
 with Dirichlet boundary conditions. We discretize the square $\Omega = (0,L_x)\times(0,L_y)$ with $2N_xN_y$ points. We start by writing the Laplacian:
 
-```julia
+```@example CGL2d
 using Revise
 using DiffEqOperators, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
@@ -44,11 +44,12 @@ function Laplacian2D(Nx, Ny, lx, ly)
 	A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
 	return A
 end
+nothing #hide
 ```
 
 It is then straightforward to write the vector field
 
-```julia
+```@example CGL2d
 # this encodes the nonlinearity
 function NL(u, p)
 	@unpack r, μ, ν, c3, c5, γ = p
@@ -73,11 +74,12 @@ function Fcgl(u, p)
 	mul!(f, p.Δ, u)
 	f .= f .+ NL(u, p)
 end
+nothing #hide
 ```
 
 and its jacobian:
 
-```julia
+```@example CGL2d
 function Jcgl(u, p)
 	@unpack r, μ, ν, c3, c5, Δ = p
 
@@ -101,11 +103,12 @@ function Jcgl(u, p)
 
 	Δ + spdiagm(0 => jacdiag, n => f1v, -n => f2u)
 end
+nothing #hide
 ```
 
 We now define the parameters and the stationary solution:
 
-```julia
+```@example CGL2d
 Nx = 41
 Ny = 21
 n = Nx * Ny
@@ -115,11 +118,12 @@ ly = pi/2
 Δ = Laplacian2D(Nx, Ny, lx, ly)
 par_cgl = (r = 0.5, μ = 0.1, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, Δ), γ = 0.)
 sol0 = zeros(2Nx, Ny)
+nothing #hide
 ```
 
 and we continue it to find the Hopf bifurcation points. We use a Shift-Invert eigensolver.
 
-```julia
+```@example CGL2d
 # Shift-Invert eigensolver
 eigls = EigArpack(1.0, :LM) # shift = 1.0
 opt_newton = NewtonPar(tol = 1e-10, verbose = true, eigsolver = eigls)
@@ -130,38 +134,19 @@ br, = continuation(Fcgl, Jcgl, vec(sol0), par_cgl, (@lens _.r), opts_br, verbosi
 
 which gives
 
-```julia
-Branch number of points: 216
-Branch of Equilibrium
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,  hopf at p ≈ +1.14777610 ∈ (+1.14766562, +1.14777610), |δp|=1e-04, [converged], δ = ( 2,  2), step =  94, eigenelements in eig[ 95], ind_ev =   2
-- #  2,  hopf at p ≈ +1.86107007 ∈ (+1.86018618, +1.86107007), |δp|=9e-04, [converged], δ = ( 2,  2), step = 195, eigenelements in eig[196], ind_ev =   4
-```
-
-and (with `plot(br, ylims=(-0.1,0.1))`)
-
-![](cgl2d-bif.png)
+```@example CGL2d
+scene = plot(br, ylims=(-0.1,0.1))
+```		
 
 ## Normal form computation
 
 We compute the Hopf normal form of the first bifurcation point.
 
-```julia
+```@example CGL2d
 # we group the differentials together
 jet  = BK.getJet(Fcgl, Jcgl)
 
 hopfpt = computeNormalForm(jet..., br, 1)
-```
-
-We can look at the coefficients of the normal form
-
-```julia
-julia> hopfpt
-SubCritical - Hopf bifurcation point at r ≈ 1.1477761028276166.
-Period of the periodic orbit ≈ 6.283185307179592
-Normal form z⋅(a⋅δp + b⋅|z|²):
-(a = 0.9999993808297818 - 6.092862765364455e-9im, b = 0.004870129870129872 + 0.0004870129870129874im)
 ```
 
 So the Hopf branch is subcritical.
@@ -172,21 +157,21 @@ Having detected 2 hopf bifurcation points, we now continue them in the plane $(\
 
 Before we start the codim 2 continuation, we tell `BifurcationKit.jl` to use the spectral information `startWithEigen = true` because the left eigenvector of the Jacobian is simply not the conjugate of the right one.
 
-```julia
+```@example CGL2d
 # we perform Hopf continuation of the first Hopf point in br
 ind_hopf = 1
 br_hopf, u1_hopf = @time continuation(
-	Fcgl, Jcgl,
+	jet[1], jet[2],
 	br, ind_hopf, (@lens _.γ),
 	ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, pMax = 0.6, pMin = -0.6, newtonOptions = opts_br.newtonOptions, plotEveryStep = 5); plot = true,
-	updateMinAugEveryStep = 1, verbosity = 3, normC = norminf,
-	startWithEigen = true, bothside = true,
-	d2F = jet[3],)
+	updateMinAugEveryStep = 1,
+	d2F = jet[3], d3F = jet[4],
+	verbosity = 3, normC = norminf,
+	detectCodim2Bifurcation = 2,
+	startWithEigen = true, bothside = true,)
 
-plot(br_hopf, title = "Hopf continuation")
+plot(br_hopf, branchlabel = "Hopf curve", legend = :top)
 ```
-
-![](cGL-codim2-hopf.png)
 
 ## Periodic orbits continuation with stability
 Having found two Hopf bifurcation points, we aim at computing the periodic orbits branching from them. Like for the Brusselator example, we need to find some educated guess for the periodic orbits in order to have a successful Newton call.

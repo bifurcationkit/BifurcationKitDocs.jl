@@ -31,14 +31,14 @@ function F_chan(x, p)
 		f[i] = (x[i-1] - 2 * x[i] + x[i+1]) * (n-1)^2 + α * N(x[i], b = β)
 	end
 	return f
-end	
+end
 nothing #hide
 ```
 We want to call a Newton solver. We first need an initial guess:
 
 ```@example TUT1
 n = 101
-sol = [(i-1)*(n-i)/n^2+0.1 for i=1:n]
+sol0 = [(i-1)*(n-i)/n^2+0.1 for i=1:n]
 
 # set of parameters
 par = (α = 3.3, β = 0.01)
@@ -55,26 +55,27 @@ nothing #hide
 We call the Newton solver:
 
 ```@example TUT1
-out, = newton( F_chan, sol, par, @set optnewton.verbose=false) # hide
-out, = @time newton( F_chan, sol, par, optnewton)
+sol, = newton( F_chan, sol, par, @set optnewton.verbose=false) # hide
+sol, = @time newton( F_chan, sol0, par, optnewton)
 nothing #hide
 ```
 
-Note that, in this case, we did not give the Jacobian. It was computed internally using Finite Differences. 
+Note that, in this case, we did not give the Jacobian. It was computed internally using Finite Differences.
 
 > This is not as bad as it looks despite the fact that there are so many allocations even with Finite Differences Jacobian. Using `BenchmarkTools.jl`, one actually finds `1.153 ms (2067 allocations: 2.04 MiB)`. This is reasonable as we did not code the problem with much care...
 
 We can perform numerical continuation w.r.t. the parameter $\alpha$. This time, we need to provide additional parameters, but now for the continuation method:
 
 ```@example TUT1
-optcont = ContinuationPar(dsmin = 0.01, dsmax = 0.2, ds= 0.1, pMin = 0., pMax = 4.1, newtonOptions = NewtonPar(maxIter = 10, tol = 1e-9))
+optcont = ContinuationPar(dsmin = 0.01, dsmax = 0.2, ds= 0.1, pMin = 0., pMax = 4.1,
+	newtonOptions = NewtonPar(maxIter = 10, tol = 1e-9))
 nothing #hide
 ```
 
 Next, we call the continuation routine as follows.
 
 ```@example TUT1
-br, = continuation(F_chan, out, par, (@lens _.α),
+br, = continuation(F_chan, sol, par, (@lens _.α),
 		optcont; plot = true, verbosity = 0,
 		# function to plot the solution
 		plotSolution = (x, p; k...) -> plot!(x; ylabel="solution", label="", k...))
@@ -102,13 +103,8 @@ The left figure is the norm of the solution as function of the parameter $p=\alp
 
 We get a summary of the branch by doing
 
-```julia
-julia> br
-Branch number of points: 78
-Branch of Equilibrium
-Fold points:
-- #  1,    fold at p ≈ 4.03926020, step =   6, eigenelements in eig[  6], ind_ev =   0 [    guess]
-- #  2,    fold at p ≈ 3.15599445, step =  24, eigenelements in eig[ 24], ind_ev =   0 [    guess]
+```@example TUT1
+br
 ```
 
 We can take the first Fold point, which has been guessed during the previous continuation run and locate it precisely. However, this only works well when the jacobian is computed analytically. We use automatic differentiation for that
@@ -136,7 +132,7 @@ We can finally continue this fold point in the plane $(α,β)$ by performing a F
 ```@example TUT1
 outfoldco, = continuation(
 	F_chan, Jac_mat,
-	br, indfold, 
+	br, indfold,
 	# second parameter axis to use for codim 2 curve
 	(@lens _.β),
 	plot = true, verbosity = 2)
@@ -152,7 +148,7 @@ We continue the previous example but now using Matrix Free methods. The user can
 dN(x; a = 0.5, b = 0.01) = (1-b*x^2+2*a*x)/(1+b*x^2)^2
 
 # Matrix Free version of the differential of F_chan
-# Very easy to write since we have F_chan. 
+# Very easy to write since we have F_chan.
 # We could use Automatic Differentiation as well
 function dF_chan(x, dx, p)
 	@unpack α, β = p
@@ -175,7 +171,7 @@ optnewton_mf = NewtonPar(verbose = true, linsolver = ls)
 # we can then call the newton solver
 out_mf, = @time newton(
 	F_chan,
-	# we pass the differential a x, 
+	# we pass the differential a x,
 	# which is a linear operator in dx
 	(x, p) -> (dx -> dF_chan(x, dx, p)),
 	sol, par,

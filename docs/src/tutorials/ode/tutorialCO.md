@@ -41,11 +41,8 @@ function COm(u, p)
 	out
 end
 
-# jacobian
-dCOm(z, p) = ForwardDiff.jacobian(x -> COm(x, p), z)
-
 # we group the differentials together
-jet = BK.getJet(COm, dCOm)
+jet = BK.getJet(COm; matrixfree=false)
 
 # parameters used in the model
 par_com = (q1 = 2.5, q2 = 0.6, q3 = 10., q4 = 0.0675, q5 = 1., q6 = 0.1, k = 0.4)

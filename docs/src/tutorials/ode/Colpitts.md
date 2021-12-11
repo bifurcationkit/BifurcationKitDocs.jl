@@ -149,7 +149,7 @@ br_po, = continuation(jet..., br, 1, opts_po_cont, probSH; plot = true, verbosit
 	# plotting of a solution
 	plotSolution = (x, p; k...) -> begin
 		outt = BK.getPeriodicOrbit(p.prob, x, (@set  par_Colpitts.μ=p.p))
-		plot!(outt, vars = [2], subplot = 3)
+		plot!(outt.t, outt[2,:], subplot = 3)
 		plot!(br, vars = (:param, :x1), subplot = 1)
 	end,
 	# the newton Callback is used to reject residual > 1

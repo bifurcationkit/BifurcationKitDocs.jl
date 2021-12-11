@@ -2,9 +2,13 @@
 
 For this to work best, it is necessary to have an analytical expression for the jacobian. See the tutorial [Temperature model (Simplest example)](@ref) for more details.
 
+A quite complete example for detection of codim 2 bifurcations of equilibria is [CO-oxydation (codim 2)](@ref) although it is for ODEs.
+
+## Introduction
+
 In this page, we explain how to perform continuation of Fold / Hopf points and detect the associated bifurcations.
 
-### List of detected bifurcation points
+### List of detected codim 2 bifurcation points
 |Bifurcation|index used|
 |---|---|
 | Bogdanov-Takens | bt |
@@ -52,7 +56,7 @@ where $w,v$ are chosen in order to have a non-singular matrix $(M_h)$. More prec
 > note that there are very simplified calls to this, see **Newton refinement** below. In particular, you don't need to set up the Hopf Minimally Augmented problem yourself. This is done in the background.
 
 !!! warning "Linear Method"
-    You can pass the bordered linear solver to solve $(M_h)$ using the option `bdlinsolver ` (see below). Note that the choice `bdlinsolver = BorderingBLS()` can lead to singular systems. Indeed, in this case, $(M_h)$ is solved by inverting `dF(u,p)` which is singular at Fold points.
+    You can pass the bordered linear solver to solve $(M_h)$ using the option `bdlinsolver ` (see below). Note that the choice `bdlinsolver = BorderingBLS()` can lead to singular systems. Indeed, in this case, $(M_h)$ is solved by inverting `dF(u,p)-iω I_n` which is singular at Hopf points.
 
 
 ## Newton refinement

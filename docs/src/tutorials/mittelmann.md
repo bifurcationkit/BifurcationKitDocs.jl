@@ -18,7 +18,7 @@ with Neumann boundary condition on $\Omega = (0,1)^2$ and where $NL(\lambda,u)\e
 
 We start with some imports:
 
-```julia
+```@example MITT
 using Revise
 using DiffEqOperators, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
@@ -31,10 +31,11 @@ normbratu(x) = norm(x .* w) / sqrt(length(x)) # the weight w is defined below
 # some plotting functions to simplify our life
 plotsol!(x, nx = Nx, ny = Ny; kwargs...) = heatmap!(reshape(x, nx, ny); color = :viridis, kwargs...)
 plotsol(x, nx = Nx, ny = Ny; kwargs...) = (plot();plotsol!(x, nx, ny; kwargs...))
+nothing #hide
 ```
 and with the discretization of the problem
 
-```julia
+```@example MITT
 function Laplacian2D(Nx, Ny, lx, ly, bc = :Neumann)
 	hx = 2lx/Nx
 	hy = 2ly/Ny
@@ -68,11 +69,12 @@ function Fmit!(f, u, p)
 end
 
 Fmit(u, p) = Fmit!(similar(u), u, p)
+nothing #hide
 ```
 
 It will also prove useful to have the derivatives of our functional:
 
-```julia
+```@example MITT
 function JFmit(x,p)
 	J = p.Δ
 	dg = dϕ.(x, p.λ)
@@ -81,11 +83,12 @@ end
 
 # compute 3-Jet
 jet = BK.getJet(Fmit, JFmit)
+nothing #hide
 ```
 
 We need to define the parameters associated to this problem:
 
-```julia
+```@example MITT
 Nx = 30; Ny = 30
 lx = 0.5; ly = 0.5
 # weight for the weighted norm
@@ -96,16 +99,17 @@ par_mit = (λ = .05, Δ = Δ)
 
 # initial guess f for newton
 sol0 = zeros(Nx, Ny) |> vec
+nothing #hide
 ```
 
 To compute the eigenvalues, we opt for the shift-invert strategy with shift `=0.5`
 
-```julia
+```@example MITT
 # eigensolver
 eigls = EigKrylovKit(dim = 70)
 
 # options for Newton solver, we pass the eigensolverr
-opt_newton = BK.NewtonPar(tol = 1e-8, verbose = true, eigsolver = eigls, maxIter = 20)
+opt_newton = BK.NewtonPar(tol = 1e-8, verbose = false, eigsolver = eigls, maxIter = 20)
 
 # options for continuation
 opts_br = ContinuationPar(pMax = 3.5, pMin = 0.025,
@@ -113,12 +117,13 @@ opts_br = ContinuationPar(pMax = 3.5, pMin = 0.025,
 	dsmin = 0.001, dsmax = 0.05, ds = 0.01,
 	# number of eigenvalues to compute
 	nev = 30,
-	plotEveryStep = 10, newtonOptions = (@set opt_newton.verbose = true),
+	plotEveryStep = 10, newtonOptions = (@set opt_newton.verbose = false),
 	maxSteps = 100, precisionStability = 1e-6,
 	# detect codim 1 bifurcations
 	detectBifurcation = 3,
 	# Optional: bisection options for locating bifurcations
 	nInversion = 4, dsminBisection = 1e-7, maxBisectionSteps = 25)
+nothing #hide
 ```	 
 Note that we put the option `detectBifurcation = 3` to detect bifurcations precisely with a bisection method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.
 
@@ -127,38 +132,27 @@ At this stage, we note that the problem has a curve of homogenous (constant in s
 
 Given that we will use these arguments for `continuation` many times, it is wise to collect them:
 
-```julia
+```@example MITT
 # optional arguments for continuation
-kwargsC = (verbosity = 3, plot = true,
+kwargsC = (verbosity = 0, plot = true,
 	recordFromSolution = (x, p) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
 	plotSolution = (x, p; k...) -> plotsol!(x ; k...),
 	normC = norminf
 	)
+nothing #hide
 ```
 
 We call `continuation` with the initial guess `sol0` which is homogenous, thereby generating homogenous solutions:
 
-```julia
+```@example MITT
 br, = BK.continuation(Fmit, JFmit, sol0, par_mit, (@lens _.λ), opts_br; kwargsC...)
+show(br)
 ```
 
 You should see the following result:
 
-![](mittlemann1.png)
-
-Several branch point were detected as can be seen using the command
-
-```julia
-julia> br
-Branch number of points: 84
-Branch of Equilibrium
-Parameters λ from 0.05 to 0.025
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at λ ≈ +0.36787944 ∈ (+0.36787944, +0.36787944), |δp|=2e-10, [converged], δ = ( 1,  0), step =  18, eigenelements in eig[ 19], ind_ev =   1
-- #  2,    nd at λ ≈ +0.27255474 ∈ (+0.27255474, +0.27255937), |δp|=5e-06, [converged], δ = ( 2,  0), step =  33, eigenelements in eig[ 34], ind_ev =   3
-- #  3,    bp at λ ≈ +0.15215124 ∈ (+0.15215124, +0.15215818), |δp|=7e-06, [converged], δ = ( 1,  0), step =  48, eigenelements in eig[ 49], ind_ev =   4
-- #  4,    nd at λ ≈ +0.03551852 ∈ (+0.03551852, +0.03554981), |δp|=3e-05, [converged], δ = ( 2,  0), step =  76, eigenelements in eig[ 77], ind_ev =   6
+```@example MITT
+title!("")
 ```
 
 We notice several simple bifurcation points for which the dimension of the kernel of the jacobian is one dimensional. In the above box, `δ = ( 1,  0)` gives the change in the stability. In this case, there is one vector in the kernel which is real. The bifurcation point 2 has a 2d kernel and is thus not amenable to automatic branch switching.
@@ -167,27 +161,25 @@ We notice several simple bifurcation points for which the dimension of the kerne
 
 We can compute the branch off the third bifurcation point:
 
-```julia
+```@example MITT
 br1, = continuation(jet..., br, 3,
 	setproperties(opts_br;ds = 0.001, maxSteps = 40); kwargsC...)
+title!("")
 ```
-
-and you should see:
-
-![](mittlemann2.png)
 
 You can also plot the two branches together `plot(br,br1,plotfold=false)` and get
 
-![](mittlemann3.png)
+```@example MITT
+scene = plot(br,br1,plotfold=false)
+```
 
 We continue our journey and compute the branch bifurcating of the first bifurcation point from the last branch we computed:
 
-```julia
+```@example MITT
 br2, = continuation(jet..., br1, 1,
 	setproperties(opts_br;ds = 0.001, maxSteps = 40); kwargsC...)
+scene = plot(br,br1,br2)
 ```
-
-![](mittlemann4.png)
 
 ## Analysis at the 2d-branch points (manual)
 
@@ -197,20 +189,12 @@ The second bifurcation point on the branch `br` of homogenous solutions has a 2d
 
 We provide a generic way to study branch points of arbitrary dimensions by computing a reduced equation. The general method is based on a Lyapunov-Schmidt reduction. We can compute the information about the branch point using the generic function (valid for simple branch points, Hopf bifurcation points,...)
 
-```julia
+```@example MITT
 bp2d = computeNormalForm(jet..., br, 2;  verbose=true, nev = 50)
 ```
 
-You can print the 2d reduced equation as follows. Note that this is a multivariate polynomials. For more information, see [Non-simple branch point](@ref).
+Note that this is a multivariate polynomials. For more information, see [Non-simple branch point](@ref).
 
-```julia
-julia> bp2d
-Non simple bifurcation point at p ≈ 0.27255473583423123.
-Kernel dimension = 2
-Normal form :
- + -73.8978 * x1 ⋅ p + 0.0071 ⋅ x1³ + 0.0231 ⋅ x1² ⋅ x2 + -0.0273 ⋅ x1 ⋅ x2² + -0.0076 ⋅ x2³
- + -73.8978 * x2 ⋅ p + 0.0079 ⋅ x1³ + -0.027 ⋅ x1² ⋅ x2 + -0.0231 ⋅ x1 ⋅ x2² + 0.0072 ⋅ x2³
-```
 
 You can evaluate this polynomial as follows `bp2d(Val(:reducedForm),[0.1,0.2], 0.01)` which returns a 2d vector or `bp2d([0.1,0.2], 0.01)`. This last expression actually returns a vector corresponding to the PDE problem.
 

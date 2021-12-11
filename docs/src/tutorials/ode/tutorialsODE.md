@@ -42,8 +42,7 @@ end
 TMvf(z, p) = TMvf!(similar(z), z, p, 0)
 
 # we group the differentials together
-dTMvf(z,p) = ForwardDiff.jacobian(x -> TMvf(x,p), z)
-jet = BK.getJet(TMvf, dTMvf)
+jet = BK.getJet(TMvf; matrixfree=false)
 
 # parameter values
 par_tm = (α = 1.5, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.200, U0 = 0.3, τF = 1.5, τS = 0.007)
@@ -66,7 +65,7 @@ opts_br = ContinuationPar(pMin = -10.0, pMax = -0.9,
 	nInversion = 8, maxBisectionSteps = 25, nev = 3)
 
 # continuation of equilibria
-br, = continuation(TMvf, dTMvf, z0, par_tm, (@lens _.E0), opts_br;
+br, = continuation(jet[1], jet[2], z0, par_tm, (@lens _.E0), opts_br;
 	recordFromSolution = (x, p) -> (E = x[1], x = x[2], u = x[3]),
 	tangentAlgo = BorderedPred(),
 	plot = true, normC = norminf)
