@@ -55,7 +55,7 @@ nothing #hide
 We call the Newton solver:
 
 ```@example TUT1
-sol, = newton( F_chan, sol, par, @set optnewton.verbose=false) # hide
+sol, = newton( F_chan, sol0, par, @set optnewton.verbose=false) # hide
 sol, = @time newton( F_chan, sol0, par, optnewton)
 nothing #hide
 ```
