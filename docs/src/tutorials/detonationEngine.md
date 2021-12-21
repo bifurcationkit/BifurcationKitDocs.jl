@@ -153,7 +153,7 @@ end
 nothing #hide
 ```
 
-Using this guess, we can continue the travelling wave as function of a parameter.
+Using this guess, we can continue the travelling wave as function of a parameter. Note that in the following code, a generalized eigensolver is automatically created during the call to `continuation` which properly computes the stability of the wave.
 
 ```@example DETENGINE
 function computeBranch(jet, br, nb; δp = 0.005, maxSteps = 190)
@@ -193,7 +193,6 @@ Scene = title!("")
 branches = [computeBranch(jet, br, i) for i in 1:3]
 plot(br, branches..., legend=:topleft, xlims = (0.5, 1.25), ylims=(0.5, 2.3))
 ```
-
 
 
 ## References

@@ -75,7 +75,7 @@ diagram = bifurcationdiagram(jet...,
 	z0, par_pp2,
 	# specify the continuation parameter
 	(@lens _.p1),
-	# very important parameter. This specifies the maximum amount of recursion
+	# very important parameter. It specifies the maximum amount of recursion
 	# when computing the bifurcation diagram. It means we allow computing branches of branches of branches
 	# at most in the present case.
 	3,

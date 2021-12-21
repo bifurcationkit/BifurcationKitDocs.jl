@@ -177,6 +177,8 @@ plot(wave[1:end-1]; linewidth = 5, label = "solution")
 plot!(uold, color = :blue, label="guess")
 ```
 
+Note that in the following code, a generalized eigensolver is automatically created during the call to `continuation` which properly computes the stability of the wave.
+
 ```@example CGL1DWAVE
 amplitude(x) = maximum(x) - minimum(x)
 optn = NewtonPar(tol = 1e-8, verbose = true, maxIter = 10)
