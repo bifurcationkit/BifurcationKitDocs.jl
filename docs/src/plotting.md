@@ -47,16 +47,18 @@ plot!(br2)
 
 ### Choosing Variables
 
-You can select which variables to plot using the keyword argument `vars`:
+You can select which variables to plot using the keyword argument `vars`, for example:
 
 ```julia
 plot(br, vars = (:param, :x))
 ```
-The available symbols are `:param, :sol, :itnewton, :ds, :theta, :step` and:
+The available symbols are `:param, :sol, :itnewton, :ds, :theta, :step`,... and:
 
 - `x` if `recordFromSolution` (see [`continuation`](@ref)) returns a `Number`.
 - `x1, x2,...` if `recordFromSolution` returns a `Tuple`.
 - the keys of the `NamedTuple` returned by `recordFromSolution`.
+
+The available symbols are provided by calling `propertynames(br.branch)`.
 
 ### Plotting directly using the field names
 

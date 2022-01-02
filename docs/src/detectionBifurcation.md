@@ -8,7 +8,7 @@ The bifurcation points are located by looking at the spectrum **e.g.** by monito
     
 ## Precise detection of bifurcation points using Bisection    
 
-Note that the bifurcation points detected when `detectBifurcation = 2` are only *approximate* bifurcation points. Indeed, we only signal that, in between two continuation steps *which can be large*, a (several) bifurcation has been detected. Hence, we only have a rough idea of where the bifurcation is located, unless your `dsmax` is very small... This can be improved as follows.
+Note that the bifurcation points detected when `detectBifurcation = 2` can be rather *crude*  localization of the true bifurcation points. Indeed, we only signal that, in between two continuation steps *which can be large*, a (several) bifurcation has been detected. Hence, we only have a rough idea of where the bifurcation is located, unless your `dsmax` is very small... This can be improved as follows.
 
 If you choose `detectBifurcation = 3`, a **bisection algorithm** is used to locate the bifurcation points more precisely. It means that we recursively track down the change in stability. Some options in [`ContinuationPar`](@ref) control this behavior:
 

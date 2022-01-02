@@ -2,6 +2,11 @@
 
 The precise definition of the methods are given in [Branch switching (branch point)](@ref) and [Branch switching (Hopf point)](@ref).
 
+```@contents
+Pages = ["branchswitching.md"]
+Depth = 3
+```
+
 ## Branch switching from simple branch point to equilibria
 
 You can perform automatic branch switching by calling `continuation` with the following options:

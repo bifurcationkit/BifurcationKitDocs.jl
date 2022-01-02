@@ -60,4 +60,4 @@ julia> BifurcationKit.nf(bp2d)
 
 - You can evaluate the reduced equation as `bp2d(Val(:reducedForm), rand(2), 0.2)`. This can be used to find all the zeros of the reduced equation by sampling on a grid. 
 
-- Finally, given a $d$-dimensional vector $x$ and a parameter $\delta p$, you can can have access to an initial guess $u$ (see above) by calling `bp2d(rand(2), 0.1)`
+- Finally, given a $d$-dimensional vector $x$ and a parameter $\delta p$, you can have access to an initial guess $u$ (see above) by calling `bp2d(rand(2), 0.1)`
