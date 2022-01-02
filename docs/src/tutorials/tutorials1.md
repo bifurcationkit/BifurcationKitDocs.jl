@@ -166,7 +166,7 @@ end
 ls = GMRESKrylovKit(dim = 100)
 
 # and pass it to the newton parameters
-optnewton_mf = NewtonPar(verbose = true, linsolver = ls)
+optnewton_mf = NewtonPar(verbose = true, linsolver = ls, tol = 1e-10)
 
 # we can then call the newton solver
 out_mf, = @time newton(
