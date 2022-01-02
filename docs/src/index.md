@@ -63,20 +63,20 @@ For example, in one of the simplest tutorials, [Temperature model (Simplest exam
 ## Main features
 
 - Newton-Krylov solver with generic linear / eigen *preconditioned* solver. Idem for the arc-length continuation.
+- Newton-Krylov solver with nonlinear deflation and preconditioner. It can be used for branch switching for example.
 - Continuation written as an [iterator](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/iterator/)
 - Monitoring user functions along curves computed by continuation, see [events](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/EventCallback/)
-- Newton-Krylov solver with nonlinear deflation and preconditioner. It can be used for branch switching for example.
-- Continuation methods: PALC, Moore Spence, Deflated continuation
+- Continuation methods: PALC, Deflated continuation
 - Bifurcation points are located using a bisection algorithm
-- Branch, Fold, Hopf bifurcation point detection of stationary solutions.
+- detection of Branch, Fold, Hopf bifurcation point of stationary solutions and computation of their normal form.
 - Automatic branch switching at branch points (whatever the dimension of the kernel)
 - Automatic branch switching at simple Hopf points to periodic orbits
 - **Automatic bifurcation diagram computation of equilibria**
 - Fold / Hopf continuation based on Minimally Augmented formulation, with Matrix Free / Sparse Jacobian.
 - detection of Bogdanov-Takens, Bautin and Cusp bifurcations
 - Periodic orbit computation and continuation using Shooting, Finite Differences or Orthogonal Collocation.
-- Branch, Fold, Neimark-Sacker, Period Doubling bifurcation point detection of periodic orbits.
-- Computation and Continuation of Fold of periodic orbits
+- detection of Branch, Fold, Neimark-Sacker, Period Doubling bifurcation point of periodic orbits.
+- Continuation of Fold of periodic orbits
 
 Custom state means, we can use something else than `AbstractArray`, for example your own `struct`.
 
