@@ -12,7 +12,7 @@ where `br` is a branch computed after a call to `br, = continuation(...)`. You c
 
 ```julia
 scatter(br)
-plot!(br, label = "continuous line")
+plot!(br, branchlabel = "continuous line")
 ```
 
 The available arguments specific to our plotting methods are

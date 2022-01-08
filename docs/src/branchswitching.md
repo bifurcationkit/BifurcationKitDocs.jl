@@ -20,6 +20,35 @@ where `br` is a branch computed after a call to `continuation` with detection of
 
 > See [Branch switching (branch point)](@ref) precise method definition
 
+### Simple example
+
+```@example TUT1
+using BifurcationKit, Setfield, Plots
+
+# vector field of transcritical bifurcation
+F(x, p) = [x[1] * (p.μ - x[1])]
+
+# vector of differentials (automatic differentiation)
+jet = BifurcationKit.getJet(F; matrixfree = false)
+
+# parameters of the vector field
+par = (μ = -0.2, )
+
+# compute branch of trivial equilibria (=0) and detect a bifurcation point
+opts_br = ContinuationPar(dsmax = 0.05, ds = 0.01, detectBifurcation = 3, nev = 2)
+br, = continuation(jet[1], jet[2], [0.1], par, (@lens _.μ), opts_br;
+	recordFromSolution = (x, p) -> x[1])
+	
+# perform branch switching on one side of the bifurcation point
+br1Top, = continuation(jet..., br, 1, setproperties(opts_br; maxSteps = 14); recordFromSolution = (x, p) -> x[1])
+
+# on the other side
+br1Bottom, = continuation(jet..., br, 1, setproperties(opts_br; ds = -opts_br.ds, maxSteps = 14); recordFromSolution = (x, p) -> x[1])
+
+scene = plot(br, br1Top, br1Bottom; branchlabel = ["br", "br1Top", "br1Bottom"], legend = :topleft)
+```
+
+
 ## Branch switching from non simple branch point to equilibria
 
 We provide an automatic branch switching method in this case. The method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and use it to compute the nearby solutions. These solutions are seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
