@@ -90,7 +90,7 @@ optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 10)
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5.,
 	maxSteps = 110, newtonOptions = (@set optn_po.tol = 1e-7),
-	nev = 3, precisionStability = 1e-8, detectBifurcation = 3, plotEveryStep = 10, saveSolEveryStep = 1)
+	nev = 3, precisionStability = 1e-8, detectBifurcation = 3, plotEveryStep = 10, saveSolEveryStep=1)
 
 # arguments for periodic orbits
 args_po = (	recordFromSolution = (x, p) -> begin

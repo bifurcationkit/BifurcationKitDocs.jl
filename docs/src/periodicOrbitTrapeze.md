@@ -58,7 +58,7 @@ The functional is encoded in the composite type [`PeriodicOrbitTrapProblem`](@re
 
 ## Preconditioning
 
-We strongly advise you to use a preconditioner to deal with the above linear problem. See [2d Ginzburg-Landau equation (finite differences)](@ref) for an example.
+We strongly advise you to use a preconditioner to deal with the above linear problem. See [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref) for an example.
 
 
 ## Floquet multipliers computation
@@ -80,7 +80,7 @@ The method allows, nevertheless, to detect bifurcations of periodic orbits. It s
 
 We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `linearalgo` to select one of the many ways to deal with the above linear problem. The default solver `linearalgo` is `:BorderedLU`.
 
-Have a look at the [Continuation of periodic orbits (Finite differences)](@ref) example for the Brusselator for a basic example and at [2d Ginzburg-Landau equation (finite differences)](@ref) for a more advanced one.
+Have a look at the [Continuation of periodic orbits (Finite differences)](@ref) example for the Brusselator for a basic example and at [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref) for a more advanced one.
 
 The docs for this specific `newton` are located at [`newton`](@ref).
 

@@ -1,5 +1,6 @@
 # Extended Lorenz-84 model (codim 2 + BT/ZH aBS)
 
+
 ```@contents
 Pages = ["lorenz84.md"]
 Depth = 3
@@ -7,7 +8,7 @@ Depth = 3
 
 In this tutorial, we study the extended Lorenz-84 model which is also treated in MatCont [^Kuznetsov]. This model is interesting because it features all codim 2 bifurcations. It is thus convenient to test our algorithms.
 
-Afterr this tutorial, you will be able to
+After this tutorial, you will be able to
 - detect codim 1 bifurcation Fold / Hopf / Branch point
 - follow Fold / Hopf points and detect codim 2 bifurcation points
 - branch from the detected codim 2 points to curves of Fold / Hopf points (This part is still "work in progress")
@@ -33,13 +34,13 @@ norminf(x) = norm(x, Inf)
 nothing #hide
 ```
 
-# Problem setting
+## Problem setting
 We can now encode the vector field (E) in a function and use automatic differentiation to compute its various derivatives.
 
 ```@example LORENZ84
 # vector field
 function Lor(u, p)
-	@unpack α,β,γ,δ,G,F,T = p
+    @unpack α,β,γ,δ,G,F,T = p
 	X,Y,Z,U = u
 	[
 		-Y^2 - Z^2 - α*X + α*F - γ*U^2,
@@ -60,7 +61,7 @@ z0 =  [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.02105
 nothing #hide
 ```
 
-# Continuation and codim 1 bifurcations
+## Continuation and codim 1 bifurcations
 
 Once the problem is set up, we can continue the state w.r.t. $F$ to and detect codim 1 bifurcations. This is achieved as follows:
 
@@ -89,7 +90,7 @@ With detailed information:
 br
 ```
 
-# Continuation of Fold points
+## Continuation of Fold points
 
 We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[4]` and continue it.
 
@@ -126,7 +127,7 @@ For example, we can compute the following normal form
 computeNormalForm(jet..., sn_codim2, 1; nev = 4)
 ```
 
-# Continuation of Hopf points
+## Continuation of Hopf points
 
 We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[2]` and continue it.
 
@@ -162,7 +163,7 @@ For example, we can compute the following normal form
 computeNormalForm(jet..., hp_codim2_1, 2; nev = 4)
 ```
 
-# Continuation of Hopf points from the Bogdanov-Takens bifurcation
+## Continuation of Hopf points from the Bogdanov-Takens bifurcation
 
 When we computed the curve of Fold points, we detected a Bogdanov-Takens bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
@@ -192,7 +193,7 @@ with detailed information
 hp_from_bt
 ```
 
-# Continuation of Hopf points from the Zero-Hopf bifurcation
+## Continuation of Hopf points from the Zero-Hopf bifurcation
 
 When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
@@ -224,4 +225,4 @@ hp_from_zh
 
 ## References
 
-[^Kuznetsov]:> Kuznetsov, Yu A., H. G. E. Meijer, W. Govaerts, and B. Sautois. “Switching to Nonhyperbolic Cycles from Codim 2 Bifurcations of Equilibria in ODEs.” Physica D: Nonlinear Phenomena 237, no. 23 (December 2008): 3061–68. https://doi.org/10.1016/j.physd.2008.06.006.
+[^Kuznetsov]:> Kuznetsov, Yu A., H. G. E. Meijer, W. Govaerts, and B. Sautois. “Switching to Nonhyperbolic Cycles from Codim 2 Bifurcations of Equilibria in ODEs.” Physica D: Nonlinear Phenomena 237, no. 23 (December 2008): 3061–68.

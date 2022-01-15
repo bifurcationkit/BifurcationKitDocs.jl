@@ -40,12 +40,9 @@ br, = continuation(jet[1], jet[2], [0.1], par, (@lens _.μ), opts_br;
 	recordFromSolution = (x, p) -> x[1])
 	
 # perform branch switching on one side of the bifurcation point
-br1Top, = continuation(jet..., br, 1, setproperties(opts_br; maxSteps = 14); recordFromSolution = (x, p) -> x[1])
+br1Top, = continuation(jet..., br, 1, setproperties(opts_br; maxSteps = 14); recordFromSolution = (x, p) -> x[1], bothside = true)
 
-# on the other side
-br1Bottom, = continuation(jet..., br, 1, setproperties(opts_br; ds = -opts_br.ds, maxSteps = 14); recordFromSolution = (x, p) -> x[1])
-
-scene = plot(br, br1Top, br1Bottom; branchlabel = ["br", "br1Top", "br1Bottom"], legend = :topleft)
+scene = plot(br, br1Top; branchlabel = ["br", "br1Top"], legend = :topleft)
 ```
 
 
@@ -60,7 +57,7 @@ continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, optionsCont::Continu
 
 An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
 
-> See [Branch switching (branch point)](@ref) for precise method definition
+> See [Branch switching (branch point)](@ref) for the precise method definition
 
 ## Branch switching from Hopf point to periodic orbits
 
@@ -70,7 +67,7 @@ In order to compute the bifurcated branch of periodic solutions at a Hopf bifurc
 - [Periodic orbits based on orthogonal collocation](@ref)
 - [Periodic orbits based on the shooting method](@ref)
 
-Once you have decided which method to use, you can call the following method.
+Once you have decided which method to use, you can call the following method:
 
 ```julia
 continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, _contParams::ContinuationPar,
@@ -82,13 +79,13 @@ We refer to [`continuation`](@ref) for more information about the arguments. Her
 
 - For [Periodic orbits based on Trapezoidal rule](@ref), you can pass `prob = PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit.
 
-- For [Periodic orbits based on orthogonal collocation](@ref), you can pass `prob = PeriodicOrbitOCollProblem(Mt, m)` where `Mt` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials.
+- For [Periodic orbits based on orthogonal collocation](@ref), you can pass `prob = PeriodicOrbitOCollProblem(M, m)` where `M` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials.
 
-- For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `prob = ShootingProblem(2, prob, Euler())` or `prob = PoincareShootingProblem(, prob, Euler())` where `prob::ODEProblem` is an ODE problem to specify the Cauchy problem.
+- For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `prob = ShootingProblem(2, prob, Euler())` or `prob = PoincareShootingProblem(2, prob, Euler())` where `prob::ODEProblem` is an ODE problem to specify the Cauchy problem.
 
-Several examples are provided like [1d Brusselator (automatic)](@ref) or [2d Ginzburg-Landau equation (finite differences)](@ref).
+Several examples are provided like [1d Brusselator (automatic)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref).
 
-> See [Branch switching (Hopf point)](@ref) precise method definition
+> See [Branch switching (Hopf point)](@ref) for the precise method definition
 
 !!! tip "Precise options"
     Although very convenient, the automatic branch switching does not allow the very fine tuning of parameters. It must be used as a first attempt before recurring to manual branch switching
@@ -105,3 +102,24 @@ An example of use is provided in [Period doubling in Lur'e problem (PD aBS)](@re
 continuation(br::AbstractBranchResult, ind_bif::Int, contParams::ContinuationPar;
 	δp = 0.1, ampfactor = 1, usedeflation = false, kwargs...)
 ```
+
+## Branch switching from Bogdanov-Takens (BT) point to Fold / Hopf curve
+
+We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+
+```julia
+continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, options_cont::ContinuationPar = br.contparams; Jᵗ = nothing, δ::Real = 1e-8, δp = nothing, ampfactor::Real = 1,
+			nev = options_cont.nev,
+			issymmetric = false,
+			detectCodim2Bifurcation::Int = 0,
+			startWithEigen = false,
+			autodiff = false,
+			Teigvec = getvectortype(br),
+			scaleζ = norm,
+			kwargs...) where {Ta, Teigvals, Teigvecbr, Biftype, Ts, Tfunc <: AbstractProblemMinimallyAugmented, Tpar, Tl <: Lens}
+```
+
+where `ind_bif` is the index of the BT point in `br`. Note that the BT has been detected during Fold or Hopf continuation. Calling the above method thus switches from Fold continuation to Hopf continuation (and vice-versa) automatically with the same parameter axis.
+
+!!! warning "WIP"
+    This is still work in progress. Please report any error.

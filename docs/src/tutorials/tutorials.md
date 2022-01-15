@@ -5,12 +5,13 @@ There are three levels of tutorials:
 1. fully **automatic bifurcation diagram** (**aBD**) computation (only for equilibria): one uses the function `bifurcationdiagram` and let it compute the diagram fully automatically. Another possibility is to use **deflated continuation**.
 2. semi-automatic bifurcation diagram computation: one uses **automatic branch switching** (**aBS**) to compute branches at specified bifurcation points
 3. manual bifurcation diagram computation: one does not uses automatic branch switching. This has only educational purposes or for complex problems where aBS fails.
+
 ## ODE examples
 
 We present examples of use in the case of ODEs. Although `BifurcationKit.jl` is not geared towards them, we provide some specific methods which allow to study the bifurcations of ODE in a relatively efficient way.
 
 ```@contents
-Pages = ["ode/tutorialsODE.md", "ode/tutorialCO.md", "ode/tutorialPP2.md","ode/tutorialsODE-PD.md"]
+Pages = ["ode/tutorialsODE.md","ode/tutorialCO.md","ode/lorenz84.md", "ode/tutorialPP2.md",	"ode/tutorialsODE-PD.md"]
 Depth = 1
 ```
 
@@ -18,6 +19,13 @@ Depth = 1
 
 ```@contents
 Pages = ["ode/Colpitts.md"]
+Depth = 1
+```
+
+## Examples based on ModelingToolkit
+
+```@contents
+Pages = ["ode/NME-MTK.md"]
 Depth = 1
 ```
 

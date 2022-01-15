@@ -1,4 +1,4 @@
-# 2d Ginzburg-Landau equation (finite differences)
+# 2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)
 
 ```@contents
 Pages = ["tutorialsCGL.md"]
@@ -163,14 +163,36 @@ ind_hopf = 1
 br_hopf, u1_hopf = @time continuation(
 	jet[1], jet[2],
 	br, ind_hopf, (@lens _.γ),
-	ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, pMax = 0.6, pMin = -0.6, newtonOptions = opts_br.newtonOptions, plotEveryStep = 5); plot = true,
+	ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, pMax = 6.5, pMin = -10., newtonOptions = opts_br.newtonOptions, detectBifurcation = 1); plot = true,
 	updateMinAugEveryStep = 1,
 	d2F = jet[3], d3F = jet[4],
 	verbosity = 3, normC = norminf,
 	detectCodim2Bifurcation = 2,
-	startWithEigen = true, bothside = true,)
+	startWithEigen = true)
 
-plot(br_hopf, branchlabel = "Hopf curve", legend = :top)
+plot(br_hopf, branchlabel = "Hopf curve", legend = :topleft)
+```
+
+with detailed information
+
+```@example CGL2d
+br_hopf
+```
+
+We can now construct the curve of Fold points branching off the Bogdanov-Takens bifurcation we just detected.
+
+```@example CGL2d
+# find the index of the BT point
+indbt = findfirst(x -> x.type == :bt, br_hopf.specialpoint)
+# branch from the BT point
+brfold, = continuation(jet..., br_hopf, indbt, setproperties(br_hopf.contparams; detectBifurcation = 1, maxSteps = 20, saveSolEveryStep = 1);
+	verbosity = 3, plot = true,
+	updateMinAugEveryStep = 1,
+	detectCodim2Bifurcation = 2,
+	callbackN = BK.cbMaxNorm(1e5),
+	bothside = true, normC = norminf)
+
+plot(br_hopf, branchlabel = "Hopf"); plot!(brfold, legend = :topleft, branchlabel = "Fold")
 ```
 
 ## Periodic orbits continuation with stability
