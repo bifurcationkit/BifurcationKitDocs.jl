@@ -40,9 +40,12 @@ br, = continuation(jet[1], jet[2], [0.1], par, (@lens _.μ), opts_br;
 	recordFromSolution = (x, p) -> x[1])
 	
 # perform branch switching on one side of the bifurcation point
-br1Top, = continuation(jet..., br, 1, setproperties(opts_br; maxSteps = 14); recordFromSolution = (x, p) -> x[1], bothside = true)
+br1Top, = continuation(jet..., br, 1, setproperties(opts_br; maxSteps = 14); recordFromSolution = (x, p) -> x[1])
 
-scene = plot(br, br1Top; branchlabel = ["br", "br1Top"], legend = :topleft)
+# on the other side
+br1Bottom, = continuation(jet..., br, 1, setproperties(opts_br; ds = -opts_br.ds, maxSteps = 14); recordFromSolution = (x, p) -> x[1])
+
+scene = plot(br, br1Top, br1Bottom; branchlabel = ["br", "br1Top", "br1Bottom"], legend = :topleft)
 ```
 
 

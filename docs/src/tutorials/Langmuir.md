@@ -176,7 +176,6 @@ Let us study the continuation of Hopf and Fold points and show that they merge a
 # compute branch of Fold points from 7th bifurcation point on br
 sn_codim2, = continuation(jet[1:2]..., br, 7, (@lens _.Δx),
 	ContinuationPar(opts_cont, pMin = -2, pMax = 0.12, ds = -0.01, dsmax = 0.01, precisionStability = 1e-8, maxSteps = 325, nev=23) ;
-	plot = true, verbosity = 3,
 	# start the problem with information from eigen elements
 	startWithEigen = true,
 	# this improves tracking the Fold points
@@ -191,7 +190,6 @@ sn_codim2, = continuation(jet[1:2]..., br, 7, (@lens _.Δx),
 
 # compute branch of Hopf points from 5th bifurcation point on br
 hp_codim2, = continuation(jet[1:2]..., br, 5, (@lens _.Δx), ContinuationPar(opts_cont, pMax = 0.1, ds = -0.01, dsmax = 0.01, maxSteps = 230, precisionStability = 1e-8) ;
-	plot = true, verbosity = 3,
 	# start the problem with information from eigen elements
 	startWithEigen = true,
 	# we update the Hopf problem at every continuation step

@@ -30,14 +30,14 @@ indexof(sym, syms) = findfirst(isequal(sym),syms)
 
 @variables t E(t) x(t) u(t) SS0(t) SS1(t) 	# independent and dependent variables
 @parameters U0 τ J E0 τD U0 τF τS α    		# parameters
-D = Differential(t) 					# define an operator for the differentiation w.r.t. time
+D = Differential(t) 				# define an operator for the differentiation w.r.t. time
 
 # define the model
 @named NMmodel = ODESystem([SS0 ~ J * u * x * E + E0,
 	SS1 ~ α * log(1 + exp(SS0 / α)),
 	D(E) ~ (-E + SS1) / τ,
 	D(x) ~ (1.0 - x) / τD - u * x * E,
-	D(u) ~ (U0 - u) / τF +  U0 * (1.0 - u) * E],
+	D(u) ~ (U0 - u) / τF +  U0 * (1 - u) * E],
 	defaults = Dict(E => 0.238616, x => 0.982747, u => 0.367876,
 	α => 1.5, τ => 0.013, J => 3.07, E0 => -2.0, τD => 0.200, U0 => 0.3, τF => 1.5, τS => 0.007))
 
@@ -81,7 +81,7 @@ With detailed information:
 br
 ```
 
-## Branch of periodic orbits with Trapezoid method
+## Branch of periodic orbits with Collocation method
 
 We then compute the branch of periodic orbits from the last Hopf bifurcation point (on the right). We use finite differences to discretize the problem of finding periodic orbits. Obviously, this will be problematic when the period of the limit cycle grows unbounded close to the homoclinic orbit.
 
@@ -95,6 +95,7 @@ opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0.
 	nev = 3, plotEveryStep = 10, saveSolEveryStep=1)
 
 # arguments for periodic orbits
+# this is mainly for printing purposes
 args_po = (	recordFromSolution = (x, p) -> begin
 		xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm[id_E0] = p.p)
 		return (max = maximum(xtt[1,:]),
@@ -118,7 +119,6 @@ Mt = 30 # number of time sections
 	# we want to use the Collocation method to locate PO, with polynomial degree 5
 	PeriodicOrbitOCollProblem(Mt, 5);
 	# regular continuation options
-	verbosity = 2,	plot = true,
 	args_po...)
 
 scene = plot(br, br_pocoll, markersize = 3)

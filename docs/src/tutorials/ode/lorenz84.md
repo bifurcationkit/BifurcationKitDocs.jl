@@ -199,9 +199,7 @@ When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. 
 
 ```@example LORENZ84
 hp_from_zh, = continuation(jet..., sn_codim2, 2, ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02, dsmin = 1e-4, nInversion = 6, detectBifurcation = 1, maxSteps = 150) ;
-	plot = false, verbosity = 0,
 	normC = norminf,
-	# δp = 0.001,
 	tangentAlgo = BorderedPred(),
 	detectCodim2Bifurcation = 2,
 	updateMinAugEveryStep = 1,
