@@ -15,7 +15,7 @@ $$\tag E J=\left(\begin{array}{ll}
 Such linear solver `bdlsolve` will be called like `sol, success, itnumber = bdlsolve(A, b, c, d, v1, v2)` throughout the package.
 
 !!! warning "Complex numbers"
-    In the case where $c\in\mathbb C^N$, please note that the adjoint operator c^T$ involves a conjugate.
+    In the case where $c\in\mathbb C^N$, please note that the adjoint operator $c^T$ involves a conjugate.
 
 ## Full matrix `MatrixBLS`
 This easiest way to solve $(E)$ is by forming the matrix $J$. In case it is sparse, it should be relatively efficient. You can create such bordered linear solver using `bls = MatrixBLS(ls)` where `ls::AbstractLinearSolver` is a linear solver (which defaults to `\`) used to solve invert $J$.
