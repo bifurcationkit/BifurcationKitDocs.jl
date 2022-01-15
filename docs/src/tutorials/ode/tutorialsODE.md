@@ -90,7 +90,7 @@ optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 10)
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5.,
 	maxSteps = 110, newtonOptions = (@set optn_po.tol = 1e-7),
-	nev = 3, precisionStability = 1e-8, detectBifurcation = 3, plotEveryStep = 10, saveSolEveryStep=1)
+	nev = 3, precisionStability = 1e-8, detectBifurcation = 3, plotEveryStep = 10, saveSolEveryStep = 1)
 
 # arguments for periodic orbits
 args_po = (	recordFromSolution = (x, p) -> begin
@@ -128,6 +128,23 @@ plot!(scene, br_potrap.param, br_potrap.min, label = "")
 
 
 We plot the maximum (resp. minimum) of the limit cycle. We can see that the min converges to the smallest equilibrium indicating a homoclinic orbit.
+
+### Plot of some of the periodic orbits as function of $E_0$
+
+We can plot some of the previously computed periodic orbits in the plane $(E,x)$ as function of $E_0$:
+
+```@example TUTODE
+plot()
+# fetch the saved solutions
+for sol in br_potrap.sol[1:2:40]
+	# periodic orbit
+	po = sol.x
+	# get the mesh and trajectory
+	traj = BK.getPeriodicOrbit(br_potrap.functional, po, @set par_tm.E0 = sol.p)
+	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
+end
+title!("")
+```
 
 ## Branch of periodic orbits with Orthogonal Collocation
 
