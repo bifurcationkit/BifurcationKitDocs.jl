@@ -52,7 +52,7 @@ jet = BK.getJet(F, J)
 nothing #hide
 ```
 
-We first compute the branch of equilibria
+We first compute the branch of equilibria 
 
 ```@example TUTNMEMTK
 # continuation options

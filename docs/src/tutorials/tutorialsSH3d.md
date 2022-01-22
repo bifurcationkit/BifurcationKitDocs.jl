@@ -212,6 +212,9 @@ br, = continuation(
 	F_sh, (x, p) -> (dx -> dF_sh(x, p, dx)),
 	zeros(N), par, (@lens _.l), optcont;
 	plot = true, verbosity = 3,
+	# we use a particuliar bordered linear solver to
+	# take advantage of our specific linear solver
+	linearAlgo = BorderingBLS(solver = optnew.linsolver, checkPrecision = false),
 	plotSolution = (ax, x, p) -> contour3dMakie(ax, x),
 	recordFromSolution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)),
 	normC = x -> norm(x, Inf))
@@ -254,6 +257,7 @@ br1, = @time continuation(jet..., br, 3, setproperties(optcont; saveSolEveryStep
 	# remove display of deflated newton iterations
 	verbosedeflation = false,
 	tangentAlgo = BorderedPred(),
+	linearAlgo = BorderingBLS(solver = optnew.linsolver, checkPrecision = false),
 	# to compute the normal form, so we don't have to
 	# compute the left eigenvectors
 	issymmetric = true,

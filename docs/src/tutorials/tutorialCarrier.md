@@ -11,7 +11,7 @@ It is a remarkably difficult problem which presents many disconnected branches w
 
 We start with some import
 
-```julia
+```@example TUTCARRIER
 using Revise
 using LinearAlgebra, Parameters, Setfield, SparseArrays, BandedMatrices
 
@@ -21,7 +21,7 @@ const BK = BifurcationKit
 
 and a discretization of the problem
 
-```julia
+```@example TUTCARRIER
 function F_carr(x, p)
 	@unpack ϵ, X, dx = p
 	f = similar(x)
@@ -52,44 +52,48 @@ end
 
 We can now use Newton to find solutions:
 
-```julia
+```@example TUTCARRIER
 N = 200
 X = LinRange(-1,1,N)
 dx = X[2] - X[1]
 par_car = (ϵ = 0.7, X = X, dx = dx)
-sol = -(1 .- par_car.X.^2)
+sol0 = -(1 .- par_car.X.^2)
 
 
 optnew = NewtonPar(tol = 1e-8, verbose = true)
-	out, = @time newton(F_carr, Jac_carr, sol,
+	sol, = @time newton(F_carr, Jac_carr, sol0,
 		(@set par_car.ϵ = 0.6), optnew, normN = x -> norm(x, Inf64))
-	plot(out, label="Solution")
+nothing #hide
 ```
 
 ## First try with automatic bifurcation diagram
 
 We can start by using our Automatic bifurcation method.
 
-```julia
+```@example TUTCARRIER
 jet = BK.getJet(F_carr, Jac_carr)
 
 optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, pMin = 0.05, plotEveryStep = 10, newtonOptions = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), maxSteps = 300, detectBifurcation = 3, nev = 40)
 
-diagram = bifurcationdiagram(jet..., 0*out, par_car,
+diagram = bifurcationdiagram(jet..., 0*sol0, par_car,
 	(@lens _.ϵ), 2,
 	(arg...) -> @set optcont.newtonOptions.verbose = false;
+	# particular bordered linear solver to use
+	# BandedMatrices.\
+	linearAlgo = BorderingBLS(DefaultLS()),
 	recordFromSolution = (x, p) -> (x[2] - x[1]) * sum(x.^2),
-	plot = true)
+	plot = false)
+
+scene = plot(diagram)
 ```
 
 However, this is a bit disappointing as we only find two branches.
-![](carrier1.png)
 
 ## Second try with deflated continuation
 
 ```julia
 # deflation operator to hold solutions
-deflationOp = DeflationOperator(2, dot, 1.0, [out])
+deflationOp = DeflationOperator(2, dot, 1.0, [sol])
 
 # parameter values for the problem
 par_def = @set par_car.ϵ = 0.6

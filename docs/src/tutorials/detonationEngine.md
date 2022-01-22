@@ -123,7 +123,7 @@ eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
 # newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)
 solhomo, = newton(Fdet, Jdet, U0, (@set par_det.up = 0.56), optnew; normN = norminf)
-optcont = ContinuationPar(newtonOptions = setproperties(optnew, verbose = false), 
+optcont = ContinuationPar(newtonOptions = setproperties(optnew, verbose = false),
 	detectBifurcation = 3, nev = 50, nInversion = 8, maxBisectionSteps = 25,
 	dsmax = 0.01, ds = 0.01, pMax = 1.4, maxSteps = 1000, plotEveryStep = 50)
 br, = continuation(Fdet, JdetAD, solhomo, setproperties(par_det; q = 0.5), (@lens _.up), optcont; plot = true,
@@ -171,6 +171,7 @@ function computeBranch(jet, br, nb; δp = 0.005, maxSteps = 190)
 		verbosity = 3, plot = true, bothside = true,
 		recordFromSolution = (x, p) -> (u∞ = maximum(x[1:N]), s = x[end], amp = amplitude(x[1:N])),
 		plotSolution = (x, p; k...) -> (plotsol!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
+		callbackN = BK.cbMaxNorm(1e2),
 		finaliseSolution = (z, tau, step, contResult; k...) -> begin
 			amplitude(z.u[N+1:2N]) > 0.01
 		end,

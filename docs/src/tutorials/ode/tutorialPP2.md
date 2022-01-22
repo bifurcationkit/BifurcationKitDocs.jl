@@ -1,4 +1,4 @@
-# pp2 example from AUTO07p (aBD + Hopf aBS)
+# pp2 example from AUTO07p (aBD + Hopf aBS) 
 
 ```@contents
 Pages = ["tutorialsPP2.md"]
@@ -60,7 +60,7 @@ opts_br = ContinuationPar(pMin = 0.1, pMax = 1.0, dsmax = 0.01,
 	nev = 2,
 	# maximal number of continuation steps
 	maxSteps = 1000,
-	# parameter theta, see `? continuation`. Setting this to a non 
+	# parameter theta, see `? continuation`. Setting this to a non
 	# default value helps passing the transcritical bifurcation
 	theta = 0.3)
 
@@ -92,7 +92,7 @@ scene = plot(diagram; code = (), title="$(size(diagram)) branches", legend = fal
 
 As you can see on the diagram, there is a Hopf bifurcation indicated by a red dot.  Let us compute the periodic orbit branching from the Hopf point.
 
-We first find the branch 
+We first find the branch
 
 ```@example TUTPP2
 # branch of the diagram with Hopf point
@@ -114,9 +114,9 @@ Mt = 101 # number of time sections
 	usedeflation = true,
 	# specific linear solver for ODEs
 	jacobianPO = :Dense,
-	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],2,Mt); 
-		return (max = maximum(xtt[1,:]), 
-			min = minimum(xtt[1,:]), 
+	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],2,Mt);
+		return (max = maximum(xtt[1,:]),
+			min = minimum(xtt[1,:]),
 			period = x[end])),
 	finaliseSolution = (z, tau, step, contResult; prob = nothing, kwargs...) -> begin
 		# limit the period
@@ -136,4 +136,3 @@ orbit  = BK.getPeriodicOrbit(br_po, 10)
 plot(orbit.t, orbit.u[1,:]; label = "u1", markersize = 2)
 plot!(orbit.t, orbit.u[2,:]; label = "u2", xlabel = "time", title = "period = $(orbit.t[end])")
 ```
-

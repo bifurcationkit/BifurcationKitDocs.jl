@@ -177,7 +177,7 @@ with detailed information
 - #  4,    bp at μ ≈ +0.63758469 ∈ (+0.63758469, +0.63761073), |δp|=3e-05, [    guess], δ = (-1,  0), step =  43, eigenelements in eig[ 44], ind_ev =   1
 ```
 
-Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation.
+Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation. 
 
 ```@example TUTDAE1
 probFreez_ode = ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.733)

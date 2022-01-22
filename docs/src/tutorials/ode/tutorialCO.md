@@ -90,9 +90,7 @@ sn_codim2, = continuation(jet[1:2]..., br, 2, (@lens _.k),
 	# we update the Fold problem at every continuation step
 	updateMinAugEveryStep = 1,
 	# compute both sides of the initial condition
-	bothside=true,
-	# use this linear bordered solver, better for ODEs
-	bdlinsolver = MatrixBLS())
+	bothside=true,)
 
 scene = plot(sn_codim2, vars=(:q2, :x), branchlabel = "Fold")
 plot!(scene, br, xlims=(0.8,1.8))
@@ -119,8 +117,6 @@ hp_codim2, = continuation(jet[1:2]..., br, 1, (@lens _.k),
 	updateMinAugEveryStep = 1,
 	# compute both sides of the initial condition
 	bothside = true,
-	# use this linear bordered solver, better for ODEs
-	bdlinsolver = MatrixBLS(),
 	)
 
 # plotting

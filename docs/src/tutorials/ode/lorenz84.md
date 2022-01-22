@@ -108,8 +108,6 @@ sn_codim2, = continuation(jet[1:2]..., br, 4, (@lens _.T), ContinuationPar(opts_
 	recordFromSolution = recordFromSolutionLor,
 	# give analytic higher differentials, useful for normal forms
 	d2F = jet[3], d3F = jet[4],
-	# [OPTIONAL] use this linear bordered solver, better for ODEs
-	bdlinsolver = MatrixBLS(),
 	)
 
 scene = plot(sn_codim2, vars=(:X, :U), branchlabel = "Folds", ylims=(-0.5, 0.5))
@@ -145,8 +143,7 @@ hp_codim2_1, = continuation(jet[1:2]..., br, 2, (@lens _.T), ContinuationPar(opt
 	d2F = jet[3], d3F = jet[4],
 	# compute both sides of the initial condition
 	bothside = true,
-	# [OPTIONAL] use this linear bordered solver, better for ODEs
-	bdlinsolver = MatrixBLS())
+	)
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "Folds")
 	plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopfs")
@@ -178,8 +175,7 @@ hp_from_bt, = continuation(jet..., sn_codim2, 4, ContinuationPar(opts_br, ds = -
 	updateMinAugEveryStep = 1,
 	# we save the different components for plotting
 	recordFromSolution = recordFromSolutionLor,
-	# [OPTIONAL] use this linear bordered solver, better for ODEs
-	bdlinsolver = MatrixBLS())
+	)
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "SN")
 	plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf1")
@@ -193,7 +189,7 @@ with detailed information
 hp_from_bt
 ```
 
-## Continuation of Hopf points from the Zero-Hopf bifurcation
+## Continuation of Hopf points from the Zero-Hopf bifurcation 
 
 When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
@@ -206,7 +202,8 @@ hp_from_zh, = continuation(jet..., sn_codim2, 2, ContinuationPar(opts_br, ds = 0
 	startWithEigen = true,
 	recordFromSolution = recordFromSolutionLor,
 	bothside = false,
-	bdlinsolver = MatrixBLS())
+	bdlinsolver = MatrixBLS(),
+	)
 
 plot(sn_codim2,vars=(:X, :U),)
 	plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf")

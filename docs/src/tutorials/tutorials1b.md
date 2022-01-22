@@ -5,13 +5,13 @@ Pages = ["tutorials1b.md"]
 Depth = 3
 ```
 
-We reconsider the first example by relying on the package `ApproxFun.jl` which allows very precise function approximation. 
+We reconsider the first example by relying on the package `ApproxFun.jl` which allows very precise function approximation.
 
 > This is one example where the state space, the space of solutions to the nonlinear equation, is not a subtype of `AbstractArray`. See [Requested methods for Custom State](@ref) for more informations.
 
 We start with some imports:
 
-```julia 
+```julia
 using ApproxFun, LinearAlgebra, Parameters, Setfield
 
 using BifurcationKit, Plots
@@ -118,6 +118,9 @@ Then, we can call the continuation routine
 ```julia
 br, = @time continuation(F_chan, Jac_chan, out, par_af, (@lens _.alpha), optcont,
 	plot = true,
+	# we need a specific bordered linear solver
+	# we use the BorderingBLS one to rely on ApproxFun.\
+	linearAlgo = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
 	plotSolution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...),
 	verbosity = 2,
 	normC = x -> norm(x, Inf64))

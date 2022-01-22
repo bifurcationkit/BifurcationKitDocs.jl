@@ -94,7 +94,6 @@ ly = 0.5
 const w = (lx .+ LinRange(-lx,lx,Nx)) * (LinRange(-ly,ly,Ny))' |> vec
 w .-= minimum(w)
 
-
 Δ = Laplacian2D(Nx, Ny, lx, ly)
 
 # parameters associated with the PDE
@@ -138,11 +137,11 @@ end
 In order to avoid spurious branch switching, we use a callback (see [`continuation`](@ref)) to reject specific continuation steps where the jump in parameters is too large or when the residual is too large:
 
 ```julia
-function cb(x,f,J,res,it,itl,optN; kwargs...)
+function cb(state; kwargs...)
 	_x = get(kwargs, :z0, nothing)
 	fromNewton = get(kwargs, :fromNewton, false)
 	if ~fromNewton
-		return (norm(_x.u - x) < 20.5 && abs(_x.p - kwargs[:p]) < 0.05)
+		return (norm(_x.u - state.x) < 20.5 && abs(_x.p - state.p) < 0.05)
 	end
 	true
 end

@@ -231,6 +231,8 @@ br_potrap, utrap = continuation(
 	jacobianPO = :FullSparseInplace,
 	# tangent algorithm along the branch
 	tangentAlgo = BorderedPred(),
+	# linear algo specific to PALC
+	linearAlgo = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
 	verbosity = 3, plot = true,
 	updateSectionEveryStep = 1,
 	recordFromSolution = (x, p) -> normL2T(x[1:end-1], M = M),

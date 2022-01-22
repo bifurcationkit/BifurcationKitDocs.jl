@@ -244,6 +244,8 @@ br_po, = continuation(
 	# linear solver for the periodic orbit problem
 	# OPTIONAL, one could use the default
 	jacobianPO = :BorderedLU,
+	# linear solver specific to PALC
+	linearAlgo = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
 	updateSectionEveryStep = 1,
 	# regular parameters for the continuation
 	# a few parameters saved during run

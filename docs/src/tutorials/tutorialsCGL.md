@@ -168,7 +168,8 @@ br_hopf, u1_hopf = @time continuation(
 	d2F = jet[3], d3F = jet[4],
 	normC = norminf,
 	detectCodim2Bifurcation = 2,
-	startWithEigen = true)
+	startWithEigen = true,
+	bdlinsolver = BorderingBLS(solver = DefaultLS(), checkPrecision = false))
 
 plot(br_hopf, branchlabel = "Hopf curve", legend = :topleft)
 ```
@@ -189,6 +190,7 @@ brfold, = continuation(jet..., br_hopf, indbt, setproperties(br_hopf.contparams;
 	updateMinAugEveryStep = 1,
 	detectCodim2Bifurcation = 2,
 	callbackN = BK.cbMaxNorm(1e5),
+	bdlinsolver = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
 	bothside = true, normC = norminf)
 
 plot(br_hopf, branchlabel = "Hopf"); plot!(brfold, legend = :topleft, branchlabel = "Fold")
@@ -503,6 +505,7 @@ opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds = 0.001, pMax = 
 br_po, = @time continuation(poTrapMF, outpo_f,
 	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, jacobianPO = :FullMatrixFree;
 	verbosity = 2,	plot = true,
+	linearAlgo = BorderingBLS(solver = ls, checkPrecision = false),
 	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicPOTrap(x, M, Nx, Ny; ratio = 2, kwargs...),
 	recordFromSolution = (u, p) -> BK.getAmplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)
 ```
@@ -519,11 +522,12 @@ We did not change the preconditioner in the previous example as it does not seem
 ```julia
 # callback which will be sent to newton.
 # `iteration` in the arguments refers to newton iterations
-function callbackPO(x, f, J, res, iteration, itlinear, linsolver = ls, prob = poTrap, p = par_cgl; kwargs...)
+function callbackPO(state; linsolver = ls, prob = poTrap, p = par_cgl, kwargs...)
+	@show ls.N keys(kwargs)
 	# we update the preconditioner every 10 continuation steps
 	if mod(kwargs[:iterationC], 10) == 9 && iteration == 1
 		@info "update Preconditioner"
-		Jpo = poTrap(Val(:JacCyclicSparse), x, @set p.r = kwargs[:p])
+		Jpo = poTrap(Val(:JacCyclicSparse), state.x, (@set p.r = kwargs[:p]))
 		Precilu = @time ilu(Jpo, τ = 0.003)
 		ls.Pl = Precilu
 	end
@@ -534,6 +538,7 @@ br_po, = @time continuation(poTrapMF, outpo_f,
 	(@set par_cgl.r = r_hopf - 0.01), (@lens _.r),	opts_po_cont, jacobianPO = :FullMatrixFree;
 	verbosity = 2,	plot = true,
 	callbackN = callbackPO,
+	linearAlgo = BorderingBLS(solver = ls, checkPrecision = false),
 	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicPOTrap(x, M, Nx, Ny; ratio = 2, kwargs...),
 	recordFromSolution = (u, p) -> BK.getAmplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)
 ```
@@ -572,6 +577,7 @@ outfold, hist, flag = @time BK.newtonFold(
 	# we change the linear solver for the one we
 	# defined above
 	options = (@set opt_po.linsolver = ls),
+	bdlinsolver = BorderingBLS(solver = lsfold, checkPrecision = false),
 	d2F = (x, p, dx1, dx2) -> d2Fcglpb(z -> poTrap(z, p), x, dx1, dx2))
 flag && printstyled(color=:red, "--> We found a Fold Point at α = ", outfold.p," from ", br_po.specialpoint[indfold].param,"\n")
 ```
@@ -602,6 +608,7 @@ outfoldco, hist, flag = @time BK.continuationFold(
 	(x, p) -> poTrap(x, p),
 	(x, p) -> poTrap(Val(:JacFullSparse), x, p),
 	br_po, indfold, (@lens _.c5), optcontfold;
+	bdlinsolver = BorderingBLS(solver = lsfold, checkPrecision = false),
 	d2F = (x, p, dx1, dx2) -> d2Fcglpb(z->poTrap(z,p), x, dx1, dx2),
 	plot = true, verbosity = 2)
 ```

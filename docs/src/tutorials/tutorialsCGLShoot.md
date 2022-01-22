@@ -190,7 +190,7 @@ probSh = ShootingProblem(
 	[sol[:, end]];
 
 	# these are options passed to the ODE time stepper
-	atol = 1e-14, rtol = 1e-14)
+	abstol = 1e-14, reltol = 1e-14)
 ```
 
 We use the solution from the ODE solver as a starting guess for the shooting method.
@@ -200,18 +200,19 @@ We use the solution from the ODE solver as a starting guess for the shooting met
 initpo = vcat(sol(116.), 6.9) |> vec
 
 # linear solver for shooting functional
-ls = GMRESIterativeSolvers(reltol = 1e-4, N = 2Nx * Ny + 1, maxiter = 50, verbose = true)
+ls = GMRESIterativeSolvers(reltol = 1e-4, N = 2Nx * Ny + 1, maxiter = 50, verbose = false)
 
 # newton parameters
 optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 20, linsolver = ls)
 
 # continuation parameters
 eig = EigKrylovKit(tol=1e-7, x₀ = rand(2Nx*Ny), verbose = 2, dim = 40)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds= -0.01, pMax = 1.5, maxSteps = 60, newtonOptions = (@set optn.eigsolver = eig), nev = 5, precisionStability = 1e-3, detectBifurcation = 3)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds= -0.01, pMax = 1.5, maxSteps = 60, newtonOptions = (@set optn.eigsolver = eig), nev = 5, precisionStability = 1e-3, detectBifurcation = 0)
 
 br_po, = @time continuation(probSh,
 	initpo, (@set par_cgl.r = 1.2), (@lens _.r), opts_po_cont;
 	verbosity = 3, plot = true,
+	linearAlgo = MatrixFreeBLS(@set ls.N = probSh.M*2n+2),
 	plotSolution = (x, p; kwargs...) -> heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, kwargs...),
-	recordFromSolution = (u, p) -> BK.getAmplitude(probSh, u, (@set par_cgl.r = p); ratio = 2), normC = norminf)
+	recordFromSolution = (u, p) -> BK.getAmplitude(probSh, u, (@set par_cgl.r = p.p); ratio = 2), normC = norminf)
 ```

@@ -109,7 +109,7 @@ par_cgl = (r = 0.0, μ = 0.5, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, 
 # initial guess
 sol0 = zeros(par_cgl.N)
 
-opt_newton = NewtonPar(tol = 1e-9, verbose = true, maxIter = 20)
+opt_newton = NewtonPar(tol = 1e-9, maxIter = 20)
 opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.15, ds = 0.001, pMax = 2.5,
 	detectBifurcation = 3, nev = 9, newtonOptions = (@set opt_newton.verbose = false), maxSteps = 100, nInversion = 8, maxBisectionSteps = 20)
 br, = continuation(jet[1], jet[2], vec(sol0), par_cgl, (@lens _.r), opts_br, verbosity = 0)
@@ -121,9 +121,9 @@ The first bifurcation point is a regular Hopf bifurcation in the zero mode, *i.e
 
 We focus on the $O(2)$-Hopf (second bifurcation point in `br`), with frequency $\omega>0$, for which no normal form is currently implemented in `BifurcationKit.jl`. We write $\zeta_0,\zeta_1$ two eigenvectors associated with the eigenvalue $i\omega$ such that
 
-$$T_z\cdot\zeta_0 = e^{im z}\zeta_0,\quad T_z\cdot\zeta_1 = e^{-im z}\zeta_1,\quad S\cdot\zeta_0 = \zeta_1,\quad S\cdot\zeta_1 = \zeta_0.$$ 
+$$T_z\cdot\zeta_0 = e^{im z}\zeta_0,\quad T_z\cdot\zeta_1 = e^{-im z}\zeta_1,\quad S\cdot\zeta_0 = \zeta_1,\quad S\cdot\zeta_1 = \zeta_0.$$
 
-By the center manifold theory[^Haragus], one has 
+By the center manifold theory[^Haragus], one has
 
 $$u = A(t)\zeta_0+B(t)\zeta_1+\overline{A(t)\zeta_0}+\overline{B(t)\zeta_1}+\text{small terms}$$
 

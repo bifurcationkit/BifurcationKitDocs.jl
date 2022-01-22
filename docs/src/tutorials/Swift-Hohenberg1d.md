@@ -61,7 +61,7 @@ parSH = (l = -0.7, ν = 2., L1 = Lsh)
 We then choose the parameters for [`continuation`](@ref) with precise detection of bifurcation points by bisection:
 
 ```julia
-optnew = NewtonPar(verbose = true, tol = 1e-12)
+optnew = NewtonPar(verbose = false, tol = 1e-12)
 opts = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds = 0.01, pMax = 1.,
 	newtonOptions = setproperties(optnew; maxIter = 30, tol = 1e-8), 
 	maxSteps = 300, plotEveryStep = 40, 
@@ -71,13 +71,13 @@ opts = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds = 0.01, pMax = 1.,
 Before we continue, it is useful to define a callback (see [`continuation`](@ref)) for [`newton`](@ref) to avoid spurious branch switching. It is not strictly necessary for what follows. 
 
 ```julia
-function cb(x,f,J,res,it,itl,optN; kwargs...)
+function cb(state; kwargs...)
 	_x = get(kwargs, :z0, nothing)
 	fromNewton = get(kwargs, :fromNewton, false)
 	if ~fromNewton
 		# if the residual is too large or if the parameter jump
 		# is too big, abord continuation step
-		return norm(_x.u - x) < 20.5 && abs(_x.p - kwargs[:p]) < 0.05
+		return norm(_x.u - state.x) < 20.5 && abs(_x.p - state.p) < 0.05
 	end
 	true
 end
@@ -86,7 +86,7 @@ end
 Next, we specify the arguments to be used during continuation, such as plotting function, tangent predictors, callbacks...
 
 ```julia
-args = (verbosity = 3,
+args = (verbosity = 0,
 	plot = true,
 	linearAlgo  = MatrixBLS(),
 	plotSolution = (x, p;kwargs...)->(plot!(X, x; ylabel="solution", label="", kwargs...)),

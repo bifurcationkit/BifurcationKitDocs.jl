@@ -16,7 +16,7 @@ $$\left\{\begin{array}{l}
 
 The model is interesting because there is a period doubling bifurcation and we want to show the branch switching capabilities of `BifurcationKit.jl` in this case. We provide two different ways to compute this periodic orbits and highlight their pro / cons.
 
-It is easy to encode the ODE as follows
+It is easy to encode the ODE as follows 
 
 ```@example TUTLURE
 using Revise, Parameters, Setfield, Plots, LinearAlgebra

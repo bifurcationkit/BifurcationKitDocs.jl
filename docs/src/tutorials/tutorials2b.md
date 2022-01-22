@@ -234,6 +234,7 @@ opts_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.007, ds= -0.005,
 	br, = @time continuation(F_shfft, J_shfft,
 		deflationOp[1], par, (@lens _.l), opts_cont;
 		plot = true, verbosity = 3,
+		linearAlgo = BorderingBLS(solver = L, checkPrecision = false),
 		plotSolution = (x, p; kwargs...)->plotsol!(x; color=:viridis, kwargs...),
 		normC = x -> maximum(abs.(x))
 		)
