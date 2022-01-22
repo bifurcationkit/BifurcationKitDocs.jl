@@ -8,7 +8,7 @@ $$\mathbb R^n\ni F(x,p) = 0 \quad\tag{E}$$
 
 using a Newton algorithm, we miss an equation. The simplest way is to select an hyperplane in the space $\mathbb R^n\times \mathbb R$ passing through $(x_0,p_0)$:
 
-$$N(x, p) = \frac{\theta}{length(x)} \langle x - x_0, dx_0\rangle + (1 - \theta)\cdot(p - p_0)\cdot dp_0 - ds = 0$$
+$$N(x, p) = \frac{\theta}{n} \langle x - x_0, dx_0\rangle + (1 - \theta)\cdot(p - p_0)\cdot dp_0 - ds = 0$$
 
 with $\theta\in[0,1]$ and where $ds$ is the pseudo arclength (see [^Keller]).
 

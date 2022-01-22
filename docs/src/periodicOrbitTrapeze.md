@@ -4,7 +4,7 @@ The Trapezoid method allows to compute periodic orbits by discretizing time usin
 
 We look for periodic orbits as solutions $(x(0),T)$ of
 
-$$M_a\dot x = T\cdot F(x),\ x(0)=x(1)$$
+$$M_a\dot x = T\cdot F(x),\ x(0)=x(1)\in\mathbb R^n\tag{1}$$
 
 where $M_a$ is a mass matrix (default is the identity one).
 
@@ -23,7 +23,7 @@ $$\begin{array}{l}
 \end{array}$$
 where $x_0=x_m$ and $h=T/m$. In view of the Newton method, we study the jacobian of the above system. The Jacobian *w.r.t.* $(x_0,T)$ is given by
 
-$$\mathcal{J}=\left(\begin{array}{cc}{A_1} & {\partial_TG} \\ {\star} & {d}\end{array}\right)$$
+$$\mathcal{J}=\left(\begin{array}{cc}{A_1} & {\partial_TG} \\ {\star} & {d}\end{array}\right)\tag{2}$$
 
 where
 
