@@ -64,6 +64,10 @@ newton
 ## [Continuation](@id Library-Continuation)
 
 ```@docs
+BifurcationKit.DotTheta
+```
+
+```@docs
 continuation
 ```
 

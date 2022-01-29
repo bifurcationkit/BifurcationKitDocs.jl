@@ -60,6 +60,39 @@ The functional is encoded in the composite type [`PeriodicOrbitTrapProblem`](@re
 
 We strongly advise you to use a preconditioner to deal with the above linear problem. See [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref) for an example.
 
+## Linear solvers
+
+We provide many different linear solvers to take advantage of the formulations. These solvers are available throught the option `jacobianPO`. For example, you can pass `jacobianPO  = :FullLU`. Note that all the internal solvers and jacobian are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+
+### 1. FullLU
+
+When using `jacobianPO = :FullLU`, this triggers the computation of $\mathcal J$ as in (2) at each step of newton/continuation. The jacobian matrix $\mathcal J$ is stored a SparseArray. This can be quite costly flow large $n$ (see (1)). This jacobian is often used with the the linear solver `DefaultLS()`.
+
+### 2. FullSparseInplace
+Same as `:FullLU` but the jacobian is allocated only once and updated inplace. This is much faster than `:FullLU` but the sparsity pattern of `dF` must be constant.
+
+### 3. Dense
+Same as `: FullSparseInplace` above but the matrix `dG` is dense. It is also updated inplace. This is useful to study ODE of small dimension.
+
+### 4. FullMatrixFree
+A matrix free linear solver is used for $\mathcal J$: note that a preconditioner is very likely required here because of the cyclic shape of $\mathcal J$ which affects negatively the convergence properties of iterative solvers. Note that $\mathcal J$ is never formed in this case.
+
+### 5. BorderedLU
+For `:BorderedLU`, we take advantage of the bordered shape of the linear solver and use a LU decomposition to invert `dG` using a bordered linear solver. More precisely, the bordered structure of $\mathcal J$ is stored using the internal structure `POTrapJacobianBordered`. Then, $\mathcal J$ is inverted using the custom bordered linear solver `PeriodicOrbitTrapBLS` which is based on the bordering strategy (see [Bordered linear solvers (BLS)](@ref)). This particuliar solver is based on an explicit formula which only requires to invert $A_\gamma$: this is done by the linear solver `AγLinearSolver`. In a nutshell, we have:
+
+```
+PeriodicOrbitTrapBLS = BorderingBLS(solver = AγLinearSolver(), checkPrecision = false)
+```	
+
+### 6. BorderedSparseInplace
+Same as `:BorderedLU ` but the jacobian is allocated only once and updated inplace. This is much faster than `:BorderedLU ` but the sparsity pattern of `dF` must be constant.
+
+### 7. BorderedMatrixFree
+A matrix free linear solver is used but for $\mathcal J_c$ only: it means that `options.linsolver` is used to invert $\mathcal J_c$. 
+
+!!! info "Matrix-Free"
+    These two Matrix-Free options, `:FullMatrixFree ` and `:BorderedMatrixFree`, thus expose different part of the jacobian $\mathcal J$ in order to use specific preconditioners. For example, an ILU preconditioner on $\mathcal J_c$ could remove the constraints in $\mathcal J$ and lead to poor convergence. Of course, for these last two methods, a preconditioner is likely be required.
+
 
 ## Floquet multipliers computation
 

@@ -174,7 +174,7 @@ out_mf, = @time newton(
 	# we pass the differential a x,
 	# which is a linear operator in dx
 	(x, p) -> (dx -> dF_chan(x, dx, p)),
-	sol, par,
+	sol0, par,
 	optnewton_mf)
 nothing #hide
 ```
@@ -190,9 +190,9 @@ P[1,1:2] .= [1, 0.];P[end,end-1:end] .= [0, 1.]
 
 # define gmres solver with left preconditioner
 ls = GMRESIterativeSolvers(reltol = 1e-4, N = length(sol), restart = 10, maxiter = 10, Pl = lu(P))
-	optnewton_mf = NewtonPar(verbose = true, linsolver = ls)
+	optnewton_mf = NewtonPar(verbose = true, linsolver = ls, tol = 1e-10)
 	out_mf, = @time newton(F_chan,
 	(x, p) -> (dx -> dF_chan(x, dx, p)),
-	sol, par, optnewton_mf)
+	sol0, par, optnewton_mf)
 nothing #hide
 ```

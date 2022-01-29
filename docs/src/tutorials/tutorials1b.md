@@ -1,13 +1,16 @@
-# Temperature model with `ApproxFun` (intermediate)
+# Temperature model with `ApproxFun`, no `AbstractArray` (intermediate)
 
 ```@contents
 Pages = ["tutorials1b.md"]
 Depth = 3
 ```
 
-We reconsider the first example by relying on the package `ApproxFun.jl` which allows very precise function approximation.
+We reconsider the example [Temperature model (Simplest example)](@ref) by relying on the package `ApproxFun.jl` which allows very precise function approximation. This is an interesting example because we have to change the scalar product of [PALC](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/PALC/) for the method to work well.
 
 > This is one example where the state space, the space of solutions to the nonlinear equation, is not a subtype of `AbstractArray`. See [Requested methods for Custom State](@ref) for more informations.
+
+
+## Code for custom state
 
 We start with some imports:
 
@@ -42,6 +45,7 @@ rmul!(y::ApproxFun.Fun, b::Bool) = b == true ? y : (y.coefficients .*= 0; y)
 copyto!(x::ApproxFun.Fun, y::ApproxFun.Fun) = ( (x.coefficients = copy(y.coefficients);x))
 ```
 
+## Problem formulation
 We can easily write our functional with boundary conditions in a convenient manner using `ApproxFun`:
 
 ```julia
@@ -49,17 +53,17 @@ N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
 dN(x; a = 0.5, b = 0.01) = (1-b*x^2+2*a*x)/(1+b*x^2)^2
 
 function F_chan(u, p)
-	@unpack alpha, beta = p
-	return [Fun(u(0.), domain(u)) - beta,
-		Fun(u(1.), domain(u)) - beta,
-		Δ * u + alpha * N(u, b = beta)]
+	@unpack α, β = p
+	return [Fun(u(0.), domain(u)) - β,
+		Fun(u(1.), domain(u)) - β,
+		Δ * u + α * N(u, b = β)]
 end
 
 function Jac_chan(u, p)
-	@unpack alpha, beta = p
+	@unpack α, β = p
 	return [Evaluation(u.space, 0.),
 		Evaluation(u.space, 1.),
-		Δ + alpha * dN(u, b = beta)]
+		Δ + α * dN(u, b = β)]
 end
 ```
 
@@ -69,7 +73,7 @@ We want to call a Newton solver. We first need an initial guess and the Laplacia
 sol = Fun(x -> x * (1-x), Interval(0.0, 1.0))
 const Δ = Derivative(sol.space, 2)
 # set of parameters
-par_af = (alpha = 3., beta = 0.01)
+par_af = (α = 3., β = 0.01)
 ```
 
 Finally, we need to provide some parameters for the Newton iterations. This is done by calling
@@ -98,25 +102,19 @@ and you should see
   0.103869 seconds (362.15 k allocations: 14.606 MiB)
 ```
 
+## Continuation
+
 We can also perform numerical continuation with respect to the parameter $\alpha$. Again, we need to provide some parameters for the continuation:
 
 ```julia
 optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.05, ds= 0.005, pMax = 4.1, plotEveryStep = 10, newtonOptions = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), maxSteps = 200)
 ```
 
-We provide a callback function to check how the `ApproxFun` solution vector grows during the continuation:
+
+Then, we can call the continuation routine.
 
 ```julia
-function finalise_solution(z, tau, step, contResult; k...)
-	printstyled(color=:red,"--> AF length = ", (z, tau) .|> length ,"\n")
-	true
-end
-```
-
-Then, we can call the continuation routine
-
-```julia
-br, = @time continuation(F_chan, Jac_chan, out, par_af, (@lens _.alpha), optcont,
+br, = continuation(F_chan, Jac_chan, out, par_af, (@lens _.α), optcont,
 	plot = true,
 	# we need a specific bordered linear solver
 	# we use the BorderingBLS one to rely on ApproxFun.\
@@ -128,3 +126,30 @@ br, = @time continuation(F_chan, Jac_chan, out, par_af, (@lens _.alpha), optcont
 and you should see
 
 ![](chan-af-bif-diag.png)
+
+
+However, if we do that, we'll see that it does not converge very well. The reason is that the default arc-length constraint (see [Pseudo arclength continuation](@ref)) is 
+
+$$N(x, p)=\frac{\theta}{\text { length}(x)}\left\langle x-x_{0}, d x_{0}\right\rangle+(1-\theta) \cdot\left(p-p_{0}\right) \cdot d p_{0}-d s=0$$
+
+is tailored for vectors of fixed length. The $\frac{1}{length(x)}$ is added to properly balance the terms in the constraint. Thus, in `BifurcationKit`, the dot product is in fact `(x,y) -> dot(x,y) / length(y)`.
+
+
+But here, the vector space is provided with a custom dot product (see above) which depends on the domain, here `Interval(0.0, 1.0)`. Hence, we want to change this constraint $N$ for the following:
+
+$$N(x, p)={\theta}\left\langle x-x_{0}, d x_{0}\right\rangle+(1-\theta) \cdot\left(p-p_{0}\right) \cdot d p_{0}-d s=0.$$
+
+This can be done as follows:
+
+```julia
+br, = continuation(F_chan, Jac_chan, out, par_af, (@lens _.α), optcont,
+	plot = true,
+	# specify the dot product used in PALC
+	dotPALC = BK.DotTheta(dot),
+	# we need a specific bordered linear solver
+	# we use the BorderingBLS one to rely on ApproxFun.\
+	linearAlgo = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
+	plotSolution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...),
+	verbosity = 2,
+	normC = x -> norm(x, Inf64))
+```

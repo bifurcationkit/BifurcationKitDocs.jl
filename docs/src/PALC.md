@@ -8,7 +8,7 @@ $$\mathbb R^n\ni F(x,p) = 0 \quad\tag{E}$$
 
 using a Newton algorithm, we miss an equation. The simplest way is to select an hyperplane in the space $\mathbb R^n\times \mathbb R$ passing through $(x_0,p_0)$:
 
-$$N(x, p) = \frac{\theta}{n} \langle x - x_0, dx_0\rangle + (1 - \theta)\cdot(p - p_0)\cdot dp_0 - ds = 0$$
+$$N(x, p) = \frac{\theta}{n} \langle x - x_0, dx_0\rangle + (1 - \theta)\cdot(p - p_0)\cdot dp_0 - ds = 0\tag{N}$$
 
 with $\theta\in[0,1]$ and where $ds$ is the pseudo arclength (see [^Keller]).
 
@@ -34,6 +34,15 @@ Let us discuss more about the norm and dot product. First, the option `normC` [`
 
 The linear solver for the linear problem associated to (PALC) is set by the option `linearAlgo` in [`continuation`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
 
+## Dot product
+
+In the constraint $N$ above, the scalar product is in fact saved in `BifurcationKit.jl` as `dotp(x,y) -> dot(x,y)/length(y)`. This is used in the bordered linear solvers associated to PALC. If you want to use your own dot product, you can pass 
+
+```julia
+dotPALC = BK.DotTheta(mydot),
+```
+
+to [`continuation`](@ref). Additionally, you may want to provide the linear operator `P` such that `mydot(x,y) = dot(x, A*y)`, especially if you intend too use the linear solver `MatrixBLS`. We refer to [`BifurcationKit.DotTheta `](@ref) for more details.
 
 
 ## Step size control
