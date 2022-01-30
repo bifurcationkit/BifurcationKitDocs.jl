@@ -125,6 +125,9 @@ br, = continuation(
 	F_sh, (x, p) -&gt; (dx -&gt; dF_sh(x, p, dx)),
 	zeros(N), par, (@lens _.l), optcont;
 	plot = true, verbosity = 3,
+	# we use a particuliar bordered linear solver to
+	# take advantage of our specific linear solver
+	linearAlgo = BorderingBLS(solver = optnew.linsolver, checkPrecision = false),
 	plotSolution = (ax, x, p) -&gt; contour3dMakie(ax, x),
 	recordFromSolution = (x, p) -&gt; (n2 = norm(x), n8 = norm(x, 8)),
 	normC = x -&gt; norm(x, Inf))</code></pre><p>The following result shows the detected bifurcation points (its takes ~300s)</p><pre><code class="language-julia hljs">julia&gt; br
@@ -143,6 +146,7 @@ Bifurcation points:
 	# remove display of deflated newton iterations
 	verbosedeflation = false,
 	tangentAlgo = BorderedPred(),
+	linearAlgo = BorderingBLS(solver = optnew.linsolver, checkPrecision = false),
 	# to compute the normal form, so we don&#39;t have to
 	# compute the left eigenvectors
 	issymmetric = true,
@@ -157,4 +161,4 @@ Bifurcation points:
 		contour3dMakie!(ax, br1[i].sol[2].x)
 		ax.protrusions = (0, 0, 0, 10)
 	end
-	display(fig)</code></pre><p><img src="../sh3dallSols.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Monday 17 January 2022 16:00">Monday 17 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	display(fig)</code></pre><p><img src="../sh3dallSols.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Sunday 30 January 2022 10:04">Sunday 30 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

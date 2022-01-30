@@ -58,7 +58,6 @@ ly = 0.5
 const w = (lx .+ LinRange(-lx,lx,Nx)) * (LinRange(-ly,ly,Ny))&#39; |&gt; vec
 w .-= minimum(w)
 
-
 Δ = Laplacian2D(Nx, Ny, lx, ly)
 
 # parameters associated with the PDE
@@ -80,11 +79,11 @@ opts_br = ContinuationPar(dsmin = 0.0001, dsmax = 0.04, ds = 0.005, pMax = 3.5, 
 		end
 	end
 	return true
-end</code></pre><h2 id="Automatic-bifurcation-diagram"><a class="docs-heading-anchor" href="#Automatic-bifurcation-diagram">Automatic bifurcation diagram</a><a id="Automatic-bifurcation-diagram-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-bifurcation-diagram" title="Permalink"></a></h2><p>In order to avoid spurious branch switching, we use a callback (see <a href="../../library/#BifurcationKit.continuation"><code>continuation</code></a>) to reject specific continuation steps where the jump in parameters is too large or when the residual is too large:</p><pre><code class="language-julia hljs">function cb(x,f,J,res,it,itl,optN; kwargs...)
+end</code></pre><h2 id="Automatic-bifurcation-diagram"><a class="docs-heading-anchor" href="#Automatic-bifurcation-diagram">Automatic bifurcation diagram</a><a id="Automatic-bifurcation-diagram-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-bifurcation-diagram" title="Permalink"></a></h2><p>In order to avoid spurious branch switching, we use a callback (see <a href="../../library/#BifurcationKit.continuation"><code>continuation</code></a>) to reject specific continuation steps where the jump in parameters is too large or when the residual is too large:</p><pre><code class="language-julia hljs">function cb(state; kwargs...)
 	_x = get(kwargs, :z0, nothing)
 	fromNewton = get(kwargs, :fromNewton, false)
 	if ~fromNewton
-		return (norm(_x.u - x) &lt; 20.5 &amp;&amp; abs(_x.p - kwargs[:p]) &lt; 0.05)
+		return (norm(_x.u - state.x) &lt; 20.5 &amp;&amp; abs(_x.p - state.p) &lt; 0.05)
 	end
 	true
 end</code></pre><p>Finally, before calling the automatic <code>bifurcationdiagram</code>, we need to provide a function to adjust the continuation parameters as function of the branching level (Note that this function can be constant).</p><pre><code class="language-julia hljs">function optionsCont(x,p,l; opt0 = opts_br)
@@ -131,4 +130,4 @@ end</code></pre><p>We are then ready to compute the bifurcation diagram. If we c
 	finaliseSolution = finSol,
 	usedeflation = true,
 	plotSolution = (x, p; kwargs...) -&gt; plotsol!(x ; kwargs...),
-	normC = norminf)</code></pre><p>This gives the following diagram. Using this call, you can pinpoint the particular location where to refine the diagram.</p><p><img src="../mittlemanBD3.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Monday 17 January 2022 16:00">Monday 17 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	normC = norminf)</code></pre><p>This gives the following diagram. Using this call, you can pinpoint the particular location where to refine the diagram.</p><p><img src="../mittlemanBD3.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Sunday 30 January 2022 10:04">Sunday 30 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

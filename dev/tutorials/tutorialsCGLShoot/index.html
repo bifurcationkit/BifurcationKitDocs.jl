@@ -119,21 +119,22 @@ br_po, = continuation(
 	[sol[:, end]];
 
 	# these are options passed to the ODE time stepper
-	atol = 1e-14, rtol = 1e-14)</code></pre><p>We use the solution from the ODE solver as a starting guess for the shooting method.</p><pre><code class="language-julia hljs"># initial guess with period 6.9 using solution at time t = 116
+	abstol = 1e-14, reltol = 1e-14)</code></pre><p>We use the solution from the ODE solver as a starting guess for the shooting method.</p><pre><code class="language-julia hljs"># initial guess with period 6.9 using solution at time t = 116
 initpo = vcat(sol(116.), 6.9) |&gt; vec
 
 # linear solver for shooting functional
-ls = GMRESIterativeSolvers(reltol = 1e-4, N = 2Nx * Ny + 1, maxiter = 50, verbose = true)
+ls = GMRESIterativeSolvers(reltol = 1e-4, N = 2Nx * Ny + 1, maxiter = 50, verbose = false)
 
 # newton parameters
 optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 20, linsolver = ls)
 
 # continuation parameters
 eig = EigKrylovKit(tol=1e-7, x₀ = rand(2Nx*Ny), verbose = 2, dim = 40)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds= -0.01, pMax = 1.5, maxSteps = 60, newtonOptions = (@set optn.eigsolver = eig), nev = 5, precisionStability = 1e-3, detectBifurcation = 3)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds= -0.01, pMax = 1.5, maxSteps = 60, newtonOptions = (@set optn.eigsolver = eig), nev = 5, precisionStability = 1e-3, detectBifurcation = 0)
 
 br_po, = @time continuation(probSh,
 	initpo, (@set par_cgl.r = 1.2), (@lens _.r), opts_po_cont;
 	verbosity = 3, plot = true,
+	linearAlgo = MatrixFreeBLS(@set ls.N = probSh.M*2n+2),
 	plotSolution = (x, p; kwargs...) -&gt; heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, kwargs...),
-	recordFromSolution = (u, p) -&gt; BK.getAmplitude(probSh, u, (@set par_cgl.r = p); ratio = 2), normC = norminf)</code></pre></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Monday 17 January 2022 16:00">Monday 17 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	recordFromSolution = (u, p) -&gt; BK.getAmplitude(probSh, u, (@set par_cgl.r = p.p); ratio = 2), normC = norminf)</code></pre></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Sunday 30 January 2022 10:04">Sunday 30 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
