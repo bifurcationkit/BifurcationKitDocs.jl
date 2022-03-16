@@ -16,7 +16,7 @@ makedocs(doctest = false,
 			"Nonlinear Equations (Newton)" => ["newton.md", "deflatedproblem.md"],
 			"Periodic Orbits" => [
 				"Introduction" => "periodicOrbit.md",
-				"Finite Differences" => "periodicOrbitTrapeze.md",
+				"Trapezoid" => "periodicOrbitTrapeze.md",
 				"Collocation" => "periodicOrbitCollocation.md",
 				"Shooting" => "periodicOrbitShooting.md",
 				],

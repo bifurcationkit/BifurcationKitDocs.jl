@@ -115,23 +115,23 @@ nothing #hide
 
 ## Freezing method
 
-The problem may feature fronts, that is solutions of the form $u(x,t) = U(x-st)$ (same for $v$) for a fixed value of the profile $U$ and the speed $s$. The equation for the front profile is, up to an abuse of notations
+The problem may feature fronts, that is solutions of the form $u(x,t) = \tilde u(x-st)$ (same for $v$) for a fixed value of the profile $\tilde u$ and the speed $s$. The equation for the front profile is, up to an abuse of notations (we removed the tildes)
 
 $$\begin{array}{l}
-0=a u_{\xi\xi}+su_{\xi}-u f(v)\\
-0=v_{\xi\xi}+sv_{\xi}+u f(v)
+0=a u_{\xi\xi}+s\cdot u_{\xi}-u f(v)\\
+0=v_{\xi\xi}+s\cdot v_{\xi}+u f(v)
 \end{array}$$
 
 with unknowns $u,v,s$. The front is solution of these equations but it is not uniquely determined because of the phase invariance. Hence, we add the phase condition (see [^Beyn])
 
-$$0 = \left\langle U, \partial_\xi U_0	\right\rangle$$
+$$0 = \left\langle (u,v), \partial_\xi (u_0,v_0) \right\rangle$$
 
-where $U_0$ is some fixed profile. This is encoded in the problem [`TWProblem`](@ref)
+where $U_0:=(u_0,v_0)$ is some fixed profile. This is encoded in the problem [`TWProblem`](@ref)
 
 ```@example TUTAUTOCATauto
 using LinearAlgebra
 
-# this structure encode the Lie generator
+# this structure encodes the Lie generator
 struct Advection{T}
 	p::T
 end
@@ -175,8 +175,8 @@ plotsol(front[1:end-1], title="front solution")
 Following [^Malham], the modulated fronts are solutions of the following DAE
 
 $$\begin{array}{l}\tag{DAE}
-u_{t}=a u_{x x}+su_x-u f(v)\\
-v_{t}=v_{x x}+s v_x+u f(v)\\
+u_{t}=a u_{x x}+s\cdot u_x-u f(v)\\
+v_{t}=v_{x x}+s\cdot v_x+u f(v)\\
 0 = \left\langle U, \partial_\xi U_0	\right\rangle
 \end{array}$$
 

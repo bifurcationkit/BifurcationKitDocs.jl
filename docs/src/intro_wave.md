@@ -3,7 +3,7 @@
 This section is dedicated to the study of an equation (in `x`) `F(x,p)=0` where one wishes to freeze a continuous symmetry. When the equation $F(x, p) = 0$ has a continuous symmetry described by a Lie group $G$ and action $g\cdot x$ for $g\in G$, one can reduce the symmetry of the problem by considering the constrained problem[^Beyn]:
 
 $$\left\{
-\begin{array}{l}
+\begin{array}{l}\tag{W}
 F(x, p) - s\cdot T\cdot x=0 \\
 \langle T\cdot x_{ref},x-x_{ref}\rangle=0
 \end{array}\right.$$
