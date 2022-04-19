@@ -14,8 +14,8 @@ Similarly, one can reduce several symmetries by considering
 
 $$\left\{
 \begin{array}{l}
-F(x, p) - \sum\limits_{i=1}^N\ s_i\cdot T_i\cdot x=0 \\
-\langle T_i\cdot x_{ref},x-x_{ref}\rangle=0,\quad i=1,\cdots,N.
+F(x, p) - \sum\limits_{i=1}^{N_g}\ s_i\cdot T_i\cdot x=0 \\
+\langle T_i\cdot x_{ref},x-x_{ref}\rangle=0,\quad i=1,\cdots,N_g.
 \end{array}\right.$$
 
 

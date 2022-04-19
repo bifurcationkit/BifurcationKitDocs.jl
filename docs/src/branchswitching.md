@@ -70,7 +70,7 @@ In order to compute the bifurcated branch of periodic solutions at a Hopf bifurc
 - [Periodic orbits based on orthogonal collocation](@ref)
 - [Periodic orbits based on the shooting method](@ref)
 
-Once you have decided which method to use, you can call the following method:
+Once you have decided which method to use, you use the following call:
 
 ```julia
 continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, _contParams::ContinuationPar,
@@ -80,18 +80,18 @@ continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, _contParams::Continu
 
 We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `prob::AbstractPeriodicOrbitProblem`.
 
-- For [Periodic orbits based on Trapezoidal rule](@ref), you can pass `prob = PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit.
+- For [Periodic orbits based on Trapezoidal rule](@ref), you can pass `PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit.
 
-- For [Periodic orbits based on orthogonal collocation](@ref), you can pass `prob = PeriodicOrbitOCollProblem(M, m)` where `M` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials.
+- For [Periodic orbits based on orthogonal collocation](@ref), you can pass `PeriodicOrbitOCollProblem(M, m)` where `M` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials.
 
-- For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `prob = ShootingProblem(2, prob, Euler())` or `prob = PoincareShootingProblem(2, prob, Euler())` where `prob::ODEProblem` is an ODE problem to specify the Cauchy problem.
+- For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `ShootingProblem(2, odeprob, Euler())` or `PoincareShootingProblem(2, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem.
 
-Several examples are provided like [1d Brusselator (automatic)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref).
+Several examples are provided in [1d Brusselator (automatic)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref).
 
 > See [Branch switching (Hopf point)](@ref) for the precise method definition
 
 !!! tip "Precise options"
-    Although very convenient, the automatic branch switching does not allow the very fine tuning of parameters. It must be used as a first attempt before recurring to manual branch switching
+    Although very convenient, the automatic branch switching does not allow the very fine tuning of parameters. It must be used as a first attempt before resorting to manual branch switching
 
 ## Branch switching from Branch / Period-doubling point of curve of periodic orbits
 

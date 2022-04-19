@@ -96,7 +96,9 @@ A matrix free linear solver is used but for $\mathcal J_c$ only: it means that `
 
 ## Floquet multipliers computation
 
-A **not very precise** algorithm for computing the Floquet multipliers is provided. The method, dubbed Quick and Dirty (QaD), is not numerically very precise for large / small Floquet exponents.
+A **not very precise** algorithm for computing the Floquet multipliers is provided. The method, dubbed Quick and Dirty (QaD), is not numerically very precise for large / small Floquet exponents. 
+
+>Note that the computation of the eigenvalues can be iterative or direct based on the eigensolver passed in arguments.
 
 It amounts to computing the eigenvalues of
 

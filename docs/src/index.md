@@ -52,7 +52,7 @@ There are many good softwares already available.
 
 - For *deflated continuation*, there is [defcont](https://bitbucket.org/pefarrell/defcon/src/master/) (by the inventor of the algo. P. E. Farrell) and this [code](https://github.com/evstigneevnm/deflated_continuation) by N. M. Evstigneev.
 
-In Julia, we have for now a [wrapper](https://github.com/JuliaDiffEq/PyDSTool.jl) to PyDSTools, and also [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl).
+In Julia, we have also [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl).
 
 ## A word on performance
 

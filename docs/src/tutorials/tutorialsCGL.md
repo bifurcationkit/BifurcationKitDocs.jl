@@ -525,9 +525,9 @@ We did not change the preconditioner in the previous example as it does not seem
 function callbackPO(state; linsolver = ls, prob = poTrap, p = par_cgl, kwargs...)
 	@show ls.N keys(kwargs)
 	# we update the preconditioner every 10 continuation steps
-	if mod(kwargs[:iterationC], 10) == 9 && iteration == 1
+	if mod(kwargs[:iterationC], 10) == 9 && state.it == 1
 		@info "update Preconditioner"
-		Jpo = poTrap(Val(:JacCyclicSparse), state.x, (@set p.r = kwargs[:p]))
+		Jpo = poTrap(Val(:JacCyclicSparse), state.x, (@set p.r = state.p))
 		Precilu = @time ilu(Jpo, τ = 0.003)
 		ls.Pl = Precilu
 	end
