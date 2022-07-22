@@ -50,6 +50,10 @@ function dF_sh(u, p)
 	@unpack l, ν, L1 = p
 	return -L1 .+ spdiagm(0 => l .+ 2 .* ν .* u .- 3 .* u.^2)
 end
+
+# we compute the differentials
+d2F_sh(u, p, dx1, dx2) = (2 .* p.ν .* dx2 .- 6 .* dx2 .* u) .* dx1
+d3F_sh(u, p, dx1, dx2, dx3) = (-6 .* dx2 .* dx3) .* dx1
 ```
 
 We first look for hexagonal patterns. This is done with
@@ -71,11 +75,19 @@ sol0 = [(cos(x) + cos(x/2) * cos(sqrt(3) * y/2) ) for x in X, y in Y]
 L1 = (I + Δ)^2
 par = (l = -0.1, ν = 1.3, L1 = L1)
 
+# Bifurcation Problem
+prob = BifurcationProblem(F_sh, vec(sol0), par, (@lens _.l);
+    J = dF_sh,
+		plotSolution = (x, p; kwargs...) -> (heatmapsol!(x; label="", kwargs...)),
+		recordFromSolution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)),
+		d2F = d2F_sh,
+		d3F = d3F_sh)
+
 # newton corrections of the initial guess
 optnewton = NewtonPar(verbose = true, tol = 1e-8, maxIter = 20)
-	sol_hexa, = @time newton(F_sh, dF_sh, vec(sol0), par, optnewton)
-	println("--> norm(sol) = ",norm(sol_hexa,Inf64))
-	heatmapsol(sol_hexa)
+	sol_hexa = @time newton(prob, optnewton)
+	println("--> norm(sol) = ",norm(sol_hexa.u, Inf64))
+	heatmapsol(sol_hexa.u)
 ```
 which produces the results
 
@@ -110,7 +122,7 @@ We can now continue this solution as follows. We want to detect bifurcations alo
 
 ```julia
 # compute the jacobian
-J0 = dF_sh(sol_hexa, par)
+J0 = dF_sh(sol_hexa.u, par)
 
 # compute 10 eigenvalues
 eig(J0, 10)
@@ -133,11 +145,11 @@ optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, pMax = 0.00
 	dsminBisection =1e-7, saveSolEveryStep = 4)
 	optcont = @set optcont.newtonOptions.eigsolver = EigArpack(0.1, :LM)
 
-	br, u1 = @time BK.continuation(F_sh, dF_sh,
-		sol_hexa, par, (@lens _.l), optcont;		plot = true, verbosity = 3,
-		tangentAlgo = BorderedPred(),
-		plotSolution = (x, p; kwargs...) -> (heatmap!(X, Y, reshape(x, Nx, Ny)'; color=:viridis, label="", kwargs...);ylims!(-1,1,subplot=4);xlims!(-.5,.3,subplot=4)),
-		recordFromSolution = (x, p) -> norm(x),
+	br = continuation(
+	  reMake(prob, u0 = sol_hexa.u), PALC(), optcont;
+		plot = true,
+		# plotSolution = (x, p; kwargs...) -> (heatmap!(X, Y, reshape(x, Nx, Ny)'; color=:viridis, label="", kwargs...);ylims!(-1,1,subplot=4);xlims!(-.5,.3,subplot=4)),
+		# recordFromSolution = (x, p) -> norm(x),
 		normC = x -> norm(x, Inf))
 ```
 
@@ -191,13 +203,14 @@ which penalizes `sol_hexa`.
 ```julia
 # this define the above penalizing factor with p=2, sigma=1, norm associated to dot
 # and the set of sol_{hexa} is of length ns=1
-deflationOp = DeflationOperator(2, 1.0, [sol_hexa])
+deflationOp = DeflationOperator(2, 1.0, [sol_hexa.u])
 optnewton = @set optnewton.maxIter = 250
-outdef, _, flag, _ = @time newton(F_sh, dF_sh,
-				0.2vec(sol_hexa) .* vec([exp.(-(x+lx)^2/25) for x in X, y in Y]),
-				par, optnewton, deflationOp, normN = x -> norm(x,Inf64))
-		heatmapsol(outdef) |> display
-		flag && push!(deflationOp, outdef)
+outdef = newton(
+				reMake(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x+lx)^2/25) for x in X, y in Y])),
+				deflationOp,
+				optnewton, normN = x -> norm(x,Inf64))
+		heatmapsol(outdef.u) |> display
+		BK.converged(outdef) && push!(deflationOp, outdef.u)
 ```
 which gives:
 
@@ -206,11 +219,11 @@ which gives:
 Note that `push!(deflationOp, outdef)` deflates the newly found solution so that by repeating the process we find another one:
 
 ```julia
-outdef, _, flag, _ = @time newton(F_sh, dF_sh,
-				0.2vec(sol_hexa) .* vec([exp.(-(x)^2/25) for x in X, y in Y]),
-				par, optnewton, deflationOp, normN = x -> norm(x,Inf64))
-		heatmapsol(outdef) |> display
-		flag && push!(deflationOp, outdef)
+outdef = newton(
+				reMake(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x)^2/25) for x in X, y in Y])),
+				deflationOp, optnewton, normN = x -> norm(x,Inf64))
+		heatmapsol(outdef.u) |> display
+		BK.converged(outdef) && push!(deflationOp, outdef.u)
 ```
 
 ![](sh2dfrontmiddle.png)
@@ -224,10 +237,9 @@ Again, repeating this from random guesses, we find several more solutions, like 
 We can now continue the solutions located in `deflationOp.roots`
 
 ```julia
-br1, = @time continuation(F_sh, dF_sh,
-	deflationOp[2], par, (@lens _.l), optcont;
-	plot = true,
-	plotSolution = (x, p; kwargs...) -> (heatmap!(X,Y,reshape(x,Nx,Ny)'; color=:viridis, label="", kwargs...)))
+br1 = @time continuation(reMake(prob, u0 = deflationOp[2]),
+	PALC(), optcont;
+	plot = true)
 ```
 
 and using `plot(br, br1)`, we obtain:
@@ -241,15 +253,8 @@ Note that the plot provides the stability of solutions and bifurcation points. I
 Instead of relying on deflated newton, we can use [Branch switching](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/branchswitching/) to compute the different branches emanating from the bifurcation point. For example, the following code will perform automatic branch switching from the second bifurcation point of `br`:
 
 ```julia
-# we compute the differentials
-d2F_sh(u, p, dx1, dx2) = (2 .* p.ν .* dx2 .- 6 .* dx2 .* u) .* dx1
-d3F_sh(u, p, dx1, dx2, dx3) = (-6 .* dx2 .* dx3) .* dx1
-jet = (F_sh, dF_sh, d2F_sh, d3F_sh)
-
-br2, = continuation(jet..., br, 2, setproperties(optcont; ds = -0.001, detectBifurcation = 3, plotEveryStep = 5, maxSteps = 170);  nev = 30,
+br2 = continuation(br, 2, setproperties(optcont; ds = -0.001, detectBifurcation = 3, plotEveryStep = 5, maxSteps = 170);  nev = 30,
 	plot = true, verbosity = 2,
-	plotSolution = (x, p; kwargs...) -> (heatmapsol!(x; label="", kwargs...);plot!(br; subplot=1,plotfold=false)),
-	recordFromSolution = (x, p) -> norm(x),
 	normC = x -> norm(x, Inf))
 ```
 

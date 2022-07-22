@@ -1,6 +1,17 @@
 # Periodic orbits computation
 
-We provide two methods for computing periodic orbits (PO):
+Consider the Cauchy problem
+
+$$\frac{du}{dt}=F(u,p).$$
+
+A periodic solution with period $T$ satisfies
+
+$$\begin{align}
+\frac{du}{dt}&=F(u,p)\\
+u(0)&=u(T).
+\end{align}$$
+
+We provide three methods for computing periodic orbits (PO):
 
 1. one (Trapezoid) based on finite differences to discretize a Cauchy problem,
 2. one (Collocation) based on orthogonal collocation to discretize a Cauchy problem,
@@ -18,3 +29,14 @@ The Collocation method is (for now) the slowest of the three methods implemented
 
 ### Shooting method
 The methods based on Shooting do not share the same drawbacks because the associated linear system is usually well conditioned, at least in the simple shooting case. There are thus often used **without preconditioner at all**. Even in the case of multiple shooting, this can be alleviated by a simple generic preconditioner based on deflation of eigenvalues (see [Linear solvers (LS)](@ref)). Also, the time stepper will automatically adapt to the stiffness of the problem, putting more time points where needed unlike the method based on finite differences which requires an adaptive (time) meshing to provide a similar property. The main drawback of the method is to find a fast time stepper, at least to compete with the method based on finite differences. The other drawback is the precision of the method which cannot compete with the collocation method.
+
+## Important notes
+
+We regroup here some important notes which are valid for all methods above. 
+
+
+### 1. Finaliser
+If you pass a `finalize` function to [`continuation`](@ref), the following occurs:
+
+1. If the newton solve was successfull, we update the phase condition every `updateSectionEveryStep`
+2. we call the user defined finalizer `finalize`

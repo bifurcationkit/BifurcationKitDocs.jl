@@ -63,14 +63,14 @@ To invert the mapping $\mu\to (\alpha_{1}(\mu),\alpha_{2}(\mu),\alpha_{3}(\mu))$
 The normal form (E) can be automatically computed as follows
 
 ```julia
-computeNormalForm(F, dF, d2F, d3F, br::ContResult, ind_bif::Int ; δ = 1e-8,
-	nev = 5, Jᵗ = nothing, verbose = false, ζs = nothing, autodiff = true, detailed = true)
+getNormalForm(br::ContResult, ind_bif::Int ;
+	nev = 5, verbose = false, ζs = nothing, autodiff = true, detailed = true)
 ```
 
-where `dF, d2F, d3F` are the differentials of `F`. `br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The option `detailed` controls the computation of a simplified version of the normal form. `autodiff` controls the use of `ForwardDiff` during the normal form computation.
+`br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The option `detailed` controls the computation of a simplified version of the normal form. `autodiff` controls the use of `ForwardDiff` during the normal form computation.
 
 
-The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`computeNormalForm`](@ref). The result returns the following:
+The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`getNormalForm`](@ref). The result returns the following:
 
 ```julia
 mutable struct BogdanovTakens{Tv, Tpar, Tlens, Tevr, Tevl, Tnf, Tnf2} <: AbstractBifurcationPoint
@@ -101,7 +101,7 @@ end
 ```
 
 !!! info "Note"
-    You should not need to call `computeNormalForm` except if you need the full information about the branch point.
+    You should not need to call `getNormalForm` except if you need the full information about the branch point.
 
 ## References
 

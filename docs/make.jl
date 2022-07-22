@@ -9,11 +9,14 @@ makedocs(doctest = false,
 	authors = "Romain Veltz",
 	pages = Any[
 		"Home" => "index.md",
-		"Overview" => "guidelines.md",
 		"Tutorials" => "tutorials/tutorials.md",
-		"Functionalities" => [
+		"Basics" => [
+			"Overview" => "guidelines.md",
 			"Plotting" => "plotting.md",
-			"Nonlinear Equations (Newton)" => ["newton.md", "deflatedproblem.md"],
+			],
+		"Problems" => [
+			"Bifurcation Problem" => "BifProblem.md",
+			"DiffEq wrapper" => "diffeq.md",
 			"Periodic Orbits" => [
 				"Introduction" => "periodicOrbit.md",
 				"Trapezoid" => "periodicOrbitTrapeze.md",
@@ -22,20 +25,26 @@ makedocs(doctest = false,
 				],
 			"Symmetries / Waves" => [
 				"Introduction" => "intro_wave.md",
+				"Eigen Solvers" => "waveEigen.md",
+				"Modulated Travelling waves" => "ModulatedTW.md",
 				],
-			"Continuation methods" => [
-					"Introduction" => "IntroContinuation.md",
+		],
+		"Continuation methods" => [
+			"Introduction" => "IntroContinuation.md",
 			"Predictors / correctors" => "Predictors.md",
-					"PALC" => "PALC.md",
-					"Moore-Penrose Continuation" => "MooreSpence.md",
-					"Deflated Continuation" => "DeflatedContinuation.md",
-				],
+			"PALC" => "PALC.md",
+			"Moore-Penrose Continuation" => "MooreSpence.md",
+			"ANM" => "ANM.md",
+			"Deflated Continuation" => "DeflatedContinuation.md",
 			"Event Handling and Callback" => "EventCallback.md",
+				],
+		"Functionalities" => [
+			"Nonlinear Equations (Newton)" => ["newton.md", "deflatedproblem.md"],
 			"Bifurcations" => [
 				"Bifurcation detection (codim 1)" => "detectionBifurcation.md",
 				"Fold / Hopf Continuation (codim 2)" => "codim2Continuation.md",
 				],
-			"Normal form" =>[
+			"Normal form" => [
 				"Simple branch point" => "simplebp.md",
 				"Non-simple branch point" => "nonsimplebp.md",
 				"Simple Hopf point" => "simplehopf.md",
@@ -46,7 +55,6 @@ makedocs(doctest = false,
 			"Branch switching" => "branchswitching.md",
 			"Bifurcation diagram" => "BifurcationDiagram.md",
 			"Constrained problem" => "constrainedproblem.md",
-			"DiffEq wrapper" => "diffeq.md",
 			"Iterator Interface" => "iterator.md",
 		],
 		"Options" => [
@@ -57,8 +65,9 @@ makedocs(doctest = false,
 		],
 		"Contributing" => [
 			"Interfaces" => [
-				"Linear/Eigen Solvers" => "interfaceLS.md",
-				"Predictor/Corrector" => "interfacePred.md",
+				"Vector" => "interfaceLS.md",
+				"Linear / Eigen Solvers" => "interfaceLS.md",
+				"Predictor / Corrector" => "interfacePred.md",
 				"Flow" => "interfaceFlow.md",
 				]
 		],

@@ -59,10 +59,13 @@ dx = X[2] - X[1]
 par_car = (ϵ = 0.7, X = X, dx = dx)
 sol0 = -(1 .- par_car.X.^2)
 
+norminf(x) = norm(x,Inf)
+recordFromSolution(x, p) = (x[2]-x[1]) * sum(x->x^2, x)
+
+prob = BifurcationProblem(F_carr, zeros(N), par_car, (@lens _.ϵ); J = Jac_carr, recordFromSolution = recordFromSolution)
 
 optnew = NewtonPar(tol = 1e-8, verbose = true)
-	sol, = @time newton(F_carr, Jac_carr, sol0,
-		(@set par_car.ϵ = 0.6), optnew, normN = x -> norm(x, Inf64))
+	sol = @time newton(prob, optnew, normN = x -> norm(x, Inf64))
 nothing #hide
 ```
 
@@ -71,17 +74,15 @@ nothing #hide
 We can start by using our Automatic bifurcation method.
 
 ```@example TUTCARRIER
-jet = BK.getJet(F_carr, Jac_carr)
 
 optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, pMin = 0.05, plotEveryStep = 10, newtonOptions = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), maxSteps = 300, detectBifurcation = 3, nev = 40)
 
-diagram = bifurcationdiagram(jet..., 0*sol0, par_car,
-	(@lens _.ϵ), 2,
+diagram = bifurcationdiagram(prob,
+    # particular bordered linear solver to use
+	# BandedMatrices.
+    PALC(bls = BorderingBLS(solver = DefaultLS(), checkPrecision = false)),
+    2,
 	(arg...) -> @set optcont.newtonOptions.verbose = false;
-	# particular bordered linear solver to use
-	# BandedMatrices.\
-	linearAlgo = BorderingBLS(DefaultLS()),
-	recordFromSolution = (x, p) -> (x[2] - x[1]) * sum(x.^2),
 	plot = false)
 
 scene = plot(diagram)
@@ -93,7 +94,7 @@ However, this is a bit disappointing as we only find two branches.
 
 ```julia
 # deflation operator to hold solutions
-deflationOp = DeflationOperator(2, dot, 1.0, [sol])
+deflationOp = DeflationOperator(2, dot, 1.0, [sol.u])
 
 # parameter values for the problem
 par_def = @set par_car.ϵ = 0.6
@@ -109,17 +110,17 @@ function perturbsol(sol, p, id)
 	return sol .+ solp .* sol0
 end
 
+# encode the deflated continuation algo
+alg = DefCont(deflationOperator = deflationOp, perturbSolution = perturbsol, maxBranches = 40)
+
 # call the deflated continuation method
-br, = @time continuation(
-	F_carr, Jac_carr,
-	par_def, (@lens _.ϵ),
+br = @time continuation(
+	reMake(prob; params = par_def), alg,
 	setproperties(optcont; ds = -0.00021, dsmin=1e-5, maxSteps = 20000,
 		pMax = 0.7, pMin = 0.05, detectBifurcation = 0, plotEveryStep = 40,
-		newtonOptions = setproperties(optnew; tol = 1e-9, maxIter = 100, verbose = false)),
-	deflationOp;
-	perturbSolution = perturbsol,
-	recordFromSolution = (x, p) -> (x[2]-x[1]) * sum(x.^2),
+		newtonOptions = setproperties(optnew; tol = 1e-9, maxIter = 100, verbose = false));
 	normN = x -> norm(x, Inf),
+  verbosity = 0,
 	)
 
 plot(br...)

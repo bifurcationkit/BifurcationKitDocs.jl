@@ -15,7 +15,7 @@ The general method `continuation` is built upon this iterator interface and we r
 The interface is set by defining an iterator, pretty much in the same way one calls [`continuation`](@ref):
 
 ```julia
-iter = ContIterable(F, J, x0, p0, lens::Lens, opts; kwargs...)
+iter = ContIterable(prob, alg, opts; kwargs...)
 ```
 
 ## Stepping
@@ -50,17 +50,19 @@ const BK = BifurcationKit
 k = 2
 
 # functional we want to study
-F = (x, p) -> (@. p + x - x^(k+1)/(k+1))
+F(x, p) = (@. p + x - x^(k+1)/(k+1))
 
-# Jacobian for the fonctional
-Jac_m = (x, p) -> diagm(0 => 1  .- x.^k)
+# Jacobian for the functional
+Jac_m(x, p) = diagm(0 => 1  .- x.^k)
 
+# bifurcation problem
+prob = BifurcationProblem(F, [0.8], 1., (@lens _); J = Jac_m)
 
 # parameters for the continuation
 opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, maxSteps = 130, pMin = -3., pMax = 3., saveSolEveryStep = 0, newtonOptions = NewtonPar(tol = 1e-8, verbose = true))
 
 # we define an iterator to hold the continuation routine
-iter = BK.ContIterable(F, Jac_m, [0.8], 1., (@lens _), opts; verbosity = 2)
+iter = BK.ContIterable(prob, PALC(), opts; verbosity = 2)
 
 resp = Float64[]
 resx = Float64[]

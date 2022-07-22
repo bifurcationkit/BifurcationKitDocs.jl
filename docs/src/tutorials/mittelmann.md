@@ -80,9 +80,6 @@ function JFmit(x,p)
 	dg = dϕ.(x, p.λ)
 	return J + spdiagm(0 => dg)
 end
-
-# compute 3-Jet
-jet = BK.getJet(Fmit, JFmit)
 nothing #hide
 ```
 
@@ -99,6 +96,11 @@ par_mit = (λ = .05, Δ = Δ)
 
 # initial guess f for newton
 sol0 = zeros(Nx, Ny) |> vec
+
+# Bifurcation Problem
+prob = BifurcationProblem(Fmit, sol0, par_mit, (@lens _.λ),; J = JFmit,
+  recordFromSolution = (x, p) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
+  plotSolution = (x, p; k...) -> plotsol!(x ; k...))
 nothing #hide
 ```
 
@@ -118,7 +120,7 @@ opts_br = ContinuationPar(pMax = 3.5, pMin = 0.025,
 	# number of eigenvalues to compute
 	nev = 30,
 	plotEveryStep = 10, newtonOptions = (@set opt_newton.verbose = false),
-	maxSteps = 100, precisionStability = 1e-6,
+	maxSteps = 100, tolStability = 1e-6,
 	# detect codim 1 bifurcations
 	detectBifurcation = 3,
 	# Optional: bisection options for locating bifurcations
@@ -134,18 +136,14 @@ Given that we will use these arguments for `continuation` many times, it is wise
 
 ```@example MITT
 # optional arguments for continuation
-kwargsC = (verbosity = 0, plot = true,
-	recordFromSolution = (x, p) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
-	plotSolution = (x, p; k...) -> plotsol!(x ; k...),
-	normC = norminf
-	)
+kwargsC = (verbosity = 0, plot = true, normC = norminf)
 nothing #hide
 ```
 
 We call `continuation` with the initial guess `sol0` which is homogenous, thereby generating homogenous solutions:
 
 ```@example MITT
-br, = BK.continuation(Fmit, JFmit, sol0, par_mit, (@lens _.λ), opts_br; kwargsC...)
+br = continuation(prob, PALC(), opts_br; kwargsC...)
 show(br)
 ```
 
@@ -162,12 +160,11 @@ We notice several simple bifurcation points for which the dimension of the kerne
 We can compute the branch off the third bifurcation point:
 
 ```@example MITT
-br1, = continuation(jet..., br, 3,
-	setproperties(opts_br;ds = 0.001, maxSteps = 40); kwargsC...)
+br1 = continuation(br, 3, setproperties(opts_br;ds = 0.001, maxSteps = 40); kwargsC...)
 title!("")
 ```
 
-You can also plot the two branches together `plot(br,br1,plotfold=false)` and get
+You can also plot the two branches together `plot(br, br1, plotfold=false)` and get
 
 ```@example MITT
 scene = plot(br,br1,plotfold=false)
@@ -176,8 +173,7 @@ scene = plot(br,br1,plotfold=false)
 We continue our journey and compute the branch bifurcating of the first bifurcation point from the last branch we computed:
 
 ```@example MITT
-br2, = continuation(jet..., br1, 1,
-	setproperties(opts_br;ds = 0.001, maxSteps = 40); kwargsC...)
+br2 = continuation(br1, 1, setproperties(opts_br;ds = 0.001, maxSteps = 40); kwargsC...)
 scene = plot(br,br1,br2)
 ```
 
@@ -190,11 +186,10 @@ The second bifurcation point on the branch `br` of homogenous solutions has a 2d
 We provide a generic way to study branch points of arbitrary dimensions by computing a reduced equation. The general method is based on a Lyapunov-Schmidt reduction. We can compute the information about the branch point using the generic function (valid for simple branch points, Hopf bifurcation points,...)
 
 ```@example MITT
-bp2d = computeNormalForm(jet..., br, 2;  verbose=true, nev = 50)
+bp2d = getNormalForm(br, 2;  verbose=true, nev = 50)
 ```
 
 Note that this is a multivariate polynomials. For more information, see [Non-simple branch point](@ref).
-
 
 You can evaluate this polynomial as follows `bp2d(Val(:reducedForm),[0.1,0.2], 0.01)` which returns a 2d vector or `bp2d([0.1,0.2], 0.01)`. This last expression actually returns a vector corresponding to the PDE problem.
 
@@ -265,13 +260,14 @@ optdef = setproperties(opt_newton; tol = 1e-8, maxIter = 100)
 vp, ve, _, _= eigls(JFmit(out, @set par_mit.λ = br.specialpoint[2].param), 5)
 
 for ii=1:length(ve)
-	outdef1, _, flag, _ = @time newton(
-		Fmit, JFmit,
-		# initial guess for newton
-		br.specialpoint[2].x .+ 0.01 .*  real.(ve[ii]) .* (1 .+ 0.01 .* rand(Nx*Ny)),
-		(@set par_mit.λ = br.specialpoint[2].param + 0.005),
-		optdef, deflationOp)
-		flag && push!(deflationOp, outdef1)
+	outdef1 = newton(
+		reMake(prob,
+		    # initial guess for newton
+		    u0 = br.specialpoint[2].x .+ 0.01 .*  real.(ve[ii]) .* (1 .+ 0.01 .* rand(Nx*Ny)),
+		    params = (@set par_mit.λ = br.specialpoint[2].param + 0.005)),
+    deflationOp,
+		optdef)
+		BK.converged(outdef1) && push!(deflationOp, outdef1.u)
 end
 ```
 
@@ -282,9 +278,11 @@ This provides `length(deflationOp) = 5` solutions as there are some symmetries i
 We can continue this solution as follows in one direction
 
 ```julia
-brdef1, = continuation(
-	Fmit, JFmit,
-	deflationOp[3], (@set par_mit.λ = br.specialpoint[2].param + 0.005), (@lens _.λ),
+brdef1 = continuation(
+	reMake(prob,
+	    u0 = deflationOp[3],
+        params = (@set par_mit.λ = br.specialpoint[2].param + 0.005)),
+    PALC(),
 	setproperties(opts_br;ds = -0.001, detectBifurcation = 3, dsmax = 0.01, maxSteps = 500);
 	kwargsC...)
 ```
@@ -292,9 +290,11 @@ brdef1, = continuation(
 If we repeat the above loop but before the branch point by using `@set par_mit.λ = br.specialpoint[2].param + 0.005`, we get 3 new solutions that we can continue
 
 ```julia
-brdef2, = continuation(
-	Fmit, JFmit,
-	deflationOp[5], (@set par_mit.λ = br.specialpoint[2].param + 0.005), (@lens _.λ),
+brdef2 = continuation(
+  reMake(prob,
+      u0 = deflationOp[5],
+      params = (@set par_mit.λ = br.specialpoint[2].param + 0.005)),
+     PALC(),
 	setproperties(opts_br;ds = 0.001, detectBifurcation = 3, dsmax = 0.01);
 	kwargsC...)
 ```
@@ -309,80 +309,13 @@ We now show how to perform automatic branch switching at the nonsimple branch po
 
 The call for automatic branch switching is the same as in the case of simple branch points (see above) except that many branches are returned.
 
-```julia
-branches, = continuation(jet..., br, 2,
+```@example MITT
+branches = continuation(br, 2,
 	setproperties(opts_br; detectBifurcation = 3, ds = 0.001, pMin = 0.01, maxSteps = 32 ) ;
+  alg = PALC(tangent = Bordered()),
 	kwargsC...,
-	nev = 30, tangentAlgo = BorderedPred()
+	nev = 30,
 	)
 ```
 
-You can plot the branches using `plot(branches...)`. The branches are as follows
-
-```julia
-julia> branches
-8-element Vector{Branch}:
- Branch number of points: 33
-Branch of Equilibrium from NonSimpleBranchPoint bifurcation point.
-Parameters λ from 0.27255473583423384 to 0.0656104381834156
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at λ ≈ +0.27255723 ∈ (+0.27255723, +0.27255723), |δp|=7e-10, [converged], δ = (-1,  0), step =   1, eigenelements in eig[  2], ind_ev =   3
-- #  2,    bp at λ ≈ +0.14414814 ∈ (+0.14414814, +0.14424073), |δp|=9e-05, [converged], δ = ( 1,  0), step =  24, eigenelements in eig[ 25], ind_ev =   3
-
- Branch number of points: 33
-Branch of Equilibrium from NonSimpleBranchPoint bifurcation point.
-Parameters λ from 0.27255473583423384 to 0.06561043854512201
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at λ ≈ +0.27255723 ∈ (+0.27255723, +0.27255723), |δp|=7e-10, [converged], δ = (-1,  0), step =   1, eigenelements in eig[  2], ind_ev =   3
-- #  2,    bp at λ ≈ +0.14414814 ∈ (+0.14414814, +0.14424073), |δp|=9e-05, [converged], δ = ( 1,  0), step =  24, eigenelements in eig[ 25], ind_ev =   3
-
- Branch number of points: 33
-Branch of Equilibrium from NonSimpleBranchPoint bifurcation point.
-Parameters λ from 0.27255473583423384 to 0.06561044134787948
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at λ ≈ +0.27255723 ∈ (+0.27255723, +0.27255723), |δp|=7e-10, [converged], δ = (-1,  0), step =   1, eigenelements in eig[  2], ind_ev =   3
-- #  2,    bp at λ ≈ +0.14414815 ∈ (+0.14414815, +0.14424074), |δp|=9e-05, [converged], δ = ( 1,  0), step =  24, eigenelements in eig[ 25], ind_ev =   3
-
- Branch number of points: 33
-Branch of Equilibrium from NonSimpleBranchPoint bifurcation point.
-Parameters λ from 0.27255473583423384 to 0.06561043798345574
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at λ ≈ +0.27255723 ∈ (+0.27255723, +0.27255723), |δp|=7e-10, [converged], δ = (-1,  0), step =   1, eigenelements in eig[  2], ind_ev =   3
-- #  2,    bp at λ ≈ +0.14414814 ∈ (+0.14414814, +0.14424073), |δp|=9e-05, [converged], δ = ( 1,  0), step =  24, eigenelements in eig[ 25], ind_ev =   3
-
- Branch number of points: 33
-Branch of Equilibrium from NonSimpleBranchPoint bifurcation point.
-Parameters λ from 0.27255473583423384 to 0.09945404995078021
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at λ ≈ +0.27255724 ∈ (+0.27255724, +0.27255724), |δp|=9e-10, [converged], δ = (-1,  0), step =   1, eigenelements in eig[  2], ind_ev =   3
-- #  2,    bp at λ ≈ +0.27868730 ∈ (+0.27868728, +0.27868730), |δp|=3e-08, [converged], δ = (-1,  0), step =  15, eigenelements in eig[ 16], ind_ev =   2
-
- Branch number of points: 33
-Branch of Equilibrium from NonSimpleBranchPoint bifurcation point.
-Parameters λ from 0.27255473583423384 to 0.09945405127587528
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at λ ≈ +0.27255724 ∈ (+0.27255724, +0.27255724), |δp|=9e-10, [converged], δ = (-1,  0), step =   1, eigenelements in eig[  2], ind_ev =   3
-- #  2,    bp at λ ≈ +0.27868730 ∈ (+0.27868728, +0.27868730), |δp|=3e-08, [converged], δ = (-1,  0), step =  15, eigenelements in eig[ 16], ind_ev =   2
-
- Branch number of points: 33
-Branch of Equilibrium from NonSimpleBranchPoint bifurcation point.
-Parameters λ from 0.27255473583423384 to 0.09945404945914721
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at λ ≈ +0.27255724 ∈ (+0.27255724, +0.27255724), |δp|=9e-10, [converged], δ = (-1,  0), step =   1, eigenelements in eig[  2], ind_ev =   3
-- #  2,    bp at λ ≈ +0.27868730 ∈ (+0.27868728, +0.27868730), |δp|=3e-08, [converged], δ = (-1,  0), step =  15, eigenelements in eig[ 16], ind_ev =   2
-
- Branch number of points: 33
-Branch of Equilibrium from NonSimpleBranchPoint bifurcation point.
-Parameters λ from 0.27255473583423384 to 0.09945404935297063
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at λ ≈ +0.27255724 ∈ (+0.27255724, +0.27255724), |δp|=9e-10, [converged], δ = (-1,  0), step =   1, eigenelements in eig[  2], ind_ev =   3
-- #  2,    bp at λ ≈ +0.27868730 ∈ (+0.27868728, +0.27868730), |δp|=3e-08, [converged], δ = (-1,  0), step =  15, eigenelements in eig[ 16], ind_ev =   2
-```
+You can plot the branches using `plot(branches...)`.

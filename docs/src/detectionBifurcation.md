@@ -1,6 +1,6 @@
 # Detection of bifurcation points
 
-The bifurcations are detected during a call to `br, _ = continuation(F, J, u0, p0, lens, contParams::ContinuationPar;kwargs...)` by turning on the following flags:
+The bifurcations are detected during a call to `br = continuation(prob, alg, contParams::ContinuationPar;kwargs...)` by turning on the following flags:
 
 - `contParams.detectBifurcation = 2`
 
@@ -69,4 +69,4 @@ The detection is triggered by setting `detectBifurcation > 1` in the parameter `
 - Period doubling
 
 !!! danger "Floquet multipliers computation"
-    The computation of Floquet multipliers is necessary for the detection of bifurcations of periodic orbits (which is done by analyzing the Floquet exponents obtained from the Floquet multipliers). Hence, the eigensolver needs to compute the eigenvalues with largest modulus (and not with largest real part which is their default behavior). This can be done by changing the option `which = :LM` of the eigensolver. Nevertheless, note that for most implemented eigensolvers in the current Package, the proper option is set.   
+    The computation of Floquet multipliers is necessary for the detection of bifurcations of periodic orbits (which is done by analyzing the Floquet exponents obtained from the Floquet multipliers). Hence, the eigensolver needs to compute the eigenvalues with largest modulus (and not with largest real part which is their default behavior). This can be done by changing the option `which = :LM` of the eigensolver. Nevertheless, note that for most implemented eigensolvers in the `BifurcationKit`, the proper option is set.   

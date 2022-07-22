@@ -53,14 +53,14 @@ N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
 dN(x; a = 0.5, b = 0.01) = (1-b*x^2+2*a*x)/(1+b*x^2)^2
 
 function F_chan(u, p)
-	@unpack α, β = p
+	@unpack α, β, Δ = p
 	return [Fun(u(0.), domain(u)) - β,
 		Fun(u(1.), domain(u)) - β,
 		Δ * u + α * N(u, b = β)]
 end
 
 function Jac_chan(u, p)
-	@unpack α, β = p
+	@unpack α, β, Δ = p
 	return [Evaluation(u.space, 0.),
 		Evaluation(u.space, 1.),
 		Δ + α * dN(u, b = β)]
@@ -71,9 +71,11 @@ We want to call a Newton solver. We first need an initial guess and the Laplacia
 
 ```julia
 sol = Fun(x -> x * (1-x), Interval(0.0, 1.0))
-const Δ = Derivative(sol.space, 2)
+Δ = Derivative(sol.space, 2)
 # set of parameters
-par_af = (α = 3., β = 0.01)
+par_af = (α = 3., β = 0.01, Δ = Δ)
+
+prob = BifurcationProblem(F_chan, sol, par_af, (@lens _.α); J = Jac_chan, plotSolution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...))
 ```
 
 Finally, we need to provide some parameters for the Newton iterations. This is done by calling
@@ -85,7 +87,7 @@ optnewton = NewtonPar(tol = 1e-12, verbose = true)
 We call the Newton solver:
 
 ```julia
-out, = @time BK.newton(F_chan, Jac_chan, sol, par_af, optnewton, normN = x -> norm(x, Inf64))
+out = @time BK.newton(prob, optnewton, normN = x -> norm(x, Inf64))
 ```
 and you should see
 
@@ -107,18 +109,17 @@ and you should see
 We can also perform numerical continuation with respect to the parameter $\alpha$. Again, we need to provide some parameters for the continuation:
 
 ```julia
-optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.05, ds= 0.005, pMax = 4.1, plotEveryStep = 10, newtonOptions = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), maxSteps = 200)
+optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.05, ds= 0.005, pMax = 4.1, plotEveryStep = 10, newtonOptions = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), detectBifurcation = 0, maxSteps = 200)
 ```
 
 
 Then, we can call the continuation routine.
 
 ```julia
-br, = continuation(F_chan, Jac_chan, out, par_af, (@lens _.α), optcont,
+# we need a specific bordered linear solver
+# we use the BorderingBLS one to rely on ApproxFun.\
+br = continuation(prob, PALC(bls = BorderingBLS(solver = optnewton.linsolver, checkPrecision = false)), optcont,
 	plot = true,
-	# we need a specific bordered linear solver
-	# we use the BorderingBLS one to rely on ApproxFun.\
-	linearAlgo = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
 	plotSolution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...),
 	verbosity = 2,
 	normC = x -> norm(x, Inf64))
@@ -128,7 +129,7 @@ and you should see
 ![](chan-af-bif-diag.png)
 
 
-However, if we do that, we'll see that it does not converge very well. The reason is that the default arc-length constraint (see [Pseudo arclength continuation](@ref)) is 
+However, if we do that, we'll see that it does not converge very well. The reason is that the default arc-length constraint (see [Pseudo arclength continuation](@ref)) is
 
 $$N(x, p)=\frac{\theta}{\text { length}(x)}\left\langle x-x_{0}, d x_{0}\right\rangle+(1-\theta) \cdot\left(p-p_{0}\right) \cdot d p_{0}-d s=0$$
 
@@ -142,7 +143,9 @@ $$N(x, p)={\theta}\left\langle x-x_{0}, d x_{0}\right\rangle+(1-\theta) \cdot\le
 This can be done as follows:
 
 ```julia
-br, = continuation(F_chan, Jac_chan, out, par_af, (@lens _.α), optcont,
+optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 4.1, plotEveryStep = 10, newtonOptions = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), maxSteps = 300, θ = 0.2, detectBifurcation = 0)
+
+br = continuation(prob, PALC(bls=BorderingBLS(solver = optnewton.linsolver, checkPrecision = false)), optcont,
 	plot = true,
 	# specify the dot product used in PALC
 	dotPALC = BK.DotTheta(dot),

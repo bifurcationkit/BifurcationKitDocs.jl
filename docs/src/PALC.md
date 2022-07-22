@@ -1,6 +1,6 @@
 # Pseudo arclength continuation
 
-This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `tangentAlgo = BorderedPred()` or `tangentAlgo = SecantPred()` in [`continuation`](@ref).
+This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `PALC(tangent = Bordered())` or `PALC(tangent = Secant())` in [`continuation`](@ref). See also [`PALC`](@ref).
 
 For solving 
 
@@ -12,8 +12,8 @@ $$N(x, p) = \frac{\theta}{n} \langle x - x_0, dx_0\rangle + (1 - \theta)\cdot(p 
 
 with $\theta\in[0,1]$ and where $ds$ is the pseudo arclength (see [^Keller]).
 
-!!! warning "Parameter `theta`"
-    The parameter `theta` in the struct `ContinuationPar` is very important. It should be tuned for the continuation to work properly especially in the case of large problems where the ``\langle x - x_0, dx_0\rangle`` component in the constraint might be favored too much. Also, large `theta`s favour `p` as the corresponding term in the constraint ``N`` involves the term ``1-\theta``.
+!!! warning "Parameter `θ`"
+    The parameter `θ` in the struct `ContinuationPar` is very important. It should be tuned for the continuation to work properly especially in the case of large problems where the ``\langle x - x_0, dx_0\rangle`` component in the constraint might be favored too much. Also, large `θ`s favour `p` as the corresponding term in the constraint ``N`` involves the term ``1-θ``.
     
 ![](PALC.png)
     

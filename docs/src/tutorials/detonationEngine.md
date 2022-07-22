@@ -110,25 +110,32 @@ function JlgvfColorsAD(J, u, p, colors)
 	J
 end
 JdetAD(x,p) = JlgvfColorsAD(L1, x, p, colors)
-# we get the Taylor expansion of the functional
-jet = BK.getJet(Fdet, JdetAD)
 nothing #hide
 ```
 
 We are now ready to compute the bifurcation of the trivial (constant in space) solution:
 
 ```@example DETENGINE
+# bifurcation problem
+prob = BifurcationProblem(Fdet, U0, setproperties(par_det; q = 0.5), (@lens _.up); J = JdetAD,
+	plotSolution = (x, p; k...) -> plotsol!(x; k...),
+	recordFromSolution = (x, p) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))
+
+prob = reMake(prob, params = (@set par_det.up = 0.56))
+
 # iterative eigen solver
 eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
+
 # newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)
-solhomo, = newton(Fdet, Jdet, U0, (@set par_det.up = 0.56), optnew; normN = norminf)
+solhomo = newton(prob, optnew; normN = norminf)
 optcont = ContinuationPar(newtonOptions = setproperties(optnew, verbose = false),
 	detectBifurcation = 3, nev = 50, nInversion = 8, maxBisectionSteps = 25,
 	dsmax = 0.01, ds = 0.01, pMax = 1.4, maxSteps = 1000, plotEveryStep = 50)
-br, = continuation(Fdet, JdetAD, solhomo, setproperties(par_det; q = 0.5), (@lens _.up), optcont; plot = true,
-plotSolution = (x, p; k...) -> plotsol!(x; k...),
-recordFromSolution = (x, p) -> (u∞ = norminf(x[1:N]), n2 = norm(x)),)
+
+br = continuation(
+		reMake(prob, params = (@set par_det.q = 0.5), u0 = solhomo.u),
+		PALC(), optcont; plot = true)
 Scene = title!("")
 ```
 
@@ -145,8 +152,8 @@ The periodic orbits emanating from the Hopf points look like travelling waves. T
 As we will do the same thing 3 times, we bundle the procedure in functions. We first use the regular Hopf normal form to create a guess for the travelling wave:
 
 ```@example DETENGINE
-function getGuess(jet, br, nb; δp = 0.005)
-	nf = computeNormalForm(jet..., br, nb; verbose  = false)
+function getGuess(br, nb; δp = 0.005)
+	nf = getNormalForm(br, nb; verbose  = false)
 	pred = predictor(nf, δp)
 	return pred.p, pred.orbit(0)
 end
@@ -156,18 +163,21 @@ nothing #hide
 Using this guess, we can continue the travelling wave as function of a parameter. Note that in the following code, a generalized eigensolver is automatically created during the call to `continuation` which properly computes the stability of the wave.
 
 ```@example DETENGINE
-function computeBranch(jet, br, nb; δp = 0.005, maxSteps = 190)
-	_p, sol = getGuess(jet, br, nb)
+function computeBranch(br, nb; δp = 0.005, maxSteps = 190)
+	_p, sol = getGuess(br, nb)
 	# travelling wave problem
-	probTW = TWProblem(jet[1], jet[2], br.params.Db, copy(sol))
+	probTW = TWProblem(
+		reMake(br.prob, params = setproperties(getParams(br); up = _p)),
+		getParams(br).Db,
+		copy(sol),
+		jacobian = :AutoDiff)
 	# newton parameters with iterative eigen solver
 	optn = NewtonPar(verbose = true, eigsolver = EigArpack(nev = 30, which = :LM, sigma = 0.2))
 	# continuation parameters
 	opt_cont_br = ContinuationPar(pMin = 0.1, pMax = 1.3, newtonOptions = optn, ds= -0.001, dsmax = 0.01, plotEveryStep = 5, detectBifurcation = 3, nev = 10, maxSteps = maxSteps)
 	# we build a guess for the travelling wave with speed -0.9
 	twguess = vcat(sol, -0.9)
-	br_wave, = continuation(probTW, twguess, setproperties(br.params; up = _p), (@lens _.up), opt_cont_br;
-		jacobian = :AutoDiff,
+	br_wave = continuation(probTW, twguess, PALC(), opt_cont_br;
 		verbosity = 3, plot = true, bothside = true,
 		recordFromSolution = (x, p) -> (u∞ = maximum(x[1:N]), s = x[end], amp = amplitude(x[1:N])),
 		plotSolution = (x, p; k...) -> (plotsol!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
@@ -184,14 +194,14 @@ We can try this continuation as follows
 
 ```@example DETENGINE
 amplitude(x) = maximum(x) - minimum(x)
-br_wave, = computeBranch(jet, br, 1; maxSteps = 10)
+br_wave = computeBranch(br, 1; maxSteps = 10)
 Scene = title!("")
 ```
 
 ## Building the full diagram
 
 ```@example DETENGINE
-branches = [computeBranch(jet, br, i) for i in 1:3]
+branches = [computeBranch(br, i) for i in 1:3]
 plot(br, branches..., legend=:topleft, xlims = (0.5, 1.25), ylims=(0.5, 2.3))
 ```
 

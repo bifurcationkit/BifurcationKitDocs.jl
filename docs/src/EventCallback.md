@@ -2,7 +2,7 @@
 
 `BifurcationKit.jl` allows the detection of events along the branch of solutions. Its main use consists in detecting bifurcation points but they can be used and combined together by the user too.
 
-The events are detected during a call to `br, = continuation(F, J, u0, p0, lens, contParams::ContinuationPar;kwargs...)` by turning on the following flags:
+The events are detected during a call to `br = continuation(prob, alg, contParams::ContinuationPar;kwargs...)` by turning on the following flag(s):
 
 - `contParams.detectEvent = 1`
 
@@ -56,11 +56,11 @@ function Feve(X, p)
 	out
 end
 
-# associated jacobian
-Jeve(X, p) = ForwardDiff.jacobian(z -> Feve(z,p), X)
-
 # parameters for the vector field
 par = (p1 = -3., p2=-3., k=3)
+
+# bifurcation problem
+prob = BifurcationProblem(Feve, -2ones(2), par, (@lens _.p1))
 
 # parameters for the continuation
 opts = ContinuationPar(dsmax = 0.1, ds = 0.001, maxSteps = 128, pMin = -3., pMax = 4.0,
@@ -71,9 +71,8 @@ opts = ContinuationPar(dsmax = 0.1, ds = 0.001, maxSteps = 128, pMin = -3., pMax
      maxBisectionSteps = 15, detectFold=false)
 
 # arguments for continuation
-args = (Feve, Jeve, -2ones(2), par, (@lens _.p1), opts)
-kwargs = (plot = true, verbosity = 3, recordFromSolution = (x,p) -> x[1],
-    linearAlgo = MatrixBLS(),)
+args = (prob, PALC(bls = MatrixBLS()), opts)
+kwargs = (plot = true, verbosity = 3, recordFromSolution = (x,p) -> x[1],)
 ```
 
 ### Example of continuous event
@@ -81,7 +80,7 @@ kwargs = (plot = true, verbosity = 3, recordFromSolution = (x,p) -> x[1],
 In this first example, we build an event to detect when the parameter value is `-2` or when the first component of the solution is `1`.
 
 ```julia
-br, = continuation(args...; kwargs...,
+br = continuation(args...; kwargs...,
 	event = BK.ContinuousEvent(2, 
 		(iter, state) -> (getp(state)+2, getx(state)[1]-1)),)
 ```
@@ -110,7 +109,7 @@ This shows for example that the first component of the event was detected `userC
 You can also name the events as follows
 
 ```julia
- br, = continuation(args...; kwargs...,
+ br = continuation(args...; kwargs...,
  	event = BK.ContinuousEvent(2, 
  		(iter, state) -> (getp(state)+2, getx(state)[1]-1),
  		("event1", "event2")))
@@ -138,7 +137,7 @@ Special points:
 You can also use discrete events to detect a change. For example, the following detect when the parameter value equals `-2`:
 
 ```julia
-br, = continuation(args...; kwargs...,
+br = continuation(args...; kwargs...,
 	event = BK.DiscreteEvent(1, 
 		(iter, state) -> getp(state)>-2))
 ```
@@ -163,7 +162,7 @@ Special points:
 Let us be a bit more creative and combine a continuous event with a discrete one:
 
 ```julia
-br, = continuation(args...; kwargs...,
+br = continuation(args...; kwargs...,
 	event = BK.PairOfEvents(
 		BK.ContinuousEvent(1, (iter, state) -> getp(state)),
 		BK.DiscreteEvent(1, (iter, state) -> getp(state)>-2)))
@@ -197,7 +196,7 @@ ev3 = BK.BifDetectEvent
 # we combine the events together
 eve = BK.SetOfEvents(ev1, ev2, ev3)
 
-br, = continuation(args...; kwargs...,
+br = continuation(args...; kwargs...,
 		event = eve)
 ```
 

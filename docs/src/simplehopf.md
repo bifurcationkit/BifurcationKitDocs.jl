@@ -37,11 +37,11 @@ $$\begin{aligned}
 The normal form (E) is automatically computed as follows
 
 ```julia
-computeNormalForm(F, dF, d2F, d3F, br::ContResult, ind_bif::Int ; δ = 1e-8,
-	nev = 5, Jᵗ = nothing, verbose = false, ζs = nothing, lens = br.param_lens)
+getNormalForm(br::ContResult, ind_bif::Int ;
+	verbose = false, ζs = nothing, lens = br.param_lens)
 ```
 
-where `dF, d2F,d3F` are the differentials of `F`. `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`computeNormalForm`](@ref). The above call returns a point with information needed to compute the bifurcated branch.
+where `prob` is a bifurcation problem. `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`getNormalForm`](@ref). The above call returns a point with information needed to compute the bifurcated branch.
 
 ```julia
 mutable struct Hopf{Tv, T, Tω, Tevr, Tevl, Tnf} <: BifurcationPoint
@@ -69,7 +69,7 @@ end
 ```
 
 !!! info "Note"
-    You should not need to call `computeNormalForm ` except if you need the full information about the branch point.
+    You should not need to call `getNormalForm ` except if you need the full information about the branch point.
 
 ## References
 

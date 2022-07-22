@@ -102,6 +102,8 @@ ly = pi/2
 par_cgl = (r = 0.5, μ = 0.1, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, Δ))
 sol0 = 0.1rand(2Nx, Ny)
 sol0_f = vec(sol0)
+
+prob = BK.BifurcationProblem(Fcgl, sol0_f, par_cgl, (@lens _.r); J = Jcgl)
 ```
 
 and the ODE problem
@@ -125,14 +127,10 @@ eigls = EigArpack(1.0, :LM)
 opt_newton = NewtonPar(tol = 1e-9, verbose = true, eigsolver = eigls, maxIter = 20)
 opts_br = ContinuationPar(dsmax = 0.02, ds = 0.01, pMax = 2., detectBifurcation = 3, nev = 15, newtonOptions = (@set opt_newton.verbose = false), nInversion = 4)
 
-br, = @time continuation(Fcgl, Jcgl, vec(sol0), par_cgl, (@lens _.r), opts_br, verbosity = 0)
+br = @time continuation(prob, PALC(), opts_br, verbosity = 0)
 ```
 
-We then compute the differentials of the vector field, this is needed by the branch switching method because it first computes the Hopf normal form. Thankfully, this is little work using Automatic Differentiation:
-
-```julia
-jet = BK.getJet(Fcgl, Jcgl)
-```
+We then compute the differentials of the vector field, this is needed by the branch switching method because it first computes the Hopf normal form. Thankfully, this is little work using Automatic Differentiation.
 
 We define the linear solvers to be use by the (Matrix-Free) shooting method
 
@@ -140,22 +138,22 @@ We define the linear solvers to be use by the (Matrix-Free) shooting method
 ls = GMRESIterativeSolvers(reltol = 1e-4, maxiter = 50, verbose = false)
 eig = EigKrylovKit(tol = 1e-7, x₀ = rand(2Nx*Ny), verbose = 2, dim = 40)
 optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 25, linsolver = ls, eigsolver = eig)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, pMax = 2.5, maxSteps = 32, newtonOptions = optn, nev = 7, precisionStability = 1e-3, detectBifurcation = 3, plotEveryStep = 1)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, pMax = 2.5, maxSteps = 32, newtonOptions = optn, nev = 7, tolStability = 1e-3, detectBifurcation = 3, plotEveryStep = 1)
 ```
 
 as
 
 ```julia
 Mt = 1 # number of time sections
-br_po, = continuation(
+br_po = continuation(
 	# we want to compute the bifurcated branch from
 	# the first Hopf point
-	jet..., br, 1,
+	br, 1,
 	# arguments for continuation
 	opts_po_cont,
 	# this is how to pass the method to compute the periodic
 	# orbits. We shall use 1 section and the ODE solver ETDRK2
-	ShootingProblem(Mt, prob_sp, ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8) ;
+	ShootingProblem(Mt, prob_sp, ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8, jacobian = :FiniteDifferences) ;
 	# linear solver for bordered linear system
 	# we combine the 2 solves. It is here faster than BorderingBLS()
 	linearAlgo = MatrixFreeBLS(@set ls.N = Mt*2n+2),
@@ -184,10 +182,16 @@ We decide to use Standard Shooting and thus define a Shooting functional
 ```julia
 probSh = ShootingProblem(
 	# we pass the ODEProblem encoding the flow and the time stepper
-	prob_sp, ETDRK2(krylov = true),
+	remake(prob_sp, p = (@set par_cgl.r = 1.2)), ETDRK2(krylov = true),
 
 	# this is the phase condition
 	[sol[:, end]];
+
+	# parameter axis
+	lens = (@lens _.r),
+
+	# jacobian of the periodic orbit functional
+	jacobian = :FiniteDifferences,
 
 	# these are options passed to the ODE time stepper
 	abstol = 1e-14, reltol = 1e-14)
@@ -207,10 +211,10 @@ optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 20, linsolver = ls)
 
 # continuation parameters
 eig = EigKrylovKit(tol=1e-7, x₀ = rand(2Nx*Ny), verbose = 2, dim = 40)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds= -0.01, pMax = 1.5, maxSteps = 60, newtonOptions = (@set optn.eigsolver = eig), nev = 5, precisionStability = 1e-3, detectBifurcation = 0)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds= -0.01, pMax = 1.5, maxSteps = 60, newtonOptions = (@set optn.eigsolver = eig), nev = 5, tolStability = 1e-3, detectBifurcation = 0)
 
-br_po, = @time continuation(probSh,
-	initpo, (@set par_cgl.r = 1.2), (@lens _.r), opts_po_cont;
+br_po = @time continuation(probSh,
+	initpo, PALC(), opts_po_cont;
 	verbosity = 3, plot = true,
 	linearAlgo = MatrixFreeBLS(@set ls.N = probSh.M*2n+2),
 	plotSolution = (x, p; kwargs...) -> heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, kwargs...),

@@ -78,16 +78,18 @@ par_br = (η = 1.0, a = -1., b = -3/2., H = 3.0, D = D, C = -0.6, Δ = blockdiag
 u0 = 1.0 * cos.(2X)
 solc0 = vcat(u0, u0)
 
+probBif = BK.BifurcationProblem(Fbr, solc0, par_br, (@lens _.C) ;J = Jbr,
+		recordFromSolution = (x, p) -> norm(x, Inf),
+		plotSolution = (x, p; kwargs...) -> plot!(x[1:end÷2];label="",ylabel ="u", kwargs...))
+
 # parameters for continuation
 eigls = EigArpack(0.5, :LM)
 opt_newton = NewtonPar(eigsolver = eigls, verbose=true, maxIter = 3200, tol=1e-9)
 opts_br = ContinuationPar(dsmax = 0.04, ds = -0.01, pMin = -1.8,
 	detectBifurcation = 3, nev = 21, plotEveryStep = 50, newtonOptions = opt_newton, maxSteps = 400)
 
-br, = @time continuation(Fbr, Jbr, solc0, (@set par_br.C = -0.2), (@lens _.C), opts_br;
-	plot = true, verbosity = 3,
-	recordFromSolution = (x, p) -> norm(x, Inf),
-	plotSolution = (x, p; kwargs...) -> plot!(x[1:end÷2];label="",ylabel ="u", kwargs...))
+br = continuation(reMake(probBif, params = (@set par_br.C = -0.2)), PALC(), opts_br;
+	plot = true, verbosity = 3)
 ```
 
 which yields
@@ -123,14 +125,16 @@ initpo = vcat(vec(orbitsection), 3.)
 # define the functional for the standard simple shooting based on the
 # ODE solver ETDRK2. SectionShooting implements an appropriate phase condition
 probSh = ShootingProblem(prob_sp, ETDRK2(krylov=true),
-	[sol(280.0)]; abstol=1e-14, reltol=1e-14, dt = 0.1)
+	[sol(280.0)]; abstol=1e-14, reltol=1e-14, dt = 0.1,
+  lens = (@lens _.C),
+  jacobian = :FiniteDifferences)
 
 # parameters for the Newton-Krylov solver
 ls = GMRESIterativeSolvers(reltol = 1e-7, N = length(initpo), maxiter = 50, verbose = false)
 optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 120, linsolver = ls)
 # Newton-Krylov solver
-out_po_sh, _, flag = @time newton(probSh , initpo, par_br_hopf, optn; normN = norminf)
-flag && printstyled(color=:red, "--> T = ", out_po_sh[end], ", amplitude = ", BK.getAmplitude(probSh, out_po_sh, par_br_hopf; ratio = 2),"\n")
+out_po_sh = @time newton(probSh, initpo, optn; normN = norminf)
+BK.converged(out_po_sh) && printstyled(color=:red, "--> T = ", out_po_sh.u[end], ", amplitude = ", BK.getAmplitude(probSh, out_po_sh.u, par_br_hopf; ratio = 2),"\n")
 ```
 
 which gives
@@ -144,12 +148,12 @@ We can now continue this periodic orbit:
 ```julia
 eig = DefaultEig()
 opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds= 0.005, pMin = -1.8, maxSteps = 170, newtonOptions = (@set optn.eigsolver = eig),
-	nev = 10, precisionStability = 1e-2, detectBifurcation = 3)
-br_po_sh, = @time continuation(probSh, out_po_sh, par_br_hopf, (@lens _.C), opts_po_cont; verbosity = 3,
+	nev = 10, tolStability = 1e-2, detectBifurcation = 3)
+br_po_sh = @time continuation(probSh, out_po_sh.u, PALC(), opts_po_cont; verbosity = 3,
 	plot = true,
 	linearAlgo = MatrixFreeBLS(@set ls.N = probSh.M*n+2),
-	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicShooting!(x[1:end-1], 1; kwargs...),
-	recordFromSolution = (u, p) -> BK.getMaximum(probSh, u, (@set par_br_hopf.C = p); ratio = 2), normC = norminf)
+  plotSolution = (x, p; kwargs...) -> BK.plotPeriodicShooting!(x[1:end-1], 1; kwargs...),
+  recordFromSolution = (u, p) -> BK.getMaximum(probSh, u, (@set par_br_hopf.C = p.p); ratio = 2), normC = norminf)
 ```
 
 We plot the result using `plot(br_po_sh, br, label = "")`:
@@ -179,8 +183,8 @@ initpo_pd = vcat(vec(orbitsectionpd), 6.2)
 For educational purposes, we show the newton outputs:
 
 ```julia
-out_po_sh_pd, _, flag = @time newton(probSh, initpo_pd, par_br_pd , optn; normN = norminf)
-flag && printstyled(color=:red, "--> T = ", out_po_sh_pd[end], ", amplitude = ", BK.getAmplitude(probSh, out_po_sh_pd, par_br_pd; ratio = 2),"\n")
+out_po_sh_pd = newton(BK.setParamsPO(probSh,par_br_pd), initpo_pd , optn; normN = norminf)
+BK.converged(out_po_sh_pd) && printstyled(color=:red, "--> T = ", out_po_sh_pd.u[end], ", amplitude = ", BK.getAmplitude(probSh, out_po_sh_pd.u, (@set par_br.C = -0.86); ratio = 2),"\n")
 ```
 which gives
 
@@ -205,11 +209,12 @@ which gives
 We also compute the branch of periodic orbits using the following command:
 
 ```julia
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= 0.001, pMin = -1.8, maxSteps = 100, newtonOptions = (@set optn.eigsolver = eig), nev = 5, precisionStability = 1e-3, detectBifurcation = 2)
-br_po_sh_pd, = @time continuation(probSh, out_po_sh_pd, par_br_pd, (@lens _.C),
-	opts_po_cont; verbosity = 2, plot = true,
-	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicShooting!(x[1:end-1], 1; kwargs...),
-	recordFromSolution = (u, p) -> BK.getMaximum(probSh, u, (@set par_br_pd.C = p); ratio = 2), normC = norminf)
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= 0.001, pMin = -1.8, maxSteps = 100, newtonOptions = (@set optn.eigsolver = eig), nev = 5, tolStability = 1e-3, detectBifurcation = 2)
+br_po_sh_pd = @time continuation(BK.setParamsPO(probSh,par_br_pd), out_po_sh_pd.u, PALC(),	opts_po_cont;
+  verbosity = 2, plot = true,
+  linearAlgo = MatrixFreeBLS(@set ls.N = probSh.M*n+2),
+  plotSolution = (x, p; kwargs...) -> (BK.plotPeriodicShooting!(x[1:end-1], 1; kwargs...); plot!(br_po_sh; subplot=1, legend=false)),
+  recordFromSolution = (u, p; k...) -> BK.getMaximum(probSh, u, (@set par_br_pd.C = p.p); ratio = 2), normC = norminf)
 ```
 
 and plot it using `plot(br_po_sh, br, br_po_sh_pd, label = "")`:

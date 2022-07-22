@@ -1,4 +1,4 @@
-# pp2 example from AUTO07p (aBD + Hopf aBS) 
+# pp2 example from AUTO07p (aBD + Hopf aBS)
 
 ```@contents
 Pages = ["tutorialsPP2.md"]
@@ -36,13 +36,17 @@ function pp2!(dz, z, p, t)
 end
 
 pp2(z, p) = pp2!(similar(z), z, p, 0)
-jet  = BK.getJet(pp2; matrixfree=false)
 
 # parameters of the model
 par_pp2 = (p1 = 1., p2 = 3., p3 = 5., p4 = 3.)
 
 # initial condition
 z0 = zeros(2)
+
+# bifurcation problem
+prob = BifurcationProblem(pp2, z0, par_pp2,
+	# specify the continuation parameter
+	(@lens _.p1), recordFromSolution = recordFromSolution)
 
 nothing #hide
 ```
@@ -58,11 +62,11 @@ opts_br = ContinuationPar(pMin = 0.1, pMax = 1.0, dsmax = 0.01,
 	detectBifurcation = 3, nInversion = 8, maxBisectionSteps = 25,
 	# number of eigenvalues
 	nev = 2,
-	# maximal number of continuation steps
+	# maximum number of continuation steps
 	maxSteps = 1000,
 	# parameter theta, see `? continuation`. Setting this to a non
 	# default value helps passing the transcritical bifurcation
-	theta = 0.3)
+	θ = 0.3)
 
 nothing #hide
 ```
@@ -70,18 +74,13 @@ nothing #hide
 We are now ready to compute the diagram
 
 ```@example TUTPP2
-diagram = bifurcationdiagram(jet...,
-	# initial point and parameter
-	z0, par_pp2,
-	# specify the continuation parameter
-	(@lens _.p1),
+diagram = bifurcationdiagram(prob, PALC(),
 	# very important parameter. It specifies the maximum amount of recursion
 	# when computing the bifurcation diagram. It means we allow computing branches of branches of branches
 	# at most in the present case.
 	3,
 	(args...) -> setproperties(opts_br; ds = -0.001, dsmax = 0.01, nInversion = 8, detectBifurcation = 3);
 	# δp = -0.01,
-	recordFromSolution = recordFromSolution,
 	verbosity = 0, plot = true)
 
 scene = plot(diagram; code = (), title="$(size(diagram)) branches", legend = false)
@@ -103,17 +102,17 @@ optn_po = NewtonPar(tol = 1e-8,  maxIter = 25)
 
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.001, dsmin = 1e-4,
- newtonOptions = (@set optn_po.tol = 1e-8), precisionStability = 1e-2,
+ newtonOptions = (@set optn_po.tol = 1e-8), tolStability = 1e-2,
  detectBifurcation = 1, saveSolEveryStep=1)
 
 Mt = 101 # number of time sections
-	br_po, utrap = continuation(
-	jet..., brH, 1, opts_po_cont,
-	PeriodicOrbitTrapProblem(M = Mt);
+	br_po = continuation(
+	brH, 1, opts_po_cont,
+	PeriodicOrbitTrapProblem(M = Mt;
+	    # specific linear solver for ODEs
+    	jacobian = :Dense);
 	# help branching from Hopf
 	usedeflation = true,
-	# specific linear solver for ODEs
-	jacobianPO = :Dense,
 	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],2,Mt);
 		return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),
@@ -132,7 +131,7 @@ Let us now plot an orbit
 
 ```@example TUTPP2
 # extract the different components
-orbit  = BK.getPeriodicOrbit(br_po, 10)
+orbit = BK.getPeriodicOrbit(br_po, 10)
 plot(orbit.t, orbit.u[1,:]; label = "u1", markersize = 2)
 plot!(orbit.t, orbit.u[2,:]; label = "u2", xlabel = "time", title = "period = $(orbit.t[end])")
 ```

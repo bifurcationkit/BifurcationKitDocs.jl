@@ -28,13 +28,42 @@ Note that you can add new solution `x0` to `M` by doing `push!(M, x0)`. Also `M[
 
 Most newton functions can be used with a deflated problem, see for example [Snaking computed with deflation](@ref). The idea is to pass the deflation operator `M`. For example, we have the following overloaded method, which works on GPUs:
 
-```
-newton(F, J, x0, p0, options::NewtonPar, defOp::DeflationOperator, linsolver = DeflatedLinearSolver(); kwargs...)
+```julia
+newton(prob::BifurcationKit.AbstractBifurcationProblem,
+		defOp::DeflationOperator,
+		options::NewtonPar,
+		_linsolver = DefProbCustomLinearSolver();
+		kwargs...)
 ```
 
-If you pass a linear solver other than the default one `::DeflatedLinearSolver`, a Matrix-Free is used in place of the dedicated solver `DeflatedLinearSolver` which is akin to a Bordering method.
+We refer to the regular [`newton`](@ref) for more information. This newton penalises the roots saved in `defOp.roots`. 
 
-We refer to [`newton`](@ref) for more information about the arguments.
+Compared to [`newton`](@ref), the only different arguments are
+
+- `defOp::DeflationOperator` deflation operator
+- `linsolver` linear solver used to invert the Jacobian of the deflated functional.
+    - custom solver `DefProbCustomLinearSolver()` with requires solving two linear systems `J⋅x = rhs`.
+    - For other linear solvers `<: AbstractLinearSolver`, a matrix free method is used for the deflated functional.
+    - if passed `Val(:autodiff)`, then `ForwardDiff.jl` is used to compute the jacobian of the deflated problem
+    - if passed `Val{:fullIterative}`, then a full matrix free method is used.
+
+
+## Simple example
+
+In this basic example, we show how to get the different roots of `F`
+
+```@example DEFNEWTON
+using BifurcationKit, LinearAlgebra
+F(x, p) = @. (x-1) * (x-2)
+# define a deflation operator which deflates the 
+# already know solution x = 1
+deflationOp = DeflationOperator(2, dot, 0.1, [ones(1)])
+# define a problem, this compute jacobian automatically
+prob = BifurcationProblem(F, rand(1), nothing)
+# call deflated newton
+sol = newton(prob, deflationOp, NewtonPar())
+println("We found the additional root: ", sol.u)
+```
 
 !!! tip "Tip"
     You can use this method for periodic orbits as well by passing the deflation operator `M` to the newton method

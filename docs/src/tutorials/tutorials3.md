@@ -91,9 +91,6 @@ function Jbru_sp(x, p)
 	@. diagpn = u * u
 	return spdiagm(0 => diag, 1 => diagp1, -1 => diagm1, n => diagpn, -n => diagmn)
 end
-
-# we group the (higher) differentials together
-jet  = BK.getJet(Fbru, Jbru_sp)
 nothing #hide
 ```
 
@@ -110,6 +107,12 @@ n = 300
 # parameters of the Brusselator model and guess for the stationary solution
 par_bru = (α = 2., β = 5.45, D1 = 0.008, D2 = 0.004, l = 0.3)
 sol0 = vcat(par_bru.α * ones(n), par_bru.β/par_bru.α * ones(n))
+
+# bifurcation problem
+probBif = BK.BifurcationProblem(Fbru, sol0, par_bru, (@lens _.l);
+  J = Jbru_sp,
+  plotSolution = (x, p; kwargs...) -> (plotsol(x; label="", kwargs... )),
+  recordFromSolution = (x, p) -> x[div(n,2)])
 nothing #hide
 ```
 
@@ -130,9 +133,7 @@ opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.001,
 	# specific options for precise localization of Hopf points
 	nInversion = 6)
 
-br, = continuation(Fbru, Jbru_sp, sol0, par_bru, (@lens _.l),
-	opts_br_eq, verbosity = 0,
-	recordFromSolution = (x,p) -> x[n÷2], normC = norminf)
+br = continuation(probBif, PALC(), opts_br_eq, normC = norminf)
 ```
 
 We obtain the following bifurcation diagram with 3 Hopf bifurcation points
@@ -146,7 +147,7 @@ scene = plot(br)
 We can compute the normal form of the Hopf points as follows
 
 ```@example TUTBRUaut
-hopfpt = BK.computeNormalForm(jet..., br, 1)
+hopfpt = getNormalForm(br, 1)
 ```
 
 ## Continuation of Hopf points
@@ -158,8 +159,8 @@ We use the bifurcation points guesses located in `br.specialpoint` to turn them 
 ind_hopf = 2
 
 # newton iterations to compute the Hopf point
-hopfpoint, _, flag = newton(Fbru, Jbru_sp, br, ind_hopf; normN = norminf)
-flag && printstyled(color=:red, "--> We found a Hopf Point at l = ", hopfpoint.p[1], ", ω = ", hopfpoint.p[2], ", from l = ", br.specialpoint[ind_hopf].param, "\n")
+hopfpoint = newton(br, ind_hopf; normN = norminf)
+BK.converged(hopfpoint) && printstyled(color=:red, "--> We found a Hopf Point at l = ", hopfpoint.u.p[1], ", ω = ", hopfpoint.u.p[2], ", from l = ", br.specialpoint[ind_hopf].param, "\n")
 ```
 
 We now perform a Hopf continuation with respect to the parameters `l, β`
@@ -168,14 +169,12 @@ We now perform a Hopf continuation with respect to the parameters `l, β`
     You don't need to call `newton` first in order to use `continuation`.
 
 ```@example TUTBRUaut
-optcdim2 = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 6.5, pMin = 0.0, newtonOptions = opt_newton)
+optcdim2 = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 6.5, pMin = 0.0, newtonOptions = opt_newton, detectBifurcation = 0)
 
-br_hopf, = continuation(Fbru, Jbru_sp, br, ind_hopf, (@lens _.β),
+br_hopf = continuation(br, ind_hopf, (@lens _.β),
 	optcdim2, verbosity = 2,
 	# detection of codim 2 bifurcations with bisection
 	detectCodim2Bifurcation = 2,
-	# this is required to detect the bifurcations
-	d2F = jet[3], d3F = jet[4],
 	# we update the Fold problem at every continuation step
 	updateMinAugEveryStep = 1,
 	normC = norminf)
@@ -193,7 +192,7 @@ We start by providing a linear solver and some options for the continuation to w
 # automatic branch switching from Hopf point
 opt_po = NewtonPar(tol = 1e-10, verbose = true, maxIter = 15)
 opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds = 0.03, pMax = 2.2, maxSteps = 200, newtonOptions = opt_po, saveSolEveryStep = 2,
-	plotEveryStep = 1, nev = 11, precisionStability = 1e-6,
+	plotEveryStep = 1, nev = 11, tolStability = 1e-6,
 	detectBifurcation = 3, dsminBisection = 1e-6, maxBisectionSteps = 15, tolBisectionEigenvalue = 0.)
 
 nothing #hide
@@ -202,21 +201,21 @@ nothing #hide
 ```@example TUTBRUaut
 # number of time slices for the periodic orbit
 M = 51
-probFD = PeriodicOrbitTrapProblem(M = M)
-br_po, = continuation(
+probFD = PeriodicOrbitTrapProblem(M = M;
+  # specific method for solving linear system
+  # of Periodic orbits with trapeze method
+  # You could use the default one :FullLU (slower here)
+  jacobian = :FullSparseInplace)
+br_po = continuation(
 	# arguments for branch switching from the first
 	# Hopf bifurcation point
-	jet..., br, 1,
+	br, 1,
 	# arguments for continuation
 	opts_po_cont, probFD;
 	# OPTIONAL parameters
 	# we want to jump on the new branch at phopf + δp
 	# ampfactor is a factor to increase the amplitude of the guess
 	δp = 0.01, ampfactor = 1,
-	# specific method for solving linear system
-	# of Periodic orbits with trapeze method
-	# You could use the default one :FullLU (slower here)
-	jacobianPO = :FullSparseInplace,
 	# regular options for continuation
 	verbosity = 3,	plot = true,
 	plotSolution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
@@ -234,11 +233,11 @@ We note that there are several branch points (blue points) on the above diagram.
 Let's say we want to branch from the first branch point of the first curve pink branch. The syntax is very similar to the previous one:
 
 ```julia
-br_po2, = continuation(
+br_po2 = continuation(
 	# arguments for branch switching
 	br_po, 1,
 	# arguments for continuation
-	opts_po_cont; jacobianPO = :FullSparseInplace,
+	opts_po_cont;
 	ampfactor = 1., δp = 0.01,
 	verbosity = 3,	plot = true,
 	plotSolution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
@@ -263,16 +262,14 @@ n = 100
 # different parameters to define the Brusselator model and guess for the stationary solution
 par_bru = (α = 2., β = 5.45, D1 = 0.008, D2 = 0.004, l = 0.3)
 sol0 = vcat(par_bru.α * ones(n), par_bru.β/par_bru.α * ones(n))
+probBif = reMake(probBif, u0 = sol0)
 
 eigls = EigArpack(1.1, :LM)
 opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.00615, ds = 0.0061, pMax = 1.9,
 	detectBifurcation = 3, nev = 21, plotEveryStep = 50,
 	newtonOptions = NewtonPar(eigsolver = eigls, tol = 1e-9), maxSteps = 200)
 
-br, = continuation(Fbru, Jbru_sp,
-	sol0, par_bru, (@lens _.l), opts_br_eq, verbosity = 0,
-	plot = false,
-	recordFromSolution = (x, p)->x[n÷2], normC = norminf)
+br = continuation(probBif, PALC(), opts_br_eq, verbosity = 0, plot = false, normC = norminf)
 ```
 
 We need to build a problem which encodes the Shooting functional. This done as follows where we first create the time stepper:
@@ -284,9 +281,12 @@ FOde(f, x, p, t) = Fbru!(f, x, p, t)
 
 u0 = sol0 .+ 0.01 .* rand(2n)
 
+# we pass our jacobian function to increase performances
+# an inplace jacobian would be favoured
+vf = ODEFunction(FOde, jac = (J,u,p,t) -> J .= Jbru_sp(u, p), jac_prototype = Jbru_sp(u0, par_bru))
+
 # this is the ODE time stepper when used with `solve`
-prob = ODEProblem(FOde, u0, (0., 1000.), par_bru;
-	abstol = 1e-10, reltol = 1e-8, jac = (J,u,p,t) -> J .= Jbru_sp(u, p), jac_prototype = Jbru_sp(u0, par_bru))
+prob = ODEProblem(vf, u0, (0., 1000.), par_bru; abstol = 1e-10, reltol = 1e-8)
 ```
 
 !!! tip "Performance"
@@ -300,11 +300,6 @@ prob = ODEProblem(FOde, u0, (0., 1000.), par_bru;
     probsundials = ODEProblem(vf,  u0, (0.0, 520.), par_bru) # gives 0.22s
     ```
 
-We also compute with automatic differentiation, the differentials of the vector field. This is is needed for branch switching as it is based on the computation of the Hopf normal form:
-
-```julia
-jet  = BK.getJet(Fbru, Jbru_sp)
-```
 
 We are now ready to call the automatic branch switching. Note how similar it is to the previous section based on finite differences. This case is more deeply studied in the tutorial [1d Brusselator (advanced user)](@ref). We use a parallel Shooting.
 
@@ -316,16 +311,16 @@ eig = EigKrylovKit(tol= 1e-12, x₀ = rand(2n), dim = 40)
 optn_po = NewtonPar(verbose = true, tol = 1e-7,  maxIter = 25, linsolver = ls, eigsolver = eig)
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.01, pMax = 2.5, maxSteps = 10,
-	newtonOptions = optn_po, nev = 15, precisionStability = 1e-3,
+	newtonOptions = optn_po, nev = 15, tolStability = 1e-3,
 	detectBifurcation = 0, plotEveryStep = 2)
 
 Mt = 2 # number of shooting sections
-br_po, = continuation(
-	jet..., br, 1,
+br_po = continuation(
+	br, 1,
 	# arguments for continuation
 	opts_po_cont,
 	# this is where we tell that we want Parallel Standard Shooting
-	ShootingProblem(Mt, prob, Rodas4P(), abstol = 1e-10, reltol = 1e-8, parallel = true);
+	ShootingProblem(Mt, prob, Rodas4P(), abstol = 1e-10, reltol = 1e-8, parallel = true, jacobian = :FiniteDifferences);
 	ampfactor = 1.0, δp = 0.0075,
 	# the next option is not necessary
 	# it speeds up the newton iterations
@@ -353,21 +348,22 @@ eig = EigKrylovKit(tol= 1e-12, x₀ = rand(2n-1), dim = 50)
 # newton parameters
 optn_po = NewtonPar(verbose = true, tol = 1e-7,  maxIter = 15, linsolver = ls, eigsolver = eig)
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.005, pMax = 2.5, maxSteps = 100, newtonOptions = optn_po, nev = 10, precisionStability = 1e-5, detectBifurcation = 3, plotEveryStep = 2)
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.005, pMax = 2.5, maxSteps = 100, newtonOptions = optn_po, nev = 10, tolStability = 1e-5, detectBifurcation = 3, plotEveryStep = 2)
 
 # number of time slices
 Mt = 2
-br_po, = continuation(
-	jet..., br, 1,
+br_po = continuation(
+	br, 1,
 	# arguments for continuation
-	opts_po_cont, PoincareShootingProblem(Mt, prob, Rodas4P(); abstol = 1e-10, reltol = 1e-8);
+	opts_po_cont,
+  PoincareShootingProblem(Mt, prob, Rodas4P(); abstol = 1e-10, reltol = 1e-8,
+      jacobian = :FiniteDifferences);
 	# the next option is not necessary
 	# it speeds up the newton iterations
 	# by combining the linear solves of the bordered linear system
 	linearAlgo = MatrixFreeBLS(@set ls.N = (2n-1)*Mt+1),
 	ampfactor = 1.0, δp = 0.005,
-	verbosity = 3,	plot = true,
-	updateSectionEveryStep = 0,
+	verbosity = 3, plot = true,
 	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicShooting!(x[1:end-1], Mt; kwargs...),
 	normC = norminf)
 ```

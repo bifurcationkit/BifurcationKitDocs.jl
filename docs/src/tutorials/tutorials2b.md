@@ -42,7 +42,7 @@ using Revise, CUDA
 # this disable slow operations but errors if you use one of them
 CUDA.allowscalar(false)
 
-# type used for the arrays, can be Float32 is GPU requires it
+# type used for the arrays, can be Float32 if GPU requires it
 TY = Float64
 
 # put the AF = Array{TY} instead to make the code on the CPU
@@ -156,8 +156,15 @@ sol0 = [(cos(x) .+ cos(x/2) * cos(sqrt(3) * y/2) ) for x in X, y in Y]
 
 L = SHLinearOp(Nx, lx, Ny, ly, AF = AF)
 J_shfft(u, p) = (u, p.l, p.ν)
+
 # parameters of the PDE
 par = (l = -0.15, ν = 1.3, L = L)
+
+# Bifurcation Problem
+prob = BK.BifurcationProblem(F_shfft, AF(sol0), par, (@lens _.l) ;
+	J =  J_shfft,
+	plotSolution = (x, p;kwargs...) -> plotsol!(x; color=:viridis, kwargs...),
+	recordFromSolution = (x, p) -> norm(x))
 ```
 
 ## Newton iterations and deflation
@@ -166,13 +173,10 @@ We are now ready to perform Newton iterations:
 
 ```julia
 opt_new = NewtonPar(verbose = true, tol = 1e-6, maxIter = 100, linsolver = L)
-	sol_hexa, hist, flag = @time newton(
-		F_shfft, J_shfft,
-		AF(sol0), par,
-		opt_new, normN = norminf)
+sol_hexa = @time newton(prob,		opt_new, normN = norminf)
 
-	println("--> norm(sol) = ", maximum(abs.(sol_hexa)))
-	plotsol(sol_hexa)
+	println("--> norm(sol) = ", maximum(abs.(sol_hexa.u)))
+	plotsol(sol_hexa.u)
 ```
 
 You should see this:
@@ -205,16 +209,14 @@ The solution is:
 We can also use the deflation technique (see [`DeflationOperator`](@ref) and [`DeflatedProblem`](@ref) for more information) on the GPU as follows
 
 ```julia
-deflationOp = DeflationOperator(2, dot, 1.0, [sol_hexa])
+deflationOp = DeflationOperator(2, dot, 1.0, [sol_hexa.u])
 
 opt_new = @set opt_new.maxIter = 250
-outdef, _, flag, _ = @time newton(
-		F_shfft, J_shfft,
-		0.4 .* sol_hexa .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]),
-		par, opt_new, deflationOp, normN = x-> maximum(abs.(x)))
-	println("--> norm(sol) = ", norm(outdef))
-	plotsol(outdef) |> display
-	flag && push!(deflationOp, outdef)
+outdef = @time newton(reMake(prob, u0 = AF(0.4 .* sol_hexa.u .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]))),
+		deflationOp, opt_new, normN = x-> maximum(abs.(x)))
+	println("--> norm(sol) = ", norm(outdef.u))
+	plotsol(outdef.u) |> display
+	BK.converged(outdef) && push!(deflationOp, outdef.u)
 ```
 
 and get:
@@ -228,14 +230,13 @@ Finally, we can perform continuation of the branches on the GPU:
 
 ```julia
 opts_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.007, ds= -0.005,
-	pMax = 0., pMin = -1.0, theta = 0.5, plotEveryStep = 5,
+	pMax = 0., pMin = -1.0, plotEveryStep = 5, detectBifurcation = 0,
 	newtonOptions = setproperties(opt_new; tol = 1e-6, maxIter = 15), maxSteps = 100)
 
-	br, = @time continuation(F_shfft, J_shfft,
-		deflationOp[1], par, (@lens _.l), opts_cont;
+	br = @time continuation(reMake(prob, u0 = deflationOp[1]),
+    PALC(bls = BorderingBLS(solver = L, checkPrecision = false)),
+    opts_cont;
 		plot = true, verbosity = 3,
-		linearAlgo = BorderingBLS(solver = L, checkPrecision = false),
-		plotSolution = (x, p; kwargs...)->plotsol!(x; color=:viridis, kwargs...),
 		normC = x -> maximum(abs.(x))
 		)
 ```

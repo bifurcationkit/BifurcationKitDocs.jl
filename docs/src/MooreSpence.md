@@ -1,9 +1,9 @@
 # Moore-Penrose continuation
 
 !!! warning "WIP"
-    This is work in progress. The available options are limited.
+    This is work in progress. The interface will be improved inn the future.
 
-This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `tangentAlgo = MoorePenrosePred()` in [`continuation`](@ref).
+This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `alg = MoorePenrose()` in [`continuation`](@ref). See also [`MoorePenrose`](@ref).
 
 For solving 
 
@@ -17,7 +17,7 @@ It can be interpreted as a PALC in which the hyperplane is adapted at every step
 
 ## Predictor
 
-The possible predictors `pred::AbstractTangentPredictor` are listed in [Predictors - Correctors](@ref). They can be used to create a Moore-Penrose algorithm  like `MoorePenrosePred(pred)`
+The possible predictors `tangent::AbstractTangentPredictor` are listed in [Predictors - Correctors](@ref). They can be used to create a Moore-Penrose algorithm  like `MoorePenrose(tangent = PALC())`
 
 ## Corrector
 
@@ -28,6 +28,40 @@ The corrector is the Gauss Newton algorithm applied to (MS).
 Let us discuss more about the norm and dot product. First, the option `normC` [`continuation`](@ref) specifies the norm used to evaluate the distance in (MS). The dot product (resp. norm) used in the (iterative) linear solvers is `LinearAlgebra.dot` (resp. `LinearAlgebra.norm`). It can be changed by importing these functions and redefining it. Note that by default, the ``L^2`` norm is used.
 
 The linear solver for the linear problem associated to (MS) is set by the option `linearAlgo` in [`continuation`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
+
+## Algorithm for solving (MS)
+
+Let us write $y\equiv(x,p)\in\mathbb R^{N+1}$.
+In order to solve for the argmin, we apply the newton algorithm with jacobian belonging to $\mathbb R^{N\times (N+1)}$:
+
+$$y^{k+1} = y^k -d_yF(y^k)^+F(y^k)$$
+
+where the superscript $^+$ indicates the Moore-Penrose pseudoinverse of rank $N$.
+
+### Direct case
+In this case, triggered by the option `MoorePenrose(directLS = true)`, the pseudoinverse is computed with `pinv`.
+
+### Iterative case
+In this case, triggered by the option `MoorePenrose(directLS = false)`, the pseudoinverse is computed with an iterative method described in [^Meijer]:
+
+$$\left\{\begin{array}{l}
+y_{1}^{j+1}=y_{1}^{j}-\left(\begin{array}{c}
+F_{y}\left(y_{1}^{j}\right) \\
+\left(\phi_{1}^{j}\right)^{\top}
+\end{array}\right)^{-1}\left(\begin{array}{c}
+F\left(y_{1}^{j}\right) \\
+0
+\end{array}\right) \\
+\phi_{1}^{j+1}=\left(\begin{array}{c}
+F_{y}\left(y_{1}^{j+1}\right) \\
+\left(\phi_{1}^{j}\right)^{\top}
+\end{array}\right)^{-1}\left(\begin{array}{l}
+0 \\
+1
+\end{array}\right), \quad j=0,1,2, \ldots
+\end{array}\right.$$
+
+We initialise $\phi_1^0$ with the tangent.
 
 
 ## Step size control

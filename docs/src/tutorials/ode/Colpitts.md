@@ -61,9 +61,6 @@ end
 # we put the option t = 0 in order to use the function with DifferentialEquations
 Colpitts(z, p, t = 0) = Colpitts!(similar(z), z, p, t)
 
-# we group the differentials together
-jet = BK.getJet(Colpitts; matrixfree=false)
-
 # parameter values
 par_Colpitts = (C1 = 1.0, C2 = 1.0, L = 1.0, R = 1/4., Is = 1e-16, q = 40., αF = 0.99, αR = 0.5, μ = 0.5, V = 6.)
 
@@ -72,6 +69,9 @@ z0 = [0.9957,0.7650,19.81,-19.81]
 
 # mass matrix
 Be = [-(par_Colpitts.C1+par_Colpitts.C2) par_Colpitts.C2 0 0;par_Colpitts.C2 -par_Colpitts.C2 0 0;par_Colpitts.C1 0 0 0; 0 0 par_Colpitts.L 0]
+
+# we group the differentials together
+prob = BifurcationProblem(Colpitts, z0, par_Colpitts, (@lens _.μ); recordFromSolution = recordFromSolution)
 
 nothing #hide
 ```
@@ -94,11 +94,8 @@ end
 # continuation options
 optn = NewtonPar(tol = 1e-13, verbose = true, maxIter = 10, eigsolver = EigenDAE(Be))
 opts_br = ContinuationPar(pMin = -0.4, pMax = 0.8, ds = 0.01, dsmax = 0.01, nInversion = 8, detectBifurcation = 3, maxBisectionSteps = 25, nev = 4, plotEveryStep = 3, maxSteps = 1000, newtonOptions = optn)
-	# opts_br = @set opts_br.newtonOptions.verbose = false
-	br, = continuation(jet[1], jet[2], z0, par_Colpitts, (@lens _.μ), opts_br;
-	recordFromSolution = recordFromSolution,
-	verbosity = 0,
-	normC = norminf)
+	opts_br = @set opts_br.newtonOptions.verbose = false
+	br = continuation(prob, PALC(), opts_br; normC = norminf)
 
 scene = plot(br, vars = (:param, :x1))
 ```
@@ -117,13 +114,13 @@ using DifferentialEquations
 
 # this is the ODEProblem used with `DiffEqBase.solve`
 # we  set  the initial conditions
-prob_dae = ODEFunction{false}(jet[1]; mass_matrix = Be)
+prob_dae = ODEFunction{false}(Colpitts; mass_matrix = Be)
 probFreez_ode = ODEProblem(prob_dae, z0, (0., 1.), par_Colpitts)
 
 # we lower the tolerance of newton for the periodic orbits
 optnpo = @set optn.tol = 1e-9
 
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, pMin = 0.2, maxSteps = 150, newtonOptions = optnpo, nev = 4, precisionStability = 1e-3, detectBifurcation = 0, plotEveryStep = 5)
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, pMin = 0.2, maxSteps = 150, newtonOptions = optnpo, nev = 4, tolStability = 1e-3, detectBifurcation = 0, plotEveryStep = 5)
 
 # we use a regular eigensolver for the Floquet coefficients
 @set! opts_po_cont.newtonOptions.eigsolver = DefaultEig()
@@ -131,12 +128,11 @@ opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, pMin 
 
 # Shooting functional. Note the  stringent tolerances used to cope with
 # the extreme parameters of the model
-probSH = ShootingProblem(5, probFreez_ode, Rodas4(); reltol = 1e-10, abstol = 1e-13)
+probSH = ShootingProblem(5, probFreez_ode, Rodas4(); reltol = 1e-10, abstol = 1e-13, jacobian = :autodiffDense, updateSectionEveryStep = 1)
 
 # automatic branching from the Hopf point
-br_po, = continuation(jet..., br, 1, opts_po_cont, probSH; plot = true, verbosity = 3,
+br_po = continuation(br, 1, opts_po_cont, probSH; plot = true, verbosity = 3,
 	linearAlgo = MatrixBLS(),
-	jacobianPO = :autodiffDense,
 	# δp is use to parametrise the first parameter point on the
 	# branch of periodic orbits
 	δp = 0.001,
@@ -145,7 +141,6 @@ br_po, = continuation(jet..., br, 1, opts_po_cont, probSH; plot = true, verbosit
 		m = maximum(outt[1,:])
 		return (s = m, period = u[end])
 	end,
-	updateSectionEveryStep = 1,
 	# plotting of a solution
 	plotSolution = (x, p; k...) -> begin
 		outt = BK.getPeriodicOrbit(p.prob, x, (@set  par_Colpitts.μ=p.p))
@@ -177,7 +172,7 @@ with detailed information
 - #  4,    bp at μ ≈ +0.63758469 ∈ (+0.63758469, +0.63761073), |δp|=3e-05, [    guess], δ = (-1,  0), step =  43, eigenelements in eig[ 44], ind_ev =   1
 ```
 
-Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation. 
+Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation.
 
 ```@example TUTDAE1
 probFreez_ode = ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.733)

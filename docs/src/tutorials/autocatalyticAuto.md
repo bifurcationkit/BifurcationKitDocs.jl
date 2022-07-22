@@ -110,6 +110,9 @@ par_cat = (N = N, a = 0.18, h = 2lx/N)
 
 u0 = @. (tanh(2X)+1)/2
 U0 = vcat(u0, 1 .- u0)
+
+# we define a problem to hold the vector field
+prob = BifurcationProblem(Fcat, u0, par_cat, (@lens _.a); J = Jcat)
 nothing #hide
 ```
 
@@ -144,7 +147,7 @@ end
 uold = vcat(u0, (1 .- u0))
 
 # we create a TW problem
-probTW = BK.TWProblem(Fcat, Jcat, Advection(par_cat), copy(uold))
+probTW = BK.TWProblem(prob, Advection(par_cat), copy(uold))
 nothing #hide
 ```
 
@@ -162,12 +165,12 @@ nothing #hide
 Let us find the front using `newton`
 
 ```@example TUTAUTOCATauto
-front, = newton(probTW, vcat(U0, 0.1), par_cat, NewtonPar(verbose = true), jacobian = :AutoDiff)
-println("norm front = ", front[1:end-1] |> norminf, ", speed = ", front[end])
+front = newton(probTW, vcat(U0, 0.1), NewtonPar(verbose = true))
+println("norm front = ", front.u[1:end-1] |> norminf, ", speed = ", front.u[end])
 ```
 
 ```@example TUTAUTOCATauto
-plotsol(front[1:end-1], title="front solution")
+plotsol(front.u[1:end-1], title="front solution")
 ```
 
 ## Continuation of front solutions
@@ -189,10 +192,9 @@ $$\lambda M_a\cdot V = dG(U^f)\cdot V.$$
 This is handled automatically when calling `continuation` on a `TWProblem`.
 
 ```@example TUTAUTOCATauto
-optn = NewtonPar(tol = 1e-8, verbose = true)
+optn = NewtonPar(tol = 1e-8)
 opt_cont_br = ContinuationPar(pMin = 0.015, pMax = 0.18, newtonOptions = optn, ds= -0.001, plotEveryStep = 2, detectBifurcation = 3, nev = 10, nInversion = 6)
-br_TW, front2, = continuation(probTW, front, par_cat, (@lens _.a), opt_cont_br;
-	jacobian = :AutoDiff, recordFromSolution = (x, p) -> (s = x[end], b=0), )
+br_TW = continuation(probTW, front.u, PALC(), opt_cont_br)
 plot(br_TW, legend = :topright)
 ```
 

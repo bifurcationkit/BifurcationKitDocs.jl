@@ -1,10 +1,15 @@
 # Continuation methods: introduction
 
+```@contents
+Pages = ["IntroContinuation.md"]
+Depth = 3
+```
+
 The goal of these methods[^Kuz],[^Govaerts],[^Rabinowitz],[^Mei],[^Keller] is to find solutions $x\in\mathbb R^n$ to nonlinear equations
 
 $$\mathbb R^n\ni F(x,p) = 0 \quad\tag{E}$$
 
-as function of a real parameter $p$. Given a known solution $(x_0,p_0)$, we can continue it by computing a 1d curve of solutions $\gamma = (x(s),p(s))_{s\in I}$ passing through $(x_0,p_0)$.
+as function of a real parameter $p$. Given a known solution $(x_0,p_0)$, we can, under reasonable assumptions, continue it by computing a 1d curve of solutions $\gamma = (x(s),p(s))_{s\in I}$ passing through $(x_0,p_0)$.
 
 For the sequel, it is convenient to use the following formalism [^Kuz]
 
@@ -20,7 +25,7 @@ For the sequel, it is convenient to use the following formalism [^Kuz]
 We just use this simple continuation method to give a **trivial** example of the formalism.
 Knowing $(x_0, p_0)$, we form the predictor $(x_0, p_0+ds)$ for some $ds$ and use it as a guess for a Newton corrector applied to $x\to F(x, p_0+ds)$. The corrector is thus the newton algorithm.
 
-This continuation method is set by the option `tangentAlgo = NaturalPred()` in `continuation`.
+This continuation method is `continuation(prob, Natural(), options)`.
 
 !!! danger "Usage"
     You should almost never use this predictor for computations. It fails at turning points, is not adaptive, ... 

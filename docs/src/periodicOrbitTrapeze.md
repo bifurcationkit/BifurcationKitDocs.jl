@@ -124,7 +124,11 @@ The docs for this specific `newton` are located at [`newton`](@ref).
 We also provide a simplified call to `newton` to locate the periodic orbit with a deflation operator.
 
 ```@docs
-newton(probPO::PeriodicOrbitTrapProblem, orbitguess, options::NewtonPar, defOp::DeflationOperator; jacobianPO = :BorderedLU, kwargs...)
+newton(probPO::PeriodicOrbitTrapProblem,
+		orbitguess::vectype,
+		defOp::DeflationOperator{Tp, Tdot, T, vectype},
+		options::NewtonPar;
+		kwargs...) where {Tp, Tdot, T, vectype}
 ```
 
 
@@ -133,7 +137,11 @@ newton(probPO::PeriodicOrbitTrapProblem, orbitguess, options::NewtonPar, defOp::
 Have a look at the [Continuation of periodic orbits (Finite differences)](@ref) example for the Brusselator. We refer to [`continuation`](@ref) for more information regarding the arguments.
 
 ```@docs
-continuation(prob::PeriodicOrbitTrapProblem, orbitguess, par, lens::Lens, _contParams::ContinuationPar; kwargs...)
+continuation(prob::PeriodicOrbitTrapProblem,
+				orbitguess,
+				alg::BifurcationKit.AbstractContinuationAlgorithm,
+				_contParams::ContinuationPar;
+				kwargs...)
 ```
 
 ## References

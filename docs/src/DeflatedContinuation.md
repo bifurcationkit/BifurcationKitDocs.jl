@@ -60,16 +60,22 @@ const BK = BifurcationKit
 
 k = 2
 N = 1
-F = (x, p) -> @. p * x + x^(k+1)/(k+1) + 0.01
-Jac_m = (x, p) -> diagm(0 => p .+ x.^k)
+F(x, p) = @. p * x + x^(k+1)/(k+1) + 0.01
+Jac_m(x, p) = diagm(0 => p .+ x.^k)
 
+# bifurcation problem
+prob = BifurcationProblem(F, [0.], 0.5, (@lens _), J = Jac_m)
+
+# continuation options
 opts = BK.ContinuationPar(dsmax = 0.051, dsmin = 1e-3, ds=0.001, maxSteps = 140, pMin = -3., saveSolEveryStep = 0, newtonOptions = NewtonPar(tol = 1e-8, verbose = false), saveEigenvectors = false)
 
-brdc, = continuation(F,Jac_m, 0.5, (@lens _),
+# algorithm
+alg = BK.DefCont(deflationOperator = DeflationOperator(2, dot, .001, [[0.]]), perturbSolution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))
+
+brdc = continuation(prob, alg,
 	ContinuationPar(opts, ds = -0.001, maxSteps = 800, newtonOptions = NewtonPar(verbose = false, maxIter = 6), plotEveryStep = 40),
-	DeflationOperator(2, dot, .001, [[0.]]); plot=true, verbosity = 0,
-	perturbSolution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))),
+	; plot=true, verbosity = 0,
 	callbackN = BK.cbMaxNorm(1e3) # reject newton step if residual too large
 	)
-plot(brdc...)
+plot(brdc)
 ```

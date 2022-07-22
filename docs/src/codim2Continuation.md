@@ -1,15 +1,13 @@
 # Fold / Hopf Continuation
 
+In this page, we explain how to perform continuation of Fold / Hopf points and detect the associated bifurcations.
+
 For this to work best, it is necessary to have an analytical expression for the jacobian. See the tutorial [Temperature model (Simplest example)](@ref) for more details.
 
 A quite complete example for detection of codim 2 bifurcations of equilibria is [CO-oxydation (codim 2)](@ref) although it is for ODEs.
 
-## Introduction
-
-In this page, we explain how to perform continuation of Fold / Hopf points and detect the associated bifurcations.
-
 ### List of detected codim 2 bifurcation points
-|Bifurcation|index used|
+|Bifurcation|symbol used|
 |---|---|
 | Bogdanov-Takens | bt |
 | Bautin | gh |
@@ -17,7 +15,7 @@ In this page, we explain how to perform continuation of Fold / Hopf points and d
 | Zero-Hopf | zh |
 | Hopf-Hopf | hh |
 
-In a nutshell, all you have to do (see below) is to call `continuation(F, J, br, ind_bif)` to continue the bifurcation point stored in `br.specialpoint[ind_bif]` and set proper options. 
+In a nutshell, all you have to do (see below) is to call `continuation(br, ind_bif)` to continue the bifurcation point stored in `br.specialpoint[ind_bif]` and set proper options. 
 
 ## Fold continuation
 
@@ -74,23 +72,23 @@ You can detect the following codim 2 bifurcation points by using the option `det
 
 - the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = 	\langle w(p),v(p)\rangle$
 - the detection of Bautin (GH) is based on the test function $\psi_{GH}(p) = \Re(l_1(p))$ where $l_1$ is the Lyapunov coefficient defined in [Simple Hopf point](@ref).
+- the detection of Zero-Hopf (ZH) is performed by monitoring the eigenvalues.
 - the detection of Hopf-Hopf (HH) is performed by monitoring the eigenvalues.
 
 > The continuation of Hopf points is stopped at BT and when $\omega<100\epsilon$ where $\epsilon$ is the newton tolerance. 
 
 ## Newton refinement
 
-Once a Fold / Hopf point has been detected after a call to `br, = continuation(...)`, it can be refined using `newton` iterations. Let us say that `ind_bif` is the index in `br.specialpoint` of a Fold / Hopf point. This guess can be refined as follows:
+Once a Fold / Hopf point has been detected after a call to `br = continuation(...)`, it can be refined using `newton` iterations. Let us say that `ind_bif` is the index in `br.specialpoint` of a Fold / Hopf point. This guess can be refined as follows:
 
 ```julia
-outfold, hist, flag =  newton(F, J, br::AbstractBranchResult, ind_bif::Int; 
-	issymmetric = false, Jᵗ = nothing, d2F = nothing, 
+outfold = newton(br::AbstractBranchResult, ind_bif::Int;  
 	normN = norm, options = br.contparams.newtonOptions, 
 	bdlinsolver = BorderingBLS(options.linsolver),
 	startWithEigen = false, kwargs...)
 ```
 
-where `par` is the set of parameters used in the call to [`continuation`](@ref) to compute `br`. For the options parameters, we refer to [Newton](@ref).
+For the options parameters, we refer to [Newton](@ref).
 
 It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. Reader interested in this advanced usage should look at the code `example/chan.jl` of the tutorial [Temperature model (Simplest example)](@ref). 
 
@@ -99,8 +97,7 @@ It is important to note that for improved performances, a function implementing 
 To compute the codim 2 curve of Fold / Hopf points, one can call [`continuation`](@ref) with the following options
 
 ```@docs
- continuation(F, J,
-				br::BifurcationKit.AbstractBranchResult, ind_bif::Int64,
+ continuation(br::BifurcationKit.AbstractBranchResult, ind_bif::Int64,
 				lens2::Lens, options_cont::ContinuationPar = br.contparams ;
 				kwargs...)
 ```

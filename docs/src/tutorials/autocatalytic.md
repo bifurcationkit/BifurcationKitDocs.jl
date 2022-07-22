@@ -110,6 +110,9 @@ par_cat = (N = N, a = 0.18, h = 2lx/N)
 
 u0 = @. (tanh(2X)+1)/2
 U0 = vcat(u0, 1 .- u0)
+
+# we define a problem to hold the vector field
+prob = BifurcationProblem(Fcat, u0, par_cat, (@lens _.a); J = Jcat)
 nothing #hide
 ```
 
@@ -157,12 +160,16 @@ nothing #hide
 Let us find the front using `newton`
 
 ```@example TUTAUTOCAT
-front, = newton(FcatWave, JcatWave, vcat(U0, -1.), par_cat_wave, NewtonPar())
-println("front speed s = ", front[end], ", norm = ", front[1:end-1] |> norminf)
+# we define a problem for solving for the wave
+probtw = BifurcationProblem(FcatWave, vcat(U0, -1.), par_cat_wave, (@lens _.a);J = JcatWave, recordFromSolution = (x,p) -> (s = x[end], nrm = norm(x[1:end-1])),
+plotSolution = (x, p; k...) -> plotsol!(x[1:end-1];k...))
+
+front = newton(probtw, NewtonPar())
+println("front speed s = ", front.u[end], ", norm = ", front.u[1:end-1] |> norminf)
 ```
 
 ```@example TUTAUTOCAT
-plotsol(front[1:end-1], title="front solution")
+plotsol(front.u[1:end-1], title="front solution")
 ```
 
 ## Continuation of front solutions
@@ -201,10 +208,7 @@ end
 
 optn = NewtonPar(tol = 1e-8, verbose = true, eigsolver = EigenWave())
 opt_cont_br = ContinuationPar(pMin = 0.05, pMax = 1., newtonOptions = optn, ds= -0.001, plotEveryStep = 2, detectBifurcation = 3, nev = 10, nInversion = 6)
-	br, front2,  = continuation(FcatWave, JcatWave, front, par_cat_wave, (@lens _.a), opt_cont_br;
-		recordFromSolution = (x,p) -> (s = x[end], nrm = norm(x[1:end-1])),
-		plotSolution = (x, p; k...) -> plotsol!(x[1:end-1];k...)
-		)
+	br  = continuation(probtw, PALC(), opt_cont_br)
 plot(br)
 ```
 
@@ -215,23 +219,25 @@ We have detected a Hopf instability in front dynamics, this will give rise of mo
 To branch from the Hopf bifurcation point, we just have to pass the mass matrix as follows:
 
 ```@example TUTAUTOCAT
-# we group the differentials together
-jet = BK.getJet(FcatWave, JcatWave)
-
 # we compute the periodic solutions using Mt time steps and a Trapezoidal time stepper
 # note that we pass the parameter massmatrix which
 # allows to solver the DAE
 Mt = 30
-probTP = PeriodicOrbitTrapProblem(M = Mt ; massmatrix = spdiagm(0 => vcat(ones(2N),0.)),)
+probTP = PeriodicOrbitTrapProblem(M = Mt ;
+		massmatrix = spdiagm(0 => vcat(ones(2N),0.)),
+		updateSectionEveryStep = 1,
+		# linear solver for the periodic orbit problem
+		# OPTIONAL, one could use the default
+		jacobian = :BorderedLU)
 
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds= -0.001, pMin = 0.05, maxSteps = 130, newtonOptions = optn, nev = 7, precisionStability = 1e-3, detectBifurcation = 0, plotEveryStep = 1, saveSolEveryStep = 1)
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds= -0.001, pMin = 0.05, maxSteps = 130, newtonOptions = optn, nev = 7, tolStability = 1e-3, detectBifurcation = 0, plotEveryStep = 1, saveSolEveryStep = 1)
 	opts_po_cont = @set opts_po_cont.newtonOptions.maxIter = 10
 	opts_po_cont = @set opts_po_cont.newtonOptions.tol = 1e-6
 
-br_po, = continuation(
+br_po = continuation(
 	# we want to compute the bifurcated branch from
 	# the first Hopf point
-	jet..., br, 1,
+	br, 1,
 	# arguments for continuation
 	opts_po_cont,
 	# this is how we pass the method to compute the periodic
@@ -240,13 +246,9 @@ br_po, = continuation(
 	# we want to jump on the new branch at phopf + δp
 	δp = 0.0025,
 	# tangent predictor
-	tangentAlgo = BorderedPred(),
-	# linear solver for the periodic orbit problem
-	# OPTIONAL, one could use the default
-	jacobianPO = :BorderedLU,
-	# linear solver specific to PALC
-	linearAlgo = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
-	updateSectionEveryStep = 1,
+	alg = PALC(tangent = Secant(),
+			# linear solver specific to PALC
+			bls = BorderingBLS(solver = DefaultLS(), checkPrecision = false)),
 	# regular parameters for the continuation
 	# a few parameters saved during run
 	recordFromSolution = (u, p) -> begin
@@ -264,6 +266,7 @@ br_po, = continuation(
 	finaliseSolution = (z, tau, step, contResult; k...) -> begin
 		true
 	end,
+	plot = true,
 	normC = norminf)
 
 plot(br);plot!(br_po, label = "modulated fronts")

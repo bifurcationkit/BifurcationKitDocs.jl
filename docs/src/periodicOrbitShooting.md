@@ -126,13 +126,23 @@ The docs for this specific `newton` are located at [`newton`](@ref).
 We also provide a simplified call to `newton` to locate the periodic orbit with a deflation operator:
 
 ```@docs
-newton(prob::BifurcationKit.AbstractShootingProblem, orbitguess, par, options::NewtonPar; jacobianPO = :MatrixFree, kwargs...)
+newton(prob::BifurcationKit.AbstractShootingProblem,
+				orbitguess,
+				options::NewtonPar;
+				lens::Union{Setfield.Lens, Nothing} = nothing,
+				kwargs...)
 ```
 
 and
 
 ```
-newton(prob::BifurcationKit.AbstractShootingProblem, orbitguess, par0, options::NewtonPar, defOp::DeflationOperator; kwargs...)
+newton(prob::BifurcationKit.AbstractShootingProblem,
+				orbitguess::vectype,
+				defOp::DeflationOperator{Tp, Tdot, T, vectype},
+				options::NewtonPar{T, S, E};
+				lens::Union{Lens, Nothing} = nothing,
+				kwargs...,
+			) where {T, Tp, Tdot, vectype, S, E}
 ```
 
 ## Continuation
@@ -142,7 +152,13 @@ Have a look at the [Continuation of periodic orbits (Standard Shooting)](@ref) e
 The docs for this specific `newton` are located at [`continuation`](@ref).
 
 ```@docs
-continuation(prob::BifurcationKit.AbstractPeriodicOrbitProblem, orbitguess, par, lens::Lens, _contParams::ContinuationPar; linearAlgo = nothing, kwargs...)
+continuation(probPO::BifurcationKit.AbstractShootingProblem, orbitguess,
+						alg::BifurcationKit.AbstractContinuationAlgorithm,
+						contParams::ContinuationPar,
+						linearAlgo::BifurcationKit.AbstractBorderedLinearSolver;
+						δ = convert(eltype(orbitguess), 1e-8),
+						kwargs...,
+					)
 ```
 
 ## References

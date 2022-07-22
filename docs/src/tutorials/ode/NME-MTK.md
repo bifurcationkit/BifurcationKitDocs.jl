@@ -47,12 +47,16 @@ odefun = odeprob.f
 F = (u,p) -> odefun(u,p,0)
 J = (u,p) -> odefun.jac(u,p,0)
 
-# we collect the differentials together
-jet = BK.getJet(F, J)
+id_E0 = indexof(E0, parameters(NMmodel))
+par_tm = odeprob.p
+
+# we collect the differentials together in a problem
+prob = BifurcationProblem(F, odeprob.u0, par_tm, (@lens _[id_E0]); J = J,
+    recordFromSolution = (x, p) -> (E = x[1], x = x[2], u = x[3]))
 nothing #hide
 ```
 
-We first compute the branch of equilibria 
+We first compute the branch of equilibria
 
 ```@example TUTNMEMTK
 # continuation options
@@ -64,13 +68,8 @@ opts_br = ContinuationPar(pMin = -10.0, pMax = -0.9,
 	# Optional: bisection options for locating bifurcations
 	nInversion = 8, maxBisectionSteps = 25, nev = 3)
 
-id_E0 = indexof(E0, parameters(NMmodel))
-par_tm = odeprob.p
 # continuation of equilibria
-br, = continuation(jet[1], jet[2], odeprob.u0, par_tm, (@lens _[id_E0]), opts_br;
-	recordFromSolution = (x, p) -> (E = x[1], x = x[2], u = x[3]),
-	tangentAlgo = BorderedPred(),
-	normC = norminf)
+br = continuation(prob, PALC(tangent = Bordered()), opts_br; normC = norminf)
 
 scene = plot(br, plotfold=false, markersize=3, legend=:topleft)
 ```
@@ -92,7 +91,7 @@ optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 10)
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5.,
 	maxSteps = 110, newtonOptions = (@set optn_po.tol = 1e-7),
-	nev = 3, plotEveryStep = 10, saveSolEveryStep=1)
+	nev = 3, plotEveryStep = 10, saveSolEveryStep=1, detectBifurcation = 0)
 
 # arguments for periodic orbits
 # this is mainly for printing purposes
@@ -113,7 +112,7 @@ args_po = (	recordFromSolution = (x, p) -> begin
 
 
 Mt = 30 # number of time sections
-	br_pocoll, ucoll, = @time continuation(jet...,
+	br_pocoll = @time continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Collocation method to locate PO, with polynomial degree 5
@@ -138,7 +137,7 @@ for sol in br_pocoll.sol[1:2:40]
 	# periodic orbit
 	po = sol.x
 	# get the mesh and trajectory
-	traj = BK.getPeriodicOrbit(br_pocoll.functional, po, @set par_tm[id_E0] = sol.p)
+	traj = BK.getPeriodicOrbit(br_pocoll.prob, po, @set par_tm[id_E0] = sol.p)
 	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
 end
 title!("")

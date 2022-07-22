@@ -24,6 +24,8 @@ We then define a discretization of the problem
 ```julia
 # define a norm
 norminf(x) = norm(x, Inf64)
+const _weight = rand(Nx)
+normweighted(x) = norm(_weight .* x)
 
 # discretisation
 Nx = 200; Lx = 6.;
@@ -51,11 +53,16 @@ d2R(u,p,dx1,dx2) = @. p.ν * 6u*dx1*dx2 - 5*4u^3*dx1*dx2
 # third derivative
 d3R(u,p,dx1,dx2,dx3) = @. p.ν * 6dx3*dx1*dx2 - 5*4*3u^2*dx1*dx2*dx3
 
-# jet associated with the functional
-jet = (R_SH, Jac_sp, d2R, d3R)
-
 # parameters associated with the equation
 parSH = (l = -0.7, ν = 2., L1 = Lsh)
+
+# initial condition
+sol0 = zeros(Nx)
+
+# Bifurcation Problem
+prob = BifurcationProblem(R_SH, sol0, parSH, (@lens _.l); J = Jac_sp,
+	recordFromSolution = (x, p) -> (n2 = norm(x), nw = normweighted(x), s = sum(x), s2 = x[end ÷ 2], s4 = x[end ÷ 4], s5 = x[end ÷ 5]),
+	plotSolution = (x, p;kwargs...)->(plot!(X, x; ylabel="solution", label="", kwargs...)))
 ```
 
 We then choose the parameters for [`continuation`](@ref) with precise detection of bifurcation points by bisection:
@@ -63,12 +70,12 @@ We then choose the parameters for [`continuation`](@ref) with precise detection 
 ```julia
 optnew = NewtonPar(verbose = false, tol = 1e-12)
 opts = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds = 0.01, pMax = 1.,
-	newtonOptions = setproperties(optnew; maxIter = 30, tol = 1e-8), 
-	maxSteps = 300, plotEveryStep = 40, 
+	newtonOptions = setproperties(optnew; maxIter = 30, tol = 1e-8),
+	maxSteps = 300, plotEveryStep = 40,
 	detectBifurcation = 3, nInversion = 4, tolBisectionEigenvalue = 1e-17, dsminBisection = 1e-7)
 ```
 
-Before we continue, it is useful to define a callback (see [`continuation`](@ref)) for [`newton`](@ref) to avoid spurious branch switching. It is not strictly necessary for what follows. 
+Before we continue, it is useful to define a callback (see [`continuation`](@ref)) for [`newton`](@ref) to avoid spurious branch switching. It is not strictly necessary for what follows.
 
 ```julia
 function cb(state; kwargs...)
@@ -88,8 +95,6 @@ Next, we specify the arguments to be used during continuation, such as plotting 
 ```julia
 args = (verbosity = 0,
 	plot = true,
-	linearAlgo  = MatrixBLS(),
-	plotSolution = (x, p;kwargs...)->(plot!(X, x; ylabel="solution", label="", kwargs...)),
 	callbackN = cb, halfbranch = true,
 	)
 ```
@@ -100,10 +105,10 @@ Depending on the level of recursion in the bifurcation diagram, we change a bit 
 function optrec(x, p, l; opt = opts)
 	level =  l
 	if level <= 2
-		return setproperties(opt; maxSteps = 300, detectBifurcation = 3, 
+		return setproperties(opt; maxSteps = 300, detectBifurcation = 3,
 			nev = Nx, detectLoop = false)
 	else
-		return setproperties(opt; maxSteps = 250, detectBifurcation = 3, 
+		return setproperties(opt; maxSteps = 250, detectBifurcation = 3,
 			nev = Nx, detectLoop = true)
 	end
 end
@@ -111,15 +116,12 @@ end
 
 !!! tip "Tuning"
     The function `optrec` modifies the continuation options `opts` as function of the branching `level`. It can be used to alter the continuation parameters inside the bifurcation diagram.
-    
+
 We are now in position to compute the bifurcation diagram
 
 ```julia
-# initial condition
-sol0 = zeros(Nx)
-
-diagram = @time bifurcationdiagram(jet..., 
-	sol0, (@set parSH.l = -1.), (@lens _.l), 
+diagram = @time bifurcationdiagram(reMake(prob, params = @set parSH.l = -0.1),
+	PALC(),
 	# here we specify a maximum branching level of 4
 	4, optrec; args...)
 ```  
@@ -130,7 +132,7 @@ After ~700s, you can plot the result
 plot(diagram;  plotfold = false,  
 	markersize = 2, putspecialptlegend = false, xlims=(-1,1))
 title!("#branches = $(size(diagram))")
-```	
+```
 
 ![](BDSH1d.png)
 
@@ -142,17 +144,26 @@ The bifurcation diagram `diagram` is stored as tree:
 
 ```julia
 julia> diagram
-Bifurcation diagram. Root branch (level 1) has 5 children and is such that:
-Branch number of points: 146
-Branch of Equilibrium
-Parameters l from -1.0 to 1.0
-Special points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    bp at l ≈ +0.00729225 ∈ (+0.00728880, +0.00729225), |δp|=3e-06, [converged], δ = ( 1,  0), step =  72, eigenelements in eig[ 73], ind_ev =   1
-- #  2,    bp at l ≈ +0.15169672 ∈ (+0.15158623, +0.15169672), |δp|=1e-04, [converged], δ = ( 1,  0), step =  83, eigenelements in eig[ 84], ind_ev =   2
-- #  3,    bp at l ≈ +0.48386427 ∈ (+0.48385737, +0.48386427), |δp|=7e-06, [converged], δ = ( 1,  0), step = 107, eigenelements in eig[108], ind_ev =   3
-- #  4,    bp at l ≈ +0.53115204 ∈ (+0.53071010, +0.53115204), |δp|=4e-04, [converged], δ = ( 1,  0), step = 111, eigenelements in eig[112], ind_ev =   4
-- #  5,    bp at l ≈ +0.86889220 ∈ (+0.86887839, +0.86889220), |δp|=1e-05, [converged], δ = ( 1,  0), step = 135, eigenelements in eig[136], ind_ev =   5
+[Bifurcation diagram]
+ ┌─ From 0-th bifurcation point.
+ ├─ Children number: 5
+ └─ Root (recursion level 1)
+      ┌─ Number of points: 82
+      ├─ Branch of EquilibriumCont
+      ├─ Type of vectors: Vector{Float64}
+      ├─ Parameter l starts at -0.1, ends at 1.0
+      ├─ Algo: PALC
+      └─ Special points:
+
+If `br` is the name of the branch,
+ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`
+
+- #  1,       bp at l ≈ +0.00739184 ∈ (+0.00694990, +0.00739184), |δp|=4e-04, [converged], δ = ( 1,  0), step =   8, eigenelements in eig[  9], ind_ev =   1
+- #  2,       bp at l ≈ +0.15163058 ∈ (+0.15157533, +0.15163058), |δp|=6e-05, [converged], δ = ( 1,  0), step =  19, eigenelements in eig[ 20], ind_ev =   2
+- #  3,       bp at l ≈ +0.48386330 ∈ (+0.48386287, +0.48386330), |δp|=4e-07, [converged], δ = ( 1,  0), step =  43, eigenelements in eig[ 44], ind_ev =   3
+- #  4,       bp at l ≈ +0.53115107 ∈ (+0.53070912, +0.53115107), |δp|=4e-04, [converged], δ = ( 1,  0), step =  47, eigenelements in eig[ 48], ind_ev =   4
+- #  5,       bp at l ≈ +0.86889123 ∈ (+0.86887742, +0.86889123), |δp|=1e-05, [converged], δ = ( 1,  0), step =  71, eigenelements in eig[ 72], ind_ev =   5
+- #  6,  endpoint  at l ≈ +1.00000000,                                                                      step =  81
 ```
 
 We can access the different branches with `BK.getBranch(diagram, (1,))`. Alternatively, you can plot a specific branch:

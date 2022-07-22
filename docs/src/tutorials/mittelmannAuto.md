@@ -78,8 +78,6 @@ function JFmit(x,p)
 	dg = dϕ.(x, p.λ)
 	return J + spdiagm(0 => dg)
 end
-
-jet = BK.getJet(Fmit, JFmit)
 ```
 
 We need to pass the parameters associated to this problem:
@@ -101,6 +99,11 @@ par_mit = (λ = .01, Δ = Δ)
 
 # initial condition
 sol0 = 0*ones(Nx, Ny) |> vec
+
+# Bifurcation Problem
+prob = BifurcationProblem(Fmit, sol0, par_mit, (@lens _.λ),; J = JFmit,
+  recordFromSolution = (x, p) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
+  plotSolution = (x, p; k...) -> plotsol!(x ; k...))
 ```
 
 To compute the eigenvalues, we opt for the solver in `KrylovKit.jl`
@@ -114,7 +117,7 @@ opt_newton = NewtonPar(tol = 1e-8, verbose = true, eigsolver = eigls, maxIter = 
 
 # options for continuation, we want to locate very precisely the
 # bifurcation points, so we tune the bisection accordingly
-opts_br = ContinuationPar(dsmin = 0.0001, dsmax = 0.04, ds = 0.005, pMax = 3.5, pMin = 0.01, detectBifurcation = 3, nev = 50, plotEveryStep = 10, newtonOptions = (@set opt_newton.verbose = false), maxSteps = 251, precisionStability = 1e-6, nInversion = 6, dsminBisection = 1e-7, maxBisectionSteps = 25, tolBisectionEigenvalue = 1e-19)
+opts_br = ContinuationPar(dsmin = 0.0001, dsmax = 0.04, ds = 0.005, pMax = 3.5, pMin = 0.01, detectBifurcation = 3, nev = 50, plotEveryStep = 10, newtonOptions = (@set opt_newton.verbose = false), maxSteps = 251, tolStability = 1e-6, nInversion = 6, dsminBisection = 1e-7, maxBisectionSteps = 25, tolBisectionEigenvalue = 1e-19)
 ```	 
 
 Note that we put the option `detectBifurcation = 3` to detect bifurcations precisely with a **bisection** method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.
@@ -164,18 +167,15 @@ end
 We are then ready to compute the bifurcation diagram. If we choose a level 5 of recursion like
 
 ```julia
-diagram = @time bifurcationdiagram(jet...,
-	sol0, par_mit, (@lens _.λ),
+diagram = @time bifurcationdiagram(prob, PALC(),
 	# important argument: this is the maximal
 	# recursion level
 	5,
 	optionsCont;
 	verbosity = 0, plot = true,
-	recordFromSolution = (x, p) -> (n2 = norm2(x), nw = normbratu(x), n∞ = norminf(x)),
 	callbackN = cb,
 	usedeflation = true,
 	finaliseSolution = finSol,
-	plotSolution = (x, p; kwargs...) -> plotsol!(x ; kwargs...),
 	normC = norminf)
 ```
 this gives using `plot(diagram; plotfold = false, putspecialptlegend=false, markersize=2, title = "#branches = $(size(diagram))")`:

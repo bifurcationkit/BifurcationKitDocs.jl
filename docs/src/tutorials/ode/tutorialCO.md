@@ -41,14 +41,14 @@ function COm(u, p)
 	out
 end
 
-# we group the differentials together
-jet = BK.getJet(COm; matrixfree=false)
-
 # parameters used in the model
 par_com = (q1 = 2.5, q2 = 0.6, q3 = 10., q4 = 0.0675, q5 = 1., q6 = 0.1, k = 0.4)
 
 # initial condition
-z0 = [0.07,0.2,05]
+z0 = [0.07, 0.2, 05]
+
+# Bifurcation Problem
+prob = BK.BifurcationProblem(COm, z0, par_com, (@lens _.q2); recordFromSolution = (x, p) -> (x = x[1], y = x[2], s = x[3]))
 nothing # hide
 ```
 
@@ -67,8 +67,7 @@ opts_br = ContinuationPar(pMin = 0.6, pMax = 1.9, ds = 0.002, dsmax = 0.01,
 	nev = 3)
 
 # compute the branch of solutions
-br, = continuation(jet[1], jet[2], z0, par_com, (@lens _.q2), opts_br;
-	recordFromSolution = (x, p) -> (x = x[1], y = x[2]),
+br = continuation(prob, PALC(), opts_br;
 	plot = true, verbosity = 3, normC = norminf)
 
 # plot the branch
@@ -80,7 +79,7 @@ scene = plot(br, xlims=(0.8,1.8))
 We follow the Fold points in the parameter plane $(q_2, k)$. We tell the solver to consider `br.specialpoint[2]` and continue it.
 
 ```@example TUTCO
-sn_codim2, = continuation(jet[1:2]..., br, 2, (@lens _.k),
+sn_codim2 = continuation(br, 2, (@lens _.k),
 	ContinuationPar(opts_br, pMax = 2.2, pMin = 0., ds = -0.001, dsmax = 0.05);
 	normC = norminf,
 	# detection of codim 2 bifurcations with bisection
@@ -100,15 +99,13 @@ plot!(scene, br, xlims=(0.8,1.8))
 
 We tell the solver to consider `br.specialpoint[1]` and continue it.
 
-```julia
-hp_codim2, = continuation(jet[1:2]..., br, 1, (@lens _.k),
+```@example TUTCO
+hp_codim2 = continuation(br, 1, (@lens _.k),
 	ContinuationPar(opts_br, pMin = 0., pMax = 2.8,
 		ds = -0.001, dsmax = 0.05) ;
 	normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detectCodim2Bifurcation = 2,
-	# this is required to detect the bifurcations
-	d2F = jet[3], d3F = jet[4],
 	# tell to start the Hopf problem using eigen elements: compute left eigenvector
 	startWithEigen = true,
 	# we save the first component for plotting
@@ -125,7 +122,6 @@ plot!(scene, hp_codim2, vars=(:q2, :x), branchlabel = "Hopf")
 plot!(scene, br, xlims=(0.6,1.5))
 ```
 
-![](com-fig3.png)
 
 ## References
 

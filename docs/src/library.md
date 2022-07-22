@@ -17,11 +17,24 @@ ContinuationPar
 
 ## Results
 
+
+```@docs
+NonLinearSolution
+```
+
 ```@docs
 ContResult
 ```
 
 ## Problems
+
+```@docs
+BifFunction
+```
+
+```@docs
+BifurcationProblem
+```
 
 ```@docs
 DeflationOperator
@@ -71,6 +84,32 @@ BifurcationKit.DotTheta
 continuation
 ```
 
+## Continuation algorithms
+
+```@docs
+Natural
+```
+
+```@docs
+PALC
+```
+
+```@docs
+Polynomial
+```
+
+```@docs
+MoorePenrose
+```
+
+```@docs
+Multiple
+```
+
+```@docs
+BifurcationKit.DefCont
+```
+
 ## Events
 
 ```@docs
@@ -92,12 +131,12 @@ BifurcationKit.PairOfEvents
 ## Branch switching (branch point)
 
 ```@docs
-continuation(F, dF, d2F, d3F, br::ContResult, ind_bif::Int, optionsCont::ContinuationPar ; Jᵗ = nothing, δ = 1e-8, δp = nothing, ampfactor = 1, nev = optionsCont.nev, issymmetric = false, usedeflation = false, Teigvec = getvectortype(br), scaleζ = norm, verbosedeflation = false, maxIterDeflation = min(50, 15optionsCont.newtonOptions.maxIter), perturb = identity, kwargs...)
+continuation(br::ContResult, ind_bif::Int, optionsCont::ContinuationPar ; kwargs...)
 ```
 
 ## Branch switching (Hopf point)
 ```@docs
-continuation(F, dF, d2F, d3F, br::BifurcationKit.AbstractBranchResult, ind_bif::Int, _contParams::ContinuationPar, prob::BifurcationKit.AbstractPeriodicOrbitProblem ; Jᵗ = nothing, δ = 1e-8, δp = nothing, ampfactor = 1, usedeflation = false, nev = _contParams.nev, updateSectionEveryStep = 0, kwargs...)
+continuation(br::BifurcationKit.AbstractBranchResult, ind_bif::Int, _contParams::ContinuationPar, prob::BifurcationKit.AbstractPeriodicOrbitProblem ; kwargs...)
 ```
 
 ## Bifurcation diagram
@@ -167,5 +206,5 @@ guessFromHopf(br, ind_hopf, eigsolver::AbstractEigenSolver, M, amplitude; phase 
 ```
 
 ```@docs
-computeNormalForm
+getNormalForm
 ```

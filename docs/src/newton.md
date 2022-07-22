@@ -35,7 +35,19 @@ Another possibility is to pass a function `J(dx)` and to use **iterative** linea
 
 One can find a full description of the Krylov-Newton method in the [API](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/library/#Newton). 
 
+## Simple example
+
+Here is a quick example to show how the basics work. In particular, the problem generates a matrix based jacobian using automatic differentiation.
+
+```@example NEWTON
+using BifurcationKit
+F(x, p) = x.^3 .- 1
+x0 = rand(10)
+prob = BifurcationProblem(F, x0, nothing)
+sol = newton(prob, NewtonPar(verbose = true))
+```
+
 ## Example
 
-The basic tutorial [Temperature model (Simplest example)](@ref) presents all cases (direct and iterative ones).
+The (basic) tutorial [Temperature model (Simplest example)](@ref) presents all cases (direct and iterative ones).
 

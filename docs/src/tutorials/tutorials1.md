@@ -55,19 +55,20 @@ nothing #hide
 We call the Newton solver:
 
 ```@example TUT1
-sol, = newton( F_chan, sol0, par, @set optnewton.verbose=false) # hide
-sol, = @time newton( F_chan, sol0, par, optnewton)
+prob = BifurcationProblem(F_chan, sol0, par, (@lens _.α),
+	# function to plot the solution
+	plotSolution = (x, p; k...) -> plot!(x; ylabel="solution", label="", k...))
+sol = newton(prob, @set optnewton.verbose=false) # hide
+sol = @time newton( prob, optnewton)
 nothing #hide
 ```
 
-Note that, in this case, we did not give the Jacobian. It was computed internally using Finite Differences.
-
-> This is not as bad as it looks despite the fact that there are so many allocations even with Finite Differences Jacobian. Using `BenchmarkTools.jl`, one actually finds `1.153 ms (2067 allocations: 2.04 MiB)`. This is reasonable as we did not code the problem with much care...
+Note that, in this case, we did not give the Jacobian. It was computed internally using Automatic Differentiation.
 
 We can perform numerical continuation w.r.t. the parameter $\alpha$. This time, we need to provide additional parameters, but now for the continuation method:
 
 ```@example TUT1
-optcont = ContinuationPar(dsmin = 0.01, dsmax = 0.2, ds= 0.1, pMin = 0., pMax = 4.1,
+optcont = ContinuationPar(dsmin = 0.01, dsmax = 0.2, ds= 0.1, pMin = 0., pMax = 4.2,
 	newtonOptions = NewtonPar(maxIter = 10, tol = 1e-9))
 nothing #hide
 ```
@@ -75,10 +76,7 @@ nothing #hide
 Next, we call the continuation routine as follows.
 
 ```@example TUT1
-br, = continuation(F_chan, sol, par, (@lens _.α),
-		optcont; plot = true, verbosity = 0,
-		# function to plot the solution
-		plotSolution = (x, p; k...) -> plot!(x; ylabel="solution", label="", k...))
+br = continuation(prob, PALC(), optcont; plot = true)
 nothing #hide		
 ```
 
@@ -110,33 +108,27 @@ br
 We can take the first Fold point, which has been guessed during the previous continuation run and locate it precisely. However, this only works well when the jacobian is computed analytically. We use automatic differentiation for that
 
 ```@example TUT1
-using ForwardDiff
-
-# Jacobian of F_chan
-Jac_mat = (x,p) -> ForwardDiff.jacobian(z -> F_chan(z,p),x)
-
 # index of the Fold bifurcation point in br.specialpoint
 indfold = 2
 
-outfold, _, flag = newton(F_chan, Jac_mat,
+outfold = newton(
 	#index of the fold point
 	br, indfold)
-flag && printstyled(color=:red, "--> We found a Fold Point at α = ", outfold.p, ", β = 0.01, from ", br.specialpoint[indfold].param,"\n")
+BK.converged(outfold) && printstyled(color=:red, "--> We found a Fold Point at α = ", outfold.u.p, ", β = 0.01, from ", br.specialpoint[indfold].param,"\n")
 ```
 
-We can finally continue this fold point in the plane $(α,β)$ by performing a Fold Point continuation. In the present case, we find a Cusp point.
+We can finally continue this fold point in the plane $(α, β)$ by performing a Fold Point continuation. In the present case, we find a Cusp point.
 
 !!! tip "Tip"
     We don't need to call `newton` first in order to use `continuation` for the codim 2 curve of bifurcation points.
 
 ```@example TUT1
-outfoldco, = continuation(
-	F_chan, Jac_mat,
-	br, indfold,
+outfoldco = continuation(br, indfold,
 	# second parameter axis to use for codim 2 curve
 	(@lens _.β),
-	plot = true, verbosity = 2)
-scene = plot(outfoldco, plotfold=true, legend = :bottomright)
+	# we disable the computation of eigenvalues, it makes little sense here
+	ContinuationPar(optcont, detectBifurcation = 0))
+scene = plot(outfoldco, plotfold = true, legend = :bottomright)
 ```
 
 ## Using GMRES or another linear solver
@@ -168,14 +160,15 @@ ls = GMRESKrylovKit(dim = 100)
 # and pass it to the newton parameters
 optnewton_mf = NewtonPar(verbose = true, linsolver = ls, tol = 1e-10)
 
-# we can then call the newton solver
-out_mf, = @time newton(
-	F_chan,
+# we change the problem with the new jacobian
+prob = reMake(prob;
 	# we pass the differential a x,
 	# which is a linear operator in dx
-	(x, p) -> (dx -> dF_chan(x, dx, p)),
-	sol0, par,
-	optnewton_mf)
+	J = (x, p) -> (dx -> dF_chan(x, dx, p))
+	)
+
+# we can then call the newton solver
+out_mf = @time newton(prob,	optnewton_mf)
 nothing #hide
 ```
 
@@ -189,10 +182,8 @@ P = spdiagm(0 => -2 * (n-1)^2 * ones(n), -1 => (n-1)^2 * ones(n-1), 1 => (n-1)^2
 P[1,1:2] .= [1, 0.];P[end,end-1:end] .= [0, 1.]
 
 # define gmres solver with left preconditioner
-ls = GMRESIterativeSolvers(reltol = 1e-4, N = length(sol), restart = 10, maxiter = 10, Pl = lu(P))
+ls = GMRESIterativeSolvers(reltol = 1e-4, N = length(sol.u), restart = 10, maxiter = 10, Pl = lu(P))
 	optnewton_mf = NewtonPar(verbose = true, linsolver = ls, tol = 1e-10)
-	out_mf, = @time newton(F_chan,
-	(x, p) -> (dx -> dF_chan(x, dx, p)),
-	sol0, par, optnewton_mf)
+	out_mf = @time newton(prob, optnewton_mf)
 nothing #hide
 ```

@@ -50,9 +50,6 @@ function Lor(u, p)
 	]
 end
 
-# we group the differentials together
-jet = BK.getJet(Lor;matrixfree=false)
-
 # parameter values
 parlor = (α = 1//4, β = 1, G = .25, δ = 1.04, γ = 0.987, F = 1.7620532879639, T = .0001265)
 
@@ -66,18 +63,19 @@ nothing #hide
 Once the problem is set up, we can continue the state w.r.t. $F$ to and detect codim 1 bifurcations. This is achieved as follows:
 
 ```@example LORENZ84
+# bifurcation problem
+prob = BifurcationProblem(Lor, z0, setproperties(parlor; T=0.04, F=3.), (@lens _.F);
+    recordFromSolution = (x, p) -> (X = x[1], Y = x[2], Z = x[3], U = x[4]))
+
 # continuation options
 opts_br = ContinuationPar(pMin = -1.5, pMax = 3.0, ds = 0.002, dsmax = 0.15,
-	# options to detect codim 1 bifurcations using bisection
-	detectBifurcation = 3,
 	# Optional: bisection options for locating bifurcations
 	nInversion = 6, maxBisectionSteps = 25,
 	# number of eigenvalues
 	nev = 4, maxSteps = 200)
 
 # compute the branch of solutions
-br, = @time continuation(jet[1], jet[2], z0, setproperties(parlor; T=0.04, F=3.), (@lens _.F), opts_br;
-	recordFromSolution = (x, p) -> (X = x[1], Y = x[2], Z = x[3], U = x[4]),
+br = @time continuation(prob, PALC(), opts_br;
 	normC = norminf,
 	bothside = true)
 
@@ -92,13 +90,13 @@ br
 
 ## Continuation of Fold points
 
-We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[4]` and continue it.
+We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[5]` and continue it.
 
 ```@example LORENZ84
 # function to record the current state
 recordFromSolutionLor(x, p) = ((X = x.u[1], Y = x.u[2], Z = x.u[3], U = x.u[4]))
 
-sn_codim2, = continuation(jet[1:2]..., br, 4, (@lens _.T), ContinuationPar(opts_br, pMax = 3.2, pMin = -0.1, detectBifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, nInversion = 10, saveSolEveryStep = 1, maxSteps = 130, maxBisectionSteps = 55) ; normC = norminf,
+sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, pMax = 3.2, pMin = -0.1, detectBifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, nInversion = 10, saveSolEveryStep = 1, maxSteps = 130, maxBisectionSteps = 55) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detectCodim2Bifurcation = 2,
 	# we update the Fold problem at every continuation step
@@ -106,8 +104,6 @@ sn_codim2, = continuation(jet[1:2]..., br, 4, (@lens _.T), ContinuationPar(opts_
 	startWithEigen = false,
 	# we save the different components for plotting
 	recordFromSolution = recordFromSolutionLor,
-	# give analytic higher differentials, useful for normal forms
-	d2F = jet[3], d3F = jet[4],
 	)
 
 scene = plot(sn_codim2, vars=(:X, :U), branchlabel = "Folds", ylims=(-0.5, 0.5))
@@ -122,25 +118,21 @@ sn_codim2
 For example, we can compute the following normal form
 
 ```@example LORENZ84
-computeNormalForm(jet..., sn_codim2, 1; nev = 4)
+getNormalForm(sn_codim2, 1; nev = 4)
 ```
 
 ## Continuation of Hopf points
 
-We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[2]` and continue it.
+We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[3]` and continue it.
 
 ```@example LORENZ84
-hp_codim2_1, = continuation(jet[1:2]..., br, 2, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, nInversion = 6, saveSolEveryStep = 1, detectBifurcation = 1) ; normC = norminf,
-	# tangent algorithm
-	tangentAlgo = BorderedPred(),
+hp_codim2_1 = continuation((@set br.alg.tangent = Bordered()), 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, nInversion = 6, saveSolEveryStep = 1, detectBifurcation = 1) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detectCodim2Bifurcation = 2,
 	# we update the Fold problem at every continuation step
 	updateMinAugEveryStep = 1,
 	# we save the different components for plotting
 	recordFromSolution = recordFromSolutionLor,
-	# give analytic higher differentials, useful for normal forms
-	d2F = jet[3], d3F = jet[4],
 	# compute both sides of the initial condition
 	bothside = true,
 	)
@@ -157,18 +149,16 @@ hp_codim2_1
 For example, we can compute the following normal form
 
 ```@example LORENZ84
-computeNormalForm(jet..., hp_codim2_1, 2; nev = 4)
+getNormalForm(hp_codim2_1, 3; nev = 4)
 ```
 
-## Continuation of Hopf points from the Bogdanov-Takens bifurcation
+## Continuation of Hopf points from the Bogdanov-Takens point
 
 When we computed the curve of Fold points, we detected a Bogdanov-Takens bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
 ```@example LORENZ84
-hp_from_bt, = continuation(jet..., sn_codim2, 4, ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4,
+hp_from_bt = continuation((@set sn_codim2.alg.tangent = Bordered()), 4, ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4,
 	nInversion = 6, detectBifurcation = 1) ; normC = norminf,
-	# tangent algorithm
-	tangentAlgo = BorderedPred(),
 	# detection of codim 2 bifurcations with bisection
 	detectCodim2Bifurcation = 2,
 	# we update the Fold problem at every continuation step
@@ -189,14 +179,13 @@ with detailed information
 hp_from_bt
 ```
 
-## Continuation of Hopf points from the Zero-Hopf bifurcation 
+## Continuation of Hopf points from the Zero-Hopf point
 
 When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
 ```@example LORENZ84
-hp_from_zh, = continuation(jet..., sn_codim2, 2, ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02, dsmin = 1e-4, nInversion = 6, detectBifurcation = 1, maxSteps = 150) ;
+hp_from_zh = continuation((@set sn_codim2.alg.tangent = Bordered()), 2, ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02, dsmin = 1e-4, nInversion = 6, detectBifurcation = 1, maxSteps = 150) ;
 	normC = norminf,
-	tangentAlgo = BorderedPred(),
 	detectCodim2Bifurcation = 2,
 	updateMinAugEveryStep = 1,
 	startWithEigen = true,

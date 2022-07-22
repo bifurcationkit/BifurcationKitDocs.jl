@@ -185,7 +185,7 @@ _center = vcat(E*ones(nx), B/E*ones(nx))
 
 # section for the flow
 sectionBru = BK.SectionSS(vf(initpo[1:end-1], par_bru), _center)
-probSh = ShootingProblem(M = 1, flow = flow, ds = diff(LinRange(0, 1, 1 + 1)), section = sectionBru)
+probSh = ShootingProblem(M = 1, flow = flow, ds = diff(LinRange(0, 1, 1 + 1)), section = sectionBru, par = par_bru, lens = (@lens _.D), jacobian = :FiniteDifferences)
 ```
 
 ## Finding a periodic orbit
@@ -203,7 +203,7 @@ optn = NewtonPar(tol = 1e-9, verbose = true,
 	)
 
 # Newton-Krylov method to check convergence and tune parameters
-solp, = @time newton(probSh, initpo, par_bru, optn,
+solp = @time newton(probSh, initpo, optn,
 	normN = x->norm(x,Inf))
 ```
 
@@ -232,10 +232,9 @@ and you should see (the guess was not that good)
 
 ```julia
 # you can detect bifurcations with the option detectBifurcation = 3
-optc = ContinuationPar(newtonOptions = optn, ds = -1e-3, dsmin = 1e-7, dsmax = 2e-3, pMax = 0.295, plotEveryStep = 2, maxSteps = 1000)
-bd, = continuation(probSh,
-	solp, par_bru, (@lens _.D), optc;
-	linearAlgo = MatrixFreeBLS(@set ls.N = 2nx+2),
+optc = ContinuationPar(newtonOptions = optn, ds = -1e-3, dsmin = 1e-7, dsmax = 2e-3, pMax = 0.295, plotEveryStep = 2, maxSteps = 1000, detectBifurcation = 0)
+bd = continuation(probSh,
+	solp, PALC(bls = MatrixFreeBLS(@set ls.N = 2nx+2)), optc;
 	plot = true,
 	verbosity = 3,
 	plotSolution = (x,p ; kw...) -> plot!(x[1:nx];kw...),

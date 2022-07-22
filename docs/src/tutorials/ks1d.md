@@ -57,12 +57,6 @@ function Fks1d(a, p)
 	out .*= -1
 	return out
 end
-
-# functional jacobian
-Jks1d(u, p) = ForwardDiff.jacobian(z -> Fks1d(z,p), u)
-
-# we group the differentials together
-jet = BK.getJet(Fks1d, Jks1d)
 ```
 
 Having defined the model, we chose parameters:
@@ -71,6 +65,11 @@ Having defined the model, we chose parameters:
 N = 50
 Δ, Δ2 = generateLinear(N)
 par_ks = (Δ = Δ, Δ2 = Δ2, λ = 0.75, N = N)
+
+# we define a Bifurcation Problem
+prob = BifurcationProblem(Fks1d, zeros(N), par_ks, (@lens _.λ),
+  recordFromSolution = (x, p) -> (s = sum(x), u2 = x[3], nrm = norm(x)),
+  plotSolution = (x, p; kwargs...) -> plot!(Fun(SinSpace(), x) ; kwargs...),)
 ```
 
 and continuation options
@@ -81,11 +80,7 @@ optn = NewtonPar(verbose = false, tol = 1e-9, maxIter = 15)
 	dsmax = 0.01, dsmin = 1e-4, ds = -0.001, detectBifurcation = 3, nev = N, nInversion = 8,
 	maxBisectionSteps = 30, dsminBisection = 1e-10, plotEveryStep = 50)
 
-kwargscont = (linearAlgo = MatrixBLS(),
-	verbosity = 2, plot = true,
-	recordFromSolution = (x, p) -> (s = sum(x), u2 = x[3], nrm = norm(x)),
-	plotSolution = (x, p; kwargs...) -> plot!(Fun(SinSpace(), x) ; kwargs...),
-	normC = norm)
+kwargscont = (verbosity = 2, plot = true, normC = norm)
 ```
 
 ## Computation of the bifurcation diagram
@@ -95,18 +90,17 @@ kwargscont = (linearAlgo = MatrixBLS(),
 function optrec(x, p, l; opt = optc)
 	level = l
 	if level <= 2
-		return setproperties(opt;  dsmax = 0.005, maxSteps = 2000, 
+		return setproperties(opt;  dsmax = 0.005, maxSteps = 2000,
 		detectBifurcation = 3, detectLoop = true, nInversion = 6)
 	else
-		return setproperties(opt;  dsmax = 0.005, maxSteps = 2000, 
+		return setproperties(opt;  dsmax = 0.005, maxSteps = 2000,
 		detectBifurcation = 3, detectLoop = true, nInversion = 6)
 	end
 end
 
 # we now compute the bifurcation diagram
 # that is the connected component of (0,0)
-diagram = @time bifurcationdiagram(jet...,
-		zeros(N), par_ks, (@lens _.λ), 4, optrec;
+diagram = @time bifurcationdiagram(prob, PALC(), 4, optrec;
 		kwargscont..., verbosity = 0,
 		)
 ```
@@ -115,9 +109,9 @@ Plotting the result can be done using
 
 ```julia
 plot(diagram; code = (), plotfold = false,  markersize = 3, putspecialptlegend = false,
-	 plotcirclesbif = true, applytoX = x->2/x, vars = (:param, :nrm), 
+	 plotcirclesbif = true, applytoX = x->2/x, vars = (:param, :nrm),
 	 xlim = (0,150), ylim=(0,8))
-title!("#branches = $(size(diagram, code))")
+title!("#branches = $(size(diagram))")
 ```
 
 ![](ks1d-1.png)

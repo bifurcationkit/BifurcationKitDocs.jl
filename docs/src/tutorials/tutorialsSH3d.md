@@ -51,7 +51,6 @@ end
 # various differentials
 d2F_sh(u, p, dx1, dx2) = (2 .* p.ν .* dx2 .- 6 .* dx2 .* u) .* dx1
 d3F_sh(u, p, dx1, dx2, dx3) = (-6 .* dx2 .* dx3) .* dx1
-jet = (F_sh, (x, p) -> (dx -> dF_sh(x, p, dx)), d2F_sh, d3F_sh)
 
 # these types are useful to switch to GPU
 TY = Float64
@@ -119,7 +118,7 @@ As said in the introduction, the LU linear solver does not scale well with dimen
 Pr = cholesky(L1)
 using SuiteSparse
 # we need this "hack" to be able to use Pr as a preconditioner.
-LinearAlgebra.ldiv!(P::SuiteSparse.CHOLMOD.Factor{Float64}, v) = -(P \ v)
+LinearAlgebra.ldiv!(o//Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= -(P \ v)
 
 # rtol must be small enough to pass the Fold points and to get precise eigenvalues
 # we know that the jacobian is symmetric so we tell the solver
@@ -129,10 +128,13 @@ ls = GMRESKrylovKit(verbose = 0, rtol = 1e-9, maxiter = 150, ishermitian = true,
 Let's try this on a Krylov-Newton computation to refine the guess `sol0`:
 
 ```julia
+prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@lens _.l),
+	J = (x, p) -> (dx -> dF_sh(x, p, dx)),
+	plotSolution = (ax, x, p) -> contour3dMakie(ax, x),
+	recordFromSolution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)))
+
 optnew = NewtonPar(verbose = true, tol = 1e-8, maxIter = 20, linsolver = ls)
-sol_hexa, hist, flag = @time BK.newton(F_sh,
-	(x, p) -> (dx -> dF_sh(x, p, dx)),
-	vec(sol0), par, optnew)
+sol_hexa = @time newton(prob, optnew)
 ```
 
 which gives
@@ -208,16 +210,13 @@ optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, pMax = 0.15
 	pMin = -.1, newtonOptions = setproperties(optnew; tol = 1e-9, maxIter = 15),
 	maxSteps = 146, detectBifurcation = 3, nev = 15, nInversion = 4, plotEveryStep = 1)
 
-br, = continuation(
-	F_sh, (x, p) -> (dx -> dF_sh(x, p, dx)),
-	zeros(N), par, (@lens _.l), optcont;
-	plot = true, verbosity = 3,
-	# we use a particuliar bordered linear solver to
-	# take advantage of our specific linear solver
-	linearAlgo = BorderingBLS(solver = optnew.linsolver, checkPrecision = false),
-	plotSolution = (ax, x, p) -> contour3dMakie(ax, x),
-	recordFromSolution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)),
-	normC = x -> norm(x, Inf))
+br = continuation( reMake(prob, u0 = zeros(N)),
+  # we use a particular bordered linear solver to
+  # take advantage of our specific linear solver
+  PALC(bls = BorderingBLS(solver = optnew.linsolver, checkPrecision = false)),
+  optcont;
+  normC = x -> norm(x, Inf),
+	plot = true, verbosity = 3)
 ```
 
 The following result shows the detected bifurcation points (its takes ~300s)

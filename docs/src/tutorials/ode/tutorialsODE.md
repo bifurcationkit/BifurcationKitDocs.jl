@@ -1,4 +1,4 @@
-# Neural mass equation (Hopf aBS) 
+# Neural mass equation (Hopf aBS)
 
 ```@contents
 Pages = ["tutorialsODE.md"]
@@ -41,14 +41,15 @@ end
 # out of place method
 TMvf(z, p) = TMvf!(similar(z), z, p, 0)
 
-# we group the differentials together
-jet = BK.getJet(TMvf; matrixfree=false)
-
 # parameter values
 par_tm = (α = 1.5, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.200, U0 = 0.3, τF = 1.5, τS = 0.007)
 
 # initial condition
 z0 = [0.238616, 0.982747, 0.367876]
+
+# Bifurcation Problem
+prob = BifurcationProblem(TMvf, z0, par_tm, (@lens _.E0); recordFromSolution = (x, p) -> (E = x[1], x = x[2], u = x[3]),)
+
 nothing #hide
 ```
 
@@ -65,9 +66,7 @@ opts_br = ContinuationPar(pMin = -10.0, pMax = -0.9,
 	nInversion = 8, maxBisectionSteps = 25, nev = 3)
 
 # continuation of equilibria
-br, = continuation(jet[1], jet[2], z0, par_tm, (@lens _.E0), opts_br;
-	recordFromSolution = (x, p) -> (E = x[1], x = x[2], u = x[3]),
-	tangentAlgo = BorderedPred(),
+br = continuation(prob, PALC(tangent=Bordered()), opts_br;
 	plot = true, normC = norminf)
 
 scene = plot(br, plotfold=false, markersize=3, legend=:topleft)
@@ -90,7 +89,7 @@ optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 10)
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5.,
 	maxSteps = 110, newtonOptions = (@set optn_po.tol = 1e-7),
-	nev = 3, precisionStability = 1e-8, detectBifurcation = 3, plotEveryStep = 10, saveSolEveryStep=1)
+	nev = 3, tolStability = 1e-8, detectBifurcation = 3, plotEveryStep = 10, saveSolEveryStep=1)
 
 # arguments for periodic orbits
 args_po = (	recordFromSolution = (x, p) -> begin
@@ -109,15 +108,14 @@ args_po = (	recordFromSolution = (x, p) -> begin
 	normC = norminf)
 
 Mt = 200 # number of time sections
-	br_potrap, utrap = continuation(jet...,
+	br_potrap = continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Trapeze method to locate PO
-	PeriodicOrbitTrapProblem(M = Mt);
 	# this jacobian is specific to ODEs
 	# it is computed using AD and
 	# updated inplace
-	jacobianPO = :Dense,
+	PeriodicOrbitTrapProblem(M = Mt, jacobian = :Dense);
 	# regular continuation options
 	verbosity = 2,	plot = true,
 	args_po...)
@@ -125,7 +123,6 @@ Mt = 200 # number of time sections
 scene = plot(br, br_potrap, markersize = 3)
 plot!(scene, br_potrap.param, br_potrap.min, label = "")
 ```
-
 
 We plot the maximum (resp. minimum) of the limit cycle. We can see that the min converges to the smallest equilibrium indicating a homoclinic orbit.
 
@@ -140,7 +137,7 @@ for sol in br_potrap.sol[1:2:40]
 	# periodic orbit
 	po = sol.x
 	# get the mesh and trajectory
-	traj = BK.getPeriodicOrbit(br_potrap.functional, po, @set par_tm.E0 = sol.p)
+	traj = BK.getPeriodicOrbit(br_potrap.prob, po, @set par_tm.E0 = sol.p)
 	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
 end
 title!("")
@@ -154,10 +151,10 @@ We compute the branch of periodic orbits from the last Hopf bifurcation point (o
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5.,
 	maxSteps = 110, newtonOptions = (@set optn_po.tol = 1e-7),
-	nev = 3, precisionStability = 1e-8, detectBifurcation = 0, plotEveryStep = 30, saveSolEveryStep=1)
+	nev = 3, tolStability = 1e-8, detectBifurcation = 0, plotEveryStep = 30, saveSolEveryStep=1)
 
 Mt = 30 # number of time sections
-	br_pocoll, ucoll, = @time continuation(jet...,
+	br_pocoll = @time continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Collocation method to locate PO, with polynomial degree 5
@@ -182,23 +179,23 @@ using DifferentialEquations
 # this is the ODEProblem used with `DiffEqBase.solve`
 probsh = ODEProblem(TMvf!, copy(z0), (0., 1000.), par_tm; abstol = 1e-10, reltol = 1e-9)
 
-opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5., maxSteps = 100, newtonOptions = (@set optn_po.tol = 1e-6), nev = 3, precisionStability = 1e-8, detectBifurcation = 0, plotEveryStep = 10, saveSolEveryStep=0)
+opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5., maxSteps = 100, newtonOptions = (@set optn_po.tol = 1e-6), nev = 3, tolStability = 1e-8, detectBifurcation = 0, plotEveryStep = 10, saveSolEveryStep=0)
 
-br_posh, = @time continuation(jet...,
+br_posh = @time continuation(
 	br, 4, opts_po_cont,
 	# this is where we tell that we want Standard Shooting
 	# with 15 time sections
-	ShootingProblem(15, probsh, Rodas4(), parallel = true);
+	ShootingProblem(15, probsh, Rodas4(), parallel = true,
+	    # this linear solver is specific to ODEs
+	    # it is computed using AD of the flow and
+	    # updated inplace
+	    jacobian = :autodiffDense,
+	    # we update the section along the branches
+	    updateSectionEveryStep = 2);
 	# this to help branching
 	δp = 0.0005,
 	# deflation helps not converging to an equilibrium instead of a PO
 	usedeflation = true,
-	# this linear solver is specific to ODEs
-	# it is computed using AD of the flow and
-	# updated inplace
-	jacobianPO = :autodiffDense,
-	# we update the section along the branches
-	updateSectionEveryStep = 2,
 	# regular continuation parameters
 	verbosity = 2,	plot = true,
 	args_po...)

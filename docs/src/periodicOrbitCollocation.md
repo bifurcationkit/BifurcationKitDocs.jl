@@ -47,9 +47,26 @@ The **nodes** $(z_l)$ are associated with a Gauss–Legendre quadrature.
 
 In order to have a unique solution, we need to remove the phase freedom. This is done by imposing a *phase* condition.
 
+## Phase condition
+
+To ensure uniqueness of the solution to the functional, we add the following phase condition
+
+$$\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_0(s)\right\rangle d s \approx  \sum_{j=1}^{N_{tst}}\sum_{i=1}^{m}\omega_i\left\langle x_{i,j}, \phi_{i,j}\right\rangle=0$$
+
+> During continuation at step $k$, we use $\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_{k-1}(s)\right\rangle d s$
+
+## Interpolation
+
+```@docs
+BifurcationKit.POOCollSolution
+```
+
 ## Mesh adaptation
 
-Work in progress.
+!!! warning "Work in progress."
+    We are still working on this.
+    
+The goal of this method[^Russell] is to adapt the mesh $\tau_i$ in order to minimize the error.
 
 ## Encoding of the functional
 
@@ -69,8 +86,7 @@ We provide a simplified call to `newton` to locate the periodic orbits. Compared
 The docs for this specific `newton` are located at [`newton`](@ref).
 
 ```@docs
-newton(prob::PeriodicOrbitOCollProblem, orbitguess, par, options::NewtonPar;
-		jacobianPO = :autodiffDense, kwargs...)
+newton(prob::PeriodicOrbitOCollProblem, orbitguess, options::NewtonPar; kwargs...)
 ```
 
 ## Continuation
