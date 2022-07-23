@@ -37,9 +37,6 @@ end
 
 lur(z, p) = lur!(similar(z), z, p, 0)
 
-# we collect the diffferentials
-jet = BK.getJet(lur; matrixfree=false)
-
 # parameters
 par_lur = (α = 1.0, β = 0.)
 
