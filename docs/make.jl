@@ -1,3 +1,7 @@
+# we use this hacky way because AsymptoticNumericalMethod is not registered
+using Pkg
+pkg"add https://github.com/bifurcationkit/AsymptoticNumericalMethod.jl"
+
 using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
