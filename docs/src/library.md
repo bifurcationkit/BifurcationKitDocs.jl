@@ -110,6 +110,10 @@ Multiple
 BifurcationKit.DefCont
 ```
 
+```@docs
+AsymptoticNumericalMethod.ANM
+```
+
 ## Events
 
 ```@docs

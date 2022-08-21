@@ -64,14 +64,14 @@ uh = zero(U)
 par_bratu = (λ = 0.01,)
 
 # problem definition
-prob = GridapProblem(res, jac, d2res, d3res, V, U)
+prob = GridapBifProblem(res, uh, par_bratu, V, U, (@lens _.λ); jac = jac, d2res = d2res, d3res = d3res, plotSolution = (x,p; k...) -> plotgridap!(x;  k...))
 ```
 
 We can call then the newton solver:
 
 ```julia
 optn = NewtonPar(eigsolver = EigArpack())
-sol, = newton(prob, uh, par_bratu, NewtonPar(optn; verbose = true))
+sol = newton(prob, NewtonPar(optn; verbose = true))
 ```
 
 which gives
@@ -91,28 +91,32 @@ In the same vein, we can continue this solution as function of $\lambda$:
 ```julia
 opts = ContinuationPar(pMax = 40., pMin = 0.01, ds = 0.01,
 	maxSteps = 1000, detectBifurcation = 3, newtonOptions = optn, nev = 20)
-br, = continuation(prob, uh, par_bratu, (@lens _.λ), opts;
-	plot = true, verbosity = 2,
-	plotSolution = (x, p; k...) -> plotgridap!(x;  k...))
+br = continuation(prob, PALC(tangent = Bordered()), opts;
+	plot = true,
+	verbosity = 0,
+	)
 ```
 
 We obtain:
 
 ```julia
 julia> br
- ┌─ Branch number of points: 53
- ├─ Branch of Equilibrium
+ ┌─ Number of points: 56
+ ├─ Curve of EquilibriumCont
  ├─ Type of vectors: Vector{Float64}
  ├─ Parameter λ starts at 0.01, ends at 0.01
+ ├─ Algo: PALC
  └─ Special points:
 
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
+If `br` is the name of the branch,
+ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`
 
-- #  1,    bp at λ ≈ +0.36782970 ∈ (+0.36782970, +0.36787920), |δp|=5e-05, [converged], δ = ( 1,  0), step =  12, eigenelements in eig[ 13], ind_ev =   1
-- #  2,    nd at λ ≈ +0.27168226 ∈ (+0.27168226, +0.27286757), |δp|=1e-03, [converged], δ = ( 2,  0), step =  19, eigenelements in eig[ 20], ind_ev =   3
-- #  3,    bp at λ ≈ +0.15186464 ∈ (+0.15186464, +0.15187849), |δp|=1e-05, [converged], δ = ( 1,  0), step =  26, eigenelements in eig[ 27], ind_ev =   4
-- #  4,    nd at λ ≈ +0.03484879 ∈ (+0.03484879, +0.03491029), |δp|=6e-05, [converged], δ = ( 2,  0), step =  41, eigenelements in eig[ 42], ind_ev =   6
-- #  5,    nd at λ ≈ +0.01556655 ∈ (+0.01556655, +0.01559518), |δp|=3e-05, [converged], δ = ( 2,  0), step =  48, eigenelements in eig[ 49], ind_ev =   8
+- #  1,       bp at λ ≈ +0.36787944 ∈ (+0.36787944, +0.36787944), |δp|=1e-12, [converged], δ = ( 1,  0), step =  13, eigenelements in eig[ 14], ind_ev =   1
+- #  2,       nd at λ ≈ +0.27234314 ∈ (+0.27234314, +0.27234328), |δp|=1e-07, [converged], δ = ( 2,  0), step =  21, eigenelements in eig[ 22], ind_ev =   3
+- #  3,       bp at λ ≈ +0.15185452 ∈ (+0.15185452, +0.15185495), |δp|=4e-07, [converged], δ = ( 1,  0), step =  29, eigenelements in eig[ 30], ind_ev =   4
+- #  4,       nd at λ ≈ +0.03489122 ∈ (+0.03489122, +0.03489170), |δp|=5e-07, [converged], δ = ( 2,  0), step =  44, eigenelements in eig[ 45], ind_ev =   6
+- #  5,       nd at λ ≈ +0.01558733 ∈ (+0.01558733, +0.01558744), |δp|=1e-07, [converged], δ = ( 2,  0), step =  51, eigenelements in eig[ 52], ind_ev =   8
+- #  6, endpoint at λ ≈ +0.01000000,                                                                     step =  55
 ```
 
 ![](fig1gridap.png)
@@ -123,23 +127,23 @@ julia> br
 Let us now compute the first branches from the bifurcation points. We start with the one with 1d kernel:
 
 ```julia
-br1, = continuation(prob, br, 3,
-	setproperties(opts;ds = 0.001, dsmax = 0.05, maxSteps = 140, detectBifurcation = 3);
-	verbosity = 0, plot = true, nev = 10,
-	tangentAlgo = BorderedPred(),
+br1 = continuation(br, 3,
+	setproperties(opts; ds = 0.005, dsmax = 0.05, maxSteps = 140, detectBifurcation = 3);
+	verbosity = 3, plot = true, nev = 10,
 	usedeflation = true,
-	plotSolution = (x, p; k...) -> plotgridap!(x;  k...))
+	callbackN = BifurcationKit.cbMaxNorm(100),
+	)
 ```
 
 We also compute the branch from the first bifurcation point on this branch `br1`:
 
 ```julia
-br2, = continuation(prob, br1, 1,
-	setproperties(opts;ds = 0.005, dsmax = 0.05, maxSteps = 140, detectBifurcation = 0);
+br2 = continuation(br1, 3,
+	setproperties(opts;ds = 0.005, dsmax = 0.05, maxSteps = 140, detectBifurcation = 3);
 	verbosity = 0, plot = true, nev = 10,
-	tangentAlgo = BorderedPred(),
 	usedeflation = true,
-	plotSolution = (x, p; k...) -> plotgridap!(x;  k...))
+	callbackN = BifurcationKit.cbMaxNorm(100),
+	)
 
 plot(br, br1, br2)
 ```
@@ -151,11 +155,13 @@ We get:
 Finally, we compute the branches from the 2d bifurcation point:
 
 ```julia
-br3, = continuation(prob, br, 2,
-	setproperties(opts;ds = 0.005, dsmax = 0.05, maxSteps = 140, detectBifurcation = 3);
-	verbosity = 0, plot = true, nev = 10,
+br3 = continuation(br, 2,
+	setproperties(opts; ds = 0.005, dsmax = 0.05, maxSteps = 140, detectBifurcation = 0);
+	verbosity = 0, plot = true,
 	usedeflation = true,
-	plotSolution = (x, p; k...) -> plotgridap!(x;  k...))
+	verbosedeflation = false,
+	callbackN = BifurcationKit.cbMaxNorm(100),
+	)
 
 plot(br, br1, br2, br3...)
 ```

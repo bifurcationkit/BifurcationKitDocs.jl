@@ -1,4 +1,5 @@
 [deps]
+AsymptoticNumericalMethod = "49cd1f3c-f820-4280-87fa-ee13bfe9a539"
 BifurcationKit = "0f109fa4-8a5d-4b75-95aa-f515264e7665"
 DiffEqOperators = "9fdde737-9c7f-55bf-ade8-46b3f136cc48"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"

@@ -1,4 +1,4 @@
-using Documenter, BifurcationKit, Setfield
+using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 

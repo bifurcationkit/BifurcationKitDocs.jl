@@ -191,9 +191,9 @@ We start by providing a linear solver and some options for the continuation to w
 ```@example TUTBRUaut
 # automatic branch switching from Hopf point
 opt_po = NewtonPar(tol = 1e-10, verbose = true, maxIter = 15)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds = 0.03, pMax = 2.2, maxSteps = 200, newtonOptions = opt_po, saveSolEveryStep = 2,
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds = 0.01, pMax = 2.2, maxSteps = 20, newtonOptions = opt_po, saveSolEveryStep = 2,
 	plotEveryStep = 1, nev = 11, tolStability = 1e-6,
-	detectBifurcation = 3, dsminBisection = 1e-6, maxBisectionSteps = 15, tolBisectionEigenvalue = 0.)
+	detectBifurcation = 3, dsminBisection = 1e-6, maxBisectionSteps = 15, nInversion = 4)
 
 nothing #hide
 ```
@@ -205,7 +205,7 @@ probFD = PeriodicOrbitTrapProblem(M = M;
   # specific method for solving linear system
   # of Periodic orbits with trapeze method
   # You could use the default one :FullLU (slower here)
-  jacobian = :FullSparseInplace)
+  jacobian = :BorderedSparseInplace)
 br_po = continuation(
 	# arguments for branch switching from the first
 	# Hopf bifurcation point
