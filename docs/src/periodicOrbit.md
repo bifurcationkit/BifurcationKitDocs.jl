@@ -11,7 +11,7 @@ $$\begin{align}
 u(0)&=u(T).
 \end{align}$$
 
-We provide three methods for computing periodic orbits (PO):
+We provide 4 methods for computing periodic orbits (PO):
 
 1. one (Trapezoid) based on finite differences to discretize a Cauchy problem,
 2. one (Collocation) based on orthogonal collocation to discretize a Cauchy problem,

@@ -13,6 +13,7 @@ makedocs(doctest = false,
 	authors = "Romain Veltz",
 	pages = Any[
 		"Home" => "index.md",
+		"Educational introduction" => "educational.md",
 		"Tutorials" => "tutorials/tutorials.md",
 		"Basics" => [
 			"Overview" => "guidelines.md",

@@ -96,11 +96,11 @@ A matrix free linear solver is used but for $\mathcal J_c$ only: it means that `
 
 ## Floquet multipliers computation
 
-A **not very precise** algorithm for computing the Floquet multipliers is provided. The method, dubbed Quick and Dirty (QaD), is not numerically very precise for large / small Floquet exponents. 
+A **not very precise** algorithm for computing the Floquet multipliers is provided. The method, dubbed Quick and Dirty (QaD), is not numerically very precise for large / small Floquet exponents because it relies on constructing the monodromy matrix. 
 
 >Note that the computation of the eigenvalues can be iterative or direct based on the eigensolver passed in arguments.
 
-It amounts to computing the eigenvalues of
+It amounts to computing the eigenvalues of the monodromy matrix
 
 $$\mathcal{M}=M_{1}^{-1} H_{1} M_{m-1}^{-1} H_{m-1} \cdots M_{2}^{-1} H_{2}.$$
 

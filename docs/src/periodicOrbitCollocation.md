@@ -21,7 +21,7 @@ $$\tau=\tau^{(j)}(\sigma):=\tau_{j}+\frac{(1+\sigma)}{2}\left(\tau_{j+1}-\tau_{j
 
 The functions $x^{(j)}$ defined on $[-1,1]$ by $x^{(j)}(\sigma) \equiv x(\tau_j(\sigma))$ satisfies the following equation on $[-1,1]$:
 
-$$\dot x^{(j)} = T\frac 	{\tau_{j+1}-\tau_j}{2}\cdot F(x^{(j)})\tag{$E_j$}$$
+$$\dot x^{(j)} = T\frac{\tau_{j+1}-\tau_j}{2}\cdot F(x^{(j)})\tag{$E_j$}$$
 
 with the continuity equation $x^{(j+1)}(-1) = x^{(j)}(1)$.
 
@@ -41,7 +41,7 @@ $$\mathcal p_j(\sigma)\equiv \sum\limits_{k=1}^{m+1}\mathcal L_k(\sigma)x_{j,k}$
 
 and the problem to be solved at the **nodes** $z_l$, $l=1,\cdots,m$:
 
-$$\forall 1\leq l\leq m,\quad, 1\leq j\leq N_{tst},\quad \dot p_j(z_l) = T\frac{\tau_{j+1}-\tau_j}{2}\cdot F(p_j(z_l))\tag{$E_j^2$}.$$
+$$\forall 1\leq l\leq m,\quad 1\leq j\leq N_{tst},\quad \dot p_j(z_l) = T\frac{\tau_{j+1}-\tau_j}{2}\cdot F(p_j(z_l))\tag{$E_j^2$}.$$
 
 The **nodes** $(z_l)$ are associated with a Gauss–Legendre quadrature.
 
