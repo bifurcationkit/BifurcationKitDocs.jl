@@ -18,11 +18,25 @@ Such linear solver `bdlsolve` will be called like `sol, success, itnumber = bdls
     In the case where $c\in\mathbb C^N$, please note that the adjoint operator $c^T$ involves a conjugate.
 
 ## Full matrix `MatrixBLS`
-This easiest way to solve $(E)$ is by forming the matrix $J$. In case it is sparse, it should be relatively efficient. You can create such bordered linear solver using `bls = MatrixBLS(ls)` where `ls::AbstractLinearSolver` is a linear solver (which defaults to `\`) used to solve invert $J$. This is the default method used in the package. 
+This easiest way to solve $(E)$ is by forming the matrix $J$. In case it is sparse, it should be relatively efficient. You can create such bordered linear solver using `bls = MatrixBLS(ls)` where `ls::AbstractLinearSolver` is a linear solver (which defaults to `\`) used to solve the linear problem associated to $J$. This is the default method used in the package. 
 
 ## Bordering method `BorderingBLS`
 
-The general solution to $(E)$ when $A$ is non singular is $x_1=A^{-1}v_1, x_2=A^{-1}b$, $u_2 = \frac{1}{d - (c,x_2)}(v_2 - (c,x_1))$ and $u_1=x_1-u_2x_2$. It is very efficient for large scale problems because it is entirely Matrix-Free and one can use preconditioners. You can create such bordered linear solver using `bls = BorderingBLS(ls)` where `ls::AbstractLinearSolver` is a linear solver which defaults to `\`. The intermediate solutions $x_1=A^{-1}v_1, x_2=A^{-1}b$ are formed using `ls`.
+The general solution $u=\left(\begin{array}{l}
+{u_1} \\
+{u_2}
+\end{array}\right)$ to $(E)$ when $A$ is non singular is
+
+$$
+\begin{array}{l}
+u_2 = \frac{1}{d - c\cdot x_2}(v_2 - c\cdot x_1) \\
+u_1=x_1-u_2x_2
+\end{array}
+$$
+
+where $x_1=A^{-1}v_1, x_2=A^{-1}b$. 
+
+It is very efficient for large scale problems because it is entirely Matrix-Free and one can use preconditioners. You can create such bordered linear solver using `bls = BorderingBLS(ls)` where `ls::AbstractLinearSolver` is a linear solver which defaults to `\`. The intermediate solutions $x_1=A^{-1}v_1, x_2=A^{-1}b$ are formed using `ls`.
 
 > 1. In the case where `ls = DefaultLS()`, the factorisation of `A` is cached so the second linear solve is very fast
 

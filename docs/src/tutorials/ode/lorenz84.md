@@ -64,8 +64,9 @@ Once the problem is set up, we can continue the state w.r.t. $F$ to and detect c
 
 ```@example LORENZ84
 # bifurcation problem
+recordFromSolutionLor(x, p) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
 prob = BifurcationProblem(Lor, z0, setproperties(parlor; T=0.04, F=3.), (@lens _.F);
-    recordFromSolution = (x, p) -> (X = x[1], Y = x[2], Z = x[3], U = x[4]))
+    recordFromSolution = recordFromSolutionLor)
 
 # continuation options
 opts_br = ContinuationPar(pMin = -1.5, pMax = 3.0, ds = 0.002, dsmax = 0.15,
@@ -94,8 +95,7 @@ We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to 
 
 ```@example LORENZ84
 # function to record the current state
-recordFromSolutionLor(x, p) = ((X = x.u[1], Y = x.u[2], Z = x.u[3], U = x.u[4]))
-
+recordFromSolutionLor(u::BorderedArray, p) = recordFromSolutionLor(u.u, p)
 sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, pMax = 3.2, pMin = -0.1, detectBifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, nInversion = 10, saveSolEveryStep = 1, maxSteps = 130, maxBisectionSteps = 55) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detectCodim2Bifurcation = 2,

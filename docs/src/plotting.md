@@ -86,7 +86,7 @@ To do this, you just need to call
 plot(diagram)
 ```
 
-where `diagram` is a branch computed after a call to `diagram, = bifurcationdiagram(...)`. You can use the keywords provided by `Plots.jl` and the different backends. You can thus call `scatter(diagram)`. In addition to the options for plotting branches (see above), there are specific arguments available for bifurcation diagrams
+where `diagram` is a branch computed after a call to `diagram = bifurcationdiagram(...)`. You can use the keywords provided by `Plots.jl` and the different backends. You can thus call `scatter(diagram)`. In addition to the options for plotting branches (see above), there are specific arguments available for bifurcation diagrams
 
 - `code` specify the part of the bifurcation diagram to plot. For example `code = (1,1,)` plots the part after the first branch of the first branch of the root branch.
 - `level = (-Inf, Inf)` restrict the branching level for plotting.

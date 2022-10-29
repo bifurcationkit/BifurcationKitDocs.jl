@@ -47,7 +47,7 @@ finaliseSolution = (z, tau, step, contResult; k...) -> begin
 You can reject a newton step by passing to `continuation` the argument `callbackN`
 
 ```julia
-function mycallback(x, f, J, res, iteration, itlinear, options; kwargs...)
+function mycallback((x, f, J, res, iteration, itlinear, options); kwargs...)
 	# stop Newton algo if residual too large
 	if res > 1e2
 		@warn "Reject Newton step!!"

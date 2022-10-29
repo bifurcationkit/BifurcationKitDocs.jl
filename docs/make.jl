@@ -6,6 +6,9 @@ using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 
+# to display progress
+ENV["JULIA_DEBUG"] = Documenter
+
 makedocs(doctest = false,
 	sitename = "Bifurcation Analysis in Julia",
 	format = Documenter.HTML(collapselevel = 1,assets = ["assets/indigo.css"]),
@@ -48,14 +51,16 @@ makedocs(doctest = false,
 			"Bifurcations" => [
 				"Bifurcation detection (codim 1)" => "detectionBifurcation.md",
 				"Fold / Hopf Continuation (codim 2)" => "codim2Continuation.md",
+				"Bogdanov-Takens refinement (codim 3)" => "codim3Continuation.md",
 				],
 			"Normal form" => [
 				"Simple branch point" => "simplebp.md",
 				"Non-simple branch point" => "nonsimplebp.md",
-				"Simple Hopf point" => "simplehopf.md",
-				"Cusp point" => "cusp.md",
-				"Bogdanov-Takens point" => "bt.md",
-				"Bautin point" => "bautin.md",
+				"Simple Hopf" => "simplehopf.md",
+				"Cusp" => "cusp.md",
+				"Bogdanov-Takens" => "bt.md",
+				"Bautin" => "bautin.md",
+			"Normal form (periodic orbit)" => [],
 			],
 			"Branch switching" => "branchswitching.md",
 			"Bifurcation diagram" => "BifurcationDiagram.md",
