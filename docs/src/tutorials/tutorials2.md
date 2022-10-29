@@ -148,8 +148,6 @@ optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, pMax = 0.00
 	br = continuation(
 	  reMake(prob, u0 = sol_hexa.u), PALC(), optcont;
 		plot = true,
-		# plotSolution = (x, p; kwargs...) -> (heatmap!(X, Y, reshape(x, Nx, Ny)'; color=:viridis, label="", kwargs...);ylims!(-1,1,subplot=4);xlims!(-.5,.3,subplot=4)),
-		# recordFromSolution = (x, p) -> norm(x),
 		normC = x -> norm(x, Inf))
 ```
 

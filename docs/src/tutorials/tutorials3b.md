@@ -172,7 +172,7 @@ We now perform a Hopf continuation with respect to the parameters `l, β`
 
 ```@example TUTBRUmanual
 optcdim2 = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 6.5, pMin = 0.0, newtonOptions = opt_newton, detectBifurcation = 0)
-br_hopf = continuation(br, ind_hopf, (@lens _.β), optcdim2, normC = norminf)
+br_hopf = continuation(br, ind_hopf, (@lens _.β), optcdim2, normC = norminf, jacobian_ma = :minaug)
 scene = plot(br_hopf)
 ```
 

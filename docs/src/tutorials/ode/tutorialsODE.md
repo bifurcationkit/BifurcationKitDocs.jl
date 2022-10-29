@@ -200,7 +200,9 @@ br_posh = @time continuation(
 	usedeflation = true,
 	# regular continuation parameters
 	verbosity = 2,	plot = true,
-	args_po...)
+	args_po...,
+	callbackN = BK.cbMaxNorm(10)
+	)
 
 Scene = title!("")
 ```

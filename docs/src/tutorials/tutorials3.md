@@ -177,6 +177,7 @@ br_hopf = continuation(br, ind_hopf, (@lens _.β),
 	detectCodim2Bifurcation = 2,
 	# we update the Fold problem at every continuation step
 	updateMinAugEveryStep = 1,
+	jacobian_ma = :minaug, # specific to large dimensions
 	normC = norminf)
 
 scene = plot(br_hopf) 	

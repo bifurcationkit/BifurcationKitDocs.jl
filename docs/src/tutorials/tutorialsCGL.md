@@ -167,6 +167,7 @@ br_hopf = @time continuation(
 	normC = norminf,
 	detectCodim2Bifurcation = 2,
 	startWithEigen = true,
+	jacobian_ma = :minaug, # specific to high dimensions
 	bdlinsolver = BorderingBLS(solver = DefaultLS(), checkPrecision = false))
 
 plot(br_hopf, branchlabel = "Hopf curve", legend = :topleft)
@@ -189,6 +190,7 @@ brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detectBi
 	detectCodim2Bifurcation = 2,
 	callbackN = BK.cbMaxNorm(1e5),
 	bdlinsolver = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
+	jacobian_ma = :minaug, # specific to high dimensions
 	bothside = true, normC = norminf)
 
 plot(br_hopf, branchlabel = "Hopf"); plot!(brfold, legend = :topleft, branchlabel = "Fold")

@@ -81,7 +81,6 @@ scene = plot(br, xlims = (0.8,1.8))
 We follow the Fold points in the parameter plane $(q_2, k)$. We tell the solver to consider `br.specialpoint[2]` and continue it.
 
 ```@example TUTCO
-recordCO(u::BorderedArray, p) = recordCO(u.u, p)
 sn_codim2 = continuation(br, 2, (@lens _.k),
 	ContinuationPar(opts_br, pMax = 2.2, pMin = 0., ds = -0.001, dsmax = 0.05);
 	normC = norminf,

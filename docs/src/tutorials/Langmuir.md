@@ -183,7 +183,9 @@ sn_codim2 = continuation(br, 7, (@lens _.Δx),
 	# we update the Fold problem at every continuation step
 	updateMinAugEveryStep = 1,
 	# compute both sides of the initial condition
-	bothside = true
+	bothside = true,
+	# we invert the Fold linear problem using Min. Aug.
+	jacobian_ma = :minaug,
 	)
 
 # compute branch of Hopf points from 5th bifurcation point on br
@@ -194,6 +196,8 @@ hp_codim2 = continuation(br, 5, (@lens _.Δx), ContinuationPar(opts_cont, pMax =
 	updateMinAugEveryStep = 1,
 	# detection of codim 2 bifurcations with bisection
 	detectCodim2Bifurcation = 2,
+	# we invert the Hopf linear problem using Min. Aug.
+	jacobian_ma = :minaug,
 	)
 
 # plot the branches

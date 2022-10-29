@@ -33,21 +33,23 @@ norminf(x) = norm(x, Inf)
 function plotsol!(x; k...)
 	n = length(x) ÷ 2
 	u = @view x[1:n]
-	v = @view x[n+1:end]
+	v = @view x[n+1:2n]
 	plot!(u; label="u", k...)
 	plot!(v; label="λ", k...)
 end
 plotsol(x; k...) = (plot();plotsol!(x; k...))
 
 # function to build derivative operators
-function DiffOp(N, lx)
-	hx = lx/N
-	Δ = spdiagm(0 => -2ones(N), 1 => ones(N-1), -1 => ones(N-1) )
-	Δ[1,end]=1; Δ[end,1]=1
-	D = spdiagm(1 => ones(N-1), -1 => -ones(N-1) )
-	D[1,end]=-1; D[end,1]=1
-	D = D / (2hx)
-	Δ = Δ / hx^2
+function DiffOp(N, lx; order = 2)
+	h = lx/N
+
+	D2 = CenteredDifference(2, order, h, N)
+	D = CenteredDifference(1, order, h, N)
+
+	Q = PeriodicBC(Float64)
+
+	Δ = sparse(D2 * Q)[1]
+	D = sparse(D * Q)[1]
 	return D, Δ
 end
 
