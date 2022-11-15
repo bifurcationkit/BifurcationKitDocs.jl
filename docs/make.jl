@@ -1,13 +1,14 @@
 # we use this hacky way because AsymptoticNumericalMethod is not registered
 using Pkg
 pkg"add https://github.com/bifurcationkit/AsymptoticNumericalMethod.jl"
+Pkg.add("BandedMatrices")
 
 using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 
 # to display progress
-ENV["JULIA_DEBUG"] = Documenter
+# ENV["JULIA_DEBUG"] = Documenter
 
 makedocs(doctest = false,
 	sitename = "Bifurcation Analysis in Julia",
