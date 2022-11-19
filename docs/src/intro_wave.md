@@ -32,8 +32,8 @@ $$A x = σ Bx\tag{GEV}$$
 
 where $B = diag(1,\cdots,1,0)$ and $A:=dG$. An advantage of (GEV) over (EV) is that the trivial eigenvalues are removed but it comes at an increased cost. We can improved this situation as follows.
 
-### Case $N_g=1$
-Let us have a look at (GEV) more closely. We find
+## Case $N_g=1$
+Let us have a look at (GEV) more closely. We need to solve for the eigenvalues $\sigma$ and the eigenvectors $(x_1,c_1)$ solutions of
 
 $$\left\{
 \begin{array}{l}\tag{W}
@@ -41,11 +41,15 @@ J x_1+c_1A_{12} = \sigma x_1 \\
 \langle A_{21},x_1\rangle + A_{22}c_1=0
 \end{array}\right.$$
 
+### Case $A_{22}\neq 0$
+
 If $A_{22}\neq 0$, the eigen problem is equivalent to
 
 $$Jx_1 - c_1\frac{\langle A_{21},x_1\rangle}{A_{22}} A_{12}= \sigma x_1$$
 
-If $A_{22}= 0$, the eigen problem is equivalent to $x_1=α A_{21} + x_1^\bot$ with $\langle A_{21},x_1^\bot\rangle=0$. Hence, I find $\langle A_{21},Jx_1^\bot\rangle+c_1\langle A_{21},A_{12}\rangle=0$
+### Case $A_{22} = 0$
+
+If $A_{22} = 0$, the eigen problem is equivalent to $x_1=α A_{21} + x_1^\bot$ with $\langle A_{21},x_1^\bot\rangle=0$. Hence, I find $\langle A_{21},Jx_1^\bot\rangle+c_1\langle A_{21},A_{12}\rangle=0$
 
 $$Jx_1^\bot-\frac{\langle A_{21},Jx_1^\bot\rangle}{\langle A_{21},A_{12}\rangle}A_{21}=σ x_1^⊥$$
 

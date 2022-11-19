@@ -12,8 +12,7 @@ Depth = 3
 You can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
-continuation(br::ContResult, ind_bif::Int, optionsCont::ContinuationPar;
-	kwargs...)
+continuation(br::ContResult, ind_bif::Int, optionsCont::ContinuationPar; kwargs...)
 ```
 
 where `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled. This call computes the branch bifurcating from the `ind_bif `th bifurcation point in `br`. An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
@@ -88,9 +87,6 @@ We refer to [`continuation`](@ref) for more information about the arguments. Her
 Several examples are provided in [1d Brusselator (automatic)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref).
 
 > See [Branch switching (Hopf point)](@ref) for the precise method definition
-
-!!! tip "Precise options"
-    Although very convenient, the automatic branch switching does not allow the very fine tuning of parameters. It must be used as a first attempt before resorting to manual branch switching
 
 ## Branch switching from Branch / Period-doubling point of curve of periodic orbits
 

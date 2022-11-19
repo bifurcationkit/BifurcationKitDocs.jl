@@ -127,6 +127,7 @@ prob = reMake(prob, params = (@set par_det.up = 0.56))
 
 # iterative eigen solver
 eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
+eig = EigArnoldiMethod(sigma=0.2, which = BifurcationKit.LM(),x₀ = rand(2N ))
 
 # newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)

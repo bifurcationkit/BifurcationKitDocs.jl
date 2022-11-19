@@ -15,7 +15,7 @@ A quite complete example for detection of codim 2 bifurcations of equilibria is 
 | Zero-Hopf | zh |
 | Hopf-Hopf | hh |
 
-In a nutshell, all you have to do (see below) is to call `continuation(br, ind_bif)` to continue the bifurcation point stored in `br.specialpoint[ind_bif]` and set proper options.
+In a nutshell, all you have to do (see below) is to call `continuation(br, ind_bif, lens2)` to continue the bifurcation point stored in `br.specialpoint[ind_bif]` and set proper options.
 
 ## Fold continuation
 
@@ -87,7 +87,7 @@ You can detect the following codim 2 bifurcation points by using the option `det
 
 ## Setting the jacobian
 
-In order to apply newton to $F_f$ or $F_h$, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can can select the following jacobians for your computations (see below):
+In order to apply the newton algorithm to $F_f$ or $F_h$, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can select the following jacobians for your computations (see below):
 
 - [Default] for `jacobian_ma = :autodiff`, automatic differentiation is applied to $F_f$ (or $F_h$) and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
 - for `jacobian_ma = :minaug`, a specific procedure for evaluating the jacobian $F_f$ (or $F_h$) and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions.

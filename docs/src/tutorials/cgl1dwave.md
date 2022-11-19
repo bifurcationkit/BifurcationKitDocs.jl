@@ -188,7 +188,7 @@ br_TW = @time continuation(probTW, wave.u, PALC(), opt_cont_br;
 	plotSolution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
 	finaliseSolution = (z, tau, step, contResult; k...) -> begin
 		amplitude(z.u[n+1:2n]) > 0.01
-end)
+end, bothside = true)
 
 plot(br, br_TW, legend = :bottomright, branchlabel =["","TW"])
 ```
