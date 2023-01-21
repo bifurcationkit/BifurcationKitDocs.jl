@@ -74,9 +74,13 @@ The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@r
 
 ## Floquet multipliers computation
 
-The algorithm is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here.
+We provide three methods to compute the Floquet coefficients.
 
+- The algorithm (Default) `FloquetColl` is based on the condensation of parameters described in [^Doedel]. It is the fastest method.
+- The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here.
 The method allows, nevertheless, to detect bifurcations of periodic orbits. It seems to work reasonably well for the tutorials considered here.
+
+- The state of the art method is based on a Periodic Schur decomposition. It is a available by the use of the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
 
 
 ## Computation with `newton`

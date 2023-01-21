@@ -96,7 +96,9 @@ A matrix free linear solver is used but for $\mathcal J_c$ only: it means that `
 
 ## Floquet multipliers computation
 
-A **not very precise** algorithm for computing the Floquet multipliers is provided. The method, dubbed Quick and Dirty (QaD), is not numerically very precise for large / small Floquet exponents because it relies on constructing the monodromy matrix. 
+### Default method
+
+A **not very precise** algorithm for computing the Floquet multipliers is provided in the package. The method, dubbed Quick and Dirty (QaD), is not numerically very precise for large / small Floquet exponents because it relies on constructing the monodromy matrix. 
 
 >Note that the computation of the eigenvalues can be iterative or direct based on the eigensolver passed in arguments.
 
@@ -106,9 +108,9 @@ $$\mathcal{M}=M_{1}^{-1} H_{1} M_{m-1}^{-1} H_{m-1} \cdots M_{2}^{-1} H_{2}.$$
 
 The method allows, nevertheless, to detect bifurcations of periodic orbits. It seems to work reasonably well for the tutorials considered here. For more information, have a look at [`FloquetQaD`](@ref).
 
+### Most precise method
 
-!!! note "Algorithm"
-    A more precise algorithm, based on the periodic Schur decomposition will be implemented in the future.
+The state of the art method is based on a Periodic Schur decomposition. It is a available by the use of the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
 
 
 ## Computation with `newton`
