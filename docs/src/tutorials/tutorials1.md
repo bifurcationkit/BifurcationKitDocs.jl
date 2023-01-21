@@ -131,6 +131,9 @@ outfoldco = continuation(br, indfold,
 scene = plot(outfoldco, plotfold = true, legend = :bottomright)
 ```
 
+!!! tip "Tip"
+    The performances for computing the curve of Fold is not that great. It is because we use the default solver tailored for ODE. If you pass `jacobian_ma = :minaug` to the last `continuation` call, you should see a great improvement in performances.
+
 ## Using GMRES or another linear solver
 
 We continue the previous example but now using Matrix Free methods. The user can pass its own solver by implementing a version of `LinearSolver`. Some linear solvers have been implemented from `KrylovKit.jl` and `IterativeSolvers.jl` (see [Linear solvers (LS)](@ref) for more information), we can use them here. Note that we can also use preconditioners as shown below. The same functionality is present for the eigensolver.

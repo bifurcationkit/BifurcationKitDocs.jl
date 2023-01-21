@@ -620,6 +620,7 @@ optcontfold = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 40.1
 outfoldco = BK.continuationFold(probFold,
 	br_po, indfold, (@lens _.c5),
 	optcontfold;
+	jacobian_ma = :minaug,
 	bdlinsolver = BorderingBLS(solver = ls, checkPrecision = false),
 	plot = true, verbosity = 2)
 ```

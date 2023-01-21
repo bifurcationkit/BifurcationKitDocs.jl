@@ -48,11 +48,17 @@ makedocs(doctest = false,
 				],
 		"Functionalities" => [
 			"Nonlinear Equations (Newton)" => ["newton.md", "deflatedproblem.md"],
-			"Bifurcations" => [
-				"Bifurcation detection (codim 1)" => "detectionBifurcation.md",
-				"Fold / Hopf Continuation (codim 2)" => "codim2Continuation.md",
-				"Bogdanov-Takens refinement (codim 3)" => "codim3Continuation.md",
-				],
+			"Bifurcations" => 
+					[
+				"Equilibria" => [
+									"Bifurcation detection (codim 1)" => "detectionBifurcation.md",
+									"Fold / Hopf Continuation (codim 2)" => "codim2Continuation.md",
+									"Bogdanov-Takens refinement (codim 3)" => "codim3Continuation.md",
+								],
+				"Periodic orbits" => [
+									"Bifurcation detection (codim 1)" => "detectionBifurcationPO.md",
+								],				
+					],
 			"Normal form" => [
 				"Simple branch point" => "simplebp.md",
 				"Non-simple branch point" => "nonsimplebp.md",

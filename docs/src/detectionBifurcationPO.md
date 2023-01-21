@@ -1,10 +1,10 @@
-# Detection of bifurcation points of Equilibria
+# Detection of bifurcation points of periodic orbits
 
 The bifurcations are detected during a call to `br = continuation(prob, alg, contParams::ContinuationPar;kwargs...)` by turning on the following flags:
 
 - `contParams.detectBifurcation = 2`
 
-The bifurcation points are located by looking at the spectrum **e.g.** by monitoring the unstable eigenvalues. The eigenvalue λ is declared unstable if `real(λ) > contParams.precisionStability`. The located bifurcation points are then returned in `br.specialpoint`. 
+The bifurcation points are located by looking at the spectrum **e.g.** by monitoring the unstable eigenvalues. The Floquet exponent λ is declared unstable if `real(λ) > contParams.precisionStability`. The located bifurcation points are then returned in `br.specialpoint`. 
     
 ## Precise detection of bifurcation points using Bisection    
 
@@ -14,9 +14,7 @@ If you choose `detectBifurcation = 3`, a **bisection algorithm** is used to loca
 
 - `nInversion`: number of sign inversions in the bisection algorithm
 - `maxBisectionSteps` maximum number of bisection steps
-- `tolBisectionEigenvalue` tolerance on real part of eigenvalue to detect bifurcation points in the bisection steps
-
-If this is still not enough, you can use a Newton solver to locate them very precisely. See [Fold / Hopf Continuation](@ref).
+- `tolBisectionEigenvalue` tolerance on real part of Floquet exponent to detect bifurcation points in the bisection steps
 
 !!! tip "Bisection mode"
     During the bisection, the eigensolvers are called like `eil(J, nev; bisection = true)` in order to be able to adapt the solver precision.
@@ -30,9 +28,9 @@ The user must specify the number of eigenvalues to be computed (like `nev = 10`)
 ## List of detected bifurcation points
 |Bifurcation|index used|
 |---|---|
-| Fold | fold |
-| Hopf | hopf |
 | Bifurcation point (single eigenvalue stability change, Fold or branch point) | bp |
+| Neimark-Sacker | ns |
+| Period doubling | pd |
 | Not documented | nd |
 
 ## Eigensolver
@@ -40,6 +38,9 @@ The user must specify the number of eigenvalues to be computed (like `nev = 10`)
 The user must provide an eigensolver by setting `NewtonOptions.eigsolver` where `NewtonOptions` is located in the parameter `::ContinuationPar` passed to continuation. See [`NewtonPar`](@ref) and [`ContinuationPar`](@ref) for more information on the composite type of the options passed to `newton` and `continuation`.
 
 The eigensolver is highly problem dependent and this is why the user should implement / parametrize its own eigensolver through the abstract type `AbstractEigenSolver` or select one among [List of implemented eigen solvers](@ref).
+
+!!! danger "Floquet multipliers computation"
+    The computation of Floquet multipliers is necessary for the detection of bifurcations of periodic orbits (which is done by analyzing the Floquet exponents obtained from the Floquet multipliers). Hence, the eigensolver needs to compute the eigenvalues with largest modulus (and not with largest real part which is their default behavior). This can be done by changing the option `which = :LM` of the eigensolver. Nevertheless, note that for most implemented eigensolvers in `BifurcationKit`, the proper option is automatically set.   
 
 ## Generic bifurcation
 
@@ -52,8 +53,15 @@ The detection of **Fold** point is done by monitoring  the monotonicity of the p
 
 The detection is triggered by setting `detectFold = true` in the parameter `::ContinuationPar` passed to `continuation`. When a **Fold** is detected on a branch `br`, a point is added to `br.foldpoint` allowing for later refinement using the function `newtonFold`.
 
-## Hopf bifurcation
+## Neimark-Sacker bifurcation
 
-The detection of Hopf point is done by analysis of the spectrum of the Jacobian.
+The detection of Neimark-Sacker point is done by analysis of the spectrum of the Jacobian.
 
-The detection is triggered by setting `detectBifurcation > 1` in the parameter `::ContinuationPar` passed to `continuation`. When a **Hopf point** is detected, a point is added to `br.specialpoint` allowing for later refinement using the function `newtonHopf`.
+The detection is triggered by setting `detectBifurcation > 1` in the parameter `::ContinuationPar` passed to `continuation`. When a **Neimark-Sacker point** is detected, a point is added to `br.specialpoint`.
+
+## Period-doubling bifurcation
+
+The detection of Period-doubling point is done by analysis of the spectrum of the Jacobian.
+
+The detection is triggered by setting `detectBifurcation > 1` in the parameter `::ContinuationPar` passed to `continuation`. When a **Period-doubling point** is detected, a point is added to `br.specialpoint`.
+
