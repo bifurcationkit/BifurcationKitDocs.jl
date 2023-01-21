@@ -11,7 +11,14 @@ There are three levels of tutorials:
 We present examples in the case of ODEs. Although `BifurcationKit.jl` is not geared towards them, we provide some specific methods which allow to study the bifurcations of ODE in a relatively efficient way.
 
 ```@contents
-Pages = ["ode/tutorialsODE.md","ode/tutorialCO.md","ode/lorenz84.md", "ode/tutorialPP2.md",	"ode/tutorialsODE-PD.md"]
+Pages = ["ode/tutorialsODE.md","ode/tutorialCO.md","ode/lorenz84.md", "ode/tutorialPP2.md",]
+Depth = 1
+```
+
+Here are some examples more oriented towards the computation of periodic orbits. For, example, in the second tutorial below, we show how to refine a periodic orbit guess obtained from numerical simulation.
+
+```@contents
+Pages = ["ode/tutorialsODE-PD.md", "ode/tutorialsCodim2PO.md",]
 Depth = 1
 ```
 
