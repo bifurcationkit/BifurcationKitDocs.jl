@@ -7,6 +7,19 @@ Pages = ["branchswitching.md"]
 Depth = 3
 ```
 
+## Summary of branching procedures
+
+We collect in the table the list of automatic branch switching (aBS) functions. Their detailed explanation follows in this page.
+
+| function | ind-th bif. point | Type `T` | <div style="width:350px">description</div> |
+|---|---|---|---|
+|  `continuation(br::ContResult{T}, ind::Int; kw...)` | `:bp`, `:nd`| `EquilibriumCont`  |  aBS from equilibria to equilibria  |
+|  `continuation(br::ContResult{T}, ind::Int, lens2::Lens; kw...)` | `:bp`, `:hopf`| `EquilibriumCont` | Fold/Hopf continuation w.r.t. parameters `getLens(br)` and `lens2`  |
+|  `continuation(br::ContResult{T}, ind::Int; kw...)` | `:bt,:zh,:hh`| ` FoldCont,HopfCont` | switch to Fold/Hopf continuation from Hopf/Fold w.r.t. parameters of codim 2 `br`  |
+| `continuation(br::ContResult{T}, ind_hopf::Int, ::ContinuationPar, prob::AbstractPeriodicOrbitProblem)`   | `:hopf` |  `EquilibriumCont` | Branch switching from Hopf point to periodic orbits |
+| `continuation(br::ContResult{T}, ind_hopf::Int, ::ContinuationPar, prob::AbstractPeriodicOrbitProblem)`   | `:hopf` |  `EquilibriumCont` | Branch switching from Hopf point to periodic orbits |
+| `continuation(br::ContResult{T}, ind::Int, kw...)`   | `:bp,:pd` |  `PeriodicOrbitCont` | Branch switching from Branch / Period-doubling point of curve of periodic orbits |
+
 ## Branch switching from simple branch point to equilibria
 
 You can perform automatic branch switching by calling `continuation` with the following options:
@@ -108,7 +121,6 @@ We provide an automatic branch switching method in this case (see for example [E
 ```julia
 continuation(br::ContResult, ind_BT::Int,
 	options_cont::ContinuationPar = br.contparams;
-	δp = nothing, ampfactor::Real = 1,
 	nev = options_cont.nev,
 	detectCodim2Bifurcation::Int = 0,
 	startWithEigen = false,
@@ -119,3 +131,46 @@ continuation(br::ContResult, ind_BT::Int,
 ```
 
 where `ind_BT` is the index of the BT point in `br`. Note that the BT has been detected during Fold or Hopf continuation. Calling the above method thus switches from Fold continuation to Hopf continuation (and vice-versa) automatically with the same parameter axis.
+
+> Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref) for improving the speed of computation for large scale systems.
+
+## Branch switching from Zero-Hopf (ZH) point to Fold / Hopf curve
+
+We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+
+```julia
+continuation(br::ContResult, ind_ZH::Int,
+	options_cont::ContinuationPar = br.contparams;
+	nev = options_cont.nev,
+	detectCodim2Bifurcation::Int = 0,
+	startWithEigen = false,
+	autodiff = false,
+	Teigvec = getvectortype(br),
+	scaleζ = norm,
+	kwargs...)
+```
+
+where `ind_ZH` is the index of the ZH point in `br`. Note that the ZH has been detected during Fold or Hopf continuation. Calling the above method thus switches from Fold continuation to Hopf continuation (and vice-versa) automatically with the same parameter axis.
+
+> Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref) for improving the speed of computation for large scale systems.
+
+## Branch switching from Hopf-Hopf (HH) point to Fold / Hopf curve
+
+We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+
+```julia
+continuation(br::ContResult, ind_HH::Int,
+	options_cont::ContinuationPar = br.contparams;
+	δp = nothing, ampfactor::Real = 1,
+	nev = options_cont.nev,
+	detectCodim2Bifurcation::Int = 0,
+	startWithEigen = false,
+	autodiff = false,
+	Teigvec = getvectortype(br),
+	scaleζ = norm,
+	kwargs...)
+```
+
+where `ind_HH` is the index of the HH point in `br`. Note that the HH has been detected during Hopf continuation. Calling the above method thus switches from Hopf continuation to another Hopf branch automatically with the same parameter axis.
+
+> Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref) for improving the speed of computation for large scale systems.
