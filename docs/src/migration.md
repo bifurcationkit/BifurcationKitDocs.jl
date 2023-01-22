@@ -1,12 +1,12 @@
 # Migration from v0.1.x to v0.2.x
 
 ## IMPORTANT NOTICE
-**New version of the package with modified interface. You are now required to define a `BifurcationProblem` to perform continuation or bifurcation analysis. The previous interface is available under the tag 0.1.12 which can be installed by doing**
+New version of the package with modified interface. You are now required to define a `BifurcationProblem` to perform continuation or bifurcation analysis. The previous interface is available under the tag 0.1.12 which can be installed by doing
 
-<span style="color:red">`] add BifurcationKit@0.1.12`</span>
+`] add BifurcationKit@0.1.12`
 
-**The new version provides many bugs fix though.
-(Please note that the docs are up to date).**
+The new version provides many bugs fix though.
+(Please note that the docs are up to date).
 
 ## Introduction
 
@@ -14,10 +14,10 @@ In v0.2.x, we introduced problem based bifurcation diagram, meaning that you hav
 
 ## Don't use AD yourself
 
-There is nothing wrong with doing so but this is done in the constructor of `BifurcationPoblem`, so 
+There is nothing wrong with doing so but this is done in the constructor of `BifurcationPoblem`, so if `myJacAD` is the jacobian computed using `ForwardDiff`, the declaration
 
 ```
-prob = BifurcationProblem(F, x, p, lens ; J = myJac) 
+prob = BifurcationProblem(F, x, p, lens ; J = myJacAD) 
 ```
 
 should be 
@@ -25,6 +25,8 @@ should be
 ```
 prob = BifurcationProblem(F, x, p, lens) 
 ```
+
+> There is nothing wrong in passing your own jacobian though
 
 ## Error: no method matching iterate(::BifurcationKit.ContResult 
 

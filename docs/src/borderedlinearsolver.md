@@ -27,12 +27,10 @@ The general solution $u=\left(\begin{array}{l}
 {u_2}
 \end{array}\right)$ to $(E)$ when $A$ is non singular is
 
-$$
-\begin{array}{l}
+$$\begin{array}{l}
 u_2 = \frac{1}{d - c\cdot x_2}(v_2 - c\cdot x_1) \\
 u_1=x_1-u_2x_2
-\end{array}
-$$
+\end{array}$$
 
 where $x_1=A^{-1}v_1, x_2=A^{-1}b$. 
 
