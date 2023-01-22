@@ -175,7 +175,8 @@ function computeBranch(br, nb; δp = 0.005, maxSteps = 190)
 		copy(sol),
 		jacobian = :AutoDiff)
 	# newton parameters with iterative eigen solver
-	eig = EigArnoldiMethod(sigma=0.2, which = BifurcationKit.LM(),x₀ = rand(2N ))
+	# eig = EigArnoldiMethod(sigma=0.2, which = BifurcationKit.LM(),x₀ = rand(2N ))
+	eig = EigArpack(nev = 10, which = :LM, sigma = 0.4)
 	optn = NewtonPar(verbose = true, eigsolver = eig)
 	# continuation parameters
 	opt_cont_br = ContinuationPar(pMin = 0.1, pMax = 1.3, newtonOptions = optn, ds= -0.001, dsmax = 0.01, plotEveryStep = 5, detectBifurcation = 3, nev = 10, maxSteps = maxSteps)

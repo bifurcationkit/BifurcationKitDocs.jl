@@ -14,7 +14,7 @@ $$\left\{\begin{array}{l}
 \end{array}\right.$$
 
 
-The model is interesting because there is a period doubling bifurcation and we want to show the branch switching capabilities of `BifurcationKit.jl` in this case. We provide two different ways to compute this periodic orbits and highlight their pro / cons.
+The model is interesting because there is a period doubling bifurcation and we want to show the branch switching capabilities of `BifurcationKit.jl` in this case. We provide 3 different ways to compute this periodic orbits and highlight their pro / cons.
 
 It is easy to encode the ODE as follows
 
@@ -174,7 +174,7 @@ br_po = continuation(
 	# first parameter value on the branch
 	δp = 0.0051,
 	# method for solving newton linear system
-	verbosity = 3,	plot = true,
+	#verbosity = 3,	plot = true,
 	recordFromSolution = recordPO,
 	plotSolution = plotPO,
 	# limit the residual, useful to help DifferentialEquations
