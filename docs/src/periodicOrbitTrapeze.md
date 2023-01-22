@@ -110,7 +110,7 @@ The method allows, nevertheless, to detect bifurcations of periodic orbits. It s
 
 ### Most precise method
 
-The state of the art method is based on a Periodic Schur decomposition. It is a available by the use of the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
+The state of the art method is based on a Periodic Schur decomposition. It is available through the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
 
 
 ## Computation with `newton`

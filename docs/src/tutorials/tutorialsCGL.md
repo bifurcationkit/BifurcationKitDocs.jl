@@ -612,7 +612,7 @@ and this gives
 --> We found a Fold Point at α = 0.9470569704262517 from 0.9481896723164748
 ```
 
-Finally, one can perform continuation of the Fold bifurcation point as follows
+Finally, one can perform continuation of the Fold bifurcation point as follows CA NE MARCHE PAS
 
 ```julia
 optcontfold = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 40.1, pMin = -10., newtonOptions = (@set opt_po.linsolver = ls), maxSteps = 20, detectBifurcation = 0)

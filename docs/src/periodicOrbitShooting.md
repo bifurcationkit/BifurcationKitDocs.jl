@@ -110,7 +110,7 @@ We provide two methods to compute the Floquet coefficients.
 - A **not very precise** algorithm for computing the Floquet multipliers is provided. The method, dubbed Quick and Dirty (QaD), is not numerically very precise for large / small Floquet exponents. 
 It amounts to computing the eigenvalues of $M=M_M\cdots M_1$ (resp. $d\Pi$) for the Standard (resp. Poincaré) Shooting.
 The method allows, nevertheless, to detect bifurcations of periodic orbits. It seems to work reasonably well for the tutorials considered here. For more information, have a look at [`FloquetQaD`](@ref).
-- The state of the art method is based on a Periodic Schur decomposition. It is a available by the use of the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
+- The state of the art method is based on a Periodic Schur decomposition. It is available through the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
 
 !!! note "Algorithm"
     A more precise algorithm, based on the periodic Schur decomposition will be provided in the future.
