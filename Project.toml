@@ -4,7 +4,6 @@ authors = ["romain.veltz@inria.fr <rveltz> and contributors"]
 version = "0.2.0"
 
 [compat]
-BifurcationKit = "0.2.3"
 julia = "1"
 
 [extras]
