@@ -5,6 +5,8 @@
 
 Deflated continuation allows to compute branches of solutions to the equation $F(x,p)=0$. It is based on the Deflated Newton (see [Deflated problems](@ref)) algorithm.
 
+See [`DefCont`](@ref) for more information.
+
 However, unlike the regular continuation method, deflated continuation allows to compute **disconnected** bifurcation diagrams, something that is impossible for our [Automatic Bifurcation diagram computation](@ref) which is limited to the connected component of the initial point.
 
 You can find an example of use of the method in [Deflated Continuation in the Carrier Problem](@ref). We reproduce below the result of the computation which shows various disconnected components arising form Fold bifurcations that  are found seemingly by the method.
@@ -28,16 +30,16 @@ while λ < λmax do
 		if solution u∗ found then
 			S(λ + ∆λ) ← S(λ + ∆λ) ∪ {u∗}  # Record success
 			F(·) ← M(·;u∗)F(·)			  # Deflate solution
-			
+
 	for u0 ∈ S(λ) do 					  # Seek new branches.
-		success ← true 
+		success ← true
 		while success do
 			apply Newton’s method to F from initial guess u0.
 			if solution u∗ found then		 # New branch found
 				S(λ + ∆λ) ← S(λ + ∆λ) ∪ {u∗} # Record success
 				F(·) ← M(·;u∗)F(·)		     # Deflate solution
 		else
-			success ← false 
+			success ← false
 	λ←λ+∆λ
 return S
 ```
@@ -46,7 +48,7 @@ return S
 
 The following piece of information is valuable in order to get the algorithm working in various conditions (see also [here](https://github.com/rveltz/BifurcationKit.jl/issues/33)) especially for small systems (e.g. dim<20):
 
-- `newton` is quite good and it is convenient to limit it otherwise it will be able to bypass the deflation. For example, you can use `maxIter = 10` in `NewtonPar` 
+- `newton` is quite good and it is convenient to limit it otherwise it will be able to bypass the deflation. For example, you can use `maxIter = 10` in `NewtonPar`
 - try to limit the newton residual by using the argument `callbackN = BifurcationKit. cbMaxNorm(1e7)`. This will likely remove the occurence of `┌ Error: Same solution found for identical parameter value!!`
 - finally, you can try some agressive shift (here `0.01` in the deflation operator, like `DeflationOperator(2, dot, 0.01, [sol])` but use it wisely.
 

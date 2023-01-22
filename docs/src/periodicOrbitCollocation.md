@@ -11,7 +11,7 @@ We look for periodic orbits as solutions $(x(0), T)$ of
 
 $$\dot x = T\cdot F(x),\ x(0)=x(1).$$
 
-We consider a partition of the time domain
+We focus on the differential equality and consider a partition of the time domain
 
 $$0=\tau_{1}<\cdots<\tau_{j}<\cdots<\tau_{N_{tst}+1}=1$$
 

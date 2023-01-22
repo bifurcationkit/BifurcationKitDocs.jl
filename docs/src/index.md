@@ -66,17 +66,17 @@ For example, in one of the simplest tutorials, [Temperature model (Simplest exam
 - Newton-Krylov solver with nonlinear deflation and preconditioner. It can be used for branch switching for example.
 - Continuation written as an [iterator](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/iterator/)
 - Monitoring user functions along curves computed by continuation, see [events](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/EventCallback/)
-- Continuation methods: PALC, Deflated continuation
-- Bifurcation points are located using a bisection algorithm
-- detection of Branch, Fold, Hopf bifurcation point of stationary solutions and computation of their normal form.
+- Continuation methods: PALC, Moore Penrose, Deflated continuation, ANM, ...
+- Bifurcation points located with a bisection algorithm
+- Detection of Branch, Fold, Hopf bifurcation point of stationary solutions and computation of their normal form.
 - Automatic branch switching at branch points (whatever the dimension of the kernel)
 - Automatic branch switching at simple Hopf points to periodic orbits
-- **Automatic bifurcation diagram computation of equilibria**
+- **Automatic computation of bifurcation diagrams of equilibria**
 - Fold / Hopf continuation based on Minimally Augmented formulation, with Matrix Free / Sparse Jacobian.
-- detection all codim 2 bifurcations of equilibria and computation of the normal forms of Bogdanov-Takens, Bautin and Cusp
-- Branching from Bogdanov-Takens points to Fold / Hopf curve
+- Detection of all codim 2 bifurcations of equilibria and computation of the normal forms of Bogdanov-Takens, Bautin and Cusp
+- Branching from Bogdanov-Takens / Zero-Hopf points to Fold / Hopf curve
 - Periodic orbit computation and continuation using Shooting, Finite Differences or Orthogonal Collocation.
-- detection of Branch, Fold, Neimark-Sacker, Period Doubling bifurcation point of periodic orbits.
+- Detection of Branch, Fold, Neimark-Sacker, Period Doubling bifurcation point of periodic orbits.
 - Continuation of Fold of periodic orbits
 
 Custom state means, we can use something else than `AbstractArray`, for example your own `struct`.
@@ -101,9 +101,10 @@ Custom state means, we can use something else than `AbstractArray`, for example 
 | Fold, Neimark-Sacker, Period doubling detection | Yes| `AbstractVector` | [:arrow_heading_up:](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/#Bifurcation-diagrams-with-periodic-orbits-1)  | |
 | Continuation of Fold of periodic orbits | Yes| `AbstractVector` | [:arrow_heading_up:](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Complex-Ginzburg-Landau-2d-1) | :heavy_check_mark: |
 | Bogdanov-Takens / Bautin / Cusp / Zero-Hopf / Hopf-Hopf point detection | Yes| Yes|  | :heavy_check_mark: |
-| Bogdanov-Takens / Bautin / Cusp / Zero-Hopf / Hopf-Hopf normal forms | Yes| Yes|  | :heavy_check_mark: |
-| Branching from Bogdanov-Takens points to Fold / Hopf curve | No  | `AbstractVector` | |  |
-| Branching from Zero-Hopf points to Fold / Hopf curve       | Yes | `AbstractVector` | |  |
+| Bogdanov-Takens / Bautin / Cusp normal forms | Yes| Yes|  | :heavy_check_mark: |
+| Bogdanov-Takens / Bautin / Cusp / Zero-Hopf / Hopf-Hopf point detection | Yes| Yes|  | :heavy_check_mark: |
+| Bogdanov-Takens / Bautin / Cusp normal forms | Yes| Yes|  | :heavy_check_mark: |
+| Branching from Bogdanov-Takens / Zero-Hopf / Hopf-Hopf to Fold / Hopf curve | Yes | `AbstractVector` | |  |
 
 ## Requested methods for Custom State
 Needless to say, if you use regular arrays, you don't need to worry about what follows.
@@ -149,7 +150,7 @@ Pkg.status(;mode = PKGMODE_MANIFEST) # hide
 </details>
 ```
 ```@raw html
-You can also download the 
+You can also download the
 <a href="
 ```
 ```@eval

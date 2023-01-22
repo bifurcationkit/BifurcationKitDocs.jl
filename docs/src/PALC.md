@@ -1,8 +1,8 @@
 # Pseudo arclength continuation
 
-This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `PALC(tangent = Bordered())` or `PALC(tangent = Secant())` in [`continuation`](@ref). See also [`PALC`](@ref).
+This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `PALC(tangent = Bordered())` or `PALC(tangent = Secant())` in [`continuation`](@ref). See also [`PALC`](@ref) for more information.
 
-For solving 
+For solving
 
 $$\mathbb R^n\ni F(x,p) = 0 \quad\tag{E}$$
 
@@ -14,9 +14,9 @@ with $\theta\in[0,1]$ and where $ds$ is the pseudo arclength (see [^Keller]).
 
 !!! warning "Parameter `θ`"
     The parameter `θ` in the struct `ContinuationPar` is very important. It should be tuned for the continuation to work properly especially in the case of large problems where the ``\langle x - x_0, dx_0\rangle`` component in the constraint might be favored too much. Also, large `θ`s favour `p` as the corresponding term in the constraint ``N`` involves the term ``1-θ``.
-    
+
 ![](PALC.png)
-    
+
 
 ## Predictor
 
@@ -36,7 +36,7 @@ The linear solver for the linear problem associated to (PALC) is set by the opti
 
 ## Dot product
 
-In the constraint $N$ above, the scalar product is in fact saved in `BifurcationKit.jl` as `dotp(x,y) -> dot(x,y)/length(y)`. This is used in the bordered linear solvers associated to PALC. If you want to use your own dot product, you can pass 
+In the constraint $N$ above, the scalar product is in fact saved in `BifurcationKit.jl` as `dotp(x,y) -> dot(x,y)/length(y)`. This is used in the bordered linear solvers associated to PALC. If you want to use your own dot product, you can pass
 
 ```julia
 dotPALC = BK.DotTheta(mydot),
@@ -47,7 +47,7 @@ to [`continuation`](@ref). Additionally, you may want to provide the linear oper
 
 ## Step size control
 
-Each time the corrector fails, the step size ``ds`` is halved. This has the disadvantage of having lost Newton iterations (which costs time) and imposing small steps (which can be slow as well). To prevent this, the step size is controlled internally with the idea of having a constant number of Newton iterations per point. This is in part controlled by the aggressiveness factor `a` in `ContinuationPar`. 
+Each time the corrector fails, the step size ``ds`` is halved. This has the disadvantage of having lost Newton iterations (which costs time) and imposing small steps (which can be slow as well). To prevent this, the step size is controlled internally with the idea of having a constant number of Newton iterations per point. This is in part controlled by the aggressiveness factor `a` in `ContinuationPar`.
 
 
 ### References

@@ -91,7 +91,7 @@ Natural
 ```
 
 ```@docs
-PALC
+Secant
 ```
 
 ```@docs
@@ -99,11 +99,15 @@ Polynomial
 ```
 
 ```@docs
-MoorePenrose
+Multiple
 ```
 
 ```@docs
-Multiple
+PALC
+```
+
+```@docs
+MoorePenrose
 ```
 
 ```@docs

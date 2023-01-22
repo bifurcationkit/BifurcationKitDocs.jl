@@ -3,9 +3,9 @@
 !!! warning "WIP"
     This is work in progress. The interface will be improved inn the future.
 
-This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `alg = MoorePenrose()` in [`continuation`](@ref). See also [`MoorePenrose`](@ref).
+This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `alg = MoorePenrose()` in [`continuation`](@ref). See also [`MoorePenrose`](@ref) for more information.
 
-For solving 
+For solving
 
 $$\mathbb R^n\ni F(x,p) = 0 \quad\tag{E}$$
 
@@ -66,7 +66,7 @@ We initialise $\phi_1^0$ with the tangent.
 
 ## Step size control
 
-Each time the corrector fails, the step size ``ds`` is halved. This has the disadvantage of having lost Newton iterations (which costs time) and imposing small steps (which can be slow as well). To prevent this, the step size is controlled internally with the idea of having a constant number of Newton iterations per point. This is in part controlled by the aggressiveness factor `a` in `ContinuationPar`. 
+Each time the corrector fails, the step size ``ds`` is halved. This has the disadvantage of having lost Newton iterations (which costs time) and imposing small steps (which can be slow as well). To prevent this, the step size is controlled internally with the idea of having a constant number of Newton iterations per point. This is in part controlled by the aggressiveness factor `a` in `ContinuationPar`.
 
 
 ### References

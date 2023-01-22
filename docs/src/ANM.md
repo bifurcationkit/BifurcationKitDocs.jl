@@ -2,13 +2,13 @@
 
 !!! warning "Work in progress"
     Automatic branch switching is being tested, it will be available soon.
-    
+
 !!! warning "Dimensions"
     This is a method for small dimensions, less than several thousands.
-    
+
 > To access this algorithm, you have to use the package [AsymptoticNumericalMethod.jl](https://github.com/bifurcationkit/AsymptoticNumericalMethod.jl)   
 
-The method seeks a Taylor approximation of the solutions of 
+The method seeks a Taylor approximation of the solutions of
 
 $$\mathbf F(X,p)=0\in\mathbb R^n$$
 
@@ -18,13 +18,13 @@ $$F(x(s),p(s))= 0$$
 
 $$\langle x(s)-x(0),\frac{\partial u}{\partial s}(0)\rangle + (p(s)-p(0))\frac{\partial p}{\partial s}(0) = s$$
 
-where 
+where
 
 $$x(s)=\sum\limits_{k=0}^K x_ks^k,\quad p(s)=\sum\limits_{k=0}^K p_ks^k$$
 
 for some user passed $K>0$. It gives
 
-$$F(x(s),p(s)) = \sum\limits_{k=0}^K F_ks^k+h.o.t.$$ 
+$$F(x(s),p(s)) = \sum\limits_{k=0}^K F_ks^k+h.o.t.$$
 
 from which we deduce the equations $F_k=0$. We then find:
 
@@ -40,9 +40,15 @@ This allows to iterate and find a sequence of series which spans the parameter r
 
 The method is based on the package [TaylorSeries.jl](https://github.com/JuliaDiff/TaylorSeries.jl) which makes it easy to manipulate Taylor series based on Automatic Differentiation.
 
+## Method
+
+```@docs
+AsymptoticNumericalMethod.ANM
+```
+
 ## Example
 
-We provide an example of use. We define a `BifurcationProblem` as usual and pass the continuation algorithm `ANM`. 
+We provide an example of use. We define a `BifurcationProblem` as usual and pass the continuation algorithm `ANM`.
 
 ```@example ANM
 using AsymptoticNumericalMethod, Plots, Parameters, Setfield
