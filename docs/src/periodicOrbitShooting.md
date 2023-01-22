@@ -63,13 +63,13 @@ The functional is encoded in the composite type [`ShootingProblem`](@ref). In pa
 
 We look for periodic orbits solutions of (1) using the hyperplanes $\Sigma_i=\{x\ / \ \langle x-x^c_{I}, n_i\rangle=0\}$ for $i=1,\cdots,M$, centered on $x^c_i$, which intersect transversally an initial periodic orbit guess. We write $\Pi_i:\Sigma_i\to\Sigma_{mod(i+1,M)}$, the Poincaré return map to $\Sigma_{mod(i+1,M)}$. The main idea of the algorithm is to use the fact that the problem is $(N-1)\cdot M$ dimensional if $x_i\in\mathbb R^N$ because each $x_i$ lives in $\Sigma_i$. Hence, one has to constrain the unknowns to these hyperplanes otherwise the Newton algorithm does not converge well.
 
-Thus we need to parametrize these hyperplanes.
+We thus need to parametrize these hyperplanes.
 
 To this end, we introduce the projection operator $R_i:\mathbb R^N\to \mathbb R^{N-1}$ such that 
 
 $$R_{i}\left(x_{1}, x_{2}, \ldots, x_{k_i-1}, x_{k_i}, x_{k_i+1}, \ldots, x_{N}\right)=\left(x_{1}, x_{2}, \ldots, x_{k_i-1}, x_{k_i+1}, \ldots, x_{N}\right)$$
 
-where $k_i=argmax_p |n_{i,p}|$. The inverse operator $E_i:\mathbb R^{N-1}\to\Sigma_i$ is defined as (where $\bar x:=R_i(x)$)
+where $k_i:=argmax_p |n_{i,p}|$. The inverse operator $E_i:\mathbb R^{N-1}\to\Sigma_i$ is defined by (where $\bar x:=R_i(x)$)
 
 $$E_{i}(\bar x) := E_{i}\left(x_{1}, x_{2}, \ldots, x_{k_i-1}, x_{k_i+1}, \ldots, x_{N}\right)=
 \left(x_{1}, x_{2}, \ldots, x_{k_i-1}, x^c_{i,k_i}-\frac{\bar{n}_i \cdot\left(\overline{x}-\overline{x}^c_{i}\right)}{n_{i,k_i}}, x_{k_i+1}, \ldots, x_{N}\right).$$ 

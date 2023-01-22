@@ -94,6 +94,11 @@ Natural
 Secant
 ```
 
+
+```@docs
+Bordered
+```
+
 ```@docs
 Polynomial
 ```

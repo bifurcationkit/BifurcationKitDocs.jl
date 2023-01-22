@@ -18,6 +18,7 @@ makedocs(doctest = false,
 	pages = Any[
 		"Home" => "index.md",
 		"Educational introduction" => "educational.md",
+		"Overview of capabilities" => "capabilities.md",		
 		"Tutorials" => "tutorials/tutorials.md",
 		"Basics" => [
 			"Overview" => "guidelines.md",
