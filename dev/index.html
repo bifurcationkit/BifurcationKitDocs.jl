@@ -12,12 +12,12 @@
   HAL_VERSION = {v1},
 }</code></pre><h2 id="Other-softwares"><a class="docs-heading-anchor" href="#Other-softwares">Other softwares</a><a id="Other-softwares-1"></a><a class="docs-heading-anchor-permalink" href="#Other-softwares" title="Permalink"></a></h2><p>There are many good softwares already available.</p><ul><li><p>For continuation in small dimension, most softwares are listed on <a href="https://dsweb.siam.org/Software">DSWeb</a>. One can mention the widely used AUTO-07p, or also, <a href="http://www.math.pitt.edu/~bard/xpp/xpp.html">XPPAUT</a>, <a href="https://sourceforge.net/projects/matcont/">MATCONT</a>, <a href="https://github.com/robclewley/pydstool">PyDSTool</a> and <a href="https://sourceforge.net/projects/cocotools/">COCO</a>. All these are very reliable and some address high codimensional bifurcations.</p></li><li><p>For large scale problems, there is the versatile and feature full <a href="http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/">pde2path</a> but also <a href="https://trilinos.org/">Trilinos</a>, <a href="https://github.com/careljonkhout/cl_matcontL">CL_MATCONTL</a>, <a href="https://sourceforge.net/projects/cocotools/">COCO</a>, <a href="https://getfem.org/userdoc/model_continuation.html">GetFEM</a> and the python libraries <a href="https://pypi.org/project/PyNCT/">pyNCT</a> and <a href="https://github.com/nschloe/pacopy">pacopy</a>.</p></li><li><p>For <em>deflated continuation</em>, there is <a href="https://bitbucket.org/pefarrell/defcon/src/master/">defcont</a> (by the inventor of the algo. P. E. Farrell) and this <a href="https://github.com/evstigneevnm/deflated_continuation">code</a> by N. M. Evstigneev.</p></li></ul><p>In Julia, we also have <a href="https://github.com/tkf/Bifurcations.jl">Bifurcations.jl</a>.</p><h2 id="A-word-on-performance"><a class="docs-heading-anchor" href="#A-word-on-performance">A word on performance</a><a id="A-word-on-performance-1"></a><a class="docs-heading-anchor-permalink" href="#A-word-on-performance" title="Permalink"></a></h2><p>The examples which follow have not <strong>all</strong> been written with the goal of performance but rather simplicity (except maybe <a href="tutorials/tutorialsCGL/#d-Ginzburg-Landau-equation-(finite-differences,-codim-2,-Hopf-aBS)">2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)</a> and <a href="tutorials/Langmuir/#d-Langmuir–Blodgett-transfer-model-(advanced)">1d Langmuir–Blodgett transfer model (advanced)</a>). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.</p><p>For example, in one of the simplest tutorials, <a href="tutorials/tutorials1/#Temperature-model-(Simplest-example)">Temperature model (Simplest example)</a>, one could use <code>BandedMatrices.jl</code> for the jacobian and an inplace modification when the jacobian is called ; using a composite type would be favored. Porting them to GPU could be another option.</p><h2 id="Main-features"><a class="docs-heading-anchor" href="#Main-features">Main features</a><a id="Main-features-1"></a><a class="docs-heading-anchor-permalink" href="#Main-features" title="Permalink"></a></h2><ul><li>Newton-Krylov solver with generic linear / eigen <em>preconditioned</em> solver. Idem for the arc-length continuation.</li><li>Newton-Krylov solver with nonlinear deflation and preconditioner. It can be used for branch switching for example.</li><li>Continuation written as an <a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/iterator/">iterator</a></li><li>Monitoring user functions along curves computed by continuation, see <a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/EventCallback/">events</a></li><li>Continuation methods: PALC, Deflated continuation</li><li>Bifurcation points are located using a bisection algorithm</li><li>detection of Branch, Fold, Hopf bifurcation point of stationary solutions and computation of their normal form.</li><li>Automatic branch switching at branch points (whatever the dimension of the kernel)</li><li>Automatic branch switching at simple Hopf points to periodic orbits</li><li><strong>Automatic bifurcation diagram computation of equilibria</strong></li><li>Fold / Hopf continuation based on Minimally Augmented formulation, with Matrix Free / Sparse Jacobian.</li><li>detection all codim 2 bifurcations of equilibria and computation of the normal forms of Bogdanov-Takens, Bautin and Cusp</li><li>Branching from Bogdanov-Takens points to Fold / Hopf curve</li><li>Periodic orbit computation and continuation using Shooting, Finite Differences or Orthogonal Collocation.</li><li>detection of Branch, Fold, Neimark-Sacker, Period Doubling bifurcation point of periodic orbits.</li><li>Continuation of Fold of periodic orbits</li></ul><p>Custom state means, we can use something else than <code>AbstractArray</code>, for example your own <code>struct</code>.</p><p><strong>Note that you can combine most of the solvers, like use Deflation for Periodic orbit computation or Fold of periodic orbits family.</strong></p><table><tr><th style="text-align: right">Features</th><th style="text-align: right">Matrix Free</th><th style="text-align: right">Custom state</th><th style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/">Tutorial</a></th><th style="text-align: right">GPU</th></tr><tr><td style="text-align: right">(Deflated) Krylov-Newton</td><td style="text-align: right">Yes</td><td style="text-align: right">Yes</td><td style="text-align: right">All</td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Continuation PALC (Natural, Secant, Tangent, Polynomial)</td><td style="text-align: right">Yes</td><td style="text-align: right">Yes</td><td style="text-align: right">All</td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Deflated Continuation</td><td style="text-align: right">Yes</td><td style="text-align: right">Yes</td><td style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialCarrier/#Deflated-Continuation-in-the-Carrier-Problem-1">:arrow<em>heading</em>up:</a></td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Bifurcation / Fold / Hopf point detection</td><td style="text-align: right">Yes</td><td style="text-align: right">Yes</td><td style="text-align: right">All / All / <a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/#Bifurcation-diagrams-with-periodic-orbits-1">:arrow<em>heading</em>up:</a></td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Fold Point continuation</td><td style="text-align: right">Yes</td><td style="text-align: right">Yes</td><td style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials1/#Temperature-model-(simplest-example-for-equilibria)-1">:arrow<em>heading</em>up:</a>, <a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Complex-Ginzburg-Landau-2d-1">:arrow<em>heading</em>up:</a></td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Hopf Point continuation</td><td style="text-align: right">Yes</td><td style="text-align: right"><code>AbstractArray</code></td><td style="text-align: right"></td><td style="text-align: right"></td></tr><tr><td style="text-align: right">Branch point / Fold / Hopf normal form</td><td style="text-align: right">Yes</td><td style="text-align: right">Yes</td><td style="text-align: right"></td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Branch switching at Branch / Hopf points</td><td style="text-align: right">Yes</td><td style="text-align: right"><code>AbstractArray</code></td><td style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/#Bifurcation-diagrams-with-periodic-orbits-1">:arrow<em>heading</em>up:</a></td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">&lt;span style=&quot;color:red&quot;&gt;<strong>Automatic bifurcation diagram computation of equilibria</strong>&lt;/span&gt;</td><td style="text-align: right">Yes</td><td style="text-align: right"><code>AbstractArray</code></td><td style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/#Automatic-bifurcation-diagram-1">:arrow<em>heading</em>up:</a></td><td style="text-align: right"></td></tr><tr><td style="text-align: right">Periodic Orbit (Trapezoid) Newton / continuation</td><td style="text-align: right">Yes</td><td style="text-align: right"><code>AbstractVector</code></td><td style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials3/#Brusselator-1d-(automatic)-1">:arrow<em>heading</em>up:</a>, <a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Complex-Ginzburg-Landau-2d-1">:arrow<em>heading</em>up:</a></td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Periodic Orbit (Collocation) Newton / continuation</td><td style="text-align: right">Yes</td><td style="text-align: right"><code>AbstractVector</code></td><td style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE/#Neural-mass-equation-(Hopf-aBS)">:arrow<em>heading</em>up:</a></td><td style="text-align: right"></td></tr><tr><td style="text-align: right">Periodic Orbit (Parallel Poincaré / Standard Shooting) Newton / continuation</td><td style="text-align: right">Yes</td><td style="text-align: right"><code>AbstractArray</code></td><td style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/#Bifurcation-diagrams-with-periodic-orbits-1">:arrow<em>heading</em>up:</a></td><td style="text-align: right"></td></tr><tr><td style="text-align: right">Fold, Neimark-Sacker, Period doubling detection</td><td style="text-align: right">Yes</td><td style="text-align: right"><code>AbstractVector</code></td><td style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/#Bifurcation-diagrams-with-periodic-orbits-1">:arrow<em>heading</em>up:</a></td><td style="text-align: right"></td></tr><tr><td style="text-align: right">Continuation of Fold of periodic orbits</td><td style="text-align: right">Yes</td><td style="text-align: right"><code>AbstractVector</code></td><td style="text-align: right"><a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Complex-Ginzburg-Landau-2d-1">:arrow<em>heading</em>up:</a></td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Bogdanov-Takens / Bautin / Cusp / Zero-Hopf / Hopf-Hopf point detection</td><td style="text-align: right">Yes</td><td style="text-align: right">Yes</td><td style="text-align: right"></td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Bogdanov-Takens / Bautin / Cusp / Zero-Hopf / Hopf-Hopf normal forms</td><td style="text-align: right">Yes</td><td style="text-align: right">Yes</td><td style="text-align: right"></td><td style="text-align: right">:heavy<em>check</em>mark:</td></tr><tr><td style="text-align: right">Branching from Bogdanov-Takens points to Fold / Hopf curve</td><td style="text-align: right">No</td><td style="text-align: right"><code>AbstractVector</code></td><td style="text-align: right"></td><td style="text-align: right"></td></tr><tr><td style="text-align: right">Branching from Zero-Hopf points to Fold / Hopf curve</td><td style="text-align: right">Yes</td><td style="text-align: right"><code>AbstractVector</code></td><td style="text-align: right"></td><td style="text-align: right"></td></tr></table><h2 id="Requested-methods-for-Custom-State"><a class="docs-heading-anchor" href="#Requested-methods-for-Custom-State">Requested methods for Custom State</a><a id="Requested-methods-for-Custom-State-1"></a><a class="docs-heading-anchor-permalink" href="#Requested-methods-for-Custom-State" title="Permalink"></a></h2><p>Needless to say, if you use regular arrays, you don&#39;t need to worry about what follows.</p><p>We make the same requirements as <code>KrylovKit.jl</code>. Hence, we refer to its <a href="https://jutho.github.io/KrylovKit.jl/stable/#Package-features-and-alternatives-1">docs</a> for more information. We additionally require the following methods to be available:</p><ul><li><code>Base.length(x)</code>: it is used in the constraint equation of the pseudo arclength continuation method (see <a href="library/#BifurcationKit.continuation"><code>continuation</code></a> for more details). If <code>length</code> is not available for your &quot;vector&quot;, define it <code>length(x) = 1</code> and adjust tuning the parameter <code>theta</code> in <code>ContinuationPar</code>.</li><li><code>Base.copyto!(dest, in)</code> this is required to reduce the allocations by avoiding too many copies</li><li><code>Base.eltype</code> must be extended to your vector type. It is mainly used for branching.</li></ul><h2 id="Citations"><a class="docs-heading-anchor" href="#Citations">Citations</a><a id="Citations-1"></a><a class="docs-heading-anchor-permalink" href="#Citations" title="Permalink"></a></h2><p>The papers citing this work are collected on <a href="https://scholar.google.fr/scholar?hl=fr&amp;as_sdt=2005&amp;cites=159498619004863176%2C8662907770106865595&amp;scipsc=&amp;as_ylo=&amp;as_yhi=">google scholar</a>.</p><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of BifurcationKit was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl/docs/Project.toml`
   [49cd1f3c] AsymptoticNumericalMethod v0.1.0 `https://github.com/bifurcationkit/AsymptoticNumericalMethod.jl#main`
-  [aae01518] BandedMatrices v0.17.9
-  [0f109fa4] BifurcationKit v0.2.2
+  [aae01518] BandedMatrices v0.17.10
+  [0f109fa4] BifurcationKit v0.2.3
   [52551710] BifurcationKitDocs v0.2.0 `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl`
   [9fdde737] DiffEqOperators v4.44.0
   [0c46a032] DifferentialEquations v7.6.0
-  [e30172f5] Documenter v0.27.23
+  [e30172f5] Documenter v0.27.24
   [f6369f11] ForwardDiff v0.10.34
 ⌃ [961ee093] ModelingToolkit v8.36.0
   [d96e819e] Parameters v0.12.3
@@ -32,10 +32,10 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 Commit 17cfb8e65ea (2023-01-08 06:45 UTC)
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
-  CPU: 2 × Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
+  CPU: 2 × Intel(R) Xeon(R) Platinum 8272CL CPU @ 2.60GHz
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-13.0.1 (ORCJIT, icelake-server)
+  LLVM: libLLVM-13.0.1 (ORCJIT, skylake-avx512)
   Threads: 1 on 2 virtual cores</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl/docs/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.8
@@ -43,9 +43,9 @@ Platform Info:
   [79e6a3ab] Adapt v3.5.0
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.2.0
-  [7d9fca2a] Arpack v0.5.4
-  [4fba245c] ArrayInterface v6.0.24
-  [30b0a656] ArrayInterfaceCore v0.1.28
+⌅ [7d9fca2a] Arpack v0.5.3
+  [4fba245c] ArrayInterface v6.0.25
+  [30b0a656] ArrayInterfaceCore v0.1.29
   [6ba088a2] ArrayInterfaceGPUArrays v0.2.2
   [015c0d05] ArrayInterfaceOffsetArrays v0.1.7
   [b0d46f97] ArrayInterfaceStaticArrays v0.1.5
@@ -53,10 +53,10 @@ Platform Info:
   [4c555306] ArrayLayouts v0.8.18
   [49cd1f3c] AsymptoticNumericalMethod v0.1.0 `https://github.com/bifurcationkit/AsymptoticNumericalMethod.jl#main`
   [15f4f7f2] AutoHashEquals v0.2.0
-  [aae01518] BandedMatrices v0.17.9
+  [aae01518] BandedMatrices v0.17.10
   [198e06fe] BangBang v0.3.37
   [9718e550] Baselet v0.1.1
-  [0f109fa4] BifurcationKit v0.2.2
+  [0f109fa4] BifurcationKit v0.2.3
   [52551710] BifurcationKitDocs v0.2.0 `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl`
   [e2ed5e7c] Bijections v0.1.4
   [d1d4a3ce] BitFlags v0.1.7
@@ -69,16 +69,16 @@ Platform Info:
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
   [d360d2e6] ChainRulesCore v1.15.7
-  [9e997f8a] ChangesOfVariables v0.1.4
+  [9e997f8a] ChangesOfVariables v0.1.5
   [fb6a15b2] CloseOpenIntervals v0.1.11
   [da1fd8a2] CodeTracking v1.2.0
-  [944b1d66] CodecZlib v0.7.0
+  [944b1d66] CodecZlib v0.7.1
   [35d6a980] ColorSchemes v3.20.0
   [3da002f7] ColorTypes v0.11.4
   [c3611d14] ColorVectorSpace v0.9.10
   [5ae59095] Colors v0.12.10
   [861a8166] Combinatorics v1.0.2
-  [a80b9123] CommonMark v0.8.9
+  [a80b9123] CommonMark v0.8.10
   [38540f10] CommonSolve v0.2.3
   [bbf7d656] CommonSubexpressions v0.3.0
   [34da2185] Compat v4.5.0
@@ -104,7 +104,7 @@ Platform Info:
   [b4f34e82] Distances v0.10.7
   [31c24e10] Distributions v0.25.80
 ⌅ [ffbed154] DocStringExtensions v0.8.6
-  [e30172f5] Documenter v0.27.23
+  [e30172f5] Documenter v0.27.24
 ⌅ [5b8099bc] DomainSets v0.5.15
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.4.5
@@ -118,7 +118,7 @@ Platform Info:
   [9aa1b823] FastClosures v0.3.2
 ⌅ [442a2c76] FastGaussQuadrature v0.4.9
   [29a986be] FastLapackInterface v1.2.8
-  [1a297f60] FillArrays v0.13.6
+  [1a297f60] FillArrays v0.13.7
   [6a86dc24] FiniteDiff v2.17.0
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
@@ -126,15 +126,15 @@ Platform Info:
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.1
   [46192b85] GPUArraysCore v0.1.3
-  [28b8d3ca] GR v0.71.3
+  [28b8d3ca] GR v0.71.5
   [c145ed77] GenericSchur v0.5.3
   [c27321d9] Glob v1.3.0
   [86223c79] Graphs v1.7.4
   [42e2da0e] Grisu v1.0.2
   [0b43b601] Groebner v0.2.11
   [d5909c97] GroupsCore v0.4.0
-  [cd3eb016] HTTP v1.7.3
-  [3e5b6fbb] HostCPUFeatures v0.1.13
+  [cd3eb016] HTTP v1.7.4
+  [3e5b6fbb] HostCPUFeatures v0.1.14
   [34004b35] HypergeometricFunctions v0.3.11
   [b5f81e59] IOCapture v0.2.2
   [615f187c] IfElse v0.1.1
@@ -150,26 +150,26 @@ Platform Info:
   [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
-  [98e50ef6] JuliaFormatter v1.0.19
+  [98e50ef6] JuliaFormatter v1.0.20
   [aa1ae85d] JuliaInterpreter v0.9.20
   [ccbc3e58] JumpProcesses v9.3.1
   [ef3ab10e] KLU v0.4.0
   [ba0b0d4f] Krylov v0.9.0
 ⌅ [0b1a1467] KrylovKit v0.5.4
   [b964fa9f] LaTeXStrings v1.3.0
-  [2ee39098] LabelledArrays v1.12.5
-  [984bce1d] LambertW v0.4.5
+  [2ee39098] LabelledArrays v1.13.0
+  [984bce1d] LambertW v0.4.6
   [23fbe1c1] Latexify v0.15.18
-  [10f19ff3] LayoutPointers v0.1.12
+  [10f19ff3] LayoutPointers v0.1.13
   [5078a376] LazyArrays v0.22.16
 ⌅ [d7e5e226] LazyBandedMatrices v0.7.17
   [2d8b4e74] LevyArea v1.0.0
   [d3d80556] LineSearches v7.2.0
   [7a12625a] LinearMaps v3.8.0
-  [7ed4a6bd] LinearSolve v1.33.0
-  [2ab3a3ac] LogExpFunctions v0.3.19
+  [7ed4a6bd] LinearSolve v1.34.1
+  [2ab3a3ac] LogExpFunctions v0.3.20
   [e6f89c97] LoggingExtras v1.0.0
-  [bdcacae8] LoopVectorization v0.12.147
+  [bdcacae8] LoopVectorization v0.12.148
   [6f1432cf] LoweredCodeUtils v2.3.0
   [1914dd2f] MacroTools v0.5.10
   [d125e4d3] ManualMemory v0.1.8
@@ -185,7 +185,7 @@ Platform Info:
   [d8a4904e] MutableArithmetics v1.1.0
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
-  [872c559c] NNlib v0.8.15
+  [872c559c] NNlib v0.8.16
   [77ba4419] NaNMath v1.0.1
   [6fe1bfb0] OffsetArrays v1.12.8
   [4d8831e6] OpenSSL v1.3.3
@@ -197,7 +197,7 @@ Platform Info:
   [69de0a69] Parsers v2.5.3
   [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.1.0
-  [995b91a9] PlotUtils v1.3.2
+  [995b91a9] PlotUtils v1.3.3
   [91a5bcdd] Plots v1.38.2
   [e409e4f3] PoissonRandom v0.4.3
 ⌅ [f517fe37] Polyester v0.6.20
@@ -224,7 +224,7 @@ Platform Info:
   [7e49a35a] RuntimeGeneratedFunctions v0.5.5
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.37
+  [476501e8] SLEEFPirates v0.6.38
   [0bca4576] SciMLBase v1.81.0
   [6c6a2e73] Scratch v1.1.1
   [efcf1570] Setfield v1.1.1
@@ -235,7 +235,7 @@ Platform Info:
   [66db9d55] SnoopPrecompile v1.0.3
   [a2af1166] SortingAlgorithms v1.1.0
   [47a9eef4] SparseDiffTools v1.30.0
-  [e56a9233] Sparspak v0.3.5
+  [e56a9233] Sparspak v0.3.7
   [276daf66] SpecialFunctions v2.1.7
   [171d559e] SplittablesBase v0.1.15
   [aedffcd0] Static v0.8.3
@@ -246,7 +246,7 @@ Platform Info:
   [4c63d2b9] StatsFuns v1.1.1
   [9672c7b4] SteadyStateDiffEq v1.11.0
   [789caeaf] StochasticDiffEq v6.57.4
-  [7792a7ef] StrideArraysCore v0.4.5
+  [7792a7ef] StrideArraysCore v0.4.6
 ⌅ [09ab397b] StructArrays v0.4.2
   [c3572dad] Sundials v4.12.0
 ⌅ [d1185830] SymbolicUtils v0.19.11
@@ -257,21 +257,21 @@ Platform Info:
   [6aa5eb33] TaylorSeries v0.12.2
   [62fd8b95] TensorCore v0.1.1
 ⌅ [8ea1fca8] TermInterface v0.2.3
-  [8290d209] ThreadingUtilities v0.5.0
+  [8290d209] ThreadingUtilities v0.5.1
   [ac1d9e8a] ThreadsX v0.1.11
   [a759f4b9] TimerOutputs v0.5.22
   [0796e94c] Tokenize v0.5.25
   [3bb67fe8] TranscodingStreams v0.9.11
   [28d57a85] Transducers v0.4.75
   [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.17
+  [d5829a12] TriangularSolve v0.1.19
   [410a4b4d] Tricks v0.1.6
   [5c2747f8] URIs v1.4.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
   [1986cc42] Unitful v1.12.2
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.57
+  [3d5dd08c] VectorizationBase v0.21.58
   [19fa3120] VertexSafeGraphs v0.2.0
   [700de1a5] ZygoteRules v0.2.2
 ⌅ [68821587] Arpack_jll v3.5.1+1
@@ -283,7 +283,7 @@ Platform Info:
   [d7e528f0] FreeType2_jll v2.10.4+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.71.3+0
+  [d2c73de3] GR_jll v0.71.5+0
   [78b55507] Gettext_jll v0.21.0+0
   [7746bdde] Glib_jll v2.74.0+2
   [3b182d85] Graphite2_jll v1.3.14+0
@@ -306,7 +306,7 @@ Platform Info:
   [91d4177d] Opus_jll v1.3.2+0
   [30392449] Pixman_jll v0.40.1+0
   [ea2cea3b] Qt5Base_jll v5.15.3+2
-  [f50d1b31] Rmath_jll v0.3.0+0
+⌅ [f50d1b31] Rmath_jll v0.3.0+0
   [fb77eaff] Sundials_jll v5.2.1+0
   [a2964d1f] Wayland_jll v1.21.0+0
   [2381bf8a] Wayland_protocols_jll v1.25.0+0
@@ -392,4 +392,4 @@ Platform Info:
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details>You can also download the 
 <a href="https://github.com/bifurcationkit/BifurcationKitDocs.jl/tree/gh-pages/v0.2.0/assets/Manifest.toml">manifest</a> file and the
-<a href="https://github.com/bifurcationkit/BifurcationKitDocs.jl/tree/gh-pages/v0.2.0/assets/Project.toml">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="educational/">Educational introduction »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Saturday 21 January 2023 15:01">Saturday 21 January 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+<a href="https://github.com/bifurcationkit/BifurcationKitDocs.jl/tree/gh-pages/v0.2.0/assets/Project.toml">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="educational/">Educational introduction »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Friday 27 January 2023 12:14">Friday 27 January 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
