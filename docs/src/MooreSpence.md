@@ -39,10 +39,12 @@ $$y^{k+1} = y^k -d_yF(y^k)^+F(y^k)$$
 where the superscript $^+$ indicates the Moore-Penrose pseudoinverse of rank $N$.
 
 ### Direct case
-In this case, triggered by the option `MoorePenrose(directLS = true)`, the pseudoinverse is computed with `pinv`.
+In this case, triggered by the option `MoorePenrose(method = BifurcationKit.direct)`, the pseudoinverse is computed with `\`.
+
+the option `MoorePenrose(method = BifurcationKit.pInv)`, the pseudoinverse is computed with `pinv`.
 
 ### Iterative case
-In this case, triggered by the option `MoorePenrose(directLS = false)`, the pseudoinverse is computed with an iterative method described in [^Meijer]:
+In this case, triggered by the option `MoorePenrose(method = BifurcationKit.iterative)`, the pseudoinverse is computed with an iterative method described in [^Meijer]:
 
 $$\left\{\begin{array}{l}
 y_{1}^{j+1}=y_{1}^{j}-\left(\begin{array}{c}

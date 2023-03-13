@@ -41,7 +41,7 @@ par_pop = ( K = 1., r = 6.28, a = 12.56, b0 = 0.25, e = 1., d = 6.28, ϵ = 0.2, 
 
 z0 = [0.1,0.1,1,0]
 
-prob = BK.BifurcationProblem(Pop, z0, par_pop, (@lens _.b0); 
+prob = BK.BifurcationProblem(Pop, z0, par_pop, (@lens _.b0);
 	recordFromSolution = (x, p) -> (x = x[1], y = x[2], u = x[3]))
 
 opts_br = ContinuationPar(pMin = 0., pMax = 20.0, ds = 0.002, dsmax = 0.01, nInversion = 6, detectBifurcation = 3, maxBisectionSteps = 25, nev = 4, maxSteps = 20000)
@@ -62,9 +62,9 @@ sol = solve(prob_de, Rodas5())
 plot(sol)
 ```
 
-## Periodic orbits with trapezoid method
+## Utility functions
 
-We compute periodic orbits of (E) using the Trapezoid method. We start with two helper functions that record and plot the periodic orbits.
+We start with two helper functions that record and plot the periodic orbits. The following works for shooting, collocation and trapezoid methods for computing periodic orbits.
 
 ```@example TUTPPREY
 argspo = (recordFromSolution = (x, p) -> begin
@@ -81,12 +81,15 @@ argspo = (recordFromSolution = (x, p) -> begin
 	end)
 ```
 
-We are now ready to build a periodic orbit problem from a solution `sol::ODEProblem`.
+
+## Periodic orbits with trapezoid method
+
+We compute periodic orbits of (E) using the Trapezoid method.
+We are now equipped to build a periodic orbit problem from a solution `sol::ODEProblem`.
 
 ```@example TUTPPREY
 # this is the function which builds probtrap from sol
-probtrap, ci = BK.generateCIProblem(PeriodicOrbitTrapProblem(M = 151;  
-	jacobian = :DenseAD, updateSectionEveryStep = 0), 
+probtrap, ci = BK.generateCIProblem(PeriodicOrbitTrapProblem(M = 150),
 	prob, sol, 2.)
 
 opts_po_cont = setproperties(opts_br, maxSteps = 50, tolStability = 1e-8)
@@ -111,34 +114,17 @@ scene = plot(brpo_pd)
 
 ## Periodic orbits with parallel standard shooting
 
-We do the same as in the previous section but using standard shooting. We start with some helper functions.
-
-```@example TUTPPREY
-record_sh = recordFromSolution = (x, p) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, set(par_pop, p.prob.lens, p.p))
-		return (max = maximum(xtt[1,:]),
-				min = minimum(xtt[1,:]),
-				period = getPeriod(p.prob, x, set(par_pop, p.prob.lens, p.p)))
-	end
-plot_sh  = (x, p; k...) -> begin
-	xtt = BK.getPeriodicOrbit(p.prob, x, set(par_pop, p.prob.lens, p.p))
-	plot!(xtt.t, xtt[1,:]; label = "x", k...)
-	plot!(xtt.t, xtt[2,:]; label = "y", k...)
-	# plot!(br; subplot = 1, putspecialptlegend = false)
-	end
-```
-
 We are now ready to build a periodic orbit problem from a solution `sol::ODEProblem`.
 
 ```@example TUTPPREY
-probsh, cish = generateCIProblem( ShootingProblem(M=3), 
+probsh, cish = generateCIProblem( ShootingProblem(M=3),
 	prob, prob_de, sol, 2.; alg = Rodas5())
 
-opts_po_cont = setproperties(opts_br, maxSteps = 50, saveEigenvectors = true, detectLoop = true, tolStability = 1e-3)
+opts_po_cont = setproperties(opts_br, maxSteps = 50, tolStability = 1e-3)
 br_fold_sh = continuation(probsh, cish, PALC(tangent = Bordered()), opts_po_cont;
 	verbosity = 3, plot = true,
-	recordFromSolution = record_sh,
-	plotSolution = plot_sh,)
+	argspo...
+)
 
 scene = plot(br_fold_sh)
 ```
@@ -149,8 +135,7 @@ We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 probsh2 = @set probsh.lens = @lens _.ϵ
 brpo_pd_sh = continuation(probsh2, cish, PALC(), opts_po_cont;
 	verbosity = 3, plot = true,
-	recordFromSolution = record_sh,
-	plotSolution = plot_sh,
+	argspo...
 	)
 scene = plot(brpo_pd_sh)
 ```
@@ -161,10 +146,10 @@ We do the same as in the previous section but using orthogonal collocation. This
 
 ```@example TUTPPREY
 # this is the function which builds probcoll from sol
-probcoll, ci = generateCIProblem(PeriodicOrbitOCollProblem(26, 3; updateSectionEveryStep = 0), 
+probcoll, ci = generateCIProblem(PeriodicOrbitOCollProblem(26, 3; updateSectionEveryStep = 0),
 	prob, sol, 2.)
 
-opts_po_cont = setproperties(opts_br, maxSteps = 50, saveEigenvectors = true, tolStability = 1e-8)
+opts_po_cont = setproperties(opts_br, maxSteps = 50, tolStability = 1e-8)
 brpo_fold = continuation(probcoll, ci, PALC(), opts_po_cont;
 	verbosity = 3, plot = true,
 	argspo...

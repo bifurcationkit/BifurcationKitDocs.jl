@@ -48,7 +48,8 @@ par_tm = (α = 1.5, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.200, U0 = 0.3, τF 
 z0 = [0.238616, 0.982747, 0.367876]
 
 # Bifurcation Problem
-prob = BifurcationProblem(TMvf, z0, par_tm, (@lens _.E0); recordFromSolution = (x, p) -> (E = x[1], x = x[2], u = x[3]),)
+prob = BifurcationProblem(TMvf, z0, par_tm, (@lens _.E0);
+	recordFromSolution = (x, p) -> (E = x[1], x = x[2], u = x[3]),)
 
 nothing #hide
 ```
@@ -59,11 +60,7 @@ We first compute the branch of equilibria
 # continuation options
 opts_br = ContinuationPar(pMin = -10.0, pMax = -0.9,
 	# parameters to have a smooth result
-	ds = 0.04, dsmax = 0.05,
-	# this is to detect bifurcation points precisely with bisection
-	detectBifurcation = 3,
-	# Optional: bisection options for locating bifurcations
-	nInversion = 8, maxBisectionSteps = 25, nev = 3)
+	ds = 0.04, dsmax = 0.05,)
 
 # continuation of equilibria
 br = continuation(prob, PALC(tangent=Bordered()), opts_br;
@@ -84,12 +81,11 @@ We then compute the branch of periodic orbits from the last Hopf bifurcation poi
 
 ```@example TUTODE
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 8)
+optn_po = NewtonPar(verbose = true, tol = 1e-10,  maxIter = 10)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5.,
-	maxSteps = 110, newtonOptions = (@set optn_po.tol = 1e-7),
-	nev = 3, tolStability = 1e-8, detectBifurcation = 3, saveSolEveryStep=1)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4,
+	maxSteps = 90, newtonOptions = (@set optn_po.tol = 1e-7), tolStability = 1e-8, saveSolEveryStep=1)
 
 # arguments for periodic orbits
 args_po = (	recordFromSolution = (x, p) -> begin
@@ -100,11 +96,13 @@ args_po = (	recordFromSolution = (x, p) -> begin
 	end,
 	plotSolution = (x, p; k...) -> begin
 		xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm.E0 = p.p)
-		plot!(xtt.t, xtt[1,:]; label = "E", k...)
-		plot!(xtt.t, xtt[2,:]; label = "x", k...)
-		plot!(xtt.t, xtt[3,:]; label = "u", k...)
+		arg = (marker = :d, markersize = 1)
+		plot!(xtt.t, xtt[1,:]; label = "E", arg..., k...)
+		plot!(xtt.t, xtt[2,:]; label = "x", arg..., k...)
+		plot!(xtt.t, xtt[3,:]; label = "u", arg..., k...)
 		plot!(br; subplot = 1, putspecialptlegend = false)
 		end,
+	# we use the supremum norm
 	normC = norminf)
 
 Mt = 200 # number of time sections
@@ -112,14 +110,11 @@ Mt = 200 # number of time sections
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Trapeze method to locate PO
-	# this jacobian is specific to ODEs
-	# it is computed using AD and
-	# updated inplace
-	PeriodicOrbitTrapProblem(M = Mt, jacobian = :Dense, updateSectionEveryStep = 0);
+	PeriodicOrbitTrapProblem(M = Mt);
 	# regular continuation options
 	verbosity = 2,	plot = true,
 	args_po...,
-	callbackN = BK.cbMaxNorm(1000.))
+	)
 
 scene = plot(br, br_potrap, markersize = 3)
 plot!(scene, br_potrap.param, br_potrap.min, label = "")
@@ -146,28 +141,28 @@ title!("")
 
 ## Branch of periodic orbits with Orthogonal Collocation
 
-We compute the branch of periodic orbits from the last Hopf bifurcation point (on the right). We use Orthogonal Collocation to discretize the problem of finding periodic orbits. This is vastly more precise than the previous method.
+We compute the branch of periodic orbits from the last Hopf bifurcation point (on the right). We use Orthogonal Collocation to discretize the problem of finding periodic orbits. This is vastly more precise than the previous method because we use mesh adaptation.
 
 ```@example TUTODE
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5.,
-	maxSteps = 110, newtonOptions = (@set optn_po.tol = 1e-8),
-	nev = 3, tolStability = 1e-8, detectBifurcation = 0, saveSolEveryStep=1)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.15, ds= -0.001, dsmin = 1e-4,
+	maxSteps = 100, newtonOptions = (@set optn_po.tol = 1e-8),
+	tolStability = 1e-5, saveSolEveryStep=1)
 
 Mt = 30 # number of time sections
 	br_pocoll = @time continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
-	# we want to use the Collocation method to locate PO, with polynomial degree 5
-	PeriodicOrbitOCollProblem(Mt, 5; updateSectionEveryStep = 0);
+	# we want to use the Collocation method to locate PO, with polynomial degree 4
+	PeriodicOrbitOCollProblem(Mt, 4; meshadapt = true);
 	# regular continuation options
 	verbosity = 2,	plot = true,
-	callbackN = BK.cbMaxNorm(1000.),
+	# we reject the step when the norm norm of the residual is high
+	callbackN = BK.cbMaxNorm(100.),
 	args_po...)
 
 Scene = title!("")
 ```
-
 
 We plot the maximum (resp. minimum) of the limit cycle. We can see that the min converges to the smallest equilibrium indicating a homoclinic orbit.
 
@@ -179,21 +174,15 @@ We use a different method to compute periodic orbits: we rely on a fixed point o
 using DifferentialEquations
 
 # this is the ODEProblem used with `DiffEqBase.solve`
-probsh = ODEProblem(TMvf!, copy(z0), (0., 1.), par_tm; abstol = 1e-10, reltol = 1e-9)
+probsh = ODEProblem(TMvf!, copy(z0), (0., 1.), par_tm; abstol = 1e-12, reltol = 1e-10)
 
-opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5., maxSteps = 120, newtonOptions = (@set optn_po.tol = 1e-6), nev = 3, detectBifurcation = 0, saveSolEveryStep=0)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, maxSteps = 120, tolStability = 1e-4)
 
 br_posh = @time continuation(
 	br, 4, opts_po_cont,
 	# this is where we tell that we want Standard Shooting
 	# with 15 time sections
-	ShootingProblem(15, probsh, Rodas4P(), parallel = true,
-	    # this linear solver is specific to ODEs
-	    # it is computed using AD of the flow and
-	    # updated inplace
-	    jacobian = :autodiffDense,
-	    # we update the section along the branches
-	    updateSectionEveryStep = 1);
+	ShootingProblem(15, probsh, Rodas5(), parallel = true);
 	# this to help branching
 	δp = 0.0005,
 	# deflation helps not converging to an equilibrium instead of a PO
@@ -201,6 +190,7 @@ br_posh = @time continuation(
 	# regular continuation parameters
 	verbosity = 2,	plot = true,
 	args_po...,
+	# we reject the step when the norm norm of the residual is high
 	callbackN = BK.cbMaxNorm(10)
 	)
 

@@ -17,7 +17,7 @@
 - Detection of all codim 2 bifurcations of equilibria and computation of the normal forms of Bogdanov-Takens, Bautin and Cusp
 - Branching from Bogdanov-Takens / Zero-Hopf / Hopf-Hopf points to Fold / Hopf curve
 
-**Note that you can combine most of the solvers, like use Deflation for Periodic orbit computation or Fold of periodic orbits family.**
+**Note that you can combine most solvers, like use Deflation for Periodic orbit computation or Fold of periodic orbits family.**
 
 > Custom state means, we can use something else than `AbstractArray`, for example your own `struct`.
 
@@ -41,10 +41,10 @@
 
 - Periodic orbit computation and continuation using **parallel** (Standard or Poincaré) Shooting, Finite Differences or Orthogonal Collocation.
 - Automatic branch switching at simple Hopf points to periodic orbits
-- Detection of Branch, Fold, Neimark-Sacker, Period Doubling bifurcation point of periodic orbits.
+- Detection of Branch, Fold, Neimark-Sacker, Period Doubling bifurcation points of periodic orbits.
 - Continuation of Fold of periodic orbits
 
-> Legend for the table Standard shooting (SS), Poincaré shooting (PS), Orthogonal collocation (OC), trapezoid (T).
+> Legend for the table: Standard shooting (SS), Poincaré shooting (PS), Orthogonal collocation (OC), trapezoid (T).
 
 |Features|Method|Matrix Free|Custom state| [Tutorial](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/) | GPU |
 |---|---|---|---|---|---|
