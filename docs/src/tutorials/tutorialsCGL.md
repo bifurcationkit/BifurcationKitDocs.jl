@@ -153,7 +153,7 @@ So the Hopf branch is subcritical.
 
 ## Codim 2 Hopf continuation
 
-Having detected 2 hopf bifurcation points, we now continue them in the plane $(\gamma, r)$. To speed things up, we need an analytical version of the second derivative.
+Having detected 2 hopf bifurcation points, we now continue them in the plane $(\gamma, r)$.
 
 Before we start the codim 2 continuation, we tell `BifurcationKit.jl` to use the spectral information `startWithEigen = true` because the left eigenvector of the Jacobian is simply not the conjugate of the right one.
 

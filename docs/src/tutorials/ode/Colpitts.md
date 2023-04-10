@@ -80,7 +80,7 @@ We first compute the branch of equilibria. But we need  a generalized eigenvalue
 
 ```@example TUTDAE1
 # we need  a specific eigensolver with mass matrix B
-struct EigenDAE{Tb} <: BK.AbstractEigenSolver
+struct EigenDAE{Tb} <: BK.AbstractDirectEigenSolver
 	B::Tb
 end
 
@@ -92,8 +92,8 @@ function (eig::EigenDAE)(Jac, nev; k...)
 end
 
 # continuation options
-optn = NewtonPar(tol = 1e-13, verbose = true, maxIter = 10, eigsolver = EigenDAE(Be))
-opts_br = ContinuationPar(pMin = -0.4, pMax = 0.8, ds = 0.01, dsmax = 0.01, nInversion = 8, detectBifurcation = 3, maxBisectionSteps = 25, nev = 4, plotEveryStep = 3, maxSteps = 1000, newtonOptions = optn)
+optn = NewtonPar(tol = 1e-13, maxIter = 10, eigsolver = EigenDAE(Be))
+opts_br = ContinuationPar(pMin = -0.4, pMax = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plotEveryStep = 3, maxSteps = 1000, newtonOptions = optn)
 	opts_br = @set opts_br.newtonOptions.verbose = false
 	br = continuation(prob, PALC(), opts_br; normC = norminf)
 
@@ -119,19 +119,18 @@ probFreez_ode = ODEProblem(prob_dae, z0, (0., 1.), par_Colpitts)
 
 # we lower the tolerance of newton for the periodic orbits
 optnpo = @set optn.tol = 1e-9
+@set! optnpo.eigsolver = DefaultEig()
 
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, pMin = 0.2, maxSteps = 150, newtonOptions = optnpo, nev = 4, tolStability = 1e-3, detectBifurcation = 0, plotEveryStep = 5)
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, pMin = 0.2, maxSteps = 50, newtonOptions = optnpo, nev = 4, tolStability = 1e-3, plotEveryStep = 5)
 
-# we use a regular eigensolver for the Floquet coefficients
-@set! opts_po_cont.newtonOptions.eigsolver = DefaultEig()
-@set! opts_po_cont.detectBifurcation = 2
 
 # Shooting functional. Note the  stringent tolerances used to cope with
 # the extreme parameters of the model
-probSH = ShootingProblem(5, probFreez_ode, Rodas4(); reltol = 1e-10, abstol = 1e-13, jacobian = :autodiffDense, updateSectionEveryStep = 1)
+probSH = ShootingProblem(10, probFreez_ode, Rodas5P(); reltol = 1e-10, abstol = 1e-13)
 
 # automatic branching from the Hopf point
-br_po = continuation(br, 1, opts_po_cont, probSH; plot = true, verbosity = 3,
+br_po = continuation(br, 1, opts_po_cont, probSH;
+	plot = true, verbosity = 3,
 	linearAlgo = MatrixBLS(),
 	# δp is use to parametrise the first parameter point on the
 	# branch of periodic orbits

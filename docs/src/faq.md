@@ -88,3 +88,16 @@ function vectorField(U, par)
 	out
 end
 ```
+
+### Arpack is slow in computing eigenvalues
+
+This is probably due to iterative refinement conducted by `SuiteSparse` as explained in this blog [post](https://discourse.julialang.org/t/some-eigenpairs-from-a-large-sparse-nonsymmetric-matrix-julia-vs-matlab/93742). You can disable this using
+
+```julia
+using SuiteSparse
+SuiteSparse.UMFPACK.umf_ctrl[8] = 0
+```
+
+### Should I use CVODE_BDF?
+
+SciML is now able to mactch the performance of the Sundials solver `CVODE_BDF`. Check the [news](https://sciml.ai/news/2021/05/24/QNDF/) for more information.

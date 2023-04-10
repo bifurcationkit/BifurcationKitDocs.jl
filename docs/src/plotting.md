@@ -52,7 +52,7 @@ You can select which variables to plot using the keyword argument `vars`, for ex
 ```julia
 plot(br, vars = (:param, :x))
 ```
-The available symbols are `:param, :sol, :itnewton, :ds, :theta, :step`,... and:
+The available symbols are `:x, :param, :itnewton, :itlinear, :ds, :θ, :n_unstable, :n_imag, :stable, :step`,... and:
 
 - `x` if `recordFromSolution` (see [`continuation`](@ref)) returns a `Number`.
 - `x1, x2,...` if `recordFromSolution` returns a `Tuple`.
@@ -67,6 +67,8 @@ You can define your own plotting functions using the internal fields of `br` whi
 ```julia
 plot(br.branch.param, br.branch.x)
 ```
+
+You can also have access to the stability of the points by using `br.stable`. More information concerning the fields can be found in [`ContResult`](@ref).
 
 You can also plot the spectrum at a specific continuation `step::Int` by calling
 

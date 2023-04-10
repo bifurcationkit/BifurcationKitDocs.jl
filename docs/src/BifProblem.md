@@ -6,7 +6,7 @@ The structure [`BifFunction`](@ref) holds the vector field. If you just pass a f
 
 ## Bifurcation Problem
 
-The structure [`BifurcationProblem`](@ref) is the basic holder for a bifurcation problem which holds 
+[`BifurcationProblem`](@ref) is the basic structure for a bifurcation problem which holds the following fields. The link [`BifurcationProblem`](@ref) provides more information.
 
 - the vector field
 - an initial guess
@@ -15,8 +15,29 @@ The structure [`BifurcationProblem`](@ref) is the basic holder for a bifurcation
 
 as well as user defined functions for 
 
-- plotting
-- recording a indicators about the solution when this oe is too large to save at every step
+- plotting, `plotSolution`
+- recording (`recordFromSolution`) indicators about the solution when this one is too large to save at every step.
+
+> `BifurcationKit` is designed to be used in very limited memory environments (GPU) where you can barely hold the equilibrium and some of the eigen-elements of the jacobian. Thus, `BifurcationKit` does not record the equilibria unless stated, *i.e.* when `ContinuationPar.saveSolEveryStep > 0`
+
+### Example
+
+```julia
+f(x,p) = @. sin(x * p.a)
+u0 = zeros(100_000_000) 
+params = (a = 1.0, b = 2.0)
+
+# save a few components / indicators of x because it is too costly 
+# to keep all solutions in memory
+function myRecord(x,p)
+	return (x1 = x[1], max = maximum(x), nrm = norm(x, Inf))
+end 
+
+prob = BifurcationProblem(f, u0, p, (@lens _.a);
+	recordSolution = myRecord
+	)
+```
+
 
 ## Problem modification
 

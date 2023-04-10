@@ -26,7 +26,7 @@ const BK = BifurcationKit
 
 # supremum norm
 norminf(x) = norm(x, Inf)
-f(u) = u^9 # solution are positive, so remove the heaviside
+f(u) = u^9 # solutions are positive, so remove the heaviside
 
 # helper function to plot solutions
 function plotsol!(x; k...)

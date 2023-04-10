@@ -52,8 +52,9 @@ function NL!(dest, u, p, t = 0.)
 end
 
 function Fbr!(f, u, p)
-	mul!(f, p.Δ, u)
-	f .= f .+ NL(u, p)
+	NL!(f, u, p)
+	mul!(f, p.Δ, u,1,1)
+	f
 end
 
 NL(u, p) = NL!(similar(u), u, p)

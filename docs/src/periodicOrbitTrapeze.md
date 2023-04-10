@@ -62,7 +62,7 @@ We strongly advise you to use a preconditioner to deal with the above linear pro
 
 ## Linear solvers
 
-We provide many different linear solvers to take advantage of the formulations. These solvers are available throught the option `jacobianPO`. For example, you can pass `jacobianPO  = :FullLU`. Note that all the internal solvers and jacobian are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+We provide many different linear solvers to take advantage of the formulations. These solvers are available through the option `jacobianPO`. For example, you can pass `jacobianPO  = :FullLU`. Note that all the internal solvers and jacobian are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
 ### 1. FullLU
 

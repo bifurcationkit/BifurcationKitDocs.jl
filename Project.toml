@@ -1,7 +1,7 @@
 name = "BifurcationKitDocs"
 uuid = "52551710-5366-4f3f-95cc-710bcb964a3f"
 authors = ["romain.veltz@inria.fr <rveltz> and contributors"]
-version = "0.2.3"
+version = "0.2.6"
 
 [compat]
 julia = "1"

@@ -34,9 +34,32 @@ The methods based on Shooting do not share the same drawbacks because the associ
 
 We regroup here some important notes which are valid for all methods above. 
 
+### 1. Accessing the periodic orbit
 
-### 1. Finaliser
-If you pass a `finalize` function to [`continuation`](@ref), the following occurs:
+In `recordFromSolution`, `plotoSlution` or after the computation of a branch of periodic orbits, how do I obtain the periodic orbit, for plotting purposes for example? If `x` it the solution from `newton` for example for the parameter `p`, you can obtain the periodic orbit as follows
 
-1. If the newton solve was successfull, we update the phase condition every `updateSectionEveryStep`
-2. we call the user defined finalizer `finalize`
+```
+xtt = getPeriodicOrbit(x, p)
+```
+where `xtt.t` contains the time mesh and `xtt[:,:]` contains the different components. Note that for Trapezoid and collocation methods, calling `getPeriodicOrbit` is essentially free as it is a reshape of `x`. However, in the case of Shooting methods, this requires recomputing the periodic orbit which can be costly for large scale problems.
+
+### 2. Finaliser
+If you pass a `finaliseSolution` function to [`continuation`](@ref), the following occurs:
+
+1. If the newton solve was successful, we update the phase condition every `updateSectionEveryStep`
+2. we call the user defined finalizer `finaliseSolution`
+
+### 3. recordFromSolution
+
+You can pass your own function to [`continuation`](@ref). In the particular case of periodic orbits, the method is called like `recordFromSolution(x, opt; k...)` where `opt.p` is the current value of the continuation parameter and `opt.prob` is the current state of the continuation problem. You can then obtain the current periodic orbit using (see above)
+
+```julia
+xtt = getPeriodicOrbit(x, opt.p)
+``` 
+
+### 4. plotSolution
+
+Similarly to `recordFromSolution`, the method is called like `plotSolution(x, opt; k...)` where `opt.p` is the current value of the continuation parameter and `opt.prob` is the current state of the continuation problem.
+
+### 5. Most precise method for Floquet coefficients
+The state of the art method is based on a Periodic Schur decomposition. It is available through the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
