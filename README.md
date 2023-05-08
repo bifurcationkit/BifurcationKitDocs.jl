@@ -1,9 +1,9 @@
 # BifurcationKitDocs
 
 
-| **Documentation**                                                                                                                                           |
-|:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
-| [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev) |  |
+| **Documentation**|
+|:---------------------------:|
+| [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev) |
 
 `BifurcationKitDocs.jl` is a component package in the BifurcationKit ecosystem. It holds the documentation for the common user interface. Users interested in using these features should check out [BifurcationKit.jl](https://github.com/rveltz/BifurcationKit.jl)
 
