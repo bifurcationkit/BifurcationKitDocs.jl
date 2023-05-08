@@ -63,10 +63,7 @@ opts_br = ContinuationPar(pMin = 0.1, pMax = 1.0, dsmax = 0.01,
 	# number of eigenvalues
 	nev = 2,
 	# maximum number of continuation steps
-	maxSteps = 1000,
-	# parameter theta, see `? continuation`. Setting this to a non
-	# default value helps passing the transcritical bifurcation
-	θ = 0.3)
+	maxSteps = 1000,)
 
 nothing #hide
 ```
@@ -74,7 +71,9 @@ nothing #hide
 We are now ready to compute the diagram
 
 ```@example TUTPP2
-diagram = bifurcationdiagram(prob, PALC(),
+# parameter theta, see `? continuation`. Setting this to a non
+# default value helps passing the transcritical bifurcation
+diagram = bifurcationdiagram(prob, PALC(θ = 0.3),
 	# very important parameter. It specifies the maximum amount of recursion
 	# when computing the bifurcation diagram. It means we allow computing branches of branches of branches
 	# at most in the present case.

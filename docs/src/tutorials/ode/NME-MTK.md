@@ -118,7 +118,7 @@ Mt = 30 # number of time sections
 	# we want to use the Collocation method to locate PO, with polynomial degree 5
 	PeriodicOrbitOCollProblem(Mt, 5);
 	# regular continuation options
-	args_po...)
+	args_po..., callbackN = BK.cbMaxNorm(10))
 
 scene = plot(br, br_pocoll, markersize = 3)
 plot!(scene, br_pocoll.param, br_pocoll.min, label = "")
