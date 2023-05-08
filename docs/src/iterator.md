@@ -59,7 +59,7 @@ Jac_m(x, p) = diagm(0 => 1  .- x.^k)
 prob = BifurcationProblem(F, [0.8], 1., (@lens _); J = Jac_m)
 
 # parameters for the continuation
-opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, maxSteps = 130, pMin = -3., pMax = 3., saveSolEveryStep = 0, newtonOptions = NewtonPar(tol = 1e-8, verbose = true))
+opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, maxSteps = 130, pMin = -3., pMax = 3., newtonOptions = NewtonPar(tol = 1e-8))
 
 # we define an iterator to hold the continuation routine
 iter = BK.ContIterable(prob, PALC(), opts; verbosity = 2)

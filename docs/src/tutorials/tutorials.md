@@ -15,10 +15,10 @@ Pages = ["ode/tutorialsODE.md","ode/tutorialCO.md","ode/lorenz84.md", "ode/tutor
 Depth = 1
 ```
 
-Here are some examples more oriented towards the computation of periodic orbits. For, example, in the second tutorial below, we show how to refine a periodic orbit guess obtained from numerical simulation.
+Here are some examples more oriented towards the computation of periodic orbits. For, example, in the second tutorial below, we show how to refine a periodic orbit guess obtained from numerical simulation. We also show how to perform continuation of PD/NS points using Shooting or Collocation. The third example is to showcase the detection of Chenciner bifurcations.
 
 ```@contents
-Pages = ["ode/tutorialsODE-PD.md", "ode/tutorialsCodim2PO.md",]
+Pages = ["ode/tutorialsODE-PD.md", "ode/tutorialsCodim2PO.md","ode/steinmetz.md",]
 Depth = 1
 ```
 

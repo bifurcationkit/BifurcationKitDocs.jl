@@ -1,8 +1,13 @@
 # Fold / Hopf Continuation
 
+```@contents
+Pages = ["codim2Continuation.md"]
+Depth = 2
+```
+
 In this page, we explain how to perform continuation of Fold / Hopf points and detect the associated bifurcations.
 
-For this to work best, it is better to have an analytical expression for the jacobian. See the tutorial [Temperature model (Simplest example)](@ref) for more details.
+For this to work best, it is advised to have an analytical expression for the jacobian. See the tutorial [Temperature model (Simplest example)](@ref) for more details.
 
 A quite complete example for detection of codim 2 bifurcations of equilibria is [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) although it is for ODEs.
 
@@ -21,7 +26,7 @@ In a nutshell, all you have to do (see below) is to call `continuation(br, ind_b
 
 The continuation of Fold bifurcation points is based on a **Minimally Augmented**[^Govaerts] formulation which is an efficient way to detect singularities. The continuation of Fold points is based on the formulation
 
-$$G(u,p) = (F(u,p), g(u,p))\in\mathbb R^{n+1}\quad\quad (F_f)$$
+$$G(u,p) = (F(u,p), \sigma(u,p))\in\mathbb R^{n+1}\quad\quad (F_f)$$
 
 where the test function $g$ is solution of
 
@@ -30,7 +35,7 @@ dF(u,p) & w \\
 v^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
 r \\
-g(u,p)
+\sigma(u,p)
 \end{array}\right]=\left[\begin{array}{c}0_{n} \\1\end{array}\right]\quad\quad (M_f)$$
 
 where $w,v$ are chosen in order to have a non-singular matrix $(M_f)$. More precisely, $v$ (resp. $w$) should be close to a null vector of `dF(u,p)` (resp. `dF(u,p)'`). During continuation, the vectors $w,v$ are updated so that the matrix $(M_f)$ remains non-singular ; this is controlled with the argument `updateMinAugEveryStep` (see below).
@@ -52,7 +57,7 @@ You can detect the following codim 2 bifurcation points by using the option `det
 
 The continuation of Fold bifurcation points is based on a **Minimally Augmented** (see [^Govaerts] p. 87) formulation which is an efficient way to detect singularities. The continuation of Hopf points is based on the formulation
 
-$$G(u,\omega,p) = (F(u,\omega,p), g(u,\omega,p))\in\mathbb R^{n+2}\quad\quad (F_h)$$
+$$G(u,\omega,p) = (F(u,\omega,p), \Re\sigma(u,\omega,p), \Im\sigma(u,\omega,p))\in\mathbb R^{n+2}\quad\quad (F_h)$$
 
 where the test function $g$ is solution of
 
@@ -61,7 +66,7 @@ dF(u,p)-i\omega I_n & w \\
 v^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
 r \\
-g(u,\omega,p)
+\sigma(u,\omega,p)
 \end{array}\right]=\left[\begin{array}{c}
 0_{n} \\
 1

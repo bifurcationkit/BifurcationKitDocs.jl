@@ -230,7 +230,7 @@ probTP = PeriodicOrbitTrapProblem(M = Mt ;
 		# OPTIONAL, one could use the default
 		jacobian = :BorderedLU)
 
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds= -0.001, pMin = 0.05, maxSteps = 130, newtonOptions = optn, nev = 7, tolStability = 1e-3, detectBifurcation = 0, plotEveryStep = 1, saveSolEveryStep = 1)
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds= -0.001, pMin = 0.05, maxSteps = 130, newtonOptions = optn, nev = 7, tolStability = 1e-3, detectBifurcation = 0, plotEveryStep = 1)
 	opts_po_cont = @set opts_po_cont.newtonOptions.maxIter = 10
 	opts_po_cont = @set opts_po_cont.newtonOptions.tol = 1e-6
 

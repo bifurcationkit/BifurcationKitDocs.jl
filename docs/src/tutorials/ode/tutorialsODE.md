@@ -85,17 +85,17 @@ optn_po = NewtonPar(verbose = true, tol = 1e-10,  maxIter = 10)
 
 # continuation parameters
 opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4,
-	maxSteps = 90, newtonOptions = (@set optn_po.tol = 1e-7), tolStability = 1e-8, saveSolEveryStep=1)
+	maxSteps = 90, newtonOptions = (@set optn_po.tol = 1e-7), tolStability = 1e-8)
 
 # arguments for periodic orbits
 args_po = (	recordFromSolution = (x, p) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm.E0 = p.p)
+		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
-				period = getPeriod(p.prob, x, @set par_tm.E0 = p.p))
+				period = getPeriod(p.prob, x, p.p))
 	end,
 	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm.E0 = p.p)
+		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 		arg = (marker = :d, markersize = 1)
 		plot!(xtt.t, xtt[1,:]; label = "E", arg..., k...)
 		plot!(xtt.t, xtt[2,:]; label = "x", arg..., k...)
@@ -147,7 +147,7 @@ We compute the branch of periodic orbits from the last Hopf bifurcation point (o
 # continuation parameters
 opts_po_cont = ContinuationPar(opts_br, dsmax = 0.15, ds= -0.001, dsmin = 1e-4,
 	maxSteps = 100, newtonOptions = (@set optn_po.tol = 1e-8),
-	tolStability = 1e-5, saveSolEveryStep=1)
+	tolStability = 1e-5)
 
 Mt = 30 # number of time sections
 	br_pocoll = @time continuation(
@@ -163,8 +163,6 @@ Mt = 30 # number of time sections
 
 Scene = title!("")
 ```
-
-We plot the maximum (resp. minimum) of the limit cycle. We can see that the min converges to the smallest equilibrium indicating a homoclinic orbit.
 
 ## Periodic orbits with Parallel Standard Shooting
 

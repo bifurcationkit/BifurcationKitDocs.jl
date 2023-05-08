@@ -1,5 +1,10 @@
 # Overview of capabilities
 
+```@contents
+Pages = ["capabilities.md"]
+Depth = 3
+```
+
 ## Main features
 
 - Newton-Krylov solver with generic linear / eigen *preconditioned* solver. Idem for the arc-length continuation.
@@ -56,3 +61,15 @@
 | Fold, Neimark-Sacker, Period doubling detection |SS/PS/OC/T| See each| `AbstractVector` | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials3/#d-Brusselator-(automatic))  | |
 | Branch switching at Branch point |SS/PS/OC/T| See each|  | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE-PD/#Period-doubling-in-Lur'e-problem-(PD-aBS)) | |
 | Branch switching at PD point |SS/PS/OC/T| See each|  | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE-PD/#Period-doubling-in-Lur'e-problem-(PD-aBS)) | |
+| Continuation of Fold points |SS/PS/OC/T| See each| `AbstractVector` | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Continuation-of-Fold-of-periodic-orbits) | Yes |
+| Continuation of Period-doubling points |SS/OC| | `AbstractVector` |  | |
+| Continuation of Neimark-Sacker points |SS/OC| | `AbstractVector` |  | |
+
+## Capabilities related to Homoclinic orbits
+
+This is available through the plugin [HclinicBifurcationKit.jl](https://github.com/bifurcationkit/HclinicBifurcationKit.jl). Please see the [specific docs](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/) for more information.
+
+- compute Homoclinic to Hyperbolic Saddle Orbits (HomHS) using Orthogonal collocation or Standard shooting
+- compute bifurcation of HomHS
+- start HomHS from a direct simulation
+- automatic branch switching to HomHS from Bogdanov-Takes bifurcation point

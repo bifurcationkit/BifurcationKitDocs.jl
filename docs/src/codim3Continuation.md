@@ -51,7 +51,7 @@ Fbt(x, p) = [x[2], p.β1 + p.β2 * x[2] + p.a * x[1]^2 + p.b * x[1] * x[2]]
 par = (β1 = 0.01, β2 = -0.1, a = -1., b = 1.)
 prob  = BifurcationProblem(Fbt, [0.01, 0.01], par, (@lens _.β1))
 opt_newton = NewtonPar(tol = 1e-9, maxIter = 40)
-opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.01, pMax = 0.5, pMin = -0.5, detectBifurcation = 3, nev = 2, newtonOptions = opt_newton, maxSteps = 100, nInversion = 4, dsminBisection = 1e-9, saveSolEveryStep = 1)
+opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.01, pMax = 0.5, pMin = -0.5, detectBifurcation = 3, nev = 2, newtonOptions = opt_newton, maxSteps = 100, nInversion = 4, dsminBisection = 1e-9)
 
 br = continuation(prob, PALC(), opts_br; bothside = true)
 

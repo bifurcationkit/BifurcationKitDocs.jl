@@ -103,7 +103,7 @@ optn_po = NewtonPar(tol = 1e-8,  maxIter = 25)
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.001, dsmin = 1e-4,
  newtonOptions = (@set optn_po.tol = 1e-8), tolStability = 1e-2,
- detectBifurcation = 1, saveSolEveryStep=1)
+ detectBifurcation = 1)
 
 Mt = 101 # number of time sections
 	br_po = continuation(

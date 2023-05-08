@@ -69,7 +69,7 @@ Jac_m(x, p) = diagm(0 => p .+ x.^k)
 prob = BifurcationProblem(F, [0.], 0.5, (@lens _), J = Jac_m)
 
 # continuation options
-opts = BK.ContinuationPar(dsmax = 0.051, dsmin = 1e-3, ds=0.001, maxSteps = 140, pMin = -3., saveSolEveryStep = 0, newtonOptions = NewtonPar(tol = 1e-8, verbose = false), saveEigenvectors = false)
+opts = BK.ContinuationPar(dsmax = 0.051, dsmin = 1e-3, ds=0.001, maxSteps = 140, pMin = -3., newtonOptions = NewtonPar(tol = 1e-8), saveEigenvectors = false)
 
 # algorithm
 alg = BK.DefCont(deflationOperator = DeflationOperator(2, dot, .001, [[0.]]), perturbSolution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))

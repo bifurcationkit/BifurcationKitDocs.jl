@@ -100,4 +100,4 @@ SuiteSparse.UMFPACK.umf_ctrl[8] = 0
 
 ### Should I use CVODE_BDF?
 
-SciML is now able to mactch the performance of the Sundials solver `CVODE_BDF`. Check the [news](https://sciml.ai/news/2021/05/24/QNDF/) for more information.
+SciML is now able to match the performance of the Sundials solver `CVODE_BDF`. Check the [news](https://sciml.ai/news/2021/05/24/QNDF/) for more information.

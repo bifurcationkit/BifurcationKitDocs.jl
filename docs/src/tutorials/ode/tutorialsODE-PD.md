@@ -78,7 +78,7 @@ We first define a plotting function and record function which are used for all c
 ```@example TUTLURE
 # plotting function
 function plotPO(x, p; k...)
-	xtt = BK.getPeriodicOrbit(p.prob, x, @set par_lur.α = p.p)
+	xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 	plot!(xtt.t, xtt[1,:]; markersize = 2, k...)
 	plot!(xtt.t, xtt[2,:]; k...)
 	plot!(xtt.t, xtt[3,:]; legend = false, k...)
@@ -86,7 +86,7 @@ end
 
 # record function
 function recordPO(x, p)
-	xtt = BK.getPeriodicOrbit(p.prob, x, @set par_lur.α = p.p)
+	xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 	period = BK.getPeriod(p.prob, x, p.p)
 	return (max = maximum(xtt[1,:]), min = minimum(xtt[1,:]), period = period)
 end
@@ -99,7 +99,7 @@ We use finite differences to discretize the problem of finding periodic orbits. 
 optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 25)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.0001, dsmin = 1e-4, pMax = 1.8, pMin=-5., maxSteps = 80, newtonOptions = (@set optn_po.tol = 1e-8), tolStability = 1e-4, plotEveryStep = 20, saveSolEveryStep=1)
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.0001, dsmin = 1e-4, pMax = 1.8, pMin=-5., maxSteps = 80, newtonOptions = (@set optn_po.tol = 1e-8), tolStability = 1e-4, plotEveryStep = 20)
 
 Mt = 120 # number of time sections
 	br_po = continuation(
@@ -154,7 +154,7 @@ probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; abstol = 1e-12, reltol
 optn_po = NewtonPar(verbose = true, tol = 1e-10, maxIter = 25)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, maxSteps = 130, newtonOptions = optn_po, tolStability = 1e-5, detectBifurcation = 3, plotEveryStep = 10, saveSolEveryStep = 1, nInversion = 6, nev = 2)
+opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, maxSteps = 130, newtonOptions = optn_po, tolStability = 1e-5, detectBifurcation = 3, plotEveryStep = 10, nInversion = 6, nev = 2)
 
 br_po = continuation(
 	br, 2, opts_po_cont,
@@ -201,7 +201,7 @@ We now rely on a the state of the art method for computing periodic orbits of OD
 optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 25)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds= 0.0001, dsmin = 1e-4, maxSteps = 80, newtonOptions = optn_po, tolStability = 1e-4, plotEveryStep = 20, saveSolEveryStep=1, nInversion = 6)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds= 0.0001, dsmin = 1e-4, maxSteps = 80, newtonOptions = optn_po, tolStability = 1e-4, plotEveryStep = 20, nInversion = 6)
 
 br_po = continuation(
 	br, 2, opts_po_cont,

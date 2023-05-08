@@ -185,7 +185,7 @@ We can now construct the curve of Fold points branching off the Bogdanov-Takens 
 # find the index of the BT point
 indbt = findfirst(x -> x.type == :bt, br_hopf.specialpoint)
 # branch from the BT point
-brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detectBifurcation = 1, maxSteps = 20, saveSolEveryStep = 1);
+brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detectBifurcation = 1, maxSteps = 20);
 	updateMinAugEveryStep = 1,
 	detectCodim2Bifurcation = 2,
 	callbackN = BK.cbMaxNorm(1e5),

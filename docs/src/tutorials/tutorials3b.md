@@ -295,7 +295,7 @@ A basic method for computing Floquet cofficients based on the eigenvalues of the
 
 ```julia
 opt_po = @set opt_po.eigsolver = DefaultEig()
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds= -0.01, pMax = 3.0, maxSteps = 200, saveSolEveryStep = 1, newtonOptions = opt_po, nev = 5, tolStability = 1e-6, detectBifurcation = 3)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds= -0.01, pMax = 3.0, maxSteps = 200, newtonOptions = opt_po, nev = 5, tolStability = 1e-6, detectBifurcation = 3)
 br_po = @time continuation(poTrap, outpo_f.u, PALC(),
 	opts_po_cont; verbosity = 3, plot = true,
 	plotSolution = (x, p;kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...), normC = norminf)

@@ -5,6 +5,8 @@ Pages = ["tutorialsCodim2PO.md"]
 Depth = 3
 ```
 
+> This example is found in the MatCont ecosystem.
+
 The following is a periodically forced predator-prey model studied in [^Kuznetsov] using shooting technics.
 
 $$\tag{E}\left\{\begin{aligned}
@@ -68,13 +70,13 @@ We start with two helper functions that record and plot the periodic orbits. The
 
 ```@example TUTPPREY
 argspo = (recordFromSolution = (x, p) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p))
+		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
-				period = getPeriod(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p)))
+				period = getPeriod(p.prob, x, p.p))
 	end,
 	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p))
+		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 		plot!(xtt.t, xtt[1,:]; label = "x", k...)
 		plot!(xtt.t, xtt[2,:]; label = "y", k...)
 		# plot!(br; subplot = 1, putspecialptlegend = false)
@@ -167,6 +169,66 @@ brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 
 	)
 
 scene = plot(brpo_pd)
+```
+
+## Fold/PD of periodic orbits continuation with Shooting
+
+We continue the previously detected fold/period-doubling bifurcations as function of two parameters and detect codim 2 bifurcations. We first start with the computation of the curve of Folds.
+
+```@example TUTPPREY
+opts_posh_fold = ContinuationPar(br_fold_sh.contparams, detectBifurcation = 3, maxSteps = 200, pMin = 0.01, pMax = 1.2)
+@set! opts_posh_fold.newtonOptions.tol = 1e-12
+fold_po_sh1 = continuation(br_fold_sh, 2, (@lens _.ϵ), opts_posh_fold;
+		verbosity = 2, plot = true,
+		detectCodim2Bifurcation = 2,
+		jacobian_ma = :minaug,
+		startWithEigen = false,
+		bothside = true,
+		callbackN = BK.cbMaxNorm(1),
+		)
+
+fold_po_sh2 = continuation(br_fold_sh, 1, (@lens _.ϵ), opts_posh_fold;
+		verbosity = 2, plot = true,
+		detectCodim2Bifurcation = 2,
+		jacobian_ma = :minaug,
+		startWithEigen = false,
+		bothside = true,
+		callbackN = BK.cbMaxNorm(1),
+		)
+```
+
+We turn to the computation of the curve of PD points.
+
+```@example TUTPPREY
+par_pop2 = @set par_pop.b0 = 0.45
+sol2 = solve(remake(prob_de, p = par_pop2, u0 = [0.1,0.1,1,0], tspan=(0,1000)), Rodas5())
+sol2 = solve(remake(sol2.prob, tspan = (0,10), u0 = sol2[end]), Rodas5())
+plot(sol2, xlims= (8,10))
+
+probshpd, ci = generateCIProblem(ShootingProblem(M=3), reMake(prob, params = sol2.prob.p), remake(prob_de, p = par_pop2), sol2, 1.; alg = Rodas5())
+
+prob2 = @set probshpd.lens = @lens _.ϵ
+brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);
+	verbosity = 3, plot = true,
+	argspo...,
+	bothside = true,
+	)
+
+opts_pocoll_pd = ContinuationPar(brpo_pd.contparams, detectBifurcation = 3, maxSteps = 40, pMin = 1.e-2, plotEveryStep = 10, dsmax = 1e-2, ds = -1e-3)
+@set! opts_pocoll_pd.newtonOptions.tol = 1e-12
+pd_po_sh2 = continuation(brpo_pd, 2, (@lens _.b0), opts_pocoll_pd;
+		verbosity = 3, plot = true,
+		detectCodim2Bifurcation = 2,
+		startWithEigen = false,
+		usehessian = false,
+		jacobian_ma = :minaug,
+		normN = norminf,
+		callbackN = BK.cbMaxNorm(10),
+		bothside = true,
+		)
+
+plot(fold_po_sh1, fold_po_sh2, branchlabel = ["FOLD", "FOLD"])
+plot!(pd_po_sh2, vars = (:ϵ, :b0), branchlabel = "PD")
 ```
 
 ## References

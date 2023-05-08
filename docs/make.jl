@@ -43,53 +43,55 @@ makedocs(doctest = false,
 			"Introduction" => "IntroContinuation.md",
 			"Predictors / correctors" => "Predictors.md",
 			"PALC" => "PALC.md",
-			"Moore-Penrose Continuation" => "MooreSpence.md",
+			"Moore-Penrose continuation" => "MooreSpence.md",
 			"ANM" => "ANM.md",
-			"Deflated Continuation" => "DeflatedContinuation.md",
+			"Deflated continuation" => "DeflatedContinuation.md",
 				],
 		"Functionalities" => [
-			"Nonlinear Equations (Newton)" => ["newton.md", "deflatedproblem.md"],
-			"Bifurcations" => 
-					[
-				"Equilibria" => [
+			"Nonlinear equations (Newton)" => ["newton.md", "deflatedproblem.md"],
+			"Bifurcations (equilibria)" => [
 									"Bifurcation detection (codim 1)" => "detectionBifurcation.md",
 									"Fold / Hopf Continuation (codim 2)" => "codim2Continuation.md",
 									"Bogdanov-Takens refinement (codim 3)" => "codim3Continuation.md",
 								],
-				"Periodic orbits" => [
+			"Bifurcations (periodic orbits)" => [
 									"Bifurcation detection (codim 1)" => "detectionBifurcationPO.md",
+									"Fold continuation (codim 2)" => "FoldContinuationPO.md",
+									"Period-Doubling continuation (codim 2)" => "PDContinuationPO.md",
+									"Neimark-Sacker continuation (codim 2)" => "NSContinuationPO.md",
 								],				
-					],
-			"Normal form" => [
-				"Simple branch point" => "simplebp.md",
-				"Non-simple branch point" => "nonsimplebp.md",
-				"Simple Hopf" => "simplehopf.md",
-				"Cusp" => "cusp.md",
-				"Bogdanov-Takens" => "bt.md",
-				"Bautin" => "bautin.md",
-			"Normal form (periodic orbit)" => [],
-			],
+			"Normal form (equilibria)" =>	[
+						"Simple branch point" => "simplebp.md",
+						"Non-simple branch point" => "nonsimplebp.md",
+						"Simple Hopf" => "simplehopf.md",
+						"Cusp" => "cusp.md",
+						"Bogdanov-Takens" => "bt.md",
+						"Bautin" => "bautin.md",
+								],
+			"Normal form (periodic orbits)" => [
+
+									],
 			"Branch switching" => "branchswitching.md",
 			"Bifurcation diagram" => "BifurcationDiagram.md",
-			"Event Handling and Callback" => "EventCallback.md",
+			"Event handling and Callback" => "EventCallback.md",
 			# "Constrained problem" => "constrainedproblem.md",
 			"Iterator Interface" => "iterator.md",
 		],
 		"Options" => [
-			"Linear Solvers" => "linearsolver.md",
+			"Linear solvers" => "linearsolver.md",
 			"Bordered linear solvers" => "borderedlinearsolver.md",
-			"Eigen Solvers" => "eigensolver.md",
+			"Eigen solvers" => "eigensolver.md",
 			"Bordered arrays" => "Borderedarrays.md",
 		],
 		"Contributing" => [
 			"Interfaces" => [
 				"Vector" => "interfaceLS.md",
-				"Linear / Eigen Solvers" => "interfaceLS.md",
-				"Predictor / Corrector" => "interfacePred.md",
+				"Linear / eigen Solvers" => "interfaceLS.md",
+				"Predictor / corrector" => "interfacePred.md",
 				"Flow" => "interfaceFlow.md",
 				]
 		],
-		"Frequently Asked Questions" => "faq.md",
+		"Frequently asked questions" => "faq.md",
 		"Migration to v0.2.x" => "migration.md",
 		"Library" => "library.md"
 	]
