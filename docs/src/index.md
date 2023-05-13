@@ -48,11 +48,10 @@ There are many good softwares already available.
 
 - For continuation in small dimension, most softwares are listed on [DSWeb](https://dsweb.siam.org/Software). One can mention the widely used AUTO-07p, or also, [XPPAUT](http://www.math.pitt.edu/~bard/xpp/xpp.html), [MATCONT](https://sourceforge.net/projects/matcont/), [PyDSTool](https://github.com/robclewley/pydstool) and [COCO](https://sourceforge.net/projects/cocotools/). All these are very reliable and some address high codimensional bifurcations.
 
-- For large scale problems, there is the versatile and feature full [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/) but also [Trilinos](https://trilinos.org/), [CL_MATCONTL](https://github.com/careljonkhout/cl_matcontL), [COCO](https://sourceforge.net/projects/cocotools/), [GetFEM](https://getfem.org/userdoc/model_continuation.html) and the python libraries [pyNCT](https://pypi.org/project/PyNCT/) and [pacopy](https://github.com/nschloe/pacopy).
-
+- For large scale problems, there is the versatile and feature full [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/) but also [Trilinos-LOCA](https://trilinos.github.io/nox_and_loca.html), [CL_MATCONTL](https://github.com/careljonkhout/cl_matcontL), [COCO](https://sourceforge.net/projects/cocotools/), [GetFEM](https://getfem.org/userdoc/model_continuation.html) and the python libraries [pyNCT](https://pypi.org/project/PyNCT/) and [pacopy](https://github.com/nschloe/pacopy). There are also some nice [lectures](https://zenodo.org/record/3821169#.Y-zsAy8w08Q) by D. Avitabile *et al.* on matrix free secant continuation based on a concise Matlab implementation which are used in the influential paper [^Rankin]. At the time of initial release of `BifurcationKit.jl`, these [lectures](https://zenodo.org/record/3821169#.Y-zsAy8w08Q) provided one of the only libraries for matrix-free continuation, much easier to use than [Trilinos-LOCA](https://trilinos.github.io/nox_and_loca.html).
 - For *deflated continuation*, there is [defcont](https://bitbucket.org/pefarrell/defcon/src/master/) (by the inventor of the algo. P. E. Farrell) and this [code](https://github.com/evstigneevnm/deflated_continuation) by N. M. Evstigneev.
 
-In Julia, we also have [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl).
+In Julia, we also have [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl) which is unmaintained.
 
 ## A word on performance
 
@@ -71,6 +70,10 @@ We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](h
 
 ## Citations
 The papers citing this work are collected on [google scholar](https://scholar.google.fr/scholar?hl=fr&as_sdt=2005&cites=159498619004863176%2C8662907770106865595&scipsc=&as_ylo=&as_yhi=).
+
+## References
+
+[^Rankin]:> J. Rankin et al., "Continuation of localized coherent structures in nonlocal neural field equations", SIAM J. Scientific Computing 36, pp. B70–B93 (2014): https://epubs.siam.org/doi/10.1137/130918721
 
 ## Reproducibility
 ```@raw html
