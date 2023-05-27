@@ -67,6 +67,8 @@ makedocs(doctest = false,
 						"Cusp" => "cusp.md",
 						"Bogdanov-Takens" => "bt.md",
 						"Bautin" => "bautin.md",
+						"Zero-Hopf" => "zh.md",
+						"Hopf-Hopf" => "hh.md",
 								],
 			"Normal form (periodic orbits)" => [
 
