@@ -45,7 +45,7 @@ mutable struct NdBranchPoint{Tv, T, Tevl, Tevr, Tnf} <: BranchPoint
 end
 ```
 
-## Using the Reduced equation
+## Using the reduced equation
 Once a branch point has been computed `bp = getNormalForm(...)`, you can do all sort of things. 
 
 - For example, quoted from the file `test/testNF.jl`, you can print the 2d reduced equation as follows:
@@ -57,6 +57,6 @@ julia> BifurcationKit.nf(bp2d)
  " + (-0.456 + 0.0im) * x1^2 * x2 + (3.23 + 0.0im) * x2 * p + (-0.123 + 0.0im) * x2^3"
 ``` 
 
-- You can evaluate the reduced equation as `bp2d(Val(:reducedForm), rand(2), 0.2)`. This can be used to find all the zeros of the reduced equation by sampling on a grid. 
+- You can evaluate the reduced equation as `bp2d(Val(:reducedForm), rand(2), 0.2)`. This can be used to find all the zeros of the reduced equation by sampling on a grid or using a general solver like  `Roots.jl`. 
 
 - Finally, given a $d$-dimensional vector $x$ and a parameter $\delta p$, you can have access to an initial guess $u$ (see above) by calling `bp2d(rand(2), 0.1)`

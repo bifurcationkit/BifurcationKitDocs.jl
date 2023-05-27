@@ -19,7 +19,7 @@ We collect in the following table the list of automatic branch switching (aBS) f
 | `continuation(br::ContResult{T}, ind_hopf::Int, ::ContinuationPar, prob::AbstractPeriodicOrbitProblem)`   | `:hopf` |  `EquilibriumCont` | Branch switching from Hopf point to periodic orbits |
 | `continuation(br::ContResult{T}, ind::Int, kw...)`   | `:bp,:pd` |  `PeriodicOrbitCont` | Branch switching from Branch / Period-doubling point of periodic orbits to curve of periodic orbits |
 
-## Branch switching from simple branch point to equilibria
+## From simple branch point to equilibria
 
 You can perform automatic branch switching by calling `continuation` with the following options:
 
@@ -59,7 +59,7 @@ scene = plot(br, br1Top, br1Bottom; branchlabel = ["br", "br1Top", "br1Bottom"],
 ```
 
 
-## Branch switching from non simple branch point to equilibria
+## From non simple branch point to equilibria
 
 We provide an automatic branch switching method in this case. The method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and use it to compute the nearby solutions. These solutions are seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
@@ -72,7 +72,7 @@ An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
 
 > See [Branch switching (branch point)](@ref) for the precise method definition
 
-## Branch switching from Hopf point to periodic orbits
+## From Hopf point to periodic orbits
 
 In order to compute the bifurcated branch of periodic solutions at a Hopf bifurcation point, you need to choose a method to compute periodic orbits among:
 
@@ -100,9 +100,9 @@ Several examples are provided in [1d Brusselator (automatic)](@ref) or [2d Ginzb
 
 > See [Branch switching (Hopf point)](@ref) for the precise method definition
 
-## Branch switching from Branch / Period-doubling point of curve of periodic orbits
+## From Branch / Period-doubling point of curve of periodic orbits
 
-We do not provide (for now) the associated normal forms to these bifurcations of periodic orbits. As a consequence, the user is asked to provide the amplitude of the bifurcated solution.
+We do not provide (for now) the automatic branching procedure for these bifurcations of periodic orbits. As a consequence, the user is asked to provide the amplitude of the bifurcated solution.
 
 We provide the branching method for the following methods to compute periodic orbits: [`PeriodicOrbitTrapProblem`](@ref),[`ShootingProblem`](@ref) and [`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching.
 
@@ -113,7 +113,7 @@ continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
 	δp = 0.1, ampfactor = 1, usedeflation = false, kwargs...)
 ```
 
-## Branch switching from Bogdanov-Takens (BT) point to Fold / Hopf curve
+## From Bogdanov-Takens (BT) point to Fold / Hopf curve
 
 We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
@@ -133,7 +133,7 @@ where `ind_BT` is the index of the BT point in `br`. Note that the BT has been d
 
 > Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref) for improving the speed of computation for large scale systems.
 
-## Branch switching from Zero-Hopf (ZH) point to Fold / Hopf curve
+## From Zero-Hopf (ZH) point to Fold / Hopf curve
 
 We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
@@ -153,7 +153,7 @@ where `ind_ZH` is the index of the ZH point in `br`. Note that the ZH has been d
 
 > Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref) for improving the speed of computation for large scale systems.
 
-## Branch switching from Hopf-Hopf (HH) point to Fold / Hopf curve
+## From Hopf-Hopf (HH) point to Fold / Hopf curve
 
 We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 

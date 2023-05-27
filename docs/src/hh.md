@@ -11,10 +11,10 @@ $$\mathbf L q_1=i \omega_{1} q_1, \quad \mathbf L q_2=i \omega_{2} q_2.$$
 Under some conditions, $x(t)\approx x_0+2\Re w_1(t)q_1+2\Re w_2(t)q_2$ where $w_i$ satisfy the normal form:
 
 $$\left\{\begin{aligned}
-\dot{w}_1= & i w_1 w_1+\frac{1}{2} G_{2100} w_1\left|w_1\right|^2+G_{1011} w_1\left|w_2\right|^2 
+\dot{w}_1= & i \omega_1 w_1+\frac{1}{2} G_{2100} w_1\left|w_1\right|^2+G_{1011} w_1\left|w_2\right|^2 
  +\frac{1}{12} G_{3200} w_1\left|w_1\right|^4+\frac{1}{2} G_{2111} w_1\left|w_1\right|^2\left|w_2\right|^2+\frac{1}{4} G_{1022} w_1\left|w_2\right|^4 \\
 & +O\left(\left\|\left(w_1, \bar{w}_1, w_2, \bar{w}_2\right)\right\|^6\right) \\
-\dot{w}_2= & i w_2 w_2+G_{1110} w_2\left|w_1\right|^2+\frac{1}{2} G_{0021} w_2\left|w_2\right|^2 +\frac{1}{4} G_{2210} w_2\left|w_1\right|^4+\frac{1}{2} G_{1121} w_2\left|w_1\right|^2\left|w_2\right|^2+\frac{1}{12} G_{0032} w_2\left|w_2\right|^4 \\
+\dot{w}_2= & i \omega_2 w_2+G_{1110} w_2\left|w_1\right|^2+\frac{1}{2} G_{0021} w_2\left|w_2\right|^2 +\frac{1}{4} G_{2210} w_2\left|w_1\right|^4+\frac{1}{2} G_{1121} w_2\left|w_1\right|^2\left|w_2\right|^2+\frac{1}{12} G_{0032} w_2\left|w_2\right|^4 \\
 & +O\left(\left\|\left(w_1, \bar{w}_1, w_2, \bar{w}_2\right)\right\|^6\right)
 \end{aligned}\right.\tag{E}$$
 
