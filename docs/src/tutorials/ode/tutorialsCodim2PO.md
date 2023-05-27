@@ -171,7 +171,7 @@ brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 
 scene = plot(brpo_pd)
 ```
 
-## Fold/PD of periodic orbits continuation with Shooting
+## Continuation of Fold/PD of periodic orbits with Shooting
 
 We continue the previously detected fold/period-doubling bifurcations as function of two parameters and detect codim 2 bifurcations. We first start with the computation of the curve of Folds.
 

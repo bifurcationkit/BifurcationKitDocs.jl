@@ -122,9 +122,10 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, maxSteps = 30, ds = 0.01, dsmax = 0.03, plotEveryStep = 10);
+br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, maxSteps = 40, ds = 0.01, dsmax = 0.02, plotEveryStep = 10);
 	verbosity = 3, plot = true,
-	ampfactor = .1, δp = -0.005,
+	ampfactor = .2, δp = -0.0075,
+	usedeflation = false,
 	plotSolution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## add previous branch
@@ -151,7 +152,7 @@ using DifferentialEquations
 probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; abstol = 1e-12, reltol = 1e-10)
 
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-10, maxIter = 25)
+optn_po = NewtonPar(verbose = true, tol = 1e-12, maxIter = 25)
 
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, maxSteps = 130, newtonOptions = optn_po, tolStability = 1e-5, detectBifurcation = 3, plotEveryStep = 10, nInversion = 6, nev = 2)
@@ -176,7 +177,7 @@ We do not provide Automatic Branch Switching as we do not have the PD normal for
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, maxSteps = 50, dsmax = 0.05, plotEveryStep = 10);
+br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, maxSteps = 40, dsmax = 0.03, plotEveryStep = 10, ds = 0.01);
 	verbosity = 3, plot = true,
 	ampfactor = .1, δp = -0.005,
 	plotSolution = (x, p; k...) -> begin
@@ -198,7 +199,7 @@ We now rely on a the state of the art method for computing periodic orbits of OD
 
 ```@example TUTLURE
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 25)
+optn_po = NewtonPar(verbose = true, tol = 1e-10,  maxIter = 25)
 
 # continuation parameters
 opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds= 0.0001, dsmin = 1e-4, maxSteps = 80, newtonOptions = optn_po, tolStability = 1e-4, plotEveryStep = 20, nInversion = 6)
@@ -222,7 +223,7 @@ We do not provide Automatic Branch Switching as we do not have the PD normal for
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, maxSteps = 50, ds = 0.01, plotEveryStep = 1);
+br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, maxSteps = 50, ds = 0.01, plotEveryStep = 10);
 	verbosity = 3, plot = true,
 	ampfactor = .3, δp = -0.005,
 	plotSolution = (x, p; k...) -> begin

@@ -71,7 +71,7 @@ nothing #hide
 We are now ready to compute the diagram
 
 ```@example TUTPP2
-# parameter theta, see `? continuation`. Setting this to a non
+# parameter theta, see `? PALC`. Setting this to a non
 # default value helps passing the transcritical bifurcation
 diagram = bifurcationdiagram(prob, PALC(θ = 0.3),
 	# very important parameter. It specifies the maximum amount of recursion
@@ -110,8 +110,6 @@ Mt = 101 # number of time sections
 	PeriodicOrbitTrapProblem(M = Mt;
 	    # specific linear solver for ODEs
     	jacobian = :Dense);
-	# help branching from Hopf
-	usedeflation = true,
 	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],2,Mt);
 		return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),

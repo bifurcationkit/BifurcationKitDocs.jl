@@ -56,5 +56,7 @@ F(x,p) = @. p.a + x^2
 # parameters
 par = (a = 0., b = 2)
 prob = BifurcationProblem(F, zeros(3), par, (@lens _.a))
+# change u0
+prob2 = BifurcationKit.reMake(prob, u0 = rand(3))
 ```
 

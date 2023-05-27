@@ -53,8 +53,6 @@ argspo = (recordFromSolution = (x, p) -> begin
 	plotSolution = (x, p; k...) -> begin
 		xtt = BK.getPeriodicOrbit(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p))
 		plot!(xtt.t, xtt[:,:]'; label = "", k...)
-		# plot!(xtt.t, xtt[2,:]; label = "y", k...)
-		# plot!(br; subplot = 1, putspecialptlegend = false)
 	end)
 
 nothing #hide
@@ -129,5 +127,5 @@ ns_po_sh = continuation(br_sh, 1, (@lens _.k7), opts_posh_ns;
 ```
 
 ```@example STEINMETZ
-plot(ns_po_sh, fold_po_sh, branchlabel = ["NS","SN"])
+plot(ns_po_sh, fold_po_sh, branchlabel = ["NS","Fold"])
 ```
