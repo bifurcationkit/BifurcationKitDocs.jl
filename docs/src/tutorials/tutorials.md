@@ -35,6 +35,13 @@ Pages = ["ode/steinmetz.md",]
 Depth = 1
 ```
 
+In the next tutorial, we showcase aBS from Bautin/HH to curve of Fold/NS of periodic orbits.
+
+```@contents
+Pages = ["ode/lorenz84-PO.md",]
+Depth = 1
+```
+
 ## DAE examples
 
 ```@contents
