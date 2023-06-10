@@ -191,7 +191,7 @@ which gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       4.3061e+00     │        0       │
 │       1     │       5.3254e-02     │       10       │

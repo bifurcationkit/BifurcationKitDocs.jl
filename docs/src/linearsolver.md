@@ -45,4 +45,4 @@ ls(J, rand(2))
 4. We provide a preconditioner based on deflation of eigenvalues (also called preconditioner based on Leading Invariant Subspaces) using a partial Schur decomposition. There are two ways to define one *i.e.* [`PrecPartialSchurKrylovKit`](@ref) and [`PrecPartialSchurArnoldiMethod`](@ref). 
 
 !!! tip "Using Preconditioners"
-    Apart from setting a preconditioner for a linear solver, it can be advantageous to change the preconditioner during computations, *e.g.* during a call to `continuation` or `newton`. This can be achieved by taking advantage of the callbacks to these methods. See the example [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref).
+    Apart from setting a preconditioner for a linear solver, it can be advantageous to change the preconditioner during computations, *e.g.* during a call to `continuation` or `newton`. This can be achieved by taking advantage of the callbacks to these methods. See the example [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl).

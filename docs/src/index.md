@@ -55,7 +55,7 @@ In Julia, we also have [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl)
 
 ## A word on performance
 
-The examples which follow have not **all** been written with the goal of performance but rather simplicity (except maybe [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref) and [1d Langmuir–Blodgett transfer model (advanced)](@ref)). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.
+The examples which follow have not **all** been written with the goal of performance but rather simplicity (except maybe [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) and [1d Langmuir–Blodgett transfer model (advanced)](@ref)). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.
 
 For example, in one of the simplest tutorials, [Temperature model (Simplest example)](@ref), one could use `BandedMatrices.jl` for the jacobian and an inplace modification when the jacobian is called ; using a composite type would be favored. Porting them to GPU could be another option.
 

@@ -19,7 +19,7 @@ The model is interesting because the branch of periodic solutions converges to a
 It is easy to encode the ODE as follows
 
 ```@example TUTODE
-using Revise, ForwardDiff, Parameters, Setfield, Plots, LinearAlgebra
+using Revise, ForwardDiff, Parameters, Plots, LinearAlgebra
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -81,11 +81,11 @@ We then compute the branch of periodic orbits from the last Hopf bifurcation poi
 
 ```@example TUTODE
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-10,  maxIter = 10)
+optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 10)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4,
-	maxSteps = 90, newtonOptions = (@set optn_po.tol = 1e-7), tolStability = 1e-8)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds = -0.001, dsmin = 1e-4,
+	maxSteps = 90, newtonOptions = optn_po, tolStability = 1e-8)
 
 # arguments for periodic orbits
 args_po = (	recordFromSolution = (x, p) -> begin
@@ -111,8 +111,6 @@ Mt = 200 # number of time sections
 	br, 4, opts_po_cont,
 	# we want to use the Trapeze method to locate PO
 	PeriodicOrbitTrapProblem(M = Mt);
-	# regular continuation options
-	verbosity = 2,	plot = true,
 	args_po...,
 	)
 

@@ -33,8 +33,8 @@ x_{3}+I C\left(x_{1}, x_{2}\right) \\
 It is easy to encode the DAE as follows. The mass matrix is defined next.
 
 ```@example TUTDAE1
-using Revise, Parameters, Setfield, Plots, LinearAlgebra
-using BifurcationKit, Test
+using Revise, Parameters, Plots, LinearAlgebra
+using BifurcationKit
 const BK = BifurcationKit
 
 # sup norm

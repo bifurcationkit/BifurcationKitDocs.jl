@@ -44,16 +44,20 @@ z0 = rand(4)
 par_sl = (k1=0.1631021, k2=1250., k3=0.046875, k4=20., k5=1.104, k6=0.001, k₋₇=0.1175, k7=1.5, k8=0.75)
 prob = BK.BifurcationProblem(SL, z0, par_sl, (@lens _.k8);)
 
-argspo = (recordFromSolution = (x, p) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p))
-		return (max = maximum(xtt[1,:]),
-				min = minimum(xtt[1,:]),
-				period = getPeriod(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p)))
-	end,
-	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p))
-		plot!(xtt.t, xtt[:,:]'; label = "", k...)
-	end)
+function recordFromSolution(x, p) 
+	xtt = BK.getPeriodicOrbit(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p))
+	return (max = maximum(xtt[1,:]),
+			min = minimum(xtt[1,:]),
+			period = getPeriod(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p)))
+end
+
+function plotSolution(x, p; k...)
+	xtt = BK.getPeriodicOrbit(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p))
+	plot!(xtt.t, xtt[:,:]'; label = "", k...)
+end
+
+argspo = (recordFromSolution = recordFromSolution,
+	plotSolution = plotSolution)
 
 nothing #hide
 ```
@@ -85,7 +89,7 @@ opts_po_cont = setproperties(opts_br, maxSteps = 60, saveEigenvectors = true, to
 @set! opts_po_cont.newtonOptions.verbose = false
 @set! opts_po_cont.newtonOptions.maxIter = 10
 br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po_cont;
-	verbosity = 3, plot = true,
+	#verbosity = 3, plot = true,
 	callbackN = BK.cbMaxNorm(10),
 	argspo...)
 ```
@@ -97,14 +101,13 @@ opts_posh_fold = ContinuationPar(br_sh.contparams, detectBifurcation = 2, maxSte
 @set! opts_posh_fold.newtonOptions.tol = 1e-12
 @set! opts_posh_fold.newtonOptions.verbose = true
 fold_po_sh = @time continuation(br_sh, 2, (@lens _.k7), opts_posh_fold;
-		verbosity = 3, plot = true,
+		#verbosity = 3, plot = true,
 		detectCodim2Bifurcation = 2,
 		startWithEigen = false,
 		usehessian = false,
 		jacobian_ma = :minaug,
-		normN = norminf,
+		normC = norminf,
 		callbackN = BK.cbMaxNorm(1e1),
-		bothside = false,
 		bdlinsolver = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
 		)
 plot(fold_po_sh)
@@ -112,20 +115,20 @@ plot(fold_po_sh)
 
 ## Curve of NS points of periodic orbits
 ```@example STEINMETZ
-opts_posh_ns = ContinuationPar(br_sh.contparams, detectBifurcation = 1, maxSteps = 35, pMax = 1.9, plotEveryStep = 10, dsmax = 4e-2, ds = 1e-2)
+opts_posh_ns = ContinuationPar(br_sh.contparams, detectBifurcation = 0, maxSteps = 35, pMax = 1.9, plotEveryStep = 10, dsmax = 4e-2, ds = 1e-2)
 @set! opts_posh_ns.newtonOptions.tol = 1e-12
 ns_po_sh = continuation(br_sh, 1, (@lens _.k7), opts_posh_ns;
-		verbosity = 3, plot = true,
+		verbosity = 2, plot = false,
 		detectCodim2Bifurcation = 2,
 		startWithEigen = false,
 		usehessian = false,
 		jacobian_ma = :minaug,
-		normN = norminf,
+		normC = norminf,
 		callbackN = BK.cbMaxNorm(1e1),
-		bothside = false,
 		)
 ```
 
 ```@example STEINMETZ
 plot(ns_po_sh, fold_po_sh, branchlabel = ["NS","Fold"])
 ```
+

@@ -8,7 +8,7 @@
 
 > To access this algorithm, you have to use the package [AsymptoticNumericalMethod.jl](https://github.com/bifurcationkit/AsymptoticNumericalMethod.jl)   
 
-The method seeks a Taylor approximation of the solutions of
+The method [^Rubbert],[^Charpentier] seeks a Taylor approximation of the solutions of
 
 $$\mathbf F(X,p)=0\in\mathbb R^n$$
 
@@ -42,9 +42,7 @@ The method is based on the package [TaylorSeries.jl](https://github.com/JuliaDif
 
 ## Method
 
-```@docs
-AsymptoticNumericalMethod.ANM
-```
+See [`AsymptoticNumericalMethod.ANM`](@ref) for more information.
 
 ## Example
 

@@ -52,3 +52,7 @@ To compute the codim 2 curve of PD points of periodic orbits, one can call [`con
 ```
 
 where `br` is a branch of periodic orbits and the options are as above except with have an additional parameter axis `lens2` which is used to locate the bifurcation points.
+
+## References
+
+[^Govaerts]: > Govaerts, Willy J. F. Numerical Methods for Bifurcations of Dynamical Equilibria. Philadelphia, Pa: Society for Industrial and Applied Mathematics, 2000.

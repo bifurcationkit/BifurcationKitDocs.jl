@@ -5,7 +5,7 @@ In this page, we explain how to perform precise localisation of Bogdanov-Takens 
 
 ## Method
 
-The continuation of BT bifurcation points is based on a **Minimally Augmented**[^Govaerts] formulation which is an efficient way to detect singularities. The continuation of BT points is based on the formulation
+The continuation of BT bifurcation points is based on a **Minimally Augmented**[^Govaerts],[^Blank],[^Bindel] formulation which is an efficient way to detect singularities. The continuation of BT points is based on the formulation
 
 $$G(u,p) = (F(u,p), g_1(u,p), g_2(u,p))\in\mathbb R^{n+2}\quad\quad (F_{bt})$$
 

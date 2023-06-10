@@ -17,7 +17,7 @@ u_{2}^{\prime}=-u_{2}+3 u_{1} u_{2}
 It is easy to encode the ODE as follows
 
 ```@example TUTPP2
-using Revise, Parameters, Setfield, Plots, LinearAlgebra
+using Revise, Parameters, Plots, LinearAlgebra
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -26,7 +26,7 @@ norminf(x) = norm(x, Inf)
 
 # function to record information from a solution
 recordFromSolution(x, p) = (u1 = x[1], u2 = x[2])
-####################################################################################################
+
 function pp2!(dz, z, p, t)
 	@unpack p1, p2, p3, p4 = p
 	u1, u2 = z
@@ -71,7 +71,7 @@ nothing #hide
 We are now ready to compute the diagram
 
 ```@example TUTPP2
-# parameter theta, see `? PALC`. Setting this to a non
+# parameter θ, see `? PALC`. Setting this to a non
 # default value helps passing the transcritical bifurcation
 diagram = bifurcationdiagram(prob, PALC(θ = 0.3),
 	# very important parameter. It specifies the maximum amount of recursion

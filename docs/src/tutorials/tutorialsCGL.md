@@ -1,4 +1,4 @@
-# 2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)
+# [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@id cgl)
 
 ```@contents
 Pages = ["tutorialsCGL.md"]
@@ -284,7 +284,7 @@ which gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       6.5432e-03     │        0       │
 │       1     │       1.4372e-03     │        8       │
@@ -338,7 +338,7 @@ which gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       6.5432e-03     │        0       │
 │       1     │       1.4372e-03     │        8       │
@@ -451,7 +451,7 @@ It gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       6.5432e-03     │        0       │
 │       1     │       1.4372e-03     │        8       │
@@ -486,7 +486,7 @@ but it gives:
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       3.3298e-03     │        0       │
 │       1     │       9.5088e-03     │       34       │
@@ -599,7 +599,7 @@ and this gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       4.5937e-01     │        0       │
 │       1     │       5.6013e-01     │       20       │

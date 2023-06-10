@@ -19,13 +19,13 @@ The model is interesting because there is a period doubling bifurcation and we w
 It is easy to encode the ODE as follows
 
 ```@example TUTLURE
-using Revise, Parameters, Setfield, Plots, LinearAlgebra
-using BifurcationKit, Test
+using Revise, Parameters, Plots, LinearAlgebra
+using BifurcationKit
 const BK = BifurcationKit
 
 norminf(x) = norm(x, Inf)
 recordFromSolution(x, p) = (u1 = x[1], u2 = x[2])
-####################################################################################################
+
 function lur!(dz, z, p, t)
 	@unpack α, β = p
 	x, y, z = z
@@ -124,7 +124,7 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 # aBS from PD
 br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, maxSteps = 40, ds = 0.01, dsmax = 0.02, plotEveryStep = 10);
 	verbosity = 3, plot = true,
-	ampfactor = .2, δp = -0.0075,
+	ampfactor = .2, δp = -0.005,
 	usedeflation = false,
 	plotSolution = (x, p; k...) -> begin
 		plotPO(x, p; k...)

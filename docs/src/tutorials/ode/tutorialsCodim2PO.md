@@ -20,8 +20,8 @@ This tutorial is useful in that we show how to start periodic orbits continuatio
 
 ```@example TUTPPREY
 using Revise
-using Test, ForwardDiff, Parameters, Setfield, Plots, LinearAlgebra
-using BifurcationKit, Test
+using ForwardDiff, Parameters, Plots, LinearAlgebra
+using BifurcationKit
 const BK = BifurcationKit
 
 norminf(x) = norm(x, Inf)
@@ -43,7 +43,7 @@ par_pop = ( K = 1., r = 6.28, a = 12.56, b0 = 0.25, e = 1., d = 6.28, ϵ = 0.2, 
 
 z0 = [0.1,0.1,1,0]
 
-prob = BK.BifurcationProblem(Pop, z0, par_pop, (@lens _.b0);
+prob = BifurcationProblem(Pop, z0, par_pop, (@lens _.b0);
 	recordFromSolution = (x, p) -> (x = x[1], y = x[2], u = x[3]))
 
 opts_br = ContinuationPar(pMin = 0., pMax = 20.0, ds = 0.002, dsmax = 0.01, nInversion = 6, detectBifurcation = 3, maxBisectionSteps = 25, nev = 4, maxSteps = 20000)
@@ -90,7 +90,7 @@ We compute periodic orbits of (E) using the Trapezoid method.
 We are now equipped to build a periodic orbit problem from a solution `sol::ODEProblem`.
 
 ```@example TUTPPREY
-# this is the function which builds probtrap from sol
+# function to build probtrap from sol
 probtrap, ci = BK.generateCIProblem(PeriodicOrbitTrapProblem(M = 150),
 	prob, sol, 2.)
 
@@ -171,7 +171,7 @@ brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 
 scene = plot(brpo_pd)
 ```
 
-## Continuation of Fold/PD of periodic orbits with Shooting
+## Continuation of Fold / PD of periodic orbits with Shooting
 
 We continue the previously detected fold/period-doubling bifurcations as function of two parameters and detect codim 2 bifurcations. We first start with the computation of the curve of Folds.
 
@@ -217,7 +217,7 @@ brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 
 opts_pocoll_pd = ContinuationPar(brpo_pd.contparams, detectBifurcation = 3, maxSteps = 40, pMin = 1.e-2, plotEveryStep = 10, dsmax = 1e-2, ds = -1e-3)
 @set! opts_pocoll_pd.newtonOptions.tol = 1e-12
 pd_po_sh2 = continuation(brpo_pd, 2, (@lens _.b0), opts_pocoll_pd;
-		verbosity = 3, plot = true,
+		verbosity = 3,
 		detectCodim2Bifurcation = 2,
 		startWithEigen = false,
 		usehessian = false,

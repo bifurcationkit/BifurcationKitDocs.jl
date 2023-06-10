@@ -62,8 +62,11 @@ Depth = 3
 | Branch switching at Branch point |SS/PS/OC/T| See each|  | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE-PD/#Period-doubling-in-Lur'e-problem-(PD-aBS)) | |
 | Branch switching at PD point |SS/PS/OC/T| See each|  | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE-PD/#Period-doubling-in-Lur'e-problem-(PD-aBS)) | |
 | Continuation of Fold points |SS/PS/OC/T| See each| `AbstractVector` | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Continuation-of-Fold-of-periodic-orbits) | Yes |
-| Continuation of Period-doubling points |SS/OC| | `AbstractVector` |  | |
-| Continuation of Neimark-Sacker points |SS/OC| | `AbstractVector` |  | |
+| Continuation of Period-doubling points |SS/OC| | `AbstractVector` |  [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsCodim2PO/#Continuation-of-Fold/PD-of-periodic-orbits-with-Shooting) | |
+| Continuation of Neimark-Sacker points |SS/OC| | `AbstractVector` | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/steinmetz/#Curve-of-NS-points-of-periodic-orbits) | |
+| detection of codim 2 bifurcations of periodic orbits |SS/OC| | `AbstractVector` | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/steinmetz/#Curve-of-NS-points-of-periodic-orbits) | |
+| Branch switching at Bautin point to curve of Fold of periodic orbits |SS/OC| | `AbstractVector` |  | |
+| Branch switching at ZH/HH point to curve of NS of periodic orbits |SS/OC| | `AbstractVector` |  | |
 
 ## Capabilities related to Homoclinic orbits
 

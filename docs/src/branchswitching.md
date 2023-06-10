@@ -18,6 +18,7 @@ We collect in the following table the list of automatic branch switching (aBS) f
 |  `continuation(br::ContResult{T}, ind::Int; kw...)` | `:bt,:zh,:hh`| ` FoldCont,HopfCont` | switch to Fold/Hopf continuation from Hopf/Fold w.r.t. parameters of codim 2 `br`  |
 | `continuation(br::ContResult{T}, ind_hopf::Int, ::ContinuationPar, prob::AbstractPeriodicOrbitProblem)`   | `:hopf` |  `EquilibriumCont` | Branch switching from Hopf point to periodic orbits |
 | `continuation(br::ContResult{T}, ind::Int, kw...)`   | `:bp,:pd` |  `PeriodicOrbitCont` | Branch switching from Branch / Period-doubling point of periodic orbits to curve of periodic orbits |
+| `continuation(br::ContResult{T}, ind::Int, kw...)`   | `:gh,:zh,:hh` |  `TwoParamCont` | Branch switching from Bautin / Zero-Hopf/ Hopf-Hopf point to curve of Fold/NS of periodic orbits |
 
 ## From simple branch point to equilibria
 
@@ -59,7 +60,7 @@ scene = plot(br, br1Top, br1Bottom; branchlabel = ["br", "br1Top", "br1Bottom"],
 ```
 
 
-## From non simple branch point to equilibria
+## [From non simple branch point to equilibria](@id abs-simple-eq)
 
 We provide an automatic branch switching method in this case. The method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and use it to compute the nearby solutions. These solutions are seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
@@ -96,7 +97,7 @@ We refer to [`continuation`](@ref) for more information about the arguments. Her
 
 - For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `ShootingProblem(M, odeprob, Euler())` or `PoincareShootingProblem(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
 
-Several examples are provided in [1d Brusselator (automatic)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref).
+Several examples are provided in [1d Brusselator (automatic)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl).
 
 > See [Branch switching (Hopf point)](@ref) for the precise method definition
 
@@ -115,7 +116,7 @@ continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
 
 ## From Bogdanov-Takens (BT) point to Fold / Hopf curve
 
-We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
 continuation(br::ContResult, ind_BT::Int,
@@ -131,11 +132,11 @@ continuation(br::ContResult, ind_BT::Int,
 
 where `ind_BT` is the index of the BT point in `br`. Note that the BT has been detected during Fold or Hopf continuation. Calling the above method thus switches from Fold continuation to Hopf continuation (and vice-versa) automatically with the same parameter axis.
 
-> Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref) for improving the speed of computation for large scale systems.
+> Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref jac-fold) for improving the speed of computation for large scale systems.
 
 ## From Zero-Hopf (ZH) point to Fold / Hopf curve
 
-We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
 continuation(br::ContResult, ind_ZH::Int,
@@ -151,11 +152,11 @@ continuation(br::ContResult, ind_ZH::Int,
 
 where `ind_ZH` is the index of the ZH point in `br`. Note that the ZH has been detected during Fold or Hopf continuation. Calling the above method thus switches from Fold continuation to Hopf continuation (and vice-versa) automatically with the same parameter axis.
 
-> Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref) for improving the speed of computation for large scale systems.
+> Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref jac-fold) for improving the speed of computation for large scale systems.
 
 ## From Hopf-Hopf (HH) point to Fold / Hopf curve
 
-We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
 continuation(br::ContResult, ind_HH::Int,
@@ -172,4 +173,59 @@ continuation(br::ContResult, ind_HH::Int,
 
 where `ind_HH` is the index of the HH point in `br`. Note that the HH has been detected during Hopf continuation. Calling the above method thus switches from Hopf continuation to another Hopf branch automatically with the same parameter axis.
 
-> Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref) for improving the speed of computation for large scale systems.
+> Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref jac-fold) for improving the speed of computation for large scale systems.
+
+## From Bautin point to curve Folds of period orbits
+
+From the [Bautin normal form](http://scholarpedia.org/article/Bautin_bifurcation), we know that there is a curve of Fold of periodic orbits which branches from it.
+
+We provide an automatic branch switching method in this case which reads as follows:
+
+```julia
+continuation(br::HopfCont, ind_BAUTIN::Int, 
+	_contParams::ContinuationPar,
+    prob::AbstractPeriodicOrbitProblem ;
+    δp = nothing, ampfactor = 1, kwargs...)
+``` 
+
+where `prob` is a method to compute periodic orbits (see [From Hopf point to periodic orbits](@ref) for more information).
+
+Note that the two parameters in `br` will be used for the continuation of Fold points of periodic orbits.
+
+## From Zero-Hopf (ZH) point to curve NS of period orbits
+
+From the [Zero-Hopf normal form](http://scholarpedia.org/article/Zero-Hopf_bifurcation), we know that there is a curve of Neimark-Sacker (NS) bifurcations of periodic orbits which branches from it.
+
+We provide an automatic branch switching method in this case which reads as follows:
+
+```julia
+continuation(br::TwoParamCont, ind_ZH::Int, 
+	_contParams::ContinuationPar,
+    prob::AbstractPeriodicOrbitProblem ;
+    δp = nothing, ampfactor = 1, kwargs...)
+``` 
+
+where `prob` is a method to compute periodic orbits (see [From Hopf point to periodic orbits](@ref) for more information).
+
+Note that the two parameters in `br` will be used for the continuation of NS points of periodic orbits.
+
+## From Hopf-Hopf (HH) point to curve NS of period orbits
+
+From the [Hopf-Hopf normal form](http://scholarpedia.org/article/Hopf-Hopf_bifurcation), we know that there are two curves of Neimark-Sacker (NS) bifurcations of periodic orbits which branches from it.
+
+We provide an automatic branch switching method in this case which reads as follows:
+
+```julia
+continuation(br::TwoParamCont, ind_HH::Int, 
+	_contParams::ContinuationPar,
+    prob::AbstractPeriodicOrbitProblem ;
+    δp = nothing, ampfactor = 1, 
+    whichns = 1,
+    kwargs...)
+``` 
+
+where `prob` is a method to compute periodic orbits (see [From Hopf point to periodic orbits](@ref) for more information).
+The option `whichns` which belongs to {1,2} controls which NS curve you want to compute. 
+
+Note that the two parameters in `br` will be used for the continuation of NS points of periodic orbits.
+	

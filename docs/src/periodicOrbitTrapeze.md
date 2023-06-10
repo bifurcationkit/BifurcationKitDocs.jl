@@ -58,7 +58,7 @@ The functional is encoded in the composite type [`PeriodicOrbitTrapProblem`](@re
 
 ## Preconditioning
 
-We strongly advise you to use a preconditioner to deal with the above linear problem. See [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref) for an example.
+We strongly advise you to use a preconditioner to deal with the above linear problem. See [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) for an example.
 
 ## Linear solvers
 
@@ -117,7 +117,7 @@ The state of the art method is based on a Periodic Schur decomposition. It is av
 
 We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `linearalgo` to select one of the many ways to deal with the above linear problem. The default solver `linearalgo` is `:BorderedLU`.
 
-Have a look at the [Continuation of periodic orbits (Finite differences)](@ref) example for the Brusselator for a basic example and at [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref) for a more advanced one.
+Have a look at the [Periodic orbits based on Trapezoidal rule](@ref cgl) example for the Brusselator for a basic example and at [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) for a more advanced one.
 
 The docs for this specific `newton` are located at [`newton`](@ref).
 
@@ -136,7 +136,7 @@ newton(probPO::PeriodicOrbitTrapProblem,
 
 ## Continuation
 
-Have a look at the [Continuation of periodic orbits (Finite differences)](@ref) example for the Brusselator. We refer to [`continuation`](@ref) for more information regarding the arguments.
+Have a look at the [Periodic orbits based on Trapezoidal rule](@ref) example for the Brusselator. We refer to [`continuation`](@ref) for more information regarding the arguments.
 
 ```@docs
 continuation(prob::PeriodicOrbitTrapProblem,

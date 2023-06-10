@@ -93,8 +93,8 @@ which produces the results
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
-├─────────────┐──────────────────────┐────────────────┤
+│ Newton step         residual     linear iterations  │
+├─────────────┬──────────────────────┬────────────────┤
 │       0     │       1.7391e+02     │        0       │
 │       1     │       5.0465e+03     │        1       │
 │       2     │       1.4878e+03     │        1       │
@@ -134,7 +134,7 @@ The reason is that the jacobian operator is not very well conditioned unlike its
 eig = EigArpack(0.1, :LM)
 ```
 
-If we want to compute the bifurcation points along the branches, we have to tell the solver by setting `detectBifurcation = 2`. However, this won't be very precise and each bifurcation point will be located at best at the step size precision. We can use bisection to locate this points more precisely using the option `detectBifurcation = 3` (see [Detection of bifurcation points](@ref) for more information).
+If we want to compute the bifurcation points along the branches, we have to tell the solver by setting `detectBifurcation = 2`. However, this won't be very precise and each bifurcation point will be located at best at the step size precision. We can use bisection to locate this points more precisely using the option `detectBifurcation = 3` (see [Detection of bifurcation points of Equilibria](@ref) for more information).
 
 We are now ready to compute the branches:
 

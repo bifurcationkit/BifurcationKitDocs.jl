@@ -15,7 +15,7 @@ where $z=1-x-y-s$.
 We start with some imports that are useful in the following.
 
 ```@example TUTCO
-using Revise, ForwardDiff, Parameters, Setfield, Plots, LinearAlgebra
+using Revise, ForwardDiff, Parameters, Plots, LinearAlgebra
 using BifurcationKit
 const BK = BifurcationKit
 

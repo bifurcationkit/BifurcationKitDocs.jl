@@ -20,7 +20,7 @@ The model is interesting because the branch of periodic solutions converges to a
 It is easy to encode the ODE as follows
 
 ```@example TUTNMEMTK
-using Revise, ModelingToolkit, Setfield, LinearAlgebra
+using Revise, ModelingToolkit, LinearAlgebra
 using DifferentialEquations, Plots
 using BifurcationKit
 const BK = BifurcationKit
