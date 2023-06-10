@@ -59,7 +59,7 @@ makedocs(doctest = false,
 									"Fold continuation (2 params)" => "FoldContinuationPO.md",
 									"Period-Doubling continuation (2 params)" => "PDContinuationPO.md",
 									"Neimark-Sacker continuation (2 params)" => "NSContinuationPO.md",
-								],				
+								],
 			"Normal form (equilibria)" =>	[
 						"Simple branch point" => "simplebp.md",
 						"Non-simple branch point" => "nonsimplebp.md",
@@ -71,7 +71,6 @@ makedocs(doctest = false,
 						"Hopf-Hopf" => "hh.md",
 								],
 			"Normal form (periodic orbits)" => [
-
 									],
 			"Branch switching" => "branchswitching.md",
 			"Bifurcation diagram" => "BifurcationDiagram.md",

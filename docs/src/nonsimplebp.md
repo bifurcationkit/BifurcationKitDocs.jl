@@ -60,3 +60,33 @@ julia> BifurcationKit.nf(bp2d)
 - You can evaluate the reduced equation as `bp2d(Val(:reducedForm), rand(2), 0.2)`. This can be used to find all the zeros of the reduced equation by sampling on a grid or using a general solver like  `Roots.jl`. 
 
 - Finally, given a $d$-dimensional vector $x$ and a parameter $\delta p$, you can have access to an initial guess $u$ (see above) by calling `bp2d(rand(2), 0.1)`
+
+## Branching from bifurcation point
+
+It may happen that the general procedure fails. We thus expose the procedure `multicontinuation` in order to let the user tune it to its need.
+
+The first step is to compute the reduced equation, say of the first bifurcation point in `br`.
+
+```julia
+bp = getNormalForm(br, 1)
+```
+
+Next, we want to find the zeros of the reduced equation. This is usually achieved by calling the predictor
+
+```julia
+pred = predictor(bp, δp)
+```
+
+which returns zeros of `bp` before and after the bifurcation point. You could also use your prefered procedure from `Roots.jl` (or other) to find the zeros of the polynomials `bp(Val(:reducedForm), z, p)`.
+
+We can use these zeros to form guesses to apply Newton for the full functional:
+
+```julia
+pts = BifurcationKit.getFirstPointsOnBranch(br, bp, pred, opts; δp =  δp)
+```
+
+We can then use this to continue the different branches
+
+```julia
+brbp = BifurcationKit.multicontinuation(br, bp, pts.before, pts.after, opts)
+```

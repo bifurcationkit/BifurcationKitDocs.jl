@@ -44,18 +44,21 @@ z0 = rand(4)
 par_sl = (k1=0.1631021, k2=1250., k3=0.046875, k4=20., k5=1.104, k6=0.001, k₋₇=0.1175, k7=1.5, k8=0.75)
 prob = BK.BifurcationProblem(SL, z0, par_sl, (@lens _.k8);)
 
+# record variables for plotting
 function recordFromSolution(x, p) 
-	xtt = BK.getPeriodicOrbit(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p))
+	xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 	return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),
-			period = getPeriod(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p)))
+			period = getPeriod(p.prob, x, p.p))
 end
 
+# plotting function
 function plotSolution(x, p; k...)
-	xtt = BK.getPeriodicOrbit(p.prob, x, set(getParams(p.prob), BK.getLens(p.prob), p.p))
+	xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 	plot!(xtt.t, xtt[:,:]'; label = "", k...)
 end
 
+# group parameters
 argspo = (recordFromSolution = recordFromSolution,
 	plotSolution = plotSolution)
 
@@ -79,13 +82,7 @@ We generate a shooting problem form the computed trajectories and continue the p
 ```@example STEINMETZ
 probsh, cish = generateCIProblem( ShootingProblem(M=4), prob, prob_de, sol, 16.; reltol = 1e-10, abstol = 1e-12, parallel = true)
 
-solpo = newton(probsh, cish, NewtonPar(verbose = true))
-
-_sol = BK.getPeriodicOrbit(probsh, solpo.u, sol.prob.p)
-	plot(_sol.t, _sol[:,:]')
-
-opts_br = ContinuationPar(pMin = 0., pMax = 20.0, ds = 0.002, dsmax = 0.05, nInversion = 8, detectBifurcation = 3, maxBisectionSteps = 25, nev = 4)
-opts_po_cont = setproperties(opts_br, maxSteps = 60, saveEigenvectors = true, tolStability = 1e-3)
+opts_po_cont = ContinuationPar(pMin = 0., pMax = 20.0, ds = 0.002, dsmax = 0.05, nInversion = 8, detectBifurcation = 3, maxBisectionSteps = 25, nev = 4, maxSteps = 60, saveEigenvectors = true, tolStability = 1e-3)
 @set! opts_po_cont.newtonOptions.verbose = false
 @set! opts_po_cont.newtonOptions.maxIter = 10
 br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po_cont;

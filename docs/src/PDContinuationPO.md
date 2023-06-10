@@ -53,6 +53,42 @@ To compute the codim 2 curve of PD points of periodic orbits, one can call [`con
 
 where `br` is a branch of periodic orbits and the options are as above except with have an additional parameter axis `lens2` which is used to locate the bifurcation points.
 
+## Algorithmic details
+
+The continuation of PD points is based on the formulation
+
+$$G(u,p,\omega) = (F_{po}(u,p), \sigma(u,p))\in\mathbb R^{n+1}\quad\quad (\mathcal F_{pd})$$
+
+where $F_{po}$ is the functional for locating periodic orbits and the test function $g$ is solution of
+
+$$\left[\begin{array}{cc}
+N(u,p) & w \\
+v^{\top} & 0
+\end{array}\right]\left[\begin{array}{c}
+r \\
+\sigma(u,p)
+\end{array}\right]=\left[\begin{array}{c}
+0_{n} \\
+1
+\end{array}\right].$$
+
+In the case of Multiple Standard Shooting, the matrix $N$ is based on the monodromy $M(x_i,T_i)$
+
+$$N:=\left(\begin{array}{cccccc}
+{M_1} & -I & {0} & {\cdots} & 0 \\
+0 & {M_2} & -I & {\cdots} & {0} \\
+{\vdots} & {\cdots} & {\ddots} & {\ddots} & {\vdots} \\
+{0} & {\cdots} & {\cdots} & {\ddots} & -I \\
+I & {\cdots} & {\cdots} & 0 & {M_{m}} \\
+\end{array}\right).$$
+
+The jacobian of the PD functional to use for the Newton algorithm
+
+$$\left[\begin{array}{cc}
+\partial_{u}F_{po} & \partial_pF_{po} \\
+\partial_u\sigma & \partial_p\sigma
+\end{array}\right].$$
+
 ## References
 
-[^Govaerts]: > Govaerts, Willy J. F. Numerical Methods for Bifurcations of Dynamical Equilibria. Philadelphia, Pa: Society for Industrial and Applied Mathematics, 2000.
+[^Govaerts]:> Govaerts, Willy J. F. Numerical Methods for Bifurcations of Dynamical Equilibria. Philadelphia, Pa: Society for Industrial and Applied Mathematics, 2000.

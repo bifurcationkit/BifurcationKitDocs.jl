@@ -28,7 +28,7 @@ Pages = ["ode/tutorialsCodim2PO.md"]
 Depth = 1
 ```
 
-In the next tutorial, we showcase the detection of **Chenciner** bifurcations.
+In the next tutorial, we showcase the detection of **Chenciner** bifurcations. This is a relatively advanced tutorial, so we don't give much explanations. The reader should get first familiar with the above simpler examples.
 
 ```@contents
 Pages = ["ode/steinmetz.md",]
@@ -42,12 +42,23 @@ Pages = ["ode/lorenz84-PO.md",]
 Depth = 1
 ```
 
+### Homoclinic orbits
+
+Based on the package [HclinicBifurcationKit.jl](https://github.com/bifurcationkit/HclinicBifurcationKit.jl) and its [docs](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/).
+
+- [Autonomous electronic circuit (aBS from BT)](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/tutorialsFreire/#Autonomous-electronic-circuit-(aBS-from-BT))
+- [Nonlinear laser model](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/OPL/#Nonlinear-laser-model)
+
 ## DAE examples
 
 ```@contents
 Pages = ["ode/Colpitts.md"]
 Depth = 1
 ```
+
+## DDE examples
+
+See the [tutorials](https://bifurcationkit.github.io/DDEBifurcationKit.jl/dev/tutorials/tutorials/) of [DDEBifurcationKit.jl](https://github.com/bifurcationkit/DDEBifurcationKit.jl).
 
 ## Examples based on ModelingToolkit
 

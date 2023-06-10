@@ -46,4 +46,44 @@ To compute the codim 2 curve of Fold points of periodic orbits, one can call [`c
 ```
 
 where `br` is a branch of periodic orbits and the options are as above except with have an additional parameter axis `lens2` which is used to locate the bifurcation points.
-## References[^Govaerts]: > Govaerts, Willy J. F. Numerical Methods for Bifurcations of Dynamical Equilibria. Philadelphia, Pa: Society for Industrial and Applied Mathematics, 2000.
+
+## Algorithmic details
+
+The continuation of NS points is based on the formulation
+
+$$G(u,p,\omega) = (F_{po}(u,p,\omega), \Re\sigma(u,p,\omega), \Im\sigma(u,p,\omega))\in\mathbb R^{n+2}\quad\quad (\mathcal F_{ns})$$
+
+where $F_{po}$ is the functional for locating periodic orbits and the test function $g$ is solution of
+
+$$\left[\begin{array}{cc}
+N(u,p,\omega) & w \\
+v^{\top} & 0
+\end{array}\right]\left[\begin{array}{c}
+r \\
+\sigma(u,\omega,p)
+\end{array}\right]=\left[\begin{array}{c}
+0_{n} \\
+1
+\end{array}\right].$$
+
+In the case of Multiple Standard Shooting, the matrix $N$ is based on the monodromy $M(x_i,T_i)$
+
+$$N:=\left(\begin{array}{cccccc}
+{M_1} & -I & {0} & {\cdots} & 0 \\
+0 & {M_2} & -I & {\cdots} & {0} \\
+{\vdots} & {\cdots} & {\ddots} & {\ddots} & {\vdots} \\
+{0} & {\cdots} & {\cdots} & {\ddots} & -I \\
+e^{i\omega}I & {\cdots} & {\cdots} & 0 & {M_{m}} \\
+\end{array}\right).$$
+
+The jacobian of the NS functional to use for the Newton algorithm
+
+$$\left[\begin{array}{ccc}
+\partial_{u}F_{po} & \partial_pF_{po} & 0 \\
+\partial_u\sigma_r & \partial_p\sigma_r & \partial_\omega\sigma_r\\
+\partial_u\sigma_i & \partial_p\sigma_i & \partial_\omega\sigma_i
+\end{array}\right].$$
+
+## References
+
+[^Govaerts]:> Govaerts, Willy J. F. Numerical Methods for Bifurcations of Dynamical Equilibria. Philadelphia, Pa: Society for Industrial and Applied Mathematics, 2000.

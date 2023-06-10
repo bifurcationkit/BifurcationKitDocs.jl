@@ -65,7 +65,9 @@ opts_br = ContinuationPar(pMin = 0., pMax = 1.9, ds = 0.002, dsmax = 0.01)
 # compute the branch of solutions
 br = continuation(prob, PALC(), opts_br;
 	plot = true, verbosity = 2, normC = norminf)
+```
 
+```@example TUTCO
 # plot the branch
 scene = plot(br, xlims = (0.8,1.8))
 ```

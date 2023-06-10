@@ -88,6 +88,8 @@ opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds = -0.001, dsmin = 1e-4,
 	maxSteps = 90, newtonOptions = optn_po, tolStability = 1e-8)
 
 # arguments for periodic orbits
+# one function to record information and one
+# function for plotting
 args_po = (	recordFromSolution = (x, p) -> begin
 		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
@@ -155,7 +157,7 @@ Mt = 30 # number of time sections
 	PeriodicOrbitOCollProblem(Mt, 4; meshadapt = true);
 	# regular continuation options
 	verbosity = 2,	plot = true,
-	# we reject the step when the norm norm of the residual is high
+	# we reject the step when the norm of the residual is high
 	callbackN = BK.cbMaxNorm(100.),
 	args_po...)
 
