@@ -15,7 +15,7 @@ where $z=1-x-y-s$.
 We start with some imports that are useful in the following.
 
 ```@example TUTCO
-using Revise, ForwardDiff, Parameters, Plots, LinearAlgebra
+using Revise, Parameters, Plots, LinearAlgebra
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -56,15 +56,14 @@ nothing # hide
 
 ## Continuation and codim 1 bifurcations
 
-Once the problem is set up, we can continue the state w.r.t. $q_2$ to and detect codim 1 bifurcations. This is achieved as follows:
+Once the problem is set up, we can continue the state w.r.t. $q_2$ and detect codim 1 bifurcations. This is achieved as follows:
 
 ```@example TUTCO
 # continuation parameters
 opts_br = ContinuationPar(pMin = 0., pMax = 1.9, ds = 0.002, dsmax = 0.01)
 
 # compute the branch of solutions
-br = continuation(prob, PALC(), opts_br;
-	plot = true, verbosity = 2, normC = norminf)
+br = continuation(prob, PALC(), opts_br; plot = true, verbosity = 2, normC = norminf)
 ```
 
 ```@example TUTCO
@@ -80,12 +79,12 @@ We follow the Fold points in the parameter plane $(q_2, k)$. We tell the solver 
 sn_codim2 = continuation(br, 2, (@lens _.k),
 	ContinuationPar(opts_br, pMax = 2.2, ds = -0.001, dsmax = 0.05);
 	normC = norminf,
-	# detection of codim 2 bifurcations with bisection
+	# detection of codim 2 bifurcations
 	detectCodim2Bifurcation = 2,
-	# we update the Fold problem at every continuation step
+	# update the Fold problem at every continuation step
 	updateMinAugEveryStep = 1,
 	# compute both sides of the initial condition
-	bothside=true,)
+	bothside = true,)
 
 scene = plot(sn_codim2, vars = (:q2, :x), branchlabel = "Fold")
 plot!(scene, br, xlims=(0.8, 1.8))
@@ -99,10 +98,10 @@ We tell the solver to consider `br.specialpoint[1]` and continue it.
 hp_codim2 = continuation(br, 1, (@lens _.k),
 	ContinuationPar(opts_br, pMax = 2.8, ds = -0.001, dsmax = 0.05) ;
 	normC = norminf,
-	# detection of codim 2 bifurcations with bisection
+	# detection of codim 2 bifurcations
 	detectCodim2Bifurcation = 2,
 	# tell to start the Hopf problem using eigen elements: compute left eigenvector
-	startWithEigen = true,
+	#startWithEigen = true,
 	# we update the Hopf problem at every continuation step
 	updateMinAugEveryStep = 1,
 	# compute both sides of the initial condition

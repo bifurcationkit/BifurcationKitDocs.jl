@@ -4,7 +4,7 @@ The precise definition of the methods are given in [Branch switching (branch poi
 
 ```@contents
 Pages = ["branchswitching.md"]
-Depth = 3
+Depth = 2
 ```
 
 ## Summary of branching procedures
@@ -44,10 +44,10 @@ F(x, p) = [x[1] * (p.μ - x[1])]
 par = (μ = -0.2, )
 
 # problem (automatic differentiation)
-prob = BifurcationProblem(F, [0.1], par, (@lens _.μ); recordFromSolution = (x, p) -> x[1])
+prob = BifurcationProblem(F, [0.], par, (@lens _.μ); recordFromSolution = (x, p) -> x[1])
 
 # compute branch of trivial equilibria (=0) and detect a bifurcation point
-opts_br = ContinuationPar(dsmax = 0.05, ds = 0.01, detectBifurcation = 3, nev = 2)
+opts_br = ContinuationPar(detectBifurcation = 3)
 br = continuation(prob, PALC(), opts_br)
 	
 # perform branch switching on one side of the bifurcation point
@@ -58,6 +58,9 @@ br1Bottom = continuation(br, 1, setproperties(opts_br; ds = -opts_br.ds, maxStep
 
 scene = plot(br, br1Top, br1Bottom; branchlabel = ["br", "br1Top", "br1Bottom"], legend = :topleft)
 ```
+
+## Algorithms
+- for the pitchfork bifurcation, the normal form is computed and non-trivial zeros are used to produce guesses for points on the bifurcated branch.
 
 
 ## [From non simple branch point to equilibria](@id abs-simple-eq)

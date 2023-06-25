@@ -53,7 +53,7 @@ The continuation of NS points is based on the formulation
 
 $$G(u,p,\omega) = (F_{po}(u,p,\omega), \Re\sigma(u,p,\omega), \Im\sigma(u,p,\omega))\in\mathbb R^{n+2}\quad\quad (\mathcal F_{ns})$$
 
-where $F_{po}$ is the functional for locating periodic orbits and the test function $g$ is solution of
+where $F_{po}$ is the functional for locating periodic orbits and the test function $\sigma$ is solution of
 
 $$\left[\begin{array}{cc}
 N(u,p,\omega) & w \\

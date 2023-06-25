@@ -69,7 +69,7 @@ We obtain some trajectories as seeds for computing periodic orbits.
 
 ```@example STEINMETZ
 using DifferentialEquations
-alg_ode = Rodas5P()
+alg_ode = Rodas5()
 prob_de = ODEProblem(SL!, z0, (0,136.), par_sl)
 sol = solve(prob_de, alg_ode)
 prob_de = ODEProblem(SL!, sol.u[end], (0,30.), sol.prob.p, reltol = 1e-11, abstol = 1e-13)

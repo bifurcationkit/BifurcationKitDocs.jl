@@ -72,7 +72,7 @@ prob = BifurcationProblem(F, [0.], 0.5, (@lens _), J = Jac_m)
 opts = BK.ContinuationPar(dsmax = 0.051, dsmin = 1e-3, ds=0.001, maxSteps = 140, pMin = -3., newtonOptions = NewtonPar(tol = 1e-8), saveEigenvectors = false)
 
 # algorithm
-alg = BK.DefCont(deflationOperator = DeflationOperator(2, dot, .001, [[0.]]), perturbSolution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))
+alg = BK.DefCont(deflationOperator = DeflationOperator(2, .001, [[0.]]), perturbSolution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))
 
 brdc = continuation(prob, alg,
 	ContinuationPar(opts, ds = -0.001, maxSteps = 800, newtonOptions = NewtonPar(verbose = false, maxIter = 6), plotEveryStep = 40),

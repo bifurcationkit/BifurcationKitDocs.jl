@@ -59,7 +59,7 @@ The continuation of PD points is based on the formulation
 
 $$G(u,p,\omega) = (F_{po}(u,p), \sigma(u,p))\in\mathbb R^{n+1}\quad\quad (\mathcal F_{pd})$$
 
-where $F_{po}$ is the functional for locating periodic orbits and the test function $g$ is solution of
+where $F_{po}$ is the functional for locating periodic orbits and the test function $\sigma$ is solution of
 
 $$\left[\begin{array}{cc}
 N(u,p) & w \\

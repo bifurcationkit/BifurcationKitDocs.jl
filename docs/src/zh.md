@@ -25,32 +25,8 @@ The normal form (E) can be automatically computed as follows
 getNormalForm(br::ContResult, ind_bif::Int ; verbose = false, ζs = nothing, lens = br.param_lens)
 ```
 
-`br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`getNormalForm`](@ref). The result returns the following:
+`br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`getNormalForm`](@ref). The result returns an object of type `ZeroHopf`.
 
-```julia
-mutable struct ZeroHopf{Tv, Tpar, Tlens, Tevr, Tevl, Tnf} <: AbstractBifurcationPoint
-	"Zero-Hopf Bifurcation point"
-	x0::Tv
-
-	"Parameters used by the vector field."
-	params::Tpar
-
-	"Parameter axis used to compute the branch on which this cusp point was detected."
-	lens::Tlens
-
-	"Right eigenvector"
-	ζ::Tevr
-
-	"Left eigenvector"
-	ζ★::Tevl
-
-	"Normal form coefficients"
-	nf::Tnf
-
-	"Type of bifurcation"
-	type::Symbol
-end
-```
 
 !!! info "Note"
     You should not need to call `getNormalForm` except if you need the full information about the branch point.

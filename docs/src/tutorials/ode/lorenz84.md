@@ -25,7 +25,7 @@ $$\left\{\begin{array}{l}
 We start with some imports that are useful in the following.
 
 ```@example LORENZ84
-using Revise, ForwardDiff, Parameters, Setfield, Plots, LinearAlgebra
+using Revise, Parameters, Setfield, Plots, LinearAlgebra
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -76,7 +76,7 @@ opts_br = ContinuationPar(pMin = -1.5, pMax = 3.0, ds = 0.002, dsmax = 0.15,
 	nev = 4, maxSteps = 200)
 
 # compute the branch of solutions
-br = @time continuation(prob, PALC(), opts_br;
+br = continuation(prob, PALC(), opts_br;
 	normC = norminf,
 	bothside = true)
 

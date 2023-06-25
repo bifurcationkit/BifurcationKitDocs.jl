@@ -53,11 +53,10 @@ We first compute the branch of equilibria
 
 ```@example TUTLURE
 # continuation options
-opts_br = ContinuationPar(pMin = -1.4, pMax = 1.8, ds = -0.01, dsmax = 0.01, plotEveryStep = 20, maxSteps = 1000)
+opts_br = ContinuationPar(pMin = -1.4, pMax = 1.8, ds = 0.01, dsmax = 0.01, plotEveryStep = 20, maxSteps = 1000)
 
 # computation of the branch
-br = continuation(prob, PALC(), opts_br;
-	bothside = true, normC = norminf)
+br = continuation(prob, PALC(), opts_br)
 
 scene = plot(br)
 ```
@@ -73,7 +72,7 @@ We note the Hopf bifurcation point which we shall investigate now.
 ## Branch of periodic orbits with finite differences
 
 We compute the branch of periodic orbits from the Hopf bifurcation point.
-We first define a plotting function and record function which are used for all cases below:
+We first define a plotting function and a record function which are used for all cases below:
 
 ```@example TUTLURE
 # plotting function
@@ -92,21 +91,20 @@ function recordPO(x, p)
 end
 ```
 
-We use finite differences to discretize the problem of finding periodic orbits. We appeal to automatic branch switching as follows
+We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching as follows
 
 ```@example TUTLURE
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 25)
+optn_po = NewtonPar(tol = 1e-8,  maxIter = 25)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.0001, dsmin = 1e-4, pMax = 1.8, pMin=-5., maxSteps = 80, newtonOptions = (@set optn_po.tol = 1e-8), tolStability = 1e-4, plotEveryStep = 20)
+opts_po_cont = ContinuationPar(dsmax = 0.02, ds= 0.01, dsmin = 1e-4, pMax = 1.8, pMin=-1., maxSteps = 80, newtonOptions =  optn_po, tolStability = 1e-4)
 
 Mt = 120 # number of time sections
-	br_po = continuation(
-	br, 2, opts_po_cont,
+br_po = continuation(
+	br, 1, opts_po_cont,
 	PeriodicOrbitTrapProblem(M = Mt);
-	ampfactor = 1., δp = 0.01,
-	verbosity = 2,	plot = true,
+	δp = 0.01,
 	recordFromSolution = recordPO,
 	plotSolution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -122,7 +120,7 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, maxSteps = 40, ds = 0.01, dsmax = 0.02, plotEveryStep = 10);
+br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, maxSteps = 40);
 	verbosity = 3, plot = true,
 	ampfactor = .2, δp = -0.005,
 	usedeflation = false,
@@ -158,12 +156,12 @@ optn_po = NewtonPar(verbose = true, tol = 1e-12, maxIter = 25)
 opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, maxSteps = 130, newtonOptions = optn_po, tolStability = 1e-5, detectBifurcation = 3, plotEveryStep = 10, nInversion = 6, nev = 2)
 
 br_po = continuation(
-	br, 2, opts_po_cont,
+	br, 1, opts_po_cont,
 	# parallel shooting functional with 15 sections
 	ShootingProblem(15, probsh, Rodas5(); parallel = true);
 	# first parameter value on the branch
 	δp = 0.005,
-	verbosity = 3,	plot = true,
+	verbosity = 3, plot = true,
 	recordFromSolution = recordPO,
 	plotSolution = plotPO,
 	# limit the residual, useful to help DifferentialEquations
@@ -199,20 +197,20 @@ We now rely on a the state of the art method for computing periodic orbits of OD
 
 ```@example TUTLURE
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-10,  maxIter = 25)
+optn_po = NewtonPar(tol = 1e-10,  maxIter = 25)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds= 0.0001, dsmin = 1e-4, maxSteps = 80, newtonOptions = optn_po, tolStability = 1e-4, plotEveryStep = 20, nInversion = 6)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds= 0.01, dsmin = 1e-4, maxSteps = 80, newtonOptions = optn_po, tolStability = 1e-4, plotEveryStep = 20, nInversion = 6)
 
 br_po = continuation(
-	br, 2, opts_po_cont,
+	br, 1, opts_po_cont,
 	PeriodicOrbitOCollProblem(20, 4);
 	ampfactor = 1., δp = 0.01,
 	verbosity = 2,	plot = true,
 	recordFromSolution = recordPO,
 	plotSolution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
-		## add previous branch
+		## plot previous branch
 		plot!(br, subplot=1, putbifptlegend = false)
 		end,
 	normC = norminf)
