@@ -58,7 +58,7 @@ The functional is encoded in the composite type [`PeriodicOrbitTrapProblem`](@re
 
 ## Preconditioning
 
-We strongly advise you to use a preconditioner to deal with the above linear problem. See [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref) for an example.
+We strongly advise you to use a preconditioner to deal with the above linear problem. See [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) for an example.
 
 ## Linear solvers
 
@@ -78,7 +78,7 @@ Same as `: FullSparseInplace` above but the matrix `dG` is dense. It is also upd
 A matrix free linear solver is used for $\mathcal J$: note that a preconditioner is very likely required here because of the cyclic shape of $\mathcal J$ which affects negatively the convergence properties of iterative solvers. Note that $\mathcal J$ is never formed in this case.
 
 ### 5. BorderedLU
-For `:BorderedLU`, we take advantage of the bordered shape of the linear solver and use a LU decomposition to invert `dG` using a bordered linear solver. More precisely, the bordered structure of $\mathcal J$ is stored using the internal structure `POTrapJacobianBordered`. Then, $\mathcal J$ is inverted using the custom bordered linear solver `PeriodicOrbitTrapBLS` which is based on the bordering strategy (see [Bordered linear solvers (BLS)](@ref)). This particuliar solver is based on an explicit formula which only requires to invert $A_\gamma$: this is done by the linear solver `AγLinearSolver`. In a nutshell, we have:
+For `:BorderedLU`, we take advantage of the bordered shape of the linear solver and use a LU decomposition to invert `dG` using a bordered linear solver. More precisely, the bordered structure of $\mathcal J$ is stored using the internal structure `POTrapJacobianBordered`. Then, $\mathcal J$ is inverted using the custom bordered linear solver `PeriodicOrbitTrapBLS` which is based on the bordering strategy (see [Bordered linear solvers (BLS)](@ref)). This particular solver is based on an explicit formula which only requires to invert $A_\gamma$: this is done by the linear solver `AγLinearSolver`. In a nutshell, we have:
 
 ```
 PeriodicOrbitTrapBLS = BorderingBLS(solver = AγLinearSolver(), checkPrecision = false)
@@ -117,7 +117,7 @@ The state of the art method is based on a Periodic Schur decomposition. It is av
 
 We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `linearalgo` to select one of the many ways to deal with the above linear problem. The default solver `linearalgo` is `:BorderedLU`.
 
-Have a look at the [Continuation of periodic orbits (Finite differences)](@ref) example for the Brusselator for a basic example and at [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref) for a more advanced one.
+Have a look at the [Periodic orbits based on Trapezoidal rule](@ref cgl) example for the Brusselator for a basic example and at [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) for a more advanced one.
 
 The docs for this specific `newton` are located at [`newton`](@ref).
 
@@ -136,7 +136,7 @@ newton(probPO::PeriodicOrbitTrapProblem,
 
 ## Continuation
 
-Have a look at the [Continuation of periodic orbits (Finite differences)](@ref) example for the Brusselator. We refer to [`continuation`](@ref) for more information regarding the arguments.
+Have a look at the [Periodic orbits based on Trapezoidal rule](@ref) example for the Brusselator. We refer to [`continuation`](@ref) for more information regarding the arguments.
 
 ```@docs
 continuation(prob::PeriodicOrbitTrapProblem,

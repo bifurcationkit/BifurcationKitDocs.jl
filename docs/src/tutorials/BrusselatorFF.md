@@ -211,7 +211,7 @@ and you should see (the guess was not that good)
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       1.6216e+03     │        0       │
 │       1     │       4.4376e+01     │        6       │

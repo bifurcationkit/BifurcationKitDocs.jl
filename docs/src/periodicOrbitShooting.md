@@ -1,6 +1,6 @@
 # Periodic orbits based on the shooting method
 
-A set of shooting algorithms is provided which are called either *Simple Shooting (SS)* if a single shooting is used and *Multiple Shooting (MS)* otherwise. For the exposition, we follow the PhD thesis[^Lust]
+A set of shooting algorithms is provided which are called either *Simple Shooting (SS)* if a single shooting is used and *Multiple Shooting (MS)* otherwise. For the exposition, we follow the PhD thesis[^Lust] and also [^Umbria].
 
 We aim at finding periodic orbits for the Cauchy problem 
 
@@ -146,7 +146,9 @@ newton(prob::BifurcationKit.AbstractShootingProblem,
 
 Have a look at the [Continuation of periodic orbits (Standard Shooting)](@ref) example for the Brusselator.
 
-The docs for this specific `newton` are located at [`continuation`](@ref).
+In order to plot the orbit during continuation, one has to recompute the orbit inside a `plotSolution` function passed to `continuation`. This is simplified by the function `getPeriodicOrbit` which returns a solution to be plotted. We refer to [Period doubling in Lur'e problem (PD aBS)](@ref) for an example of use.
+
+The docs for this specific `continuation` are located at [`continuation`](@ref).
 
 ```@docs
 continuation(probPO::BifurcationKit.AbstractShootingProblem, orbitguess,
@@ -161,3 +163,5 @@ continuation(probPO::BifurcationKit.AbstractShootingProblem, orbitguess,
 ## References
 
 [^Lust]:> **Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations**, Lust Kurt, 1997. 
+
+[^Umbria]:> J. S. Umbría and M. Net. **Numerical continuation methods for large-scale dissipative dynamical systems**. The European Physical Journal Special Topics, 225(13):2465–2486, 2016.

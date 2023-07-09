@@ -22,7 +22,7 @@ const FD = ForwardDiff
 
 # supremum norm
 norminf(x) = norm(x, Inf)
-# pltting utilities
+# plotting utilities
 plotsol!(x, m, n; np = n, k...) = heatmap!(reshape(x[1:end-1],m,n)[1:np,:]; color =  :viridis, k...)
 contoursol!(x, m, n; np = n, k...) = contour!(reshape(x[1:end-1],m,n)[1:np,:]; color =  :viridis, k...)
 plotsol(x,m,n;k...) = (plot();plotsol!(x,m,n;k...))
@@ -193,7 +193,7 @@ end, bothside = true)
 plot(br, br_TW, legend = :bottomright, branchlabel =["","TW"])
 ```
 
-We note that the branch of travelling wave solutions has a Hopf bifurcation point at which point Modulated Travelling waves will emerge. This will be anlyzed in the future.
+We note that the branch of travelling wave solutions has a Hopf bifurcation point at which point Modulated Travelling waves will emerge. This will be analyzed in the future.
 
 
 ## References

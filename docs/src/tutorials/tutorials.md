@@ -15,12 +15,39 @@ Pages = ["ode/tutorialsODE.md","ode/tutorialCO.md","ode/lorenz84.md", "ode/tutor
 Depth = 1
 ```
 
-Here are some examples more oriented towards the computation of periodic orbits. For, example, in the second tutorial below, we show how to refine a periodic orbit guess obtained from numerical simulation.
-
+Here are some examples more oriented towards the computation of periodic orbits. Here is one for aBS from **period-doubling** bifurcations of periodic orbits
 ```@contents
-Pages = ["ode/tutorialsODE-PD.md", "ode/tutorialsCodim2PO.md",]
+Pages = ["ode/tutorialsODE-PD.md"]
 Depth = 1
 ```
+
+In the next tutorial, we show how to refine a periodic orbit guess obtained from numerical simulation. We also show how to perform **continuation of PD/NS** points using Shooting or Collocation. 
+
+```@contents
+Pages = ["ode/tutorialsCodim2PO.md"]
+Depth = 1
+```
+
+In the next tutorial, we showcase the detection of **Chenciner** bifurcations. This is a relatively advanced tutorial, so we don't give much explanations. The reader should get first familiar with the above simpler examples.
+
+```@contents
+Pages = ["ode/steinmetz.md",]
+Depth = 1
+```
+
+In the next tutorial, we showcase aBS from Bautin/HH to curve of Fold/NS of periodic orbits.
+
+```@contents
+Pages = ["ode/lorenz84-PO.md",]
+Depth = 1
+```
+
+### Homoclinic orbits
+
+Based on the package [HclinicBifurcationKit.jl](https://github.com/bifurcationkit/HclinicBifurcationKit.jl) and its [docs](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/).
+
+- [Autonomous electronic circuit (aBS from BT)](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/tutorialsFreire/#Autonomous-electronic-circuit-(aBS-from-BT))
+- [Nonlinear laser model](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/OPL/#Nonlinear-laser-model)
 
 ## DAE examples
 
@@ -28,6 +55,10 @@ Depth = 1
 Pages = ["ode/Colpitts.md"]
 Depth = 1
 ```
+
+## DDE examples
+
+See the [tutorials](https://bifurcationkit.github.io/DDEBifurcationKit.jl/dev/tutorials/tutorials/) of [DDEBifurcationKit.jl](https://github.com/bifurcationkit/DDEBifurcationKit.jl).
 
 ## Examples based on ModelingToolkit
 

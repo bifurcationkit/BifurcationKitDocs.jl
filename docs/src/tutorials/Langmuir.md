@@ -141,8 +141,7 @@ We then continue the previous guess and find this very nice folded structure wit
 # or compute ~100 eigenvalues
 opts_cont = ContinuationPar(
 	dsmin = 1e-5, dsmax = 0.04, ds= -0.001, pMin = -0.01, pMax = 10.1,
-	# we adjust theta so that the continuation steps are larger
-	θ = 0.4, a = 0.75, plotEveryStep = 30, maxSteps = 600,
+	a = 0.75, plotEveryStep = 30, maxSteps = 600,
 	newtonOptions = setproperties(opt_new; tol = 1e-9, maxIter = 10, verbose = false),
 	nev = 10, saveEigenvectors = true, tolStability = 1e-5, detectBifurcation = 3,
 	dsminBisection = 1e-8, maxBisectionSteps = 15, nInversion = 6, tolBisectionEigenvalue = 1e-9, saveSolEveryStep = 50)
@@ -153,7 +152,8 @@ opts_cont = ContinuationPar(
 br = @time continuation(
 	reMake(prob, params = (@set par.ν = 0.06), u0 = out.u),
 	# we form a sparse matrix for the bordered linear problem
-	PALC(bls = MatrixBLS()), opts_cont,
+	# and we adjust θ so that the continuation steps are larger
+	PALC(θ = 0.4, bls = MatrixBLS()), opts_cont,
 	plot = true, verbosity = 2,
 	normC = normL2)
 

@@ -49,12 +49,12 @@ return S
 The following piece of information is valuable in order to get the algorithm working in various conditions (see also [here](https://github.com/rveltz/BifurcationKit.jl/issues/33)) especially for small systems (e.g. dim<20):
 
 - `newton` is quite good and it is convenient to limit it otherwise it will be able to bypass the deflation. For example, you can use `maxIter = 10` in `NewtonPar`
-- try to limit the newton residual by using the argument `callbackN = BifurcationKit. cbMaxNorm(1e7)`. This will likely remove the occurence of `┌ Error: Same solution found for identical parameter value!!`
-- finally, you can try some agressive shift (here `0.01` in the deflation operator, like `DeflationOperator(2, dot, 0.01, [sol])` but use it wisely.
+- try to limit the newton residual by using the argument `callbackN = BifurcationKit. cbMaxNorm(1e7)`. This will likely remove the occurrence of `┌ Error: Same solution found for identical parameter value!!`
+- finally, you can try some aggressive shift (here `0.01` in the deflation operator, like `DeflationOperator(2, dot, 0.01, [sol])` but use it wisely.
 
 ## Basic example
 
-We show a quick and simple example of use. Note in particular that the algoritm is able to find the disconnected branch. The starting points are marked with crosses
+We show a quick and simple example of use. Note in particular that the algorithm is able to find the disconnected branch. The starting points are marked with crosses
 
 ```@example
 using BifurcationKit, LinearAlgebra, Setfield, SparseArrays, Plots
@@ -69,10 +69,10 @@ Jac_m(x, p) = diagm(0 => p .+ x.^k)
 prob = BifurcationProblem(F, [0.], 0.5, (@lens _), J = Jac_m)
 
 # continuation options
-opts = BK.ContinuationPar(dsmax = 0.051, dsmin = 1e-3, ds=0.001, maxSteps = 140, pMin = -3., saveSolEveryStep = 0, newtonOptions = NewtonPar(tol = 1e-8, verbose = false), saveEigenvectors = false)
+opts = BK.ContinuationPar(dsmax = 0.051, dsmin = 1e-3, ds=0.001, maxSteps = 140, pMin = -3., newtonOptions = NewtonPar(tol = 1e-8), saveEigenvectors = false)
 
 # algorithm
-alg = BK.DefCont(deflationOperator = DeflationOperator(2, dot, .001, [[0.]]), perturbSolution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))
+alg = BK.DefCont(deflationOperator = DeflationOperator(2, .001, [[0.]]), perturbSolution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))
 
 brdc = continuation(prob, alg,
 	ContinuationPar(opts, ds = -0.001, maxSteps = 800, newtonOptions = NewtonPar(verbose = false, maxIter = 6), plotEveryStep = 40),

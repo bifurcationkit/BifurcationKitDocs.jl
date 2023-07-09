@@ -1,4 +1,4 @@
-# Extended Lorenz-84 model (codim 2 + BT/ZH aBS)
+# [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@id lorenz)
 
 
 ```@contents
@@ -25,7 +25,7 @@ $$\left\{\begin{array}{l}
 We start with some imports that are useful in the following.
 
 ```@example LORENZ84
-using Revise, ForwardDiff, Parameters, Setfield, Plots, LinearAlgebra
+using Revise, Parameters, Setfield, Plots, LinearAlgebra
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -76,7 +76,7 @@ opts_br = ContinuationPar(pMin = -1.5, pMax = 3.0, ds = 0.002, dsmax = 0.15,
 	nev = 4, maxSteps = 200)
 
 # compute the branch of solutions
-br = @time continuation(prob, PALC(), opts_br;
+br = continuation(prob, PALC(), opts_br;
 	normC = norminf,
 	bothside = true)
 
@@ -95,7 +95,7 @@ We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to 
 
 ```@example LORENZ84
 # function to record the current state
-sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, pMax = 3.2, pMin = -0.1, detectBifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, nInversion = 10, saveSolEveryStep = 1, maxSteps = 130, maxBisectionSteps = 55) ; normC = norminf,
+sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, pMax = 3.2, pMin = -0.1, detectBifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, nInversion = 10, maxSteps = 130, maxBisectionSteps = 55) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detectCodim2Bifurcation = 2,
 	# we update the Fold problem at every continuation step
@@ -125,7 +125,7 @@ getNormalForm(sn_codim2, 1; nev = 4)
 We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[3]` and continue it.
 
 ```@example LORENZ84
-hp_codim2_1 = continuation((@set br.alg.tangent = Bordered()), 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, nInversion = 6, saveSolEveryStep = 1, detectBifurcation = 1) ; normC = norminf,
+hp_codim2_1 = continuation((@set br.alg.tangent = Bordered()), 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, nInversion = 6, detectBifurcation = 1) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detectCodim2Bifurcation = 2,
 	# we update the Fold problem at every continuation step

@@ -70,35 +70,7 @@ getNormalForm(br::ContResult, ind_bif::Int ;
 `br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The option `detailed` controls the computation of a simplified version of the normal form. `autodiff` controls the use of `ForwardDiff` during the normal form computation.
 
 
-The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`getNormalForm`](@ref). The result returns the following:
-
-```julia
-mutable struct BogdanovTakens{Tv, Tpar, Tlens, Tevr, Tevl, Tnf, Tnf2} <: AbstractBifurcationPoint
-	"Bogdanov-Takens point"
-	x0::Tv
-
-	"Parameters used by the vector field."
-	params::Tpar
-
-	"Parameter axis used to compute the branch on which this BT point was detected."
-	lens::Tlens
-
-	"Right eigenvectors"
-	ζ::Tevr
-
-	"Left eigenvectors"
-	ζstar::Tevl
-
-	"Normal form coefficients (basic)"
-	nf::Tnf
-
-	"Normal form coefficients (detailed)"
-	nfsupp::Tnf2
-
-	"Type of bifurcation"
-	type::Symbol
-end
-```
+The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`getNormalForm`](@ref). The result returns an object of type `BogdanovTakens`.
 
 !!! info "Note"
     You should not need to call `getNormalForm` except if you need the full information about the branch point.

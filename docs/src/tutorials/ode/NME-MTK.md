@@ -20,7 +20,7 @@ The model is interesting because the branch of periodic solutions converges to a
 It is easy to encode the ODE as follows
 
 ```@example TUTNMEMTK
-using Revise, ModelingToolkit, Setfield, LinearAlgebra
+using Revise, ModelingToolkit, LinearAlgebra
 using DifferentialEquations, Plots
 using BifurcationKit
 const BK = BifurcationKit
@@ -91,18 +91,18 @@ optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 10)
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5.,
 	maxSteps = 110, newtonOptions = (@set optn_po.tol = 1e-7),
-	nev = 3, plotEveryStep = 10, saveSolEveryStep=1, detectBifurcation = 0)
+	nev = 3, plotEveryStep = 10, detectBifurcation = 0)
 
 # arguments for periodic orbits
 # this is mainly for printing purposes
 args_po = (	recordFromSolution = (x, p) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm[id_E0] = p.p)
+		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
-				period = getPeriod(p.prob, x, @set par_tm[id_E0] = p.p))
+				period = getPeriod(p.prob, x, p.p))
 	end,
 	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, @set par_tm[id_E0] = p.p)
+		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
 		plot!(xtt.t, xtt[1,:]; label = "E", k...)
 		plot!(xtt.t, xtt[2,:]; label = "x", k...)
 		plot!(xtt.t, xtt[3,:]; label = "u", k...)
@@ -118,7 +118,7 @@ Mt = 30 # number of time sections
 	# we want to use the Collocation method to locate PO, with polynomial degree 5
 	PeriodicOrbitOCollProblem(Mt, 5);
 	# regular continuation options
-	args_po...)
+	args_po..., callbackN = BK.cbMaxNorm(10))
 
 scene = plot(br, br_pocoll, markersize = 3)
 plot!(scene, br_pocoll.param, br_pocoll.min, label = "")

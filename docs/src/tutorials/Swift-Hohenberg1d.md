@@ -7,7 +7,7 @@ Depth = 3
 
 In this tutorial, we will see how to compute automatically the bifurcation diagram of the 1d Swift-Hohenberg equation
 
-$$-(I+\Delta)^2 u+l\cdot u +\nu u^3-u^5 = 0\tag{E}$$
+$$-(I+\Delta)^2 u+\lambda\cdot u +\nu u^3-u^5 = 0\tag{E}$$
 
 with Dirichlet boundary conditions. We use a Sparse Matrix to express the operator $L_1=(I+\Delta)^2$. We start by loading the packages:
 
@@ -28,24 +28,25 @@ const _weight = rand(Nx)
 normweighted(x) = norm(_weight .* x)
 
 # discretisation
-Nx = 200; Lx = 6.;
-X = -Lx .+ 2Lx/Nx*(0:Nx-1) |> collect
-hx = X[2]-X[1]
+N = 200
+l = 6.
+X = -l .+ 2l/N*(0:N-1) |> collect
+h = X[2]-X[1]
 
 # boundary condition
-Q = Dirichlet0BC(hx |> typeof)
-Dxx = sparse(CenteredDifference(2, 2, hx, Nx) * Q)[1]
-Lsh = -(I + Dxx)^2
+Q = Dirichlet0BC(h |> typeof)
+Δ = sparse(CenteredDifference(2, 2, h, N) * Q)[1]
+L1 = -(I + Δ)^2
 
 # functional of the problem
 function R_SH(u, par)
-	@unpack l, ν, L1 = par
+	@unpack λ, ν, L1 = par
 	out = similar(u)
-	out .= L1 * u .+ l .* u .+ ν .* u.^3 - u.^5
+	out .= L1 * u .+ λ .* u .+ ν .* u.^3 - u.^5
 end
 
-# Jacobian of the function
-Jac_sp(u, par) = par.L1 + spdiagm(0 => par.l .+ 3 .* par.ν .* u.^2 .- 5 .* u.^4)
+# jacobian
+Jac_sp(u, par) = par.L1 + spdiagm(0 => par.λ .+ 3 .* par.ν .* u.^2 .- 5 .* u.^4)
 
 # second derivative
 d2R(u,p,dx1,dx2) = @. p.ν * 6u*dx1*dx2 - 5*4u^3*dx1*dx2
@@ -54,13 +55,13 @@ d2R(u,p,dx1,dx2) = @. p.ν * 6u*dx1*dx2 - 5*4u^3*dx1*dx2
 d3R(u,p,dx1,dx2,dx3) = @. p.ν * 6dx3*dx1*dx2 - 5*4*3u^2*dx1*dx2*dx3
 
 # parameters associated with the equation
-parSH = (l = -0.7, ν = 2., L1 = Lsh)
+parSH = (λ = -0.7, ν = 2., L1 = L1)
 
 # initial condition
 sol0 = zeros(Nx)
 
 # Bifurcation Problem
-prob = BifurcationProblem(R_SH, sol0, parSH, (@lens _.l); J = Jac_sp,
+prob = BifurcationProblem(R_SH, sol0, parSH, (@lens _.λ); J = Jac_sp,
 	recordFromSolution = (x, p) -> (n2 = norm(x), nw = normweighted(x), s = sum(x), s2 = x[end ÷ 2], s4 = x[end ÷ 4], s5 = x[end ÷ 5]),
 	plotSolution = (x, p;kwargs...)->(plot!(X, x; ylabel="solution", label="", kwargs...)))
 ```
@@ -83,7 +84,7 @@ function cb(state; kwargs...)
 	fromNewton = get(kwargs, :fromNewton, false)
 	if ~fromNewton
 		# if the residual is too large or if the parameter jump
-		# is too big, abord continuation step
+		# is too big, abort continuation step
 		return norm(_x.u - state.x) < 20.5 && abs(_x.p - state.p) < 0.05
 	end
 	true
@@ -106,10 +107,10 @@ function optrec(x, p, l; opt = opts)
 	level =  l
 	if level <= 2
 		return setproperties(opt; maxSteps = 300, detectBifurcation = 3,
-			nev = Nx, detectLoop = false)
+			nev = N, detectLoop = false)
 	else
 		return setproperties(opt; maxSteps = 250, detectBifurcation = 3,
-			nev = Nx, detectLoop = true)
+			nev = N, detectLoop = true)
 	end
 end
 ```
@@ -120,7 +121,7 @@ end
 We are now in position to compute the bifurcation diagram
 
 ```julia
-diagram = @time bifurcationdiagram(reMake(prob, params = @set parSH.l = -0.1),
+diagram = @time bifurcationdiagram(reMake(prob, params = @set parSH.λ = -0.1),
 	PALC(),
 	# here we specify a maximum branching level of 4
 	4, optrec; args...)
@@ -158,12 +159,12 @@ julia> diagram
 If `br` is the name of the branch,
 ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`
 
-- #  1,       bp at l ≈ +0.00739184 ∈ (+0.00694990, +0.00739184), |δp|=4e-04, [converged], δ = ( 1,  0), step =   8, eigenelements in eig[  9], ind_ev =   1
-- #  2,       bp at l ≈ +0.15163058 ∈ (+0.15157533, +0.15163058), |δp|=6e-05, [converged], δ = ( 1,  0), step =  19, eigenelements in eig[ 20], ind_ev =   2
-- #  3,       bp at l ≈ +0.48386330 ∈ (+0.48386287, +0.48386330), |δp|=4e-07, [converged], δ = ( 1,  0), step =  43, eigenelements in eig[ 44], ind_ev =   3
-- #  4,       bp at l ≈ +0.53115107 ∈ (+0.53070912, +0.53115107), |δp|=4e-04, [converged], δ = ( 1,  0), step =  47, eigenelements in eig[ 48], ind_ev =   4
-- #  5,       bp at l ≈ +0.86889123 ∈ (+0.86887742, +0.86889123), |δp|=1e-05, [converged], δ = ( 1,  0), step =  71, eigenelements in eig[ 72], ind_ev =   5
-- #  6,  endpoint  at l ≈ +1.00000000,                                                                      step =  81
+- #  1,       bp at λ ≈ +0.00739184 ∈ (+0.00694990, +0.00739184), |δp|=4e-04, [converged], δ = ( 1,  0), step =   8, eigenelements in eig[  9], ind_ev =   1
+- #  2,       bp at λ ≈ +0.15163058 ∈ (+0.15157533, +0.15163058), |δp|=6e-05, [converged], δ = ( 1,  0), step =  19, eigenelements in eig[ 20], ind_ev =   2
+- #  3,       bp at λ ≈ +0.48386330 ∈ (+0.48386287, +0.48386330), |δp|=4e-07, [converged], δ = ( 1,  0), step =  43, eigenelements in eig[ 44], ind_ev =   3
+- #  4,       bp at λ ≈ +0.53115107 ∈ (+0.53070912, +0.53115107), |δp|=4e-04, [converged], δ = ( 1,  0), step =  47, eigenelements in eig[ 48], ind_ev =   4
+- #  5,       bp at λ ≈ +0.86889123 ∈ (+0.86887742, +0.86889123), |δp|=1e-05, [converged], δ = ( 1,  0), step =  71, eigenelements in eig[ 72], ind_ev =   5
+- #  6,  endpoint  at λ ≈ +1.00000000,                                                                      step =  81
 ```
 
 We can access the different branches with `BK.getBranch(diagram, (1,))`. Alternatively, you can plot a specific branch:

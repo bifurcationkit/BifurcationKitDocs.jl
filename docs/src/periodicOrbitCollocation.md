@@ -58,7 +58,7 @@ $$\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_0(s)\right\rangle d s \appro
 ## Interpolation
 
 ```@docs
-BifurcationKit.POOCollSolution
+BifurcationKit.POSolution
 ```
 
 ## Mesh adaptation

@@ -1,12 +1,10 @@
 # Bifurcation Problem
 
-## Vector field
-
-The structure [`BifFunction`](@ref) holds the vector field. If you just pass a function, everything (jacobian, second derivative, ...) will be evaluated using automatic differentiation.
+The idea behind `BifurcationKit` is to compute bifurcation diagrams in memory limited environments where the device can barely hold the current continuation state. We thus disable by default saving all solutions along the branch and all eigenvectors (see [`ContinuationPar`](@ref) to change this behaviour). Still, one needs to save a few solution indicators, like for plotting. This is the reason for the function `recordFromSolution` (see below).
 
 ## Bifurcation Problem
 
-[`BifurcationProblem`](@ref) is the basic structure for a bifurcation problem which holds the following fields. The link [`BifurcationProblem`](@ref) provides more information.
+[`BifurcationProblem`](@ref) is the basic structure for a bifurcation problem which holds the following fields:
 
 - the vector field
 - an initial guess
@@ -16,9 +14,7 @@ The structure [`BifFunction`](@ref) holds the vector field. If you just pass a f
 as well as user defined functions for 
 
 - plotting, `plotSolution`
-- recording (`recordFromSolution`) indicators about the solution when this one is too large to save at every step.
-
-> `BifurcationKit` is designed to be used in very limited memory environments (GPU) where you can barely hold the equilibrium and some of the eigen-elements of the jacobian. Thus, `BifurcationKit` does not record the equilibria unless stated, *i.e.* when `ContinuationPar.saveSolEveryStep > 0`
+- recording (`recordFromSolution`) indicators about the solution when this one is too large to be saved at every continuation step.
 
 ### Example
 
@@ -27,11 +23,8 @@ f(x,p) = @. sin(x * p.a)
 u0 = zeros(100_000_000) 
 params = (a = 1.0, b = 2.0)
 
-# save a few components / indicators of x because it is too costly 
-# to keep all solutions in memory
-function myRecord(x,p)
-	return (x1 = x[1], max = maximum(x), nrm = norm(x, Inf))
-end 
+# record a few components / indicators about x 
+myRecord(x,p) = (x1 = x[1], max = maximum(x), nrm = norm(x, Inf))
 
 prob = BifurcationProblem(f, u0, p, (@lens _.a);
 	recordSolution = myRecord
@@ -63,5 +56,7 @@ F(x,p) = @. p.a + x^2
 # parameters
 par = (a = 0., b = 2)
 prob = BifurcationProblem(F, zeros(3), par, (@lens _.a))
+# change u0
+prob2 = BifurcationKit.reMake(prob, u0 = rand(3))
 ```
 

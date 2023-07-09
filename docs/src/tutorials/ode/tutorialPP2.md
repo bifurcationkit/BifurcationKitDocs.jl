@@ -17,7 +17,7 @@ u_{2}^{\prime}=-u_{2}+3 u_{1} u_{2}
 It is easy to encode the ODE as follows
 
 ```@example TUTPP2
-using Revise, Parameters, Setfield, Plots, LinearAlgebra
+using Revise, Parameters, Plots, LinearAlgebra
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -26,7 +26,7 @@ norminf(x) = norm(x, Inf)
 
 # function to record information from a solution
 recordFromSolution(x, p) = (u1 = x[1], u2 = x[2])
-####################################################################################################
+
 function pp2!(dz, z, p, t)
 	@unpack p1, p2, p3, p4 = p
 	u1, u2 = z
@@ -63,10 +63,7 @@ opts_br = ContinuationPar(pMin = 0.1, pMax = 1.0, dsmax = 0.01,
 	# number of eigenvalues
 	nev = 2,
 	# maximum number of continuation steps
-	maxSteps = 1000,
-	# parameter theta, see `? continuation`. Setting this to a non
-	# default value helps passing the transcritical bifurcation
-	θ = 0.3)
+	maxSteps = 1000,)
 
 nothing #hide
 ```
@@ -74,7 +71,9 @@ nothing #hide
 We are now ready to compute the diagram
 
 ```@example TUTPP2
-diagram = bifurcationdiagram(prob, PALC(),
+# parameter θ, see `? PALC`. Setting this to a non
+# default value helps passing the transcritical bifurcation
+diagram = bifurcationdiagram(prob, PALC(θ = 0.3),
 	# very important parameter. It specifies the maximum amount of recursion
 	# when computing the bifurcation diagram. It means we allow computing branches of branches of branches
 	# at most in the present case.
@@ -103,7 +102,7 @@ optn_po = NewtonPar(tol = 1e-8,  maxIter = 25)
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.001, dsmin = 1e-4,
  newtonOptions = (@set optn_po.tol = 1e-8), tolStability = 1e-2,
- detectBifurcation = 1, saveSolEveryStep=1)
+ detectBifurcation = 1)
 
 Mt = 101 # number of time sections
 	br_po = continuation(
@@ -111,8 +110,6 @@ Mt = 101 # number of time sections
 	PeriodicOrbitTrapProblem(M = Mt;
 	    # specific linear solver for ODEs
     	jacobian = :Dense);
-	# help branching from Hopf
-	usedeflation = true,
 	recordFromSolution = (x, p) -> (xtt=reshape(x[1:end-1],2,Mt);
 		return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),

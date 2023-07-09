@@ -21,7 +21,7 @@ See the description of [continuation](https://bifurcationkit.github.io/Bifurcati
 
 ### How can I change the preconditioner during computations?
 
-The easiest way to achieve this is by using the callbacks provided by `newton` and `continuation`. See the documentation about these two methods. See also the example [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref)
+The easiest way to achieve this is by using the callbacks provided by `newton` and `continuation`. See the documentation about these two methods. See also the example [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)
 
 ### How can I implement my own bifurcation detection method?
 
@@ -71,7 +71,7 @@ The package does not yet allow to compute periodic orbits solutions of non-auton
 
 $$\frac{du}{dt}  = F(u, par, t).$$
 
-On certains cases, one can still go away with the following trick. Say one is interested (dummy example!) to study
+On certain cases, one can still go away with the following trick. Say one is interested (dummy example!) to study
 
 $$\dot u = cos(u) + cos(\omega \cdot t).$$
 
@@ -100,4 +100,4 @@ SuiteSparse.UMFPACK.umf_ctrl[8] = 0
 
 ### Should I use CVODE_BDF?
 
-SciML is now able to mactch the performance of the Sundials solver `CVODE_BDF`. Check the [news](https://sciml.ai/news/2021/05/24/QNDF/) for more information.
+SciML is now able to match the performance of the Sundials solver `CVODE_BDF`. Check the [news](https://sciml.ai/news/2021/05/24/QNDF/) for more information.

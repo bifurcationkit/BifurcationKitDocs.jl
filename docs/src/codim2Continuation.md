@@ -1,10 +1,15 @@
 # Fold / Hopf Continuation
 
+```@contents
+Pages = ["codim2Continuation.md"]
+Depth = 2
+```
+
 In this page, we explain how to perform continuation of Fold / Hopf points and detect the associated bifurcations.
 
-For this to work best, it is better to have an analytical expression for the jacobian. See the tutorial [Temperature model (Simplest example)](@ref) for more details.
+For this to work best, it is advised to have an analytical expression for the jacobian. See the tutorial [Temperature model (Simplest example)](@ref) for more details.
 
-A quite complete example for detection of codim 2 bifurcations of equilibria is [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref) although it is for ODEs.
+A quite complete example for detection of codim 2 bifurcations of equilibria is [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) although it is for ODEs.
 
 ### List of detected codim 2 bifurcation points
 |Bifurcation|symbol used|
@@ -21,7 +26,7 @@ In a nutshell, all you have to do (see below) is to call `continuation(br, ind_b
 
 The continuation of Fold bifurcation points is based on a **Minimally Augmented**[^Govaerts] formulation which is an efficient way to detect singularities. The continuation of Fold points is based on the formulation
 
-$$G(u,p) = (F(u,p), g(u,p))\in\mathbb R^{n+1}\quad\quad (F_f)$$
+$$G(u,p) = (F(u,p), \sigma(u,p))\in\mathbb R^{n+1}\quad\quad (F_f)$$
 
 where the test function $g$ is solution of
 
@@ -30,7 +35,7 @@ dF(u,p) & w \\
 v^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
 r \\
-g(u,p)
+\sigma(u,p)
 \end{array}\right]=\left[\begin{array}{c}0_{n} \\1\end{array}\right]\quad\quad (M_f)$$
 
 where $w,v$ are chosen in order to have a non-singular matrix $(M_f)$. More precisely, $v$ (resp. $w$) should be close to a null vector of `dF(u,p)` (resp. `dF(u,p)'`). During continuation, the vectors $w,v$ are updated so that the matrix $(M_f)$ remains non-singular ; this is controlled with the argument `updateMinAugEveryStep` (see below).
@@ -42,7 +47,7 @@ where $w,v$ are chosen in order to have a non-singular matrix $(M_f)$. More prec
 
 ### Detection of codim 2 bifurcation points
 
-You can detect the following codim 2 bifurcation points by using the option `detectCodim2Bifurcation` in the method `continuation` (see [Codim 2 continuation](@ref)). Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
+You can detect the following codim 2 bifurcation points by using the option `detectCodim2Bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
 
 - the detection of Cusp (Cusp) is done by the detection of Fold bifurcation points along the curve of Folds by monitoring the parameter component of the tangent.
 - the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = \langle w(p),v(p)\rangle$
@@ -52,7 +57,7 @@ You can detect the following codim 2 bifurcation points by using the option `det
 
 The continuation of Fold bifurcation points is based on a **Minimally Augmented** (see [^Govaerts] p. 87) formulation which is an efficient way to detect singularities. The continuation of Hopf points is based on the formulation
 
-$$G(u,\omega,p) = (F(u,\omega,p), g(u,\omega,p))\in\mathbb R^{n+2}\quad\quad (F_h)$$
+$$G(u,\omega,p) = (F(u,\omega,p), \Re\sigma(u,\omega,p), \Im\sigma(u,\omega,p))\in\mathbb R^{n+2}\quad\quad (F_h)$$
 
 where the test function $g$ is solution of
 
@@ -61,7 +66,7 @@ dF(u,p)-i\omega I_n & w \\
 v^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
 r \\
-g(u,\omega,p)
+\sigma(u,\omega,p)
 \end{array}\right]=\left[\begin{array}{c}
 0_{n} \\
 1
@@ -76,16 +81,16 @@ where $w,v$ are chosen in order to have a non-singular matrix $(M_h)$. More prec
 
 ### Detection of codim 2 bifurcation points
 
-You can detect the following codim 2 bifurcation points by using the option `detectCodim2Bifurcation` in the method `continuation` (see [Codim 2 continuation](@ref)). Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
+You can detect the following codim 2 bifurcation points by using the option `detectCodim2Bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
 
-- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = 	\langle w(p),v(p)\rangle$
+- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel],[^Blank] $\psi_{BT}(p) = 	\langle w(p),v(p)\rangle$
 - the detection of Bautin (GH) is based on the test function $\psi_{GH}(p) = \Re(l_1(p))$ where $l_1$ is the Lyapunov coefficient defined in [Simple Hopf point](@ref).
 - the detection of Zero-Hopf (ZH) is performed by monitoring the eigenvalues.
 - the detection of Hopf-Hopf (HH) is performed by monitoring the eigenvalues.
 
 > The continuation of Hopf points is stopped at BT and when $\omega<100\epsilon$ where $\epsilon$ is the newton tolerance.
 
-## Setting the jacobian
+## [Setting the jacobian](@id jac-fold)
 
 In order to apply the newton algorithm to $F_f$ or $F_h$, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can select the following jacobians for your computations (see below):
 
@@ -124,7 +129,7 @@ See [Temperature model (Simplest example)](@ref) for an example of use.
 
 ## Advanced use
 
-Here, we expose the solvers that are used to perform newton refinement or codim 2 continuation in case the above methods fails. This is useful in case it is too involved to expose the linear solver options. An example of advanced use is the continuation of Folds of periodic orbits, see [Continuation of Fold of periodic orbits](@ref).
+Here, we expose the solvers that are used to perform newton refinement or codim 2 continuation in case the above methods fails. This is useful in case it is too involved to expose the linear solver options. An example of advanced use is the continuation of Folds of periodic orbits, see [Continuation of Fold of periodic orbits](@ref fold-po).
 
 ```@docs
 newtonFold
@@ -142,6 +147,29 @@ continuationFold
 ```@docs
 continuationHopf
 ```
+
+## Algorithmic details (Fold)
+
+If we write $(s,\sigma)$ the solution of the adjoint problem associated to $(M_f)$, one can show[^Govaerts] that the differential of $\sigma$ satisfies:
+$$
+\partial \sigma + \langle s,\partial dF \cdot r\rangle = 0
+$$
+This allows to compute the jacobian of the Fold functional to use for the Newton algorithm
+
+$$\left[\begin{array}{cc}
+\partial_{u}F(u,p) & \partial_pF(u,p) \\
+\partial_x\sigma(u,p) & \partial_p\sigma(u,p)
+\end{array}\right].$$
+
+## Algorithmic details (Hopf)
+
+We recall that the unknowns are $(x,p,\omega)$. The jacobian of the Hopf functional to use for the Newton algorithm
+
+$$\left[\begin{array}{ccc}
+\partial_{u}F & \partial_pF & 0 \\
+\partial_x\sigma_r & \partial_p\sigma_r & \partial_\omega\sigma_r\\
+\partial_x\sigma_i & \partial_p\sigma_i & \partial_\omega\sigma_i
+\end{array}\right].$$
 
 ## References
 

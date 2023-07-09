@@ -2,14 +2,14 @@
 
 > If you provide your own linear solver, it must be a subtype of `AbstractLinearSolver` otherwise `BifurcationKit.jl` will not recognize it. See example just below. 
 
-The linear solvers provide a way of inverting the Jacobian `J` or solving `J * x = rhs`. Such linear solver `linsolve` will be called like `sol, success, itnumber = linsolve(J, rhs)` throughout the package.
+The linear solvers provide a way of inverting the Jacobian `J` or solving `J * x = rhs`. Such linear solver `linsolve` will be called like `sol, success, itnumber = linsolve(J, rhs; kwargs...)` throughout the package.
 
 Here is an example of the simplest one (see `src/LinearSolver.jl` for the true implementation) to give you an idea, the backslash operator:
 
 ```julia
 struct DefaultLS <: AbstractLinearSolver end
 
-function (l::DefaultLS)(J, rhs)
+function (l::DefaultLS)(J, rhs; k...)
 	return J \ rhs, true, 1
 end
 ```
@@ -45,4 +45,4 @@ ls(J, rand(2))
 4. We provide a preconditioner based on deflation of eigenvalues (also called preconditioner based on Leading Invariant Subspaces) using a partial Schur decomposition. There are two ways to define one *i.e.* [`PrecPartialSchurKrylovKit`](@ref) and [`PrecPartialSchurArnoldiMethod`](@ref). 
 
 !!! tip "Using Preconditioners"
-    Apart from setting a preconditioner for a linear solver, it can be advantageous to change the preconditioner during computations, *e.g.* during a call to `continuation` or `newton`. This can be achieved by taking advantage of the callbacks to these methods. See the example [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref).
+    Apart from setting a preconditioner for a linear solver, it can be advantageous to change the preconditioner during computations, *e.g.* during a call to `continuation` or `newton`. This can be achieved by taking advantage of the callbacks to these methods. See the example [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl).

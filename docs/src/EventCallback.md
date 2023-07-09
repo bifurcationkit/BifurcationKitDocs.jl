@@ -64,8 +64,7 @@ prob = BifurcationProblem(Feve, -2ones(2), par, (@lens _.p1);
 	recordFromSolution = (x,p) -> x[1])
 
 # parameters for the continuation
-opts = ContinuationPar(dsmax = 0.1, ds = 0.001, maxSteps = 128, pMin = -3., pMax = 4.0,
-     saveSolEveryStep = 1, plotEveryStep = 10,
+opts = ContinuationPar(dsmax = 0.1, ds = 0.001, maxSteps = 128, pMin = -3., pMax = 4.0, plotEveryStep = 10,
      newtonOptions = NewtonPar(tol = 1e-10, verbose = false, maxIter = 5),
      # parameters specific to event detection
      detectBifurcation = 0, detectEvent = 2, nInversion = 6, dsminBisection = 1e-9,

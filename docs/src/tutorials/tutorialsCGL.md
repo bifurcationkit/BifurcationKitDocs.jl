@@ -1,4 +1,4 @@
-# 2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)
+# [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@id cgl)
 
 ```@contents
 Pages = ["tutorialsCGL.md"]
@@ -185,7 +185,7 @@ We can now construct the curve of Fold points branching off the Bogdanov-Takens 
 # find the index of the BT point
 indbt = findfirst(x -> x.type == :bt, br_hopf.specialpoint)
 # branch from the BT point
-brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detectBifurcation = 1, maxSteps = 20, saveSolEveryStep = 1);
+brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detectBifurcation = 1, maxSteps = 20);
 	updateMinAugEveryStep = 1,
 	detectCodim2Bifurcation = 2,
 	callbackN = BK.cbMaxNorm(1e5),
@@ -284,7 +284,7 @@ which gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       6.5432e-03     │        0       │
 │       1     │       1.4372e-03     │        8       │
@@ -338,7 +338,7 @@ which gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       6.5432e-03     │        0       │
 │       1     │       1.4372e-03     │        8       │
@@ -451,7 +451,7 @@ It gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       6.5432e-03     │        0       │
 │       1     │       1.4372e-03     │        8       │
@@ -470,7 +470,7 @@ Notice the small speed boost but the reduced allocations. At this stage, further
 
 ### Other linear formulation
 
-We could use another way to "invert" jacobian of the functional based on bordered technics. We try to use an ILU preconditioner on the cyclic matrix $J_c$ (see [Periodic orbits based on Trapezoidal rule](@ref)) which has a smaller memory footprint:
+We could use another way to "invert" jacobian of the functional based on bordered techniques. We try to use an ILU preconditioner on the cyclic matrix $J_c$ (see [Periodic orbits based on Trapezoidal rule](@ref)) which has a smaller memory footprint:
 
 ```julia
 Jpo2 = poTrap(Val(:JacCyclicSparse), orbitguess_f, @set par_cgl.r = r_hopf - 0.1)
@@ -486,7 +486,7 @@ but it gives:
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       3.3298e-03     │        0       │
 │       1     │       9.5088e-03     │       34       │
@@ -599,7 +599,7 @@ and this gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton Iterations      f(x)      Linear Iterations  │
+│ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       4.5937e-01     │        0       │
 │       1     │       5.6013e-01     │       20       │

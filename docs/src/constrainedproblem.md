@@ -25,12 +25,4 @@ where $T$ is a generator of the Lie algebra associated to $G$ and $x_{ref}$ is a
 !!! unknown "Reference"
     See Beyn and Thümmler, **Phase Conditions, Symmetries and PDE Continuation.** for more information on the *freezing method*.
 
-## Encoding of the functional
-
-A composite type which implements this functional:
-
-```@docs
-BorderedProblem
-```
-
 
