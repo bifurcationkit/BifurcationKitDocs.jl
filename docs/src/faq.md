@@ -71,7 +71,7 @@ The package does not yet allow to compute periodic orbits solutions of non-auton
 
 $$\frac{du}{dt}  = F(u, par, t).$$
 
-On certains cases, one can still go away with the following trick. Say one is interested (dummy example!) to study
+On certain cases, one can still go away with the following trick. Say one is interested (dummy example!) to study
 
 $$\dot u = cos(u) + cos(\omega \cdot t).$$
 

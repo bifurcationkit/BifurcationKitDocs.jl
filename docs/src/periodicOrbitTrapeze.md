@@ -78,7 +78,7 @@ Same as `: FullSparseInplace` above but the matrix `dG` is dense. It is also upd
 A matrix free linear solver is used for $\mathcal J$: note that a preconditioner is very likely required here because of the cyclic shape of $\mathcal J$ which affects negatively the convergence properties of iterative solvers. Note that $\mathcal J$ is never formed in this case.
 
 ### 5. BorderedLU
-For `:BorderedLU`, we take advantage of the bordered shape of the linear solver and use a LU decomposition to invert `dG` using a bordered linear solver. More precisely, the bordered structure of $\mathcal J$ is stored using the internal structure `POTrapJacobianBordered`. Then, $\mathcal J$ is inverted using the custom bordered linear solver `PeriodicOrbitTrapBLS` which is based on the bordering strategy (see [Bordered linear solvers (BLS)](@ref)). This particuliar solver is based on an explicit formula which only requires to invert $A_\gamma$: this is done by the linear solver `AγLinearSolver`. In a nutshell, we have:
+For `:BorderedLU`, we take advantage of the bordered shape of the linear solver and use a LU decomposition to invert `dG` using a bordered linear solver. More precisely, the bordered structure of $\mathcal J$ is stored using the internal structure `POTrapJacobianBordered`. Then, $\mathcal J$ is inverted using the custom bordered linear solver `PeriodicOrbitTrapBLS` which is based on the bordering strategy (see [Bordered linear solvers (BLS)](@ref)). This particular solver is based on an explicit formula which only requires to invert $A_\gamma$: this is done by the linear solver `AγLinearSolver`. In a nutshell, we have:
 
 ```
 PeriodicOrbitTrapBLS = BorderingBLS(solver = AγLinearSolver(), checkPrecision = false)

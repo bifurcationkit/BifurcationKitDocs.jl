@@ -470,7 +470,7 @@ Notice the small speed boost but the reduced allocations. At this stage, further
 
 ### Other linear formulation
 
-We could use another way to "invert" jacobian of the functional based on bordered technics. We try to use an ILU preconditioner on the cyclic matrix $J_c$ (see [Periodic orbits based on Trapezoidal rule](@ref)) which has a smaller memory footprint:
+We could use another way to "invert" jacobian of the functional based on bordered techniques. We try to use an ILU preconditioner on the cyclic matrix $J_c$ (see [Periodic orbits based on Trapezoidal rule](@ref)) which has a smaller memory footprint:
 
 ```julia
 Jpo2 = poTrap(Val(:JacCyclicSparse), orbitguess_f, @set par_cgl.r = r_hopf - 0.1)

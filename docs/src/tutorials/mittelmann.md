@@ -129,8 +129,8 @@ nothing #hide
 ```	 
 Note that we put the option `detectBifurcation = 3` to detect bifurcations precisely with a bisection method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.
 
-## Branch of homogenous solutions
-At this stage, we note that the problem has a curve of homogenous (constant in space) solutions $u_h$ solving $N(\lambda, u_h)=0$. We shall compute this branch now.
+## Branch of homogeneous solutions
+At this stage, we note that the problem has a curve of homogeneous (constant in space) solutions $u_h$ solving $N(\lambda, u_h)=0$. We shall compute this branch now.
 
 Given that we will use these arguments for `continuation` many times, it is wise to collect them:
 
@@ -140,7 +140,7 @@ kwargsC = (verbosity = 0, plot = true, normC = norminf)
 nothing #hide
 ```
 
-We call `continuation` with the initial guess `sol0` which is homogenous, thereby generating homogenous solutions:
+We call `continuation` with the initial guess `sol0` which is homogeneous, thereby generating homogeneous solutions:
 
 ```@example MITT
 br = continuation(prob, PALC(), opts_br; kwargsC...)
@@ -179,7 +179,7 @@ scene = plot(br,br1,br2)
 
 ## Analysis at the 2d-branch points (manual)
 
-The second bifurcation point on the branch `br` of homogenous solutions has a 2d kernel. we provide two methods to deal with such case
+The second bifurcation point on the branch `br` of homogeneous solutions has a 2d kernel. we provide two methods to deal with such case
 - automatic local bifurcation diagram (see below)
 - branch switching with deflation (see next section)
 
@@ -245,7 +245,7 @@ We could use the solutions saved in `resp, resx` as initial guesses for a call t
 
 ## Branch switching with deflated newton (manual)
 
-At this stage, we know what happens at the 2d bifurcation point of the curve of homogenous solutions. We chose another method based on [Deflated problems](@ref). We want to find all nearby solutions of the problem close to this bifurcation point. This is readily done by trying several initial guesses in a brute force manner:
+At this stage, we know what happens at the 2d bifurcation point of the curve of homogeneous solutions. We chose another method based on [Deflated problems](@ref). We want to find all nearby solutions of the problem close to this bifurcation point. This is readily done by trying several initial guesses in a brute force manner:
 
 ```julia
 out = zeros(Nx*Ny)
@@ -256,7 +256,7 @@ deflationOp = DeflationOperator(2, 1.0, [zeros(Nx*Ny)])
 optdef = setproperties(opt_newton; tol = 1e-8, maxIter = 100)
 
 # eigen-elements close to the second bifurcation point on the branch
-# of homogenous solutions
+# of homogeneous solutions
 vp, ve, _, _= eigls(JFmit(out, @set par_mit.λ = br.specialpoint[2].param), 5)
 
 for ii=1:length(ve)
