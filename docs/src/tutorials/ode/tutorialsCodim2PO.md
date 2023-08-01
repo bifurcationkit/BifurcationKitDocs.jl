@@ -7,7 +7,7 @@ Depth = 3
 
 > This example is found in the MatCont ecosystem.
 
-The following is a periodically forced predator-prey model studied in [^Kuznetsov] using shooting technics.
+The following is a periodically forced predator-prey model studied in [^Kuznetsov] using shooting techniques.
 
 $$\tag{E}\left\{\begin{aligned}
 \dot{x} & =r\left(1-\frac{x}{K}\right) x-\frac{a x y}{b_0(1+\varepsilon u)+x} \\

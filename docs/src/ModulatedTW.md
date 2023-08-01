@@ -3,7 +3,7 @@
 !!! warning ""
     This is work in progress
 
-A modulated travelling wave with period $T$ satifies $q(x,t+T) = q(x-s T,t)$. Equivalently, using a moving frame to freeze the wave $\xi=x-st$, it holds that $\tilde q(\xi,t+T) = \tilde q(\xi,t)$ where $\tilde q(\xi,t):=q(\xi+st,t)$. Hence, $\tilde q$ is a periodic solution to
+A modulated travelling wave with period $T$ satisfies $q(x,t+T) = q(x-s T,t)$. Equivalently, using a moving frame to freeze the wave $\xi=x-st$, it holds that $\tilde q(\xi,t+T) = \tilde q(\xi,t)$ where $\tilde q(\xi,t):=q(\xi+st,t)$. Hence, $\tilde q$ is a periodic solution to
 
 $$\partial_t\tilde q = -sT\cdot\tilde q+F(\tilde q,p).\tag{eqMWP}$$
 

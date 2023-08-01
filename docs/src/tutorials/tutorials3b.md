@@ -291,7 +291,7 @@ outpo_f = @time newton(poTrap, orbitguess_f, deflationOp, opt_po; normN = normin
 
 ## Floquet coefficients
 
-A basic method for computing Floquet cofficients based on the eigenvalues of the monodromy operator is available (see [`FloquetQaD`](@ref)). It is precise enough to locate bifurcations. Their computation is triggered like in the case of a regular call to `continuation`:
+A basic method for computing Floquet coefficients based on the eigenvalues of the monodromy operator is available (see [`FloquetQaD`](@ref)). It is precise enough to locate bifurcations. Their computation is triggered like in the case of a regular call to `continuation`:
 
 ```julia
 opt_po = @set opt_po.eigsolver = DefaultEig()

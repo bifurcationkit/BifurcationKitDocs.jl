@@ -47,7 +47,7 @@ The available arguments specific to our plotting methods are
 - `applytoX = identity` apply transformation `applytoX` to x-axis
 - `applytoY = identity` apply transformation `applytoY` to y-axis
 
-If you have severals branches `br1, br2`, you can plot them in the same figure by doing
+If you have several branches `br1, br2`, you can plot them in the same figure by doing
 
 ```julia
 plot(br1, br2)

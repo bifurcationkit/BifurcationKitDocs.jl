@@ -16,7 +16,7 @@ There are several couples predictor-tangent/corrector which can be used in **Bif
 
 ## 1. Natural, zeroth order predictor
 
-This is the dumbest predictor based on the formula $(x_1,p_1) = (x_0, p_0 + ds)$ with Newton corrector ; it fails at Turning points. This is set by the algorithm `Natural()` in [`continuation`](@ref). For matrix based jacobian, it is not faster than the pseudo-arclength predictor because the factorisation of the jacobian is catched. For Matrix-free methods, this predictor can be faster than the following ones until it hits a Turning point.
+This is the dumbest predictor based on the formula $(x_1,p_1) = (x_0, p_0 + ds)$ with Newton corrector ; it fails at Turning points. This is set by the algorithm `Natural()` in [`continuation`](@ref). For matrix based jacobian, it is not faster than the pseudo-arclength predictor because the factorisation of the jacobian is cached. For Matrix-free methods, this predictor can be faster than the following ones until it hits a Turning point.
 
 ## 2. First order predictor
 
