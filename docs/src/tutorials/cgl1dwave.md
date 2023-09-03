@@ -20,8 +20,6 @@ using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
 const BK = BifurcationKit
 const FD = ForwardDiff
 
-# supremum norm
-norminf(x) = norm(x, Inf)
 # plotting utilities
 plotsol!(x, m, n; np = n, k...) = heatmap!(reshape(x[1:end-1],m,n)[1:np,:]; color =  :viridis, k...)
 contoursol!(x, m, n; np = n, k...) = contour!(reshape(x[1:end-1],m,n)[1:np,:]; color =  :viridis, k...)
@@ -110,9 +108,9 @@ sol0 = zeros(par_cgl.N)
 # bifurcation problem
 prob = BifurcationProblem(Fcgl, sol0, par_cgl,  (@lens _.r); J = Jcgl)
 
-opt_newton = NewtonPar(tol = 1e-9, maxIter = 20)
-opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.15, ds = 0.001, pMax = 2.5,
-	detectBifurcation = 3, nev = 9, newtonOptions = (@set opt_newton.verbose = false), maxSteps = 100, nInversion = 8, maxBisectionSteps = 20)
+opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)
+opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.15, ds = 0.001, p_max = 2.5,
+	detect_bifurcation = 3, nev = 9, newton_options = (@set opt_newton.verbose = false), max_steps = 100, n_inversion = 8, max_bisection_steps = 20)
 br = continuation(prob, PALC(), opts_br, verbosity = 0)
 ```
 
@@ -165,11 +163,11 @@ r_hopf, Th, orbitguess2, hopfpt, eigvec = guessFromHopfO2(br, 2, opt_newton.eigs
 uold = copy(orbitguess2[1][1:2n])
 
 # we create a TW problem
-probTW = TWProblem(reMake(prob, params = setproperties(par_cgl; r = r_hopf - 0.01)), par_cgl.Db, uold; jacobian = :FullLU)
+probTW = TWProblem(re_make(prob, params = setproperties(par_cgl; r = r_hopf - 0.01)), par_cgl.Db, uold; jacobian = :FullLU)
 
 # refine the guesss
 wave = newton(probTW, vcat(uold, 0),
-		NewtonPar(verbose = true, maxIter = 50),
+		NewtonPar(verbose = true, max_iterations = 50),
 	)
 println("norm wave = ", wave.u[1:end-1] |> norminf)
 plot(wave.u[1:end-1]; linewidth = 5, label = "solution")
@@ -180,13 +178,13 @@ Note that in the following code, a generalized eigensolver is automatically crea
 
 ```@example CGL1DWAVE
 amplitude(x) = maximum(x) - minimum(x)
-optn = NewtonPar(tol = 1e-8, verbose = true, maxIter = 10)
-opt_cont_br = ContinuationPar(pMin = 0.015, pMax = 2.5, newtonOptions = optn, ds= 0.001, dsmax = 0.1, detectBifurcation = 3, nev = 10, maxSteps = 190, nInversion = 6)
+optn = NewtonPar(tol = 1e-8, verbose = true, max_iterations = 10)
+opt_cont_br = ContinuationPar(p_min = 0.015, p_max = 2.5, newton_options = optn, ds= 0.001, dsmax = 0.1, detect_bifurcation = 3, nev = 10, max_steps = 190, n_inversion = 6)
 
 br_TW = @time continuation(probTW, wave.u, PALC(), opt_cont_br;
-	recordFromSolution = (x, p) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
-	plotSolution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
-	finaliseSolution = (z, tau, step, contResult; k...) -> begin
+	record_from_solution = (x, p) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
+	plot_solution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
+	finalise_solution = (z, tau, step, contResult; k...) -> begin
 		amplitude(z.u[n+1:2n]) > 0.01
 end, bothside = true)
 

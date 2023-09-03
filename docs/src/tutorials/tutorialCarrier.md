@@ -59,13 +59,12 @@ dx = X[2] - X[1]
 par_car = (ϵ = 0.7, X = X, dx = dx)
 sol0 = -(1 .- par_car.X.^2)
 
-norminf(x) = norm(x,Inf)
 recordFromSolution(x, p) = (x[2]-x[1]) * sum(x->x^2, x)
 
-prob = BifurcationProblem(F_carr, zeros(N), par_car, (@lens _.ϵ); J = Jac_carr, recordFromSolution = recordFromSolution)
+prob = BifurcationProblem(F_carr, zeros(N), par_car, (@lens _.ϵ); J = Jac_carr, record_from_solution = recordFromSolution)
 
 optnew = NewtonPar(tol = 1e-8, verbose = true)
-	sol = @time newton(prob, optnew, normN = x -> norm(x, Inf64))
+	sol = @time newton(prob, optnew, normN = norminf)
 nothing #hide
 ```
 
@@ -75,14 +74,14 @@ We can start by using our Automatic bifurcation method.
 
 ```@example TUTCARRIER
 
-optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, pMin = 0.05, plotEveryStep = 10, newtonOptions = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), maxSteps = 300, detectBifurcation = 3, nev = 40)
+optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, p_min = 0.05, plot_every_step = 10, newton_options = NewtonPar(tol = 1e-8, max_iterations = 20, verbose = true), max_steps = 300, detect_bifurcation = 3, nev = 40)
 
 diagram = bifurcationdiagram(prob,
     # particular bordered linear solver to use
 	# BandedMatrices.
-    PALC(bls = BorderingBLS(solver = DefaultLS(), checkPrecision = false)),
+    PALC(bls = BorderingBLS(solver = DefaultLS(), check_precision = false)),
     2,
-	(arg...) -> @set optcont.newtonOptions.verbose = false;
+	(arg...) -> @set optcont.newton_options.verbose = false;
 	plot = false)
 
 scene = plot(diagram)
@@ -100,7 +99,7 @@ deflationOp = DeflationOperator(2, dot, 1.0, [sol.u])
 par_def = @set par_car.ϵ = 0.6
 
 # newton options
-optdef = setproperties(optnew; tol = 1e-7, maxIter = 200)
+optdef = setproperties(optnew; tol = 1e-7, max_iterations = 200)
 
 # function to encode a perturbation of the old solutions
 function perturbsol(sol, p, id)
@@ -111,14 +110,14 @@ function perturbsol(sol, p, id)
 end
 
 # encode the deflated continuation algo
-alg = DefCont(deflationOperator = deflationOp, perturbSolution = perturbsol, maxBranches = 40)
+alg = DefCont(deflation_operator = deflationOp, perturb_solution = perturbsol, max_branches = 40)
 
 # call the deflated continuation method
 br = @time continuation(
-	reMake(prob; params = par_def), alg,
-	setproperties(optcont; ds = -0.00021, dsmin=1e-5, maxSteps = 20000,
-		pMax = 0.7, pMin = 0.05, detectBifurcation = 0, plotEveryStep = 40,
-		newtonOptions = setproperties(optnew; tol = 1e-9, maxIter = 100, verbose = false));
+	re_make(prob; params = par_def), alg,
+	setproperties(optcont; ds = -0.00021, dsmin=1e-5, max_steps = 20000,
+		p_max = 0.7, p_min = 0.05, detect_bifurcation = 0, plot_every_step = 40,
+		newton_options = setproperties(optnew; tol = 1e-9, max_iterations = 100, verbose = false));
 	normN = x -> norm(x, Inf),
   verbosity = 0,
 	)

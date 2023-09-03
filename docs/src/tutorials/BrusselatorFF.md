@@ -231,13 +231,13 @@ and you should see (the guess was not that good)
 ## Computation of the snaking branch
 
 ```julia
-# you can detect bifurcations with the option detectBifurcation = 3
-optc = ContinuationPar(newtonOptions = optn, ds = -1e-3, dsmin = 1e-7, dsmax = 2e-3, pMax = 0.295, plotEveryStep = 2, maxSteps = 1000, detectBifurcation = 0)
+# you can detect bifurcations with the option detect_bifurcation = 3
+optc = ContinuationPar(newton_options = optn, ds = -1e-3, dsmin = 1e-7, dsmax = 2e-3, p_max = 0.295, plot_every_step = 2, max_steps = 1000, detect_bifurcation = 0)
 bd = continuation(probSh,
 	solp, PALC(bls = MatrixFreeBLS(@set ls.N = 2nx+2)), optc;
 	plot = true,
 	verbosity = 3,
-	plotSolution = (x,p ; kw...) -> plot!(x[1:nx];kw...),
+	plot_solution = (x,p ; kw...) -> plot!(x[1:nx];kw...),
 	normC = x->norm(x,Inf))
 ```
 

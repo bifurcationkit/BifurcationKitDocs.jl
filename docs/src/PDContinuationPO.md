@@ -28,7 +28,7 @@ The continuation of PD bifurcation points is based on a **Minimally Augmented**[
 
 ## Detection of codim 2 bifurcation points
 
-You can detect the following codim 2 bifurcation points by using the option `detectCodim2Bifurcation` in the method `continuation` 
+You can detect the following codim 2 bifurcation points by using the option `detect_codim2_bifurcation` in the method `continuation` 
 
 - the detection of Generalised Period-Doubling bifurcation is done by computing the PD normal form
 - the detection the above bifurcation points is done by monitoring the number of eigenvalues $\lambda$ such that $\Re\lambda > \min\limits_{\nu\in\Sigma(dF)}|\Re\nu|$ and $\Im\lambda > \epsilon$ where $\epsilon$ is the Newton tolerance.

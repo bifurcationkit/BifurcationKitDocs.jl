@@ -25,7 +25,6 @@ using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
 const BK = BifurcationKit
 
 # define the sup norm and a L2 norm
-norminf(x) = norm(x, Inf)
 normbratu(x) = norm(x .* w) / sqrt(length(x)) # the weight w is defined below
 
 # some plotting functions to simplify our life
@@ -99,8 +98,8 @@ sol0 = zeros(Nx, Ny) |> vec
 
 # Bifurcation Problem
 prob = BifurcationProblem(Fmit, sol0, par_mit, (@lens _.λ),; J = JFmit,
-  recordFromSolution = (x, p) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
-  plotSolution = (x, p; k...) -> plotsol!(x ; k...))
+  record_from_solution = (x, p) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
+  plot_solution = (x, p; k...) -> plotsol!(x ; k...))
 nothing #hide
 ```
 
@@ -111,23 +110,23 @@ To compute the eigenvalues, we opt for the shift-invert strategy with shift `=0.
 eigls = EigKrylovKit(dim = 70)
 
 # options for Newton solver, we pass the eigensolverr
-opt_newton = BK.NewtonPar(tol = 1e-8, verbose = false, eigsolver = eigls, maxIter = 20)
+opt_newton = BK.NewtonPar(tol = 1e-8, verbose = false, eigsolver = eigls, max_iterations = 20)
 
 # options for continuation
-opts_br = ContinuationPar(pMax = 3.5, pMin = 0.025,
+opts_br = ContinuationPar(p_max = 3.5, p_min = 0.025,
 	# for a good looking curve
 	dsmin = 0.001, dsmax = 0.05, ds = 0.01,
 	# number of eigenvalues to compute
 	nev = 30,
-	plotEveryStep = 10, newtonOptions = (@set opt_newton.verbose = false),
-	maxSteps = 100, tolStability = 1e-6,
+	plot_every_step = 10, newton_options = (@set opt_newton.verbose = false),
+	max_steps = 100, tol_stability = 1e-6,
 	# detect codim 1 bifurcations
-	detectBifurcation = 3,
+	detect_bifurcation = 3,
 	# Optional: bisection options for locating bifurcations
-	nInversion = 4, dsminBisection = 1e-7, maxBisectionSteps = 25)
+	n_inversion = 4, dsmin_bisection = 1e-7, max_bisection_steps = 25)
 nothing #hide
 ```	 
-Note that we put the option `detectBifurcation = 3` to detect bifurcations precisely with a bisection method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.
+Note that we put the option `detect_bifurcation = 3` to detect bifurcations precisely with a bisection method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.
 
 ## Branch of homogeneous solutions
 At this stage, we note that the problem has a curve of homogeneous (constant in space) solutions $u_h$ solving $N(\lambda, u_h)=0$. We shall compute this branch now.
@@ -160,7 +159,7 @@ We notice several simple bifurcation points for which the dimension of the kerne
 We can compute the branch off the third bifurcation point:
 
 ```@example MITT
-br1 = continuation(br, 3, setproperties(opts_br;ds = 0.001, maxSteps = 40); kwargsC...)
+br1 = continuation(br, 3, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
 title!("")
 ```
 
@@ -173,7 +172,7 @@ scene = plot(br,br1,plotfold=false)
 We continue our journey and compute the branch bifurcating of the first bifurcation point from the last branch we computed:
 
 ```@example MITT
-br2 = continuation(br1, 1, setproperties(opts_br;ds = 0.001, maxSteps = 40); kwargsC...)
+br2 = continuation(br1, 1, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
 scene = plot(br,br1,br2)
 ```
 
@@ -186,7 +185,7 @@ The second bifurcation point on the branch `br` of homogeneous solutions has a 2
 We provide a generic way to study branch points of arbitrary dimensions by computing a reduced equation. The general method is based on a Lyapunov-Schmidt reduction. We can compute the information about the branch point using the generic function (valid for simple branch points, Hopf bifurcation points,...)
 
 ```@example MITT
-bp2d = getNormalForm(br, 2;  verbose=true, nev = 50)
+bp2d = get_normal_form(br, 2;  verbose=true, nev = 50)
 ```
 
 Note that this is a multivariate polynomials. For more information, see [Non-simple branch point](@ref).
@@ -253,7 +252,7 @@ out = zeros(Nx*Ny)
 deflationOp = DeflationOperator(2, 1.0, [zeros(Nx*Ny)])
 
 # options for the newton solver
-optdef = setproperties(opt_newton; tol = 1e-8, maxIter = 100)
+optdef = setproperties(opt_newton; tol = 1e-8, max_iterations = 100)
 
 # eigen-elements close to the second bifurcation point on the branch
 # of homogeneous solutions
@@ -261,7 +260,7 @@ vp, ve, _, _= eigls(JFmit(out, @set par_mit.λ = br.specialpoint[2].param), 5)
 
 for ii=1:length(ve)
 	outdef1 = newton(
-		reMake(prob,
+		re_make(prob,
 		    # initial guess for newton
 		    u0 = br.specialpoint[2].x .+ 0.01 .*  real.(ve[ii]) .* (1 .+ 0.01 .* rand(Nx*Ny)),
 		    params = (@set par_mit.λ = br.specialpoint[2].param + 0.005)),
@@ -279,11 +278,11 @@ We can continue this solution as follows in one direction
 
 ```julia
 brdef1 = continuation(
-	reMake(prob,
+	re_make(prob,
 	    u0 = deflationOp[3],
         params = (@set par_mit.λ = br.specialpoint[2].param + 0.005)),
     PALC(),
-	setproperties(opts_br;ds = -0.001, detectBifurcation = 3, dsmax = 0.01, maxSteps = 500);
+	setproperties(opts_br;ds = -0.001, detect_bifurcation = 3, dsmax = 0.01, max_steps = 500);
 	kwargsC...)
 ```
 
@@ -291,11 +290,11 @@ If we repeat the above loop but before the branch point by using `@set par_mit.�
 
 ```julia
 brdef2 = continuation(
-  reMake(prob,
+  re_make(prob,
       u0 = deflationOp[5],
       params = (@set par_mit.λ = br.specialpoint[2].param + 0.005)),
      PALC(),
-	setproperties(opts_br;ds = 0.001, detectBifurcation = 3, dsmax = 0.01);
+	setproperties(opts_br;ds = 0.001, detect_bifurcation = 3, dsmax = 0.01);
 	kwargsC...)
 ```
 
@@ -311,7 +310,7 @@ The call for automatic branch switching is the same as in the case of simple bra
 
 ```@example MITT
 branches = continuation(br, 2,
-	setproperties(opts_br; detectBifurcation = 3, ds = 0.001, pMin = 0.01, maxSteps = 32 ) ;
+	setproperties(opts_br; detect_bifurcation = 3, ds = 0.001, p_min = 0.01, max_steps = 32 ) ;
   alg = PALC(tangent = Bordered()),
 	kwargsC...,
 	nev = 30,

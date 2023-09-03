@@ -50,21 +50,21 @@ using BifurcationKit, LinearAlgebra, Setfield, SparseArrays, ForwardDiff, Parame
 Fbt(x, p) = [x[2], p.β1 + p.β2 * x[2] + p.a * x[1]^2 + p.b * x[1] * x[2]]
 par = (β1 = 0.01, β2 = -0.1, a = -1., b = 1.)
 prob  = BifurcationProblem(Fbt, [0.01, 0.01], par, (@lens _.β1))
-opt_newton = NewtonPar(tol = 1e-9, maxIter = 40)
-opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.01, pMax = 0.5, pMin = -0.5, detectBifurcation = 3, nev = 2, newtonOptions = opt_newton, maxSteps = 100, nInversion = 4, dsminBisection = 1e-9)
+opt_newton = NewtonPar(tol = 1e-9, max_iterations = 40)
+opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.01, p_max = 0.5, p_min = -0.5, detect_bifurcation = 3, nev = 2, newton_options = opt_newton, max_steps = 100, n_inversion = 4, dsmin_bisection = 1e-9)
 
 br = continuation(prob, PALC(), opts_br; bothside = true)
 
 # compute branch of Hopf points
-hopf_codim2 = continuation(br, 3, (@lens _.β2), ContinuationPar(opts_br, detectBifurcation = 1, saveSolEveryStep = 1, maxSteps = 40, maxBisectionSteps = 25) ; plot = false, verbosity = 0,
-	detectCodim2Bifurcation = 2,
-	updateMinAugEveryStep = 1,
+hopf_codim2 = continuation(br, 3, (@lens _.β2), ContinuationPar(opts_br, detect_bifurcation = 1, max_steps = 40, max_bisection_steps = 25) ; plot = false, verbosity = 0,
+	detect_codim2_bifurcation = 2,
+	update_minaug_every_step = 1,
 	bothside = true,
 	bdlinsolver = MatrixBLS(),
 	)
 
 # refine BT point
-solbt = BifurcationKit.newtonBT(hopf_codim2, 2; startWithEigen = true)
+solbt = BifurcationKit.newton_bt(hopf_codim2, 2; start_with_eigen = true)
 solbt.u
 ```
 
@@ -76,10 +76,10 @@ Once a Fold / Hopf point has been detected after a call to `br = continuation(..
 ```julia
 outfold = newton(br::AbstractBranchResult, ind_bif::Int;  
 	normN = norm,
-	options = br.contparams.newtonOptions,
+	options = br.contparams.newton_options,
 	bdlinsolver = BorderingBLS(options.linsolver),
 	jacobian_ma = :autodiff,
-	startWithEigen = false, kwargs...)
+	start_with_eigen = false, kwargs...)
 ```
 
 For the options parameters, we refer to [Newton](@ref).

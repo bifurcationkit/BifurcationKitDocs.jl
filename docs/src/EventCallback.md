@@ -4,19 +4,19 @@
 
 The events are detected during a call to `br = continuation(prob, alg, contParams::ContinuationPar;kwargs...)` by turning on the following flag(s):
 
-- `contParams.detectEvent = 1`
+- `contParams.detect_event = 1`
 
 The event points are located by looking at the function defining the event (see below). The located event points are then returned in `br.specialpoint`.
 
 ## Precise detection of event points using Bisection
 
-Note that the event points detected when `detectEvent = 1` are only approximate event points. Indeed, we only signal that, in between two continuation steps which can be large, a (several) event point has been detected. Hence, we only have a rough idea of where the event is located, unless your `ContinuationPar().dsmax` is very small... This can be improved as follows.
+Note that the event points detected when `detect_event = 1` are only approximate event points. Indeed, we only signal that, in between two continuation steps which can be large, a (several) event point has been detected. Hence, we only have a rough idea of where the event is located, unless your `ContinuationPar().dsmax` is very small... This can be improved as follows.
 
-If you choose `detectEvent = 2`, a bisection algorithm is used to locate the event points more precisely. It means that we recursively track down the event. Some options in `ContinuationPar` control this behavior:
+If you choose `detect_event = 2`, a bisection algorithm is used to locate the event points more precisely. It means that we recursively track down the event. Some options in `ContinuationPar` control this behavior:
 
-- `nInversion`: number of sign inversions in the bisection algorithm
-- `maxBisectionSteps` maximum number of bisection steps
-- `tolParamBisectionEvent` tolerance on parameter to locate event
+- `n_inversion`: number of sign inversions in the bisection algorithm
+- `max_bisection_steps` maximum number of bisection steps
+- `tol_param_bisection_event` tolerance on parameter to locate event
 
 ## Different event types
 
@@ -61,14 +61,14 @@ par = (p1 = -3., p2=-3., k=3)
 
 # bifurcation problem
 prob = BifurcationProblem(Feve, -2ones(2), par, (@lens _.p1);
-	recordFromSolution = (x,p) -> x[1])
+	record_from_solution = (x,p) -> x[1])
 
 # parameters for the continuation
-opts = ContinuationPar(dsmax = 0.1, ds = 0.001, maxSteps = 128, pMin = -3., pMax = 4.0, plotEveryStep = 10,
-     newtonOptions = NewtonPar(tol = 1e-10, verbose = false, maxIter = 5),
+opts = ContinuationPar(dsmax = 0.1, ds = 0.001, max_steps = 128, p_min = -3., p_max = 4.0, plot_every_step = 10,
+     newton_options = NewtonPar(tol = 1e-10, verbose = false, max_iterations = 5),
      # parameters specific to event detection
-     detectBifurcation = 0, detectEvent = 2, nInversion = 6, dsminBisection = 1e-9,
-     maxBisectionSteps = 15, detectFold=false)
+     detect_bifurcation = 0, detect_event = 2, n_inversion = 6, dsmin_bisection = 1e-9,
+     max_bisection_steps = 15, detect_fold=false)
 
 # arguments for continuation
 args = (prob, PALC(bls = MatrixBLS()), opts)

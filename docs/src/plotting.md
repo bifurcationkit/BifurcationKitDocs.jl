@@ -1,6 +1,11 @@
 # Plotting
 
-## Standard Plots Using the Plot Recipe
+```@contents
+Pages = ["plotting.md"]
+Depth = 3
+```
+
+## Standard plots using the plot recipe from Plots.jl
 
 Plotting is provided by calling recipes to `Plots.jl`. It means that to plot a branch `br`, you just need to call
 
@@ -74,9 +79,9 @@ plot(br, vars = (:param, :x))
 ```
 The available symbols are `:x, :param, :itnewton, :itlinear, :ds, :θ, :n_unstable, :n_imag, :stable, :step`,... and:
 
-- `x` if `recordFromSolution` (see [`continuation`](@ref)) returns a `Number`.
-- `x1, x2,...` if `recordFromSolution` returns a `Tuple`.
-- the keys of the `NamedTuple` returned by `recordFromSolution`.
+- `x` if `record_from_solution` (see [`continuation`](@ref)) returns a `Number`.
+- `x1, x2,...` if `record_from_solution` returns a `Tuple`.
+- the keys of the `NamedTuple` returned by `record_from_solution`.
 
 The available symbols are provided by calling `propertynames(br.branch)`.
 
@@ -116,4 +121,30 @@ eigvals = br.eig[step].eigenvals
 
 # plot them in the complex plane
 scatter(real.(eigvals), imag.(eigvals))
+```
+
+## Standard plots using the Makie.jl [Experimental]
+
+Plotting is also provided by calling recipes to `Makie.jl`. It means that to plot a branch `br`, you just need to call
+
+```julia
+#]add GLMakie # You need to install GLMakie.jl before your first time using it!
+using GLMakie
+BifurcationKit.plot(br)
+```
+
+The keyword arguments to `BifurcationKit.plot` are the same as decribed above in the page. You can also combine diagrams with `BifurcationKit.plot(br1, br2)` or use `BifurcationKit.plot!(ax, br)` to add a branch to an existing plot.
+
+### Example
+
+```julia
+using Revise, GLMakie, BifurcationKit
+Makie.inline!(true)
+q = 1/0
+k = 2
+F(x, p) = (@. p + x - x^(k+1)/(k+1))
+prob = BifurcationProblem(F, [0.8], 1., (@lens _); record_from_solution = (x,p) -> x[1])
+opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, p_min = -1., p_max = 1.)
+br = continuation(prob, PALC(), opts)
+BifurcationKit.plot(br)
 ```

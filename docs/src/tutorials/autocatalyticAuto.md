@@ -193,7 +193,7 @@ This is handled automatically when calling `continuation` on a `TWProblem`.
 
 ```@example TUTAUTOCATauto
 optn = NewtonPar(tol = 1e-8)
-opt_cont_br = ContinuationPar(pMin = 0.015, pMax = 0.18, newtonOptions = optn, ds= -0.001, plotEveryStep = 2, detectBifurcation = 3, nev = 10, nInversion = 6)
+opt_cont_br = ContinuationPar(p_min = 0.015, p_max = 0.18, newton_options = optn, ds= -0.001, plot_every_step = 2, detect_bifurcation = 3, nev = 10, n_inversion = 6)
 br_TW = continuation(probTW, front.u, PALC(), opt_cont_br)
 plot(br_TW, legend = :topright)
 ```

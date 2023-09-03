@@ -17,8 +17,6 @@ using Revise
 	using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
 	const BK = BifurcationKit
 
-norminf(x) = norm(x, Inf)
-
 function Laplacian2D(Nx, Ny, lx, ly)
 	hx = 2lx/Nx
 	hy = 2ly/Ny
@@ -124,8 +122,8 @@ We first recompute the Hopf points as in the previous tutorial:
 
 ```julia
 eigls = EigArpack(1.0, :LM)
-opt_newton = NewtonPar(tol = 1e-9, verbose = true, eigsolver = eigls, maxIter = 20)
-opts_br = ContinuationPar(dsmax = 0.02, ds = 0.01, pMax = 2., detectBifurcation = 3, nev = 15, newtonOptions = (@set opt_newton.verbose = false), nInversion = 4)
+opt_newton = NewtonPar(tol = 1e-9, verbose = true, eigsolver = eigls, max_iterations = 20)
+opts_br = ContinuationPar(dsmax = 0.02, ds = 0.01, p_max = 2., detect_bifurcation = 3, nev = 15, newton_options = (@set opt_newton.verbose = false), n_inversion = 4)
 
 br = @time continuation(prob, PALC(), opts_br, verbosity = 0)
 ```
@@ -137,8 +135,8 @@ We define the linear solvers to be use by the (Matrix-Free) shooting method
 ```julia
 ls = GMRESIterativeSolvers(reltol = 1e-4, maxiter = 50, verbose = false)
 eig = EigKrylovKit(tol = 1e-7, x₀ = rand(2Nx*Ny), verbose = 2, dim = 40)
-optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 25, linsolver = ls, eigsolver = eig)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, pMax = 2.5, maxSteps = 32, newtonOptions = optn, nev = 7, tolStability = 1e-3, detectBifurcation = 3, plotEveryStep = 1)
+optn = NewtonPar(verbose = true, tol = 1e-9,  max_iterations = 25, linsolver = ls, eigsolver = eig)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, p_max = 2.5, max_steps = 32, newton_options = optn, nev = 7, tol_stability = 1e-3, detect_bifurcation = 3, plot_every_step = 1)
 ```
 
 as
@@ -153,20 +151,20 @@ br_po = continuation(
 	opts_po_cont,
 	# this is how to pass the method to compute the periodic
 	# orbits. We shall use 1 section and the ODE solver ETDRK2
-	ShootingProblem(Mt, prob_sp, ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8, jacobian = :FiniteDifferences) ;
+	ShootingProblem(Mt, prob_sp, ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8, jacobian = BK.FiniteDifferencesMF()) ;
 	# linear solver for bordered linear system
 	# we combine the 2 solves. It is here faster than BorderingBLS()
-	linearAlgo = MatrixFreeBLS(@set ls.N = Mt*2n+2),
+	linear_algo = MatrixFreeBLS(@set ls.N = Mt*2n+2),
 	# to help branching from the Hopf point
 	ampfactor = 1.5, δp = 0.01,
 	# regular parameters for the continuation
 	verbosity = 3, plot = true,
 	# a few parameters saved during run
-	recordFromSolution = (u, p) -> (amp = BK.getAmplitude(p.prob, u, (@set par_cgl.r = p.p)), period = u[end]),
+	record_from_solution = (u, p) -> (amp = BK.getamplitude(p.prob, u, (@set par_cgl.r = p.p)), period = u[end]),
 	# plotting of a section
-	plotSolution = (x, p; k...) -> heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, k...),
+	plot_solution = (x, p; k...) -> heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, k...),
 	# print the Floquet exponent
-	finaliseSolution = (z, tau, step, contResult; k...) ->
+	finalise_solution = (z, tau, step, contResult; k...) ->
 		(Base.display(contResult.eig[end].eigenvals) ;true),
 	normC = norminf)
 ```
@@ -191,7 +189,7 @@ probSh = ShootingProblem(
 	lens = (@lens _.r),
 
 	# jacobian of the periodic orbit functional
-	jacobian = :FiniteDifferences,
+	jacobian = BK.FiniteDifferencesMF(),
 
 	# these are options passed to the ODE time stepper
 	abstol = 1e-14, reltol = 1e-14)
@@ -207,16 +205,24 @@ initpo = vcat(sol(116.), 6.9) |> vec
 ls = GMRESIterativeSolvers(reltol = 1e-4, N = 2Nx * Ny + 1, maxiter = 50, verbose = false)
 
 # newton parameters
-optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 20, linsolver = ls)
+optn = NewtonPar(verbose = true, tol = 1e-9,  max_iterations = 20, linsolver = ls)
 
 # continuation parameters
 eig = EigKrylovKit(tol=1e-7, x₀ = rand(2Nx*Ny), verbose = 2, dim = 40)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds= -0.01, pMax = 1.5, maxSteps = 60, newtonOptions = (@set optn.eigsolver = eig), nev = 5, tolStability = 1e-3, detectBifurcation = 0)
+opts_po_cont = ContinuationPar(dsmin = 0.001,
+				dsmax = 0.01,
+				ds = -0.01,
+				p_max = 1.5,
+				max_steps = 60,
+				newton_options = (@set optn.eigsolver = eig),
+				nev = 5,
+				tol_stability = 1e-3,
+				detect_bifurcation = 0)
 
 br_po = @time continuation(probSh,
 	initpo, PALC(), opts_po_cont;
 	verbosity = 3, plot = true,
-	linearAlgo = MatrixFreeBLS(@set ls.N = probSh.M*2n+2),
-	plotSolution = (x, p; kwargs...) -> heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, kwargs...),
-	recordFromSolution = (u, p) -> BK.getAmplitude(probSh, u, (@set par_cgl.r = p.p); ratio = 2), normC = norminf)
+	linear_algo = MatrixFreeBLS(@set ls.N = probSh.M*2n+2),
+	plot_solution = (x, p; kwargs...) -> heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, kwargs...),
+	record_from_solution = (u, p) -> BK.getamplitude(probSh, u, (@set par_cgl.r = p.p); ratio = 2), normC = norminf)
 ```

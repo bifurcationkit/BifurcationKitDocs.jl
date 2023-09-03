@@ -12,15 +12,13 @@ $$\left\{\begin{array}{l}\dot{x}=2 q_{1} z^{2}-2 q_{5} x^{2}-q_{3} x y \\ \dot{y
 
 where $z=1-x-y-s$.
 
-We start with some imports that are useful in the following.
+We start with some imports:
 
 ```@example TUTCO
-using Revise, Parameters, Plots, LinearAlgebra
+using Revise, Parameters, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
-# define the sup norm
-norminf(x) =  norm(x, Inf)
 nothing # hide
 ```
 
@@ -50,7 +48,7 @@ recordCO(x, p) = (x = x[1], y = x[2], s = x[3])
 z0 = [0.07, 0.2, 05]
 
 # Bifurcation Problem
-prob = BifurcationProblem(COm, z0, par_com, (@lens _.q2); recordFromSolution = recordCO)
+prob = BifurcationProblem(COm, z0, par_com, (@lens _.q2); record_from_solution = recordCO)
 nothing # hide
 ```
 
@@ -60,7 +58,7 @@ Once the problem is set up, we can continue the state w.r.t. $q_2$ and detect co
 
 ```@example TUTCO
 # continuation parameters
-opts_br = ContinuationPar(pMin = 0., pMax = 1.9, ds = 0.002, dsmax = 0.01)
+opts_br = ContinuationPar(p_min = 0., p_max = 1.9, ds = 0.002, dsmax = 0.01)
 
 # compute the branch of solutions
 br = continuation(prob, PALC(), opts_br; plot = true, verbosity = 2, normC = norminf)
@@ -77,12 +75,12 @@ We follow the Fold points in the parameter plane $(q_2, k)$. We tell the solver 
 
 ```@example TUTCO
 sn_codim2 = continuation(br, 2, (@lens _.k),
-	ContinuationPar(opts_br, pMax = 2.2, ds = -0.001, dsmax = 0.05);
+	ContinuationPar(opts_br, p_max = 2.2, ds = -0.001, dsmax = 0.05);
 	normC = norminf,
 	# detection of codim 2 bifurcations
-	detectCodim2Bifurcation = 2,
+	detect_codim2_bifurcation = 2,
 	# update the Fold problem at every continuation step
-	updateMinAugEveryStep = 1,
+	update_minaug_every_step = 1,
 	# compute both sides of the initial condition
 	bothside = true,)
 
@@ -96,14 +94,14 @@ We tell the solver to consider `br.specialpoint[1]` and continue it.
 
 ```@example TUTCO
 hp_codim2 = continuation(br, 1, (@lens _.k),
-	ContinuationPar(opts_br, pMax = 2.8, ds = -0.001, dsmax = 0.05) ;
+	ContinuationPar(opts_br, p_max = 2.8, ds = -0.001, dsmax = 0.05) ;
 	normC = norminf,
 	# detection of codim 2 bifurcations
-	detectCodim2Bifurcation = 2,
+	detect_codim2_bifurcation = 2,
 	# tell to start the Hopf problem using eigen elements: compute left eigenvector
-	#startWithEigen = true,
+	#start_with_eigen = true,
 	# we update the Hopf problem at every continuation step
-	updateMinAugEveryStep = 1,
+	update_minaug_every_step = 1,
 	# compute both sides of the initial condition
 	bothside = true,
 	)

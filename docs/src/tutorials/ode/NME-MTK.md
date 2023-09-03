@@ -25,7 +25,6 @@ using DifferentialEquations, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
-norminf(x) = norm(x, Inf)
 indexof(sym, syms) = findfirst(isequal(sym),syms)
 
 @variables t E(t) x(t) u(t) SS0(t) SS1(t) 	# independent and dependent variables
@@ -52,7 +51,7 @@ par_tm = odeprob.p
 
 # we collect the differentials together in a problem
 prob = BifurcationProblem(F, odeprob.u0, par_tm, (@lens _[id_E0]); J = J,
-    recordFromSolution = (x, p) -> (E = x[1], x = x[2], u = x[3]))
+    record_from_solution = (x, p) -> (E = x[1], x = x[2], u = x[3]))
 nothing #hide
 ```
 
@@ -60,13 +59,13 @@ We first compute the branch of equilibria
 
 ```@example TUTNMEMTK
 # continuation options
-opts_br = ContinuationPar(pMin = -10.0, pMax = -0.9,
+opts_br = ContinuationPar(p_min = -10.0, p_max = -0.9,
 	# parameters to have a smooth result
 	ds = 0.04, dsmax = 0.05,
 	# this is to detect bifurcation points precisely with bisection
-	detectBifurcation = 3,
+	detect_bifurcation = 3,
 	# Optional: bisection options for locating bifurcations
-	nInversion = 8, maxBisectionSteps = 25, nev = 3)
+	n_inversion = 8, max_bisection_steps = 25, nev = 3)
 
 # continuation of equilibria
 br = continuation(prob, PALC(tangent = Bordered()), opts_br; normC = norminf)
@@ -86,23 +85,23 @@ We then compute the branch of periodic orbits from the last Hopf bifurcation poi
 
 ```@example TUTNMEMTK
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 10)
+optn_po = NewtonPar(tol = 1e-8,  max_iterations = 10)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, pMax = 0., pMin=-5.,
-	maxSteps = 110, newtonOptions = (@set optn_po.tol = 1e-7),
-	nev = 3, plotEveryStep = 10, detectBifurcation = 0)
+opts_po_cont = ContinuationPar(dsmax = 0.15, ds= -0.0001, dsmin = 1e-4, p_max = 0., p_min=-5.,
+	max_steps = 150, newton_options = optn_po,
+	nev = 3, plot_every_step = 10, detect_bifurcation = 0)
 
 # arguments for periodic orbits
 # this is mainly for printing purposes
-args_po = (	recordFromSolution = (x, p) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
+args_po = (	record_from_solution = (x, p) -> begin
+		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
-				period = getPeriod(p.prob, x, p.p))
+				period = getperiod(p.prob, x, p.p))
 	end,
-	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
+	plot_solution = (x, p; k...) -> begin
+		xtt = get_periodic_orbit(p.prob, x, p.p)
 		plot!(xtt.t, xtt[1,:]; label = "E", k...)
 		plot!(xtt.t, xtt[2,:]; label = "x", k...)
 		plot!(xtt.t, xtt[3,:]; label = "u", k...)
@@ -116,9 +115,9 @@ Mt = 30 # number of time sections
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Collocation method to locate PO, with polynomial degree 5
-	PeriodicOrbitOCollProblem(Mt, 5);
+	PeriodicOrbitOCollProblem(Mt, 5; meshadapt = true);
 	# regular continuation options
-	args_po..., callbackN = BK.cbMaxNorm(10))
+	args_po..., callback_newton = BK.cbMaxNorm(10))
 
 scene = plot(br, br_pocoll, markersize = 3)
 plot!(scene, br_pocoll.param, br_pocoll.min, label = "")
@@ -137,7 +136,7 @@ for sol in br_pocoll.sol[1:2:40]
 	# periodic orbit
 	po = sol.x
 	# get the mesh and trajectory
-	traj = BK.getPeriodicOrbit(br_pocoll.prob, po, @set par_tm[id_E0] = sol.p)
+	traj = BK.get_periodic_orbit(br_pocoll.prob, po, @set par_tm[id_E0] = sol.p)
 	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
 end
 title!("")

@@ -6,12 +6,12 @@ Pages = ["lorenz84.md"]
 Depth = 3
 ```
 
-In this tutorial, we study the extended Lorenz-84 model which is also treated in MatCont [^Kuznetsov]. This model is interesting because it features all codim 2 bifurcations. It is thus convenient to test our algorithms.
+In this tutorial, we study the extended Lorenz-84 model which is also treated in MatCont [^Kuznetsov]. This model is interesting because it features all codim 2 bifurcations of equilibria. It is thus convenient to test our algorithms.
 
 After this tutorial, you will be able to
 - detect codim 1 bifurcation Fold / Hopf / Branch point
 - follow Fold / Hopf points and detect codim 2 bifurcation points
-- branch from the detected codim 2 points to curves of Fold / Hopf points (This part is still "work in progress")
+- branch from the detected codim 2 points to curves of Fold / Hopf points
 
 The model is as follows
 
@@ -22,15 +22,13 @@ $$\left\{\begin{array}{l}
 \dot{U}=-\delta U+\gamma U X+T
 \end{array}\right.\tag{E}$$
 
-We start with some imports that are useful in the following.
+We start with some imports:
 
 ```@example LORENZ84
-using Revise, Parameters, Setfield, Plots, LinearAlgebra
+using Revise, Parameters, Setfield, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
-# sup norm
-norminf(x) = norm(x, Inf)
 nothing #hide
 ```
 
@@ -55,6 +53,11 @@ parlor = (α = 1//4, β = 1, G = .25, δ = 1.04, γ = 0.987, F = 1.7620532879639
 
 # initial condition
 z0 =  [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.02105288273117459]
+
+# bifurcation problem
+recordFromSolutionLor(x, p) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
+prob = BifurcationProblem(Lor, z0, setproperties(parlor; T=0.04, F=3.), (@lens _.F);
+    record_from_solution = recordFromSolutionLor)
 nothing #hide
 ```
 
@@ -63,17 +66,12 @@ nothing #hide
 Once the problem is set up, we can continue the state w.r.t. $F$ to and detect codim 1 bifurcations. This is achieved as follows:
 
 ```@example LORENZ84
-# bifurcation problem
-recordFromSolutionLor(x, p) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
-prob = BifurcationProblem(Lor, z0, setproperties(parlor; T=0.04, F=3.), (@lens _.F);
-    recordFromSolution = recordFromSolutionLor)
-
 # continuation options
-opts_br = ContinuationPar(pMin = -1.5, pMax = 3.0, ds = 0.002, dsmax = 0.15,
+opts_br = ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.15,
 	# Optional: bisection options for locating bifurcations
-	nInversion = 6, maxBisectionSteps = 25,
+	n_inversion = 6, max_bisection_steps = 25,
 	# number of eigenvalues
-	nev = 4, maxSteps = 200)
+	nev = 4, max_steps = 200)
 
 # compute the branch of solutions
 br = continuation(prob, PALC(), opts_br;
@@ -95,14 +93,14 @@ We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to 
 
 ```@example LORENZ84
 # function to record the current state
-sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, pMax = 3.2, pMin = -0.1, detectBifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, nInversion = 10, maxSteps = 130, maxBisectionSteps = 55) ; normC = norminf,
+sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, detect_bifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10, max_steps = 130, max_bisection_steps = 55) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
-	detectCodim2Bifurcation = 2,
+	detect_codim2_bifurcation = 2,
 	# we update the Fold problem at every continuation step
-	updateMinAugEveryStep = 1,
-	startWithEigen = false,
+	update_minaug_every_step = 1,
+	start_with_eigen = false,
 	# we save the different components for plotting
-	recordFromSolution = recordFromSolutionLor,
+	record_from_solution = recordFromSolutionLor,
 	)
 
 scene = plot(sn_codim2, vars=(:X, :U), branchlabel = "Folds", ylims=(-0.5, 0.5))
@@ -117,7 +115,7 @@ sn_codim2
 For example, we can compute the following normal form
 
 ```@example LORENZ84
-getNormalForm(sn_codim2, 1; nev = 4)
+get_normal_form(sn_codim2, 1; nev = 4)
 ```
 
 ## Continuation of Hopf points
@@ -125,13 +123,13 @@ getNormalForm(sn_codim2, 1; nev = 4)
 We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[3]` and continue it.
 
 ```@example LORENZ84
-hp_codim2_1 = continuation((@set br.alg.tangent = Bordered()), 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, nInversion = 6, detectBifurcation = 1) ; normC = norminf,
+hp_codim2_1 = continuation((@set br.alg.tangent = Bordered()), 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 6, detect_bifurcation = 1) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
-	detectCodim2Bifurcation = 2,
+	detect_codim2_bifurcation = 2,
 	# we update the Fold problem at every continuation step
-	updateMinAugEveryStep = 1,
+	update_minaug_every_step = 1,
 	# we save the different components for plotting
-	recordFromSolution = recordFromSolutionLor,
+	record_from_solution = recordFromSolutionLor,
 	# compute both sides of the initial condition
 	bothside = true,
 	)
@@ -148,7 +146,7 @@ hp_codim2_1
 For example, we can compute the following normal form
 
 ```@example LORENZ84
-getNormalForm(hp_codim2_1, 3; nev = 4)
+get_normal_form(hp_codim2_1, 3; nev = 4)
 ```
 
 ## Continuation of Hopf points from the Bogdanov-Takens point
@@ -157,13 +155,13 @@ When we computed the curve of Fold points, we detected a Bogdanov-Takens bifurca
 
 ```@example LORENZ84
 hp_from_bt = continuation((@set sn_codim2.alg.tangent = Bordered()), 4, ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4,
-	nInversion = 6, detectBifurcation = 1) ; normC = norminf,
+	n_inversion = 6, detect_bifurcation = 1) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
-	detectCodim2Bifurcation = 2,
+	detect_codim2_bifurcation = 2,
 	# we update the Fold problem at every continuation step
-	updateMinAugEveryStep = 1,
+	update_minaug_every_step = 1,
 	# we save the different components for plotting
-	recordFromSolution = recordFromSolutionLor,
+	record_from_solution = recordFromSolutionLor,
 	)
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "SN")
@@ -183,12 +181,12 @@ hp_from_bt
 When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
 ```@example LORENZ84
-hp_from_zh = continuation((@set sn_codim2.alg.tangent = Bordered()), 2, ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02, dsmin = 1e-4, nInversion = 6, detectBifurcation = 1, maxSteps = 150) ;
+hp_from_zh = continuation((@set sn_codim2.alg.tangent = Bordered()), 2, ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 6, detect_bifurcation = 1, max_steps = 150) ;
 	normC = norminf,
-	detectCodim2Bifurcation = 2,
-	updateMinAugEveryStep = 1,
-	startWithEigen = true,
-	recordFromSolution = recordFromSolutionLor,
+	detect_codim2_bifurcation = 2,
+	update_minaug_every_step = 1,
+	start_with_eigen = true,
+	record_from_solution = recordFromSolutionLor,
 	bothside = false,
 	bdlinsolver = MatrixBLS(),
 	)

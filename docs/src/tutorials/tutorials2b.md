@@ -163,8 +163,8 @@ par = (l = -0.15, ν = 1.3, L = L)
 # Bifurcation Problem
 prob = BK.BifurcationProblem(F_shfft, AF(sol0), par, (@lens _.l) ;
 	J =  J_shfft,
-	plotSolution = (x, p;kwargs...) -> plotsol!(x; color=:viridis, kwargs...),
-	recordFromSolution = (x, p) -> norm(x))
+	plot_solution = (x, p;kwargs...) -> plotsol!(x; color=:viridis, kwargs...),
+	record_from_solution = (x, p) -> norm(x))
 ```
 
 ## Newton iterations and deflation
@@ -172,11 +172,10 @@ prob = BK.BifurcationProblem(F_shfft, AF(sol0), par, (@lens _.l) ;
 We are now ready to perform Newton iterations:
 
 ```julia
-opt_new = NewtonPar(verbose = true, tol = 1e-6, maxIter = 100, linsolver = L)
-sol_hexa = @time newton(prob,		opt_new, normN = norminf)
-
-	println("--> norm(sol) = ", maximum(abs.(sol_hexa.u)))
-	plotsol(sol_hexa.u)
+opt_new = NewtonPar(verbose = true, tol = 1e-6, max_iterations = 100, linsolver = L)
+sol_hexa = @time newton(prob, opt_new, normN = norminf)
+println("--> norm(sol) = ", maximum(abs.(sol_hexa.u)))
+plotsol(sol_hexa.u)
 ```
 
 You should see this:
@@ -211,12 +210,12 @@ We can also use the deflation technique (see [`DeflationOperator`](@ref) and [`D
 ```julia
 deflationOp = DeflationOperator(2, dot, 1.0, [sol_hexa.u])
 
-opt_new = @set opt_new.maxIter = 250
-outdef = @time newton(reMake(prob, u0 = AF(0.4 .* sol_hexa.u .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]))),
+opt_new = @set opt_new.max_iterations = 250
+outdef = @time newton(re_make(prob, u0 = AF(0.4 .* sol_hexa.u .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]))),
 		deflationOp, opt_new, normN = x-> maximum(abs.(x)))
-	println("--> norm(sol) = ", norm(outdef.u))
-	plotsol(outdef.u) |> display
-	BK.converged(outdef) && push!(deflationOp, outdef.u)
+println("--> norm(sol) = ", norm(outdef.u))
+plotsol(outdef.u) |> display
+BK.converged(outdef) && push!(deflationOp, outdef.u)
 ```
 
 and get:
@@ -230,15 +229,15 @@ Finally, we can perform continuation of the branches on the GPU:
 
 ```julia
 opts_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.007, ds= -0.005,
-	pMax = 0., pMin = -1.0, plotEveryStep = 5, detectBifurcation = 0,
-	newtonOptions = setproperties(opt_new; tol = 1e-6, maxIter = 15), maxSteps = 100)
+	p_max = 0., p_min = -1.0, plot_every_step = 5, detect_bifurcation = 0,
+	newton_options = setproperties(opt_new; tol = 1e-6, max_iterations = 15), max_steps = 100)
 
-	br = @time continuation(reMake(prob, u0 = deflationOp[1]),
-    PALC(bls = BorderingBLS(solver = L, checkPrecision = false)),
-    opts_cont;
-		plot = true, verbosity = 3,
-		normC = x -> maximum(abs.(x))
-		)
+br = @time continuation(re_make(prob, u0 = deflationOp[1]),
+PALC(bls = BorderingBLS(solver = L, check_precision = false)),
+opts_cont;
+	plot = true, verbosity = 3,
+	normC = x -> maximum(abs.(x))
+	)
 ```
 
 We did not detail how to compute the eigenvalues on the GPU and detect the bifurcations. It is based on a simple Shift-Invert strategy, please look at `examples/SH2d-fronts-cuda.jl`.

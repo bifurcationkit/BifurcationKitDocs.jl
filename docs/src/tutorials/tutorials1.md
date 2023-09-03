@@ -10,8 +10,7 @@ Depth = 3
 This is a simple example in which we aim at solving $\Delta T+\alpha N(T,\beta)=0$ with boundary conditions $T(0) = T(1)=\beta$. This example is coded in `examples/chan.jl`. We start with some imports:
 
 ```@example TUT1
-using BifurcationKit, LinearAlgebra, Plots, Parameters, Setfield
-# Setfield.jl is used to provide the parameter axis @lens
+using BifurcationKit, LinearAlgebra, Plots, Parameters
 const BK = BifurcationKit
 
 N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
@@ -57,7 +56,7 @@ We call the Newton solver:
 ```@example TUT1
 prob = BifurcationProblem(F_chan, sol0, par, (@lens _.α),
 	# function to plot the solution
-	plotSolution = (x, p; k...) -> plot!(x; ylabel="solution", label="", k...))
+	plot_solution = (x, p; k...) -> plot!(x; ylabel="solution", label="", k...))
 sol = newton(prob, @set optnewton.verbose=false) # hide
 sol = @time newton( prob, optnewton)
 nothing #hide
@@ -68,8 +67,8 @@ Note that, in this case, we did not give the Jacobian. It was computed internall
 We can perform numerical continuation w.r.t. the parameter $\alpha$. This time, we need to provide additional parameters, but now for the continuation method:
 
 ```@example TUT1
-optcont = ContinuationPar(dsmin = 0.01, dsmax = 0.2, ds= 0.1, pMin = 0., pMax = 4.2,
-	newtonOptions = NewtonPar(maxIter = 10, tol = 1e-9))
+optcont = ContinuationPar(dsmin = 0.01, dsmax = 0.2, ds= 0.1, p_min = 0., p_max = 4.2,
+	newton_options = NewtonPar(max_iterations = 10, tol = 1e-9))
 nothing #hide
 ```
 
@@ -91,7 +90,7 @@ You should see
 scene = title!("") #hide		
 ```
 
-The left figure is the norm of the solution as function of the parameter $p=\alpha$, the *y-axis* can be changed by passing a different `recordFromSolution` to `continuation`. The top right figure is the value of $\alpha$ as function of the iteration number. The bottom right is the solution for the current value of the parameter. This last plot can be modified by changing the argument `plotSolution` to `continuation`.
+The left figure is the norm of the solution as function of the parameter $p=\alpha$, the *y-axis* can be changed by passing a different `recordFromSolution` to `BifurcationProblem `. The top right figure is the value of $\alpha$ as function of the iteration number. The bottom right is the solution for the current value of the parameter. This last plot can be modified by changing the argument `plotSolution` to `BifurcationProblem `.
 
 !!! note "Bif. point detection"
     Two Fold points were detected. This can be seen by looking at `br.specialpoint`, by the black	dots on the continuation plots when doing `plot(br, plotfold=true)` or by typing `br` in the REPL. Note that the bifurcation points are located in `br.specialpoint`.
@@ -127,7 +126,7 @@ outfoldco = continuation(br, indfold,
 	# second parameter axis to use for codim 2 curve
 	(@lens _.β),
 	# we disable the computation of eigenvalues, it makes little sense here
-	ContinuationPar(optcont, detectBifurcation = 0))
+	ContinuationPar(optcont, detect_bifurcation = 0))
 scene = plot(outfoldco, plotfold = true, legend = :bottomright)
 ```
 
@@ -164,7 +163,7 @@ ls = GMRESKrylovKit(dim = 100)
 optnewton_mf = NewtonPar(verbose = true, linsolver = ls, tol = 1e-10)
 
 # we change the problem with the new jacobian
-prob = reMake(prob;
+prob = re_make(prob;
 	# we pass the differential a x,
 	# which is a linear operator in dx
 	J = (x, p) -> (dx -> dF_chan(x, dx, p))

@@ -64,7 +64,7 @@ uh = zero(U)
 par_bratu = (λ = 0.01,)
 
 # problem definition
-prob = GridapBifProblem(res, uh, par_bratu, V, U, (@lens _.λ); jac = jac, d2res = d2res, d3res = d3res, plotSolution = (x,p; k...) -> plotgridap!(x;  k...))
+prob = GridapBifProblem(res, uh, par_bratu, V, U, (@lens _.λ); jac = jac, d2res = d2res, d3res = d3res, plot_solution = (x,p; k...) -> plotgridap!(x;  k...))
 ```
 
 We can call then the newton solver:
@@ -89,8 +89,8 @@ which gives
 In the same vein, we can continue this solution as function of $\lambda$:
 
 ```julia
-opts = ContinuationPar(pMax = 40., pMin = 0.01, ds = 0.01,
-	maxSteps = 1000, detectBifurcation = 3, newtonOptions = optn, nev = 20)
+opts = ContinuationPar(p_max = 40., p_min = 0.01, ds = 0.01,
+	max_steps = 1000, detect_bifurcation = 3, newton_options = optn, nev = 20)
 br = continuation(prob, PALC(tangent = Bordered()), opts;
 	plot = true,
 	verbosity = 0,
@@ -128,10 +128,10 @@ Let us now compute the first branches from the bifurcation points. We start with
 
 ```julia
 br1 = continuation(br, 3,
-	setproperties(opts; ds = 0.005, dsmax = 0.05, maxSteps = 140, detectBifurcation = 3);
+	setproperties(opts; ds = 0.005, dsmax = 0.05, max_steps = 140, detect_bifurcation = 3);
 	verbosity = 3, plot = true, nev = 10,
 	usedeflation = true,
-	callbackN = BifurcationKit.cbMaxNorm(100),
+	callback_newton = BifurcationKit.cbMaxNorm(100),
 	)
 ```
 
@@ -139,10 +139,10 @@ We also compute the branch from the first bifurcation point on this branch `br1`
 
 ```julia
 br2 = continuation(br1, 3,
-	setproperties(opts;ds = 0.005, dsmax = 0.05, maxSteps = 140, detectBifurcation = 3);
+	setproperties(opts;ds = 0.005, dsmax = 0.05, max_steps = 140, detect_bifurcation = 3);
 	verbosity = 0, plot = true, nev = 10,
 	usedeflation = true,
-	callbackN = BifurcationKit.cbMaxNorm(100),
+	callback_newton = BifurcationKit.cbMaxNorm(100),
 	)
 
 plot(br, br1, br2)
@@ -156,11 +156,11 @@ Finally, we compute the branches from the 2d bifurcation point:
 
 ```julia
 br3 = continuation(br, 2,
-	setproperties(opts; ds = 0.005, dsmax = 0.05, maxSteps = 140, detectBifurcation = 0);
+	setproperties(opts; ds = 0.005, dsmax = 0.05, max_steps = 140, detect_bifurcation = 0);
 	verbosity = 0, plot = true,
 	usedeflation = true,
 	verbosedeflation = false,
-	callbackN = BifurcationKit.cbMaxNorm(100),
+	callback_newton = BifurcationKit.cbMaxNorm(100),
 	)
 
 plot(br, br1, br2, br3...)

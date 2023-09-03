@@ -130,7 +130,7 @@ and we continue it to find the Hopf bifurcation points. We use a Shift-Invert ei
 # Shift-Invert eigensolver
 eigls = EigArpack(1.0, :LM) # shift = 1.0
 opt_newton = NewtonPar(tol = 1e-10, verbose = true, eigsolver = eigls)
-opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.005, ds = 0.001, pMax = 2., detectBifurcation = 3, nev = 5, plotEveryStep = 50, newtonOptions = opt_newton, maxSteps = 1060)
+opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.005, ds = 0.001, p_max = 2., detect_bifurcation = 3, nev = 5, plot_every_step = 50, newton_options = opt_newton, max_steps = 1060)
 
 br = continuation(prob, PALC(), opts_br)
 ```
@@ -146,7 +146,7 @@ scene = plot(br, ylims=(-0.1,0.1))
 We compute the Hopf normal form of the first bifurcation point.
 
 ```@example CGL2d
-hopfpt = getNormalForm(br, 1)
+hopfpt = get_normal_form(br, 1)
 ```
 
 So the Hopf branch is subcritical.
@@ -155,20 +155,20 @@ So the Hopf branch is subcritical.
 
 Having detected 2 hopf bifurcation points, we now continue them in the plane $(\gamma, r)$.
 
-Before we start the codim 2 continuation, we tell `BifurcationKit.jl` to use the spectral information `startWithEigen = true` because the left eigenvector of the Jacobian is simply not the conjugate of the right one.
+Before we start the codim 2 continuation, we tell `BifurcationKit.jl` to use the spectral information `start_with_eigen = true` because the left eigenvector of the Jacobian is simply not the conjugate of the right one.
 
 ```@example CGL2d
 # we perform Hopf continuation of the first Hopf point in br
 ind_hopf = 1
 br_hopf = @time continuation(
 	br, ind_hopf, (@lens _.γ),
-	ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, pMax = 6.5, pMin = -10., newtonOptions = opts_br.newtonOptions, detectBifurcation = 1); plot = true,
-	updateMinAugEveryStep = 1,
+	ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, p_max = 6.5, p_min = -10., newton_options = opts_br.newton_options, detect_bifurcation = 1); plot = true,
+	update_minaug_every_step = 1,
 	normC = norminf,
-	detectCodim2Bifurcation = 2,
-	startWithEigen = true,
+	detect_codim2_bifurcation = 2,
+	start_with_eigen = true,
 	jacobian_ma = :minaug, # specific to high dimensions
-	bdlinsolver = BorderingBLS(solver = DefaultLS(), checkPrecision = false))
+	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false))
 
 plot(br_hopf, branchlabel = "Hopf curve", legend = :topleft)
 ```
@@ -185,11 +185,11 @@ We can now construct the curve of Fold points branching off the Bogdanov-Takens 
 # find the index of the BT point
 indbt = findfirst(x -> x.type == :bt, br_hopf.specialpoint)
 # branch from the BT point
-brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detectBifurcation = 1, maxSteps = 20);
-	updateMinAugEveryStep = 1,
-	detectCodim2Bifurcation = 2,
-	callbackN = BK.cbMaxNorm(1e5),
-	bdlinsolver = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
+brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detect_bifurcation = 1, max_steps = 20);
+	update_minaug_every_step = 1,
+	detect_codim2_bifurcation = 2,
+	callback_newton = BK.cbMaxNorm(1e5),
+	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false),
 	jacobian_ma = :minaug, # specific to high dimensions
 	bothside = true, normC = norminf)
 
@@ -211,7 +211,7 @@ ind_hopf = 1
 M = 30
 
 # periodic orbit initial guess from Hopf point
-r_hopf, Th, orbitguess2, hopfpt, eigvec = guessFromHopf(br, ind_hopf, opt_newton.eigsolver,
+r_hopf, Th, orbitguess2, hopfpt, eigvec = guess_from_hopf(br, ind_hopf, opt_newton.eigsolver,
 	# we pass the number of time slices M, the amplitude 22*sqrt(0.1) and phase
 	M, 22*sqrt(0.1); phase = 0.25)
 
@@ -225,7 +225,7 @@ We create a problem to hold the functional and compute Periodic orbits based on 
 ```julia
 poTrap = PeriodicOrbitTrapProblem(
 # vector field and sparse Jacobian
-	reMake(prob, params = (@set par_cgl.r = r_hopf - 0.01)),
+	re_make(prob, params = (@set par_cgl.r = r_hopf - 0.01)),
 # parameters for the phase condition
 	real.(eigvec),
 	hopfpt.u,
@@ -244,7 +244,7 @@ We can use this (family) problem `poTrap` with `newton` on our periodic orbit gu
     It uses too much memory
 
     ```julia
-    opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.03, ds= 0.001, pMax = 2.5, maxSteps = 250, plotEveryStep = 3, newtonOptions = (@set opt_po.linsolver = DefaultLS()))
+    opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.03, ds= 0.001, p_max = 2.5, max_steps = 250, plot_every_step = 3, newton_options = (@set opt_po.linsolver = DefaultLS()))
     br_po = @time continuation(poTrap, vec(sol0), PALC(), opts_po_cont)
     ```
 
@@ -260,7 +260,7 @@ using IncompleteLU
 Jpo = poTrap(Val(:JacFullSparse), orbitguess_f, @set par_cgl.r = r_hopf - 0.01)
 
 # incomplete LU factorization with threshold
-Precilu = @time ilu(Jpo, τ = 0.005)
+Precilu = @time ilu(Jpo, τ = 0.005);
 
 # we define the linear solver with left preconditioner Precilu
 ls = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, N = size(Jpo,1), restart = 40, maxiter = 50, Pl = Precilu, log=true)
@@ -314,7 +314,7 @@ ls0 = GMRESIterativeSolvers(N = 2Nx*Ny, reltol = 1e-9, Pl = lu(I + par_cgl.Δ))
 
 poTrapMF = PeriodicOrbitTrapProblem(
 # vector field and sparse Jacobian
-	reMake(prob, params = (@set par_cgl.r = r_hopf - 0.01), J = (x, p) ->  (dx -> d1Fcgl(x, p, dx))),
+	re_make(prob, params = (@set par_cgl.r = r_hopf - 0.01), J = (x, p) ->  (dx -> d1Fcgl(x, p, dx))),
 # parameters for the phase condition
 	real.(eigvec),
 	hopfpt.u,
@@ -510,14 +510,14 @@ We can now perform continuation of the newly found periodic orbit and compute th
 opt_po = @set opt_po.eigsolver = EigKrylovKit(tol = 1e-3, x₀ = rand(2n), verbose = 2, dim = 25)
 
 # parameters for the continuation
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds = 0.001, pMax = 2.2, maxSteps = 250, plotEveryStep = 3, newtonOptions = (@set opt_po.linsolver = ls),
-	nev = 5, tolStability = 1e-7, detectBifurcation = 0)
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds = 0.001, p_max = 2.2, max_steps = 250, plot_every_step = 3, newton_options = (@set opt_po.linsolver = ls),
+	nev = 5, tol_stability = 1e-7, detect_bifurcation = 0)
 
 br_po = @time continuation(poTrapMF, outpo_f.u, PALC(),	opts_po_cont;
 	verbosity = 2,	plot = true,
-	linearAlgo = BorderingBLS(solver = ls, checkPrecision = false),
-	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicPOTrap(x, M, Nx, Ny; ratio = 2, kwargs...),
-	recordFromSolution = (u, p) -> BK.getAmplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)
+	linear_algo = BorderingBLS(solver = ls, check_precision = false),
+	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_potrap(x, M, Nx, Ny; ratio = 2, kwargs...),
+	record_from_solution = (u, p) -> BK.getamplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)
 ```
 
 This gives the following bifurcation diagram:
@@ -546,10 +546,10 @@ end
 
 br_po = @time continuation(poTrapMF, outpo_f.u, PALC(),	opts_po_cont;
 	verbosity = 2,	plot = true,
-	callbackN = callbackPO,
-	linearAlgo = BorderingBLS(solver = ls, checkPrecision = false),
-	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicPOTrap(x, M, Nx, Ny; ratio = 2, kwargs...),
-	recordFromSolution = (u, p) -> BK.getAmplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)
+	callback_newton = callbackPO,
+	linear_algo = BorderingBLS(solver = ls, check_precision = false),
+	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_potrap(x, M, Nx, Ny; ratio = 2, kwargs...),
+	record_from_solution = (u, p) -> BK.getamplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)
 ```
 
 ## Continuation of Fold of periodic orbits
@@ -569,11 +569,11 @@ We select the Fold point from the branch `br_po` and redefine our linear solver 
 
 ```julia
 indfold = 2
-foldpt = FoldPoint(br_po, indfold)
+foldpt = foldpoint(br_po, indfold)
 
 Jpo = poTrap(Val(:JacFullSparse), orbitguess_f, (@set par_cgl.r = r_hopf - 0.1))
-Precilu = @time ilu(Jpo, τ = 0.005)
-ls = GMRESIterativeSolvers(verbose = false, reltol = 1e-4, N = size(Jpo, 1), restart = 40, maxiter = 60, Pl = Precilu)
+Precilu = @time ilu(Jpo, τ = 0.005);
+ls = GMRESIterativeSolvers(verbose = false, reltol = 1e-4, N = size(Jpo, 1), restart = 40, maxiter = 60, Pl = Precilu);
 ```
 
 We can then use our functional to call `newtonFold` unlike for a regular function (see Tutorial 1). Indeed, we specify the change the parameters too much to rely on a generic algorithm.
@@ -581,17 +581,17 @@ We can then use our functional to call `newtonFold` unlike for a regular functio
 ```julia
 # define a bifurcation problem for the fold
 # this will be made automatic in the future
-probFold = BifurcationProblem((x, p) -> poTrap(x, p), foldpt, getParams(br), getLens(br);
+probFold = BifurcationProblem((x, p) -> poTrap(x, p), foldpt, getparams(br), getlens(br);
 			J = (x, p) -> poTrap(Val(:JacFullSparse), x, p),
 			d2F = (x, p, dx1, dx2) -> d2Fcglpb(z -> poTrap(z, p), x, dx1, dx2))
 
-outfold = @time BK.newtonFold(
+outfold = @time BK.newton_fold(
   br_po, indfold; #index of the fold point
   prob = probFold,
 	# we change the linear solver for the one we
 	# defined above
 	options = (@set opt_po.linsolver = ls),
-	bdlinsolver = BorderingBLS(solver = ls, checkPrecision = false))
+	bdlinsolver = BorderingBLS(solver = ls, check_precision = false))
 BK.converged(outfold) && printstyled(color=:red, "--> We found a Fold Point at α = ", outfold.u.p," from ", br_po.specialpoint[indfold].param,"\n")
 ```
 
@@ -615,13 +615,13 @@ and this gives
 Finally, one can perform continuation of the Fold bifurcation point as follows CA NE MARCHE PAS
 
 ```julia
-optcontfold = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 40.1, pMin = -10., newtonOptions = (@set opt_po.linsolver = ls), maxSteps = 20, detectBifurcation = 0)
+optcontfold = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 40.1, p_min = -10., newton_options = (@set opt_po.linsolver = ls), max_steps = 20, detect_bifurcation = 0)
 
-outfoldco = BK.continuationFold(probFold,
+outfoldco = BK.continuation_fold(probFold,
 	br_po, indfold, (@lens _.c5),
 	optcontfold;
 	jacobian_ma = :minaug,
-	bdlinsolver = BorderingBLS(solver = ls, checkPrecision = false),
+	bdlinsolver = BorderingBLS(solver = ls, check_precision = false),
 	plot = true, verbosity = 2)
 ```
 
@@ -751,11 +751,11 @@ The computing time is `6.914367 seconds (2.94 M allocations: 130.348 MiB, 1.10% 
 You can also perform continuation, here is a simple example:
 
 ```julia
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds= 0.001, pMax = 2.2, maxSteps = 250, plotEveryStep = 3, newtonOptions = (@set opt_po.linsolver = lsgpu), detectBifurcation = 0)
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds= 0.001, p_max = 2.2, max_steps = 250, plot_every_step = 3, newton_options = (@set opt_po.linsolver = lsgpu), detect_bifurcation = 0)
 br_po = @time continuation(poTrapMFGPU, orbitguess_cu, PALC(),
    opts_po_cont;
    verbosity = 2,
-   recordFromSolution = (u, p) -> getAmplitude(poTrapMFGPU, u, par_cgl_gpu), normC = x->maximum(abs.(x)))
+   record_from_solution = (u, p) -> getAmplitude(poTrapMFGPU, u, par_cgl_gpu), normC = x->maximum(abs.(x)))
 ```
 
 !!! info "Preconditioner update"

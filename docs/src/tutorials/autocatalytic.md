@@ -161,8 +161,8 @@ Let us find the front using `newton`
 
 ```@example TUTAUTOCAT
 # we define a problem for solving for the wave
-probtw = BifurcationProblem(FcatWave, vcat(U0, -1.), par_cat_wave, (@lens _.a);J = JcatWave, recordFromSolution = (x,p) -> (s = x[end], nrm = norm(x[1:end-1])),
-plotSolution = (x, p; k...) -> plotsol!(x[1:end-1];k...))
+probtw = BifurcationProblem(FcatWave, vcat(U0, -1.), par_cat_wave, (@lens _.a);J = JcatWave, record_from_solution = (x,p) -> (s = x[end], nrm = norm(x[1:end-1])),
+plot_solution = (x, p; k...) -> plotsol!(x[1:end-1];k...))
 
 front = newton(probtw, NewtonPar())
 println("front speed s = ", front.u[end], ", norm = ", front.u[1:end-1] |> norminf)
@@ -207,7 +207,7 @@ function (eig::EigenWave)(Jac, nev; k...)
 end
 
 optn = NewtonPar(tol = 1e-8, verbose = true, eigsolver = EigenWave())
-opt_cont_br = ContinuationPar(pMin = 0.05, pMax = 1., newtonOptions = optn, ds= -0.001, plotEveryStep = 2, detectBifurcation = 3, nev = 10, nInversion = 6)
+opt_cont_br = ContinuationPar(p_min = 0.05, p_max = 1., newton_options = optn, ds= -0.001, plot_every_step = 2, detect_bifurcation = 3, nev = 10, n_inversion = 6)
 	br  = continuation(probtw, PALC(), opt_cont_br)
 plot(br)
 ```
@@ -225,14 +225,14 @@ To branch from the Hopf bifurcation point, we just have to pass the mass matrix 
 Mt = 30
 probTP = PeriodicOrbitTrapProblem(M = Mt ;
 		massmatrix = spdiagm(0 => vcat(ones(2N),0.)),
-		updateSectionEveryStep = 1,
+		update_section_every_step = 1,
 		# linear solver for the periodic orbit problem
 		# OPTIONAL, one could use the default
 		jacobian = :BorderedLU)
 
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds= -0.001, pMin = 0.05, maxSteps = 130, newtonOptions = optn, nev = 7, tolStability = 1e-3, detectBifurcation = 0, plotEveryStep = 1)
-	opts_po_cont = @set opts_po_cont.newtonOptions.maxIter = 10
-	opts_po_cont = @set opts_po_cont.newtonOptions.tol = 1e-6
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds= -0.001, p_min = 0.05, max_steps = 130, newton_options = optn, nev = 7, tol_stability = 1e-3, detect_bifurcation = 0, plot_every_step = 1)
+	opts_po_cont = @set opts_po_cont.newton_options.max_iterations = 10
+	opts_po_cont = @set opts_po_cont.newton_options.tol = 1e-6
 
 br_po = continuation(
 	# we want to compute the bifurcated branch from
@@ -248,22 +248,22 @@ br_po = continuation(
 	# tangent predictor
 	alg = PALC(tangent = Secant(),
 			# linear solver specific to PALC
-			bls = BorderingBLS(solver = DefaultLS(), checkPrecision = false)),
+			bls = BorderingBLS(solver = DefaultLS(), check_precision = false)),
 	# regular parameters for the continuation
 	# a few parameters saved during run
-	recordFromSolution = (u, p) -> begin
-		outt = BK.getPeriodicOrbit(p.prob, u, (@set  par_cat_wave.a=p))
+	record_from_solution = (u, p) -> begin
+		outt = BK.get_periodic_orbit(p.prob, u, (@set  par_cat_wave.a=p))
 		m = maximum(outt.u[end,:])
 		return (s = m, period = u[end])
 	end,
 	# plotting of a section
-	plotSolution = (x, p; k...) -> begin
-		outt = BK.getPeriodicOrbit(p.prob, x, (@set  par_cat_wave.a=p.p))
+	plot_solution = (x, p; k...) -> begin
+		outt = BK.get_periodic_orbit(p.prob, x, (@set  par_cat_wave.a=p.p))
 		plot!(outt.t, outt.u[end, :]; label = "", subplot=3)
 		plot!(br, subplot=1)
 	end,
 	# print the Floquet exponent
-	finaliseSolution = (z, tau, step, contResult; k...) -> begin
+	finalise_solution = (z, tau, step, contResult; k...) -> begin
 		true
 	end,
 	plot = true,
@@ -275,7 +275,7 @@ plot(br);plot!(br_po, label = "modulated fronts")
 Let us plot one modulated front:
 
 ```@example TUTAUTOCAT
-modfront = BK.getPeriodicOrbit(br_po, length(br_po))
+modfront = BK.get_periodic_orbit(br_po, length(br_po))
 plot(plot(modfront.t, modfront.u[end,:], xlabel = "t", ylabel = "s", label = ""),
 	contour(modfront.t, X, modfront.u[1:N,:], color = :viridis, xlabel = "t", title = "u for a = $(round(br_po.sol[length(br_po)].p,digits=4))", fill = true, ylims=(-10,10)))
 ```

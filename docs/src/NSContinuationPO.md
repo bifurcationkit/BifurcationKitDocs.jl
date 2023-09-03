@@ -23,7 +23,7 @@ The continuation of Neimark-Sacker bifurcation points is based on a **Minimally 
 
 ### Detection of codim 2 bifurcation points
 
-You can detect the following codim 2 bifurcation points by using the keyword argument `detectCodim2Bifurcation` in the method `continuation` 
+You can detect the following codim 2 bifurcation points by using the keyword argument `detect_codim2_bifurcation` in the method `continuation` 
 
 - the detection of Chenciner bifurcation is done by the the computating the NS normal form
 - the detection the above bifurcation points is done by monitoring the number of eigenvalues $\lambda$ such that $\Re\lambda > \min\limits_{\nu\in\Sigma(dF)}|\Re\nu|$ and $\Im\lambda > \epsilon$ where $\epsilon$ is the Newton tolerance.

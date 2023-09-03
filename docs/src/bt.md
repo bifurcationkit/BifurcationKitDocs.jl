@@ -63,17 +63,17 @@ To invert the mapping $\mu\to (\alpha_{1}(\mu),\alpha_{2}(\mu),\alpha_{3}(\mu))$
 The normal form (E) can be automatically computed as follows
 
 ```julia
-getNormalForm(br::ContResult, ind_bif::Int ;
+get_normal_form(br::ContResult, ind_bif::Int ;
 	nev = 5, verbose = false, ζs = nothing, autodiff = true, detailed = true)
 ```
 
 `br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The option `detailed` controls the computation of a simplified version of the normal form. `autodiff` controls the use of `ForwardDiff` during the normal form computation.
 
 
-The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`getNormalForm`](@ref). The result returns an object of type `BogdanovTakens`.
+The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`get_normal_form`](@ref). The result returns an object of type `BogdanovTakens`.
 
 !!! info "Note"
-    You should not need to call `getNormalForm` except if you need the full information about the branch point.
+    You should not need to call `get_normal_form` except if you need the full information about the branch point.
 
 ## References
 

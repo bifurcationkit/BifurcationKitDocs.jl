@@ -18,10 +18,10 @@ Once the zeros of $\Phi$ have been located, we can use them as initial guess for
 The reduced equation (E) can be automatically computed as follows
 
 ```julia
-getNormalForm(br::ContResult, ind_bif::Int ; verbose = false, ζs = nothing, lens = br.param_lens)
+get_normal_form(br::ContResult, ind_bif::Int ; verbose = false, ζs = nothing, lens = getlens(br))
 ```
 
-where `prob` is a bifurcation problem. `br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`getNormalForm`](@ref). It returns a point with all requested information:
+where `prob` is a bifurcation problem. `br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`get_normal_form`](@ref). It returns a point with all requested information:
 
 ```julia
 mutable struct NdBranchPoint{Tv, T, Tevl, Tevr, Tnf} <: BranchPoint
@@ -46,7 +46,7 @@ end
 ```
 
 ## Using the reduced equation
-Once a branch point has been computed `bp = getNormalForm(...)`, you can do all sort of things. 
+Once a branch point has been computed `bp = get_normal_form(...)`, you can do all sort of things. 
 
 - For example, quoted from the file `test/testNF.jl`, you can print the 2d reduced equation as follows:
 
@@ -68,7 +68,7 @@ It may happen that the general procedure fails. We thus expose the procedure `mu
 The first step is to compute the reduced equation, say of the first bifurcation point in `br`.
 
 ```julia
-bp = getNormalForm(br, 1)
+bp = get_normal_form(br, 1)
 ```
 
 Next, we want to find the zeros of the reduced equation. This is usually achieved by calling the predictor

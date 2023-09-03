@@ -25,7 +25,6 @@ using DiffEqOperators, ForwardDiff, DifferentialEquations, SparseArrays
 using BifurcationKit, LinearAlgebra, Plots, Setfield
 const BK = BifurcationKit
 
-norminf(x) = norm(x, Inf)
 ω(u, p) = p.k * exp((u - p.uc) / p.α)
 β(u, p) = p.s * p.up /(1 + exp(p.r * (u - p.up)) )
 
@@ -120,10 +119,10 @@ We are now ready to compute the bifurcation of the trivial (constant in space) s
 ```@example DETENGINE
 # bifurcation problem
 prob = BifurcationProblem(Fdet, U0, setproperties(par_det; q = 0.5), (@lens _.up); J = JdetAD,
-	plotSolution = (x, p; k...) -> plotsol!(x; k...),
-	recordFromSolution = (x, p) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))
+	plot_solution = (x, p; k...) -> plotsol!(x; k...),
+	record_from_solution = (x, p) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))
 
-prob = reMake(prob, params = (@set par_det.up = 0.56))
+prob = re_make(prob, params = (@set par_det.up = 0.56))
 
 # iterative eigen solver
 eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
@@ -132,12 +131,12 @@ eig = EigArnoldiMethod(sigma=0.2, which = BifurcationKit.LM(),x₀ = rand(2N ))
 # newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)
 solhomo = newton(prob, optnew; normN = norminf)
-optcont = ContinuationPar(newtonOptions = setproperties(optnew, verbose = false),
-	detectBifurcation = 3, nev = 50, nInversion = 8, maxBisectionSteps = 25,
-	dsmax = 0.01, ds = 0.01, pMax = 1.4, maxSteps = 1000, plotEveryStep = 50)
+optcont = ContinuationPar(newton_options = setproperties(optnew, verbose = false),
+	detect_bifurcation = 3, nev = 50, n_inversion = 8, max_bisection_steps = 25,
+	dsmax = 0.01, ds = 0.01, p_max = 1.4, max_steps = 1000, plot_every_step = 50)
 
 br = continuation(
-		reMake(prob, params = (@set par_det.q = 0.5), u0 = solhomo.u),
+		re_make(prob, params = (@set par_det.q = 0.5), u0 = solhomo.u),
 		PALC(), optcont; plot = true)
 Scene = title!("")
 ```
@@ -156,7 +155,7 @@ As we will do the same thing 3 times, we bundle the procedure in functions. We f
 
 ```@example DETENGINE
 function getGuess(br, nb; δp = 0.005)
-	nf = getNormalForm(br, nb; verbose  = false)
+	nf = get_normal_form(br, nb; verbose  = false)
 	pred = predictor(nf, δp)
 	return pred.p, pred.orbit(0)
 end
@@ -166,12 +165,12 @@ nothing #hide
 Using this guess, we can continue the travelling wave as function of a parameter. Note that in the following code, a generalized eigensolver is automatically created during the call to `continuation` which properly computes the stability of the wave.
 
 ```@example DETENGINE
-function computeBranch(br, nb; δp = 0.005, maxSteps = 190)
+function computeBranch(br, nb; δp = 0.005, max_steps = 190)
 	_p, sol = getGuess(br, nb)
 	# travelling wave problem
 	probTW = TWProblem(
-		reMake(br.prob, params = setproperties(getParams(br); up = _p)),
-		getParams(br).Db,
+		re_make(br.prob, params = setproperties(getparams(br); up = _p)),
+		getparams(br).Db,
 		copy(sol),
 		jacobian = :AutoDiff)
 	# newton parameters with iterative eigen solver
@@ -179,15 +178,15 @@ function computeBranch(br, nb; δp = 0.005, maxSteps = 190)
 	eig = EigArpack(nev = 10, which = :LM, sigma = 0.4)
 	optn = NewtonPar(verbose = true, eigsolver = eig)
 	# continuation parameters
-	opt_cont_br = ContinuationPar(pMin = 0.1, pMax = 1.3, newtonOptions = optn, ds= -0.001, dsmax = 0.01, plotEveryStep = 5, detectBifurcation = 3, nev = 10, maxSteps = maxSteps)
+	opt_cont_br = ContinuationPar(p_min = 0.1, p_max = 1.3, newton_options = optn, ds= -0.001, dsmax = 0.01, plot_every_step = 5, detect_bifurcation = 3, nev = 10, max_steps = max_steps)
 	# we build a guess for the travelling wave with speed -0.9
 	twguess = vcat(sol, -0.9)
 	br_wave = continuation(probTW, twguess, PALC(), opt_cont_br;
 		verbosity = 3, plot = true, bothside = true,
-		recordFromSolution = (x, p) -> (u∞ = maximum(x[1:N]), s = x[end], amp = amplitude(x[1:N])),
-		plotSolution = (x, p; k...) -> (plotsol!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
-		callbackN = BK.cbMaxNorm(1e2),
-		finaliseSolution = (z, tau, step, contResult; k...) -> begin
+		record_from_solution = (x, p) -> (u∞ = maximum(x[1:N]), s = x[end], amp = amplitude(x[1:N])),
+		plot_solution = (x, p; k...) -> (plotsol!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
+		callback_newton = BK.cbMaxNorm(1e2),
+		finalise_solution = (z, tau, step, contResult; k...) -> begin
 			amplitude(z.u[N+1:2N]) > 0.01
 		end,
 		)
@@ -199,7 +198,7 @@ We can try this continuation as follows
 
 ```@example DETENGINE
 amplitude(x) = maximum(x) - minimum(x)
-br_wave = computeBranch(br, 1; maxSteps = 10)
+br_wave = computeBranch(br, 1; max_steps = 10)
 Scene = title!("")
 ```
 

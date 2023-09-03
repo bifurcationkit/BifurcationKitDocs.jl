@@ -38,7 +38,7 @@ r \\
 \sigma(u,p)
 \end{array}\right]=\left[\begin{array}{c}0_{n} \\1\end{array}\right]\quad\quad (M_f)$$
 
-where $w,v$ are chosen in order to have a non-singular matrix $(M_f)$. More precisely, $v$ (resp. $w$) should be close to a null vector of `dF(u,p)` (resp. `dF(u,p)'`). During continuation, the vectors $w,v$ are updated so that the matrix $(M_f)$ remains non-singular ; this is controlled with the argument `updateMinAugEveryStep` (see below).
+where $w,v$ are chosen in order to have a non-singular matrix $(M_f)$. More precisely, $v$ (resp. $w$) should be close to a null vector of `dF(u,p)` (resp. `dF(u,p)'`). During continuation, the vectors $w,v$ are updated so that the matrix $(M_f)$ remains non-singular ; this is controlled with the argument `update_minaug_every_step` (see below).
 
 > note that there are very simplified calls for this, see **Newton refinement** below. In particular, you don't need to set up the Fold Minimally Augmented problem yourself. This is done in the background.
 
@@ -47,7 +47,7 @@ where $w,v$ are chosen in order to have a non-singular matrix $(M_f)$. More prec
 
 ### Detection of codim 2 bifurcation points
 
-You can detect the following codim 2 bifurcation points by using the option `detectCodim2Bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
+You can detect the following codim 2 bifurcation points by using the option `detect_codim2_bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
 
 - the detection of Cusp (Cusp) is done by the detection of Fold bifurcation points along the curve of Folds by monitoring the parameter component of the tangent.
 - the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = \langle w(p),v(p)\rangle$
@@ -72,7 +72,7 @@ r \\
 1
 \end{array}\right]\quad\quad (M_h)$$
 
-where $w,v$ are chosen in order to have a non-singular matrix $(M_h)$. More precisely, $w$ (resp. $v$) should be a left (resp. right) approximate null vector of $dF(u,p)-i\omega I_n$. During continuation, the vectors $w,v$ are updated so that the matrix $(M_h)$ remains non-singular ; this is controlled with the argument `updateMinAugEveryStep ` (see below).
+where $w,v$ are chosen in order to have a non-singular matrix $(M_h)$. More precisely, $w$ (resp. $v$) should be a left (resp. right) approximate null vector of $dF(u,p)-i\omega I_n$. During continuation, the vectors $w,v$ are updated so that the matrix $(M_h)$ remains non-singular ; this is controlled with the argument `update_minaug_every_step ` (see below).
 
 > note that there are very simplified calls to this, see **Newton refinement** below. In particular, you don't need to set up the Hopf Minimally Augmented problem yourself. This is done in the background.
 
@@ -81,7 +81,7 @@ where $w,v$ are chosen in order to have a non-singular matrix $(M_h)$. More prec
 
 ### Detection of codim 2 bifurcation points
 
-You can detect the following codim 2 bifurcation points by using the option `detectCodim2Bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
+You can detect the following codim 2 bifurcation points by using the option `detect_codim2_bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
 
 - the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel],[^Blank] $\psi_{BT}(p) = 	\langle w(p),v(p)\rangle$
 - the detection of Bautin (GH) is based on the test function $\psi_{GH}(p) = \Re(l_1(p))$ where $l_1$ is the Lyapunov coefficient defined in [Simple Hopf point](@ref).
@@ -103,9 +103,9 @@ Once a Fold / Hopf point has been detected after a call to `br = continuation(..
 
 ```julia
 outfold = newton(br::AbstractBranchResult, ind_bif::Int;  
-	normN = norm, options = br.contparams.newtonOptions,
+	normN = norm, options = br.contparams.newton_options,
 	bdlinsolver = BorderingBLS(options.linsolver),
-	startWithEigen = false, kwargs...)
+	start_with_eigen = false, kwargs...)
 ```
 
 For the options parameters, we refer to [Newton](@ref).

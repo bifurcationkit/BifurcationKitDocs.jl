@@ -5,7 +5,7 @@ Pages = ["Swift-Hohenberg1d.md"]
 Depth = 3
 ```
 
-In this tutorial, we will see how to compute automatically the bifurcation diagram of the 1d Swift-Hohenberg equation
+In this tutorial, we will see how to compute automatically the bifurcation diagram of the 1d Swift-Hohenberg equation. This example is treated in [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/).
 
 $$-(I+\Delta)^2 u+\lambda\cdot u +\nu u^3-u^5 = 0\tag{E}$$
 
@@ -22,16 +22,15 @@ const BK = BifurcationKit
 We then define a discretization of the problem
 
 ```julia
-# define a norm
-norminf(x) = norm(x, Inf64)
-const _weight = rand(Nx)
-normweighted(x) = norm(_weight .* x)
-
 # discretisation
 N = 200
 l = 6.
 X = -l .+ 2l/N*(0:N-1) |> collect
 h = X[2]-X[1]
+
+# define a norm
+const _weight = rand(N)
+normweighted(x) = norm(_weight .* x)
 
 # boundary condition
 Q = Dirichlet0BC(h |> typeof)
@@ -58,22 +57,22 @@ d3R(u,p,dx1,dx2,dx3) = @. p.ν * 6dx3*dx1*dx2 - 5*4*3u^2*dx1*dx2*dx3
 parSH = (λ = -0.7, ν = 2., L1 = L1)
 
 # initial condition
-sol0 = zeros(Nx)
+sol0 = zeros(N)
 
 # Bifurcation Problem
 prob = BifurcationProblem(R_SH, sol0, parSH, (@lens _.λ); J = Jac_sp,
-	recordFromSolution = (x, p) -> (n2 = norm(x), nw = normweighted(x), s = sum(x), s2 = x[end ÷ 2], s4 = x[end ÷ 4], s5 = x[end ÷ 5]),
-	plotSolution = (x, p;kwargs...)->(plot!(X, x; ylabel="solution", label="", kwargs...)))
+	record_from_solution = (x, p) -> (n2 = norm(x), nw = normweighted(x), s = sum(x), s2 = x[end ÷ 2], s4 = x[end ÷ 4], s5 = x[end ÷ 5]),
+	plot_solution = (x, p;kwargs...)->(plot!(X, x; ylabel="solution", label="", kwargs...)))
 ```
 
 We then choose the parameters for [`continuation`](@ref) with precise detection of bifurcation points by bisection:
 
 ```julia
 optnew = NewtonPar(verbose = false, tol = 1e-12)
-opts = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds = 0.01, pMax = 1.,
-	newtonOptions = setproperties(optnew; maxIter = 30, tol = 1e-8),
-	maxSteps = 300, plotEveryStep = 40,
-	detectBifurcation = 3, nInversion = 4, tolBisectionEigenvalue = 1e-17, dsminBisection = 1e-7)
+opts = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds = 0.01, p_max = 1.,
+	newton_options = setproperties(optnew; max_iterations = 30, tol = 1e-8),
+	max_steps = 300, plot_every_step = 40,
+	detect_bifurcation = 3, n_inversion = 4, tol_bisection_eigenvalue = 1e-17, dsmin_bisection = 1e-7)
 ```
 
 Before we continue, it is useful to define a callback (see [`continuation`](@ref)) for [`newton`](@ref) to avoid spurious branch switching. It is not strictly necessary for what follows.
@@ -96,7 +95,7 @@ Next, we specify the arguments to be used during continuation, such as plotting 
 ```julia
 args = (verbosity = 0,
 	plot = true,
-	callbackN = cb, halfbranch = true,
+	callback_newton = cb, halfbranch = true,
 	)
 ```
 
@@ -106,11 +105,11 @@ Depending on the level of recursion in the bifurcation diagram, we change a bit 
 function optrec(x, p, l; opt = opts)
 	level =  l
 	if level <= 2
-		return setproperties(opt; maxSteps = 300, detectBifurcation = 3,
-			nev = N, detectLoop = false)
+		return setproperties(opt; max_steps = 300, detect_bifurcation = 3,
+			nev = N, detect_loop = false)
 	else
-		return setproperties(opt; maxSteps = 250, detectBifurcation = 3,
-			nev = N, detectLoop = true)
+		return setproperties(opt; max_steps = 250, detect_bifurcation = 3,
+			nev = N, detect_loop = true)
 	end
 end
 ```
@@ -121,7 +120,7 @@ end
 We are now in position to compute the bifurcation diagram
 
 ```julia
-diagram = @time bifurcationdiagram(reMake(prob, params = @set parSH.λ = -0.1),
+diagram = @time bifurcationdiagram(re_make(prob, params = @set parSH.λ = -0.1),
 	PALC(),
 	# here we specify a maximum branching level of 4
 	4, optrec; args...)
@@ -174,3 +173,5 @@ plot(diagram; code = (1,), plotfold = false,  markersize = 2, putspecialptlegend
 ```
 
 ![](BDSH1d-1.png)
+
+## References

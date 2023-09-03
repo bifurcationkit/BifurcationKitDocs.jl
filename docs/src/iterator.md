@@ -30,7 +30,7 @@ end
 
 The `state::ContState` has the following description. It is a mutable object which holds the current state of the continuation procedure from which one can step to the next state.
 
-The for loop stops when `done(iter, state)` returns `false`. The condition which is implemented is basically that the number of iterations should be smaller than `maxIter`, that the parameters should be in `(pMin, pMax)`...
+The for loop stops when `done(iter, state)` returns `false`. The condition which is implemented is basically that the number of iterations should be smaller than `maxIter`, that the parameters should be in `(p_min, p_max)`...
 
 ```@docs
 ContState
@@ -44,7 +44,7 @@ ContState
 We show a quick and simple example of use. Note that it is not very optimized because of the use of global variables.
 
 ```@example ITERATOR
-using BifurcationKit, SparseArrays, LinearAlgebra, Plots, Setfield
+using BifurcationKit, Plots
 const BK = BifurcationKit
 
 k = 2
@@ -52,14 +52,11 @@ k = 2
 # functional we want to study
 F(x, p) = (@. p + x - x^(k+1)/(k+1))
 
-# Jacobian for the functional
-Jac_m(x, p) = diagm(0 => 1  .- x.^k)
-
 # bifurcation problem
-prob = BifurcationProblem(F, [0.8], 1., (@lens _); J = Jac_m)
+prob = BifurcationProblem(F, [0.8], 1., (@lens _))
 
 # parameters for the continuation
-opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, maxSteps = 130, pMin = -3., pMax = 3., newtonOptions = NewtonPar(tol = 1e-8))
+opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, max_steps = 130, p_min = -3., p_max = 3., newton_options = NewtonPar(tol = 1e-8))
 
 # we define an iterator to hold the continuation routine
 iter = BK.ContIterable(prob, PALC(), opts; verbosity = 2)

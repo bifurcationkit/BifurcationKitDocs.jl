@@ -163,11 +163,11 @@ bifurcationdiagram!
 ```
 
 ```@docs
-getBranch
+get_branch
 ```
 
 ```@docs
-getBranchesFromBP
+get_branches_from_BP
 ```
 
 ```@docs
@@ -177,7 +177,7 @@ BifurcationKit.SpecialPoint
 ## Utils for periodic orbits
 
 ```@docs
-getPeriod
+getperiod
 ```
 
 ```@docs
@@ -215,9 +215,9 @@ FloquetQaD
 ```
 
 ```@docs
-guessFromHopf(br, ind_hopf, eigsolver::AbstractEigenSolver, M, amplitude; phase = 0)
+guess_from_hopf(br, ind_hopf, eigsolver::AbstractEigenSolver, M, amplitude; phase = 0)
 ```
 
 ```@docs
-getNormalForm
+get_normal_form
 ```

@@ -26,7 +26,6 @@ using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Setfield, Parameters
 const BK = BifurcationKit
 
 f1(u, v) = u * u * v
-norminf(x) = norm(x, Inf)
 
 function Fbru!(f, x, p, t = 0)
 	@unpack α, β, D1, D2, l = p
@@ -111,8 +110,8 @@ sol0 = vcat(par_bru.α * ones(n), par_bru.β/par_bru.α * ones(n))
 # bifurcation problem
 probBif = BK.BifurcationProblem(Fbru, sol0, par_bru, (@lens _.l);
   J = Jbru_sp,
-  plotSolution = (x, p; kwargs...) -> (plotsol(x; label="", kwargs... )),
-  recordFromSolution = (x, p) -> x[div(n,2)])
+  plot_solution = (x, p; kwargs...) -> (plotsol(x; label="", kwargs... )),
+  record_from_solution = (x, p) -> x[div(n,2)])
 nothing #hide
 ```
 
@@ -128,10 +127,10 @@ We continue the trivial equilibrium to find the Hopf points
 ```@example TUTBRUaut
 opt_newton = NewtonPar(eigsolver = eigls, tol = 1e-9)
 opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.001,
-	pMax = 1.9, detectBifurcation = 3, nev = 21,
-	newtonOptions = opt_newton, maxSteps = 1000,
+	p_max = 1.9, detect_bifurcation = 3, nev = 21,
+	newton_options = opt_newton, max_steps = 1000,
 	# specific options for precise localization of Hopf points
-	nInversion = 6)
+	n_inversion = 6)
 
 br = continuation(probBif, PALC(), opts_br_eq, normC = norminf)
 ```
@@ -147,7 +146,7 @@ scene = plot(br)
 We can compute the normal form of the Hopf points as follows
 
 ```@example TUTBRUaut
-hopfpt = getNormalForm(br, 1)
+hopfpt = get_normal_form(br, 1)
 ```
 
 ## Continuation of Hopf points
@@ -169,14 +168,14 @@ We now perform a Hopf continuation with respect to the parameters `l, β`
     You don't need to call `newton` first in order to use `continuation`.
 
 ```@example TUTBRUaut
-optcdim2 = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 6.5, pMin = 0.0, newtonOptions = opt_newton, detectBifurcation = 0)
+optcdim2 = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 6.5, p_min = 0.0, newton_options = opt_newton, detect_bifurcation = 0)
 
 br_hopf = continuation(br, ind_hopf, (@lens _.β),
 	optcdim2, verbosity = 2,
 	# detection of codim 2 bifurcations with bisection
-	detectCodim2Bifurcation = 2,
+	detect_codim2_bifurcation = 2,
 	# we update the Fold problem at every continuation step
-	updateMinAugEveryStep = 1,
+	update_minaug_every_step = 1,
 	jacobian_ma = :minaug, # specific to large dimensions
 	normC = norminf)
 
@@ -191,10 +190,20 @@ We start by providing a linear solver and some options for the continuation to w
 
 ```@example TUTBRUaut
 # automatic branch switching from Hopf point
-opt_po = NewtonPar(tol = 1e-10, verbose = true, maxIter = 15)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds = 0.01, pMax = 2.2, maxSteps = 20, newtonOptions = opt_po, saveSolEveryStep = 2,
-	plotEveryStep = 1, nev = 11, tolStability = 1e-6,
-	detectBifurcation = 3, dsminBisection = 1e-6, maxBisectionSteps = 15, nInversion = 4)
+opt_po = NewtonPar(tol = 1e-10, verbose = true, max_iterations = 15)
+opts_po_cont = ContinuationPar(dsmin = 0.001,
+		dsmax = 0.04, ds = 0.01,
+		p_max = 2.2,
+		max_steps = 20,
+		newton_options = opt_po,
+		save_sol_every_step = 2,
+		plot_every_step = 1,
+		nev = 11,
+		tol_stability = 1e-6,
+		detect_bifurcation = 3,
+		dsmin_bisection = 1e-6,
+		max_bisection_steps = 15,
+		n_inversion = 4)
 
 nothing #hide
 ```
@@ -219,7 +228,7 @@ br_po = continuation(
 	δp = 0.01, ampfactor = 1,
 	# regular options for continuation
 	verbosity = 3,	plot = true,
-	plotSolution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
+	plot_solution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
 	normC = norminf)
 
 Scene = title!("")
@@ -241,7 +250,7 @@ br_po2 = continuation(
 	opts_po_cont;
 	ampfactor = 1., δp = 0.01,
 	verbosity = 3,	plot = true,
-	plotSolution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
+	plot_solution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
 	normC = norminf)
 ```
 
@@ -263,12 +272,17 @@ n = 100
 # different parameters to define the Brusselator model and guess for the stationary solution
 par_bru = (α = 2., β = 5.45, D1 = 0.008, D2 = 0.004, l = 0.3)
 sol0 = vcat(par_bru.α * ones(n), par_bru.β/par_bru.α * ones(n))
-probBif = reMake(probBif, u0 = sol0)
+probBif = re_make(probBif, u0 = sol0)
 
 eigls = EigArpack(1.1, :LM)
-opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.00615, ds = 0.0061, pMax = 1.9,
-	detectBifurcation = 3, nev = 21, plotEveryStep = 50,
-	newtonOptions = NewtonPar(eigsolver = eigls, tol = 1e-9), maxSteps = 200)
+opts_br_eq = ContinuationPar(dsmin = 0.001,
+		dsmax = 0.00615, ds = 0.0061,
+		p_max = 1.9,
+		detect_bifurcation = 3,
+		nev = 21,
+		plot_every_step = 50,
+		newton_options = NewtonPar(eigsolver = eigls,
+			tol = 1e-9), max_steps = 200)
 
 br = continuation(probBif, PALC(), opts_br_eq, verbosity = 0, plot = false, normC = norminf)
 ```
@@ -309,11 +323,11 @@ We are now ready to call the automatic branch switching. Note how similar it is 
 ls = GMRESIterativeSolvers(reltol = 1e-7, maxiter = 100)
 eig = EigKrylovKit(tol= 1e-12, x₀ = rand(2n), dim = 40)
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-7,  maxIter = 25, linsolver = ls, eigsolver = eig)
+optn_po = NewtonPar(verbose = true, tol = 1e-7,  max_iterations = 25, linsolver = ls, eigsolver = eig)
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.01, pMax = 2.5, maxSteps = 10,
-	newtonOptions = optn_po, nev = 15, tolStability = 1e-3,
-	detectBifurcation = 0, plotEveryStep = 2)
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.01, p_max = 2.5, max_steps = 10,
+	newton_options = optn_po, nev = 15, tol_stability = 1e-3,
+	detect_bifurcation = 0, plot_every_step = 2)
 
 Mt = 2 # number of shooting sections
 br_po = continuation(
@@ -321,14 +335,14 @@ br_po = continuation(
 	# arguments for continuation
 	opts_po_cont,
 	# this is where we tell that we want Parallel Standard Shooting
-	ShootingProblem(Mt, prob, Rodas4P(), abstol = 1e-10, reltol = 1e-8, parallel = true, jacobian = :FiniteDifferences);
+	ShootingProblem(Mt, prob, Rodas4P(), abstol = 1e-10, reltol = 1e-8, parallel = true, jacobian = BK.FiniteDifferencesMF());
 	ampfactor = 1.0, δp = 0.0075,
 	# the next option is not necessary
 	# it speeds up the newton iterations
 	# by combining the linear solves of the bordered linear system
-	linearAlgo = MatrixFreeBLS(@set ls.N = 2+2n*Mt),
+	linear_algo = MatrixFreeBLS(@set ls.N = 2+2n*Mt),
 	verbosity = 3,	plot = true,
-	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicShooting!(x[1:end-1], Mt; kwargs...),
+	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_shooting!(x[1:end-1], Mt; kwargs...),
 	normC = norminf)
 ```
 
@@ -347,9 +361,9 @@ We show how to use this method, the code is very similar to the case of the Para
 ls = GMRESIterativeSolvers(reltol = 1e-8, maxiter = 100)
 eig = EigKrylovKit(tol= 1e-12, x₀ = rand(2n-1), dim = 50)
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-7,  maxIter = 15, linsolver = ls, eigsolver = eig)
+optn_po = NewtonPar(verbose = true, tol = 1e-7,  max_iterations = 15, linsolver = ls, eigsolver = eig)
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.005, pMax = 2.5, maxSteps = 100, newtonOptions = optn_po, nev = 10, tolStability = 1e-5, detectBifurcation = 3, plotEveryStep = 2)
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.005, p_max = 2.5, max_steps = 100, newton_options = optn_po, nev = 10, tol_stability = 1e-5, detect_bifurcation = 3, plot_every_step = 2)
 
 # number of time slices
 Mt = 2
@@ -358,14 +372,14 @@ br_po = continuation(
 	# arguments for continuation
 	opts_po_cont,
   PoincareShootingProblem(Mt, prob, Rodas4P(); abstol = 1e-10, reltol = 1e-8,
-      jacobian = :FiniteDifferences);
+      jacobian = BK.FiniteDifferencesMF());
 	# the next option is not necessary
 	# it speeds up the newton iterations
 	# by combining the linear solves of the bordered linear system
-	linearAlgo = MatrixFreeBLS(@set ls.N = (2n-1)*Mt+1),
+	linear_algo = MatrixFreeBLS(@set ls.N = (2n-1)*Mt+1),
 	ampfactor = 1.0, δp = 0.005,
 	verbosity = 3, plot = true,
-	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicShooting!(x[1:end-1], Mt; kwargs...),
+	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_shooting!(x[1:end-1], Mt; kwargs...),
 	normC = norminf)
 ```
 

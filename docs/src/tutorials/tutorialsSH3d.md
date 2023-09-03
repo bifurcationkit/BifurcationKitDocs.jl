@@ -90,9 +90,9 @@ sol0 = [(cos(x) .* cos(y )) for x in X, y in Y, z in Z]
 	sol0 .*= 1.7
 
 # parameters for PDE
-Δ, D2x = Laplacian3D(Nx, Ny, Nz, lx, ly, lz, :Neumann)
-L1 = (I + Δ)^2
-par = (l = 0.1, ν = 1.2, L1 = L1)
+Δ, D2x = Laplacian3D(Nx, Ny, Nz, lx, ly, lz, :Neumann);
+L1 = (I + Δ)^2;
+par = (l = 0.1, ν = 1.2, L1 = L1);
 ```
 
 ## Choice of linear solver
@@ -115,7 +115,7 @@ Hence, `cholesky` is the big winner but it requires a positive matrix so let's s
 As said in the introduction, the LU linear solver does not scale well with dimension $N$. Hence, we do something else. We note that the matrix $L_1$ is hermitian positive and use it as a preconditioner. Thus, we pre-factorize it using a Cholesky decomposition:
 
 ```julia
-Pr = cholesky(L1)
+Pr = cholesky(L1);
 using SuiteSparse
 # we need this "hack" to be able to use Pr as a preconditioner.
 LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= -(P \ v)
@@ -130,10 +130,10 @@ Let's try this on a Krylov-Newton computation to refine the guess `sol0`:
 ```julia
 prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@lens _.l),
 	J = (x, p) -> (dx -> dF_sh(x, p, dx)),
-	plotSolution = (ax, x, p) -> contour3dMakie(ax, x),
-	recordFromSolution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)))
+	plot_solution = (ax, x, p) -> contour3dMakie(ax, x),
+	record_from_solution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)))
 
-optnew = NewtonPar(verbose = true, tol = 1e-8, maxIter = 20, linsolver = ls)
+optnew = NewtonPar(verbose = true, tol = 1e-8, max_iterations = 20, linsolver = ls)
 sol_hexa = @time newton(prob, optnew)
 ```
 
@@ -206,14 +206,14 @@ eigSH3d = SH3dEig((@set ls.rtol = 1e-9), 0.1)
 We are now ready to perform continuation and detection of bifurcation points:
 
 ```julia
-optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, pMax = 0.15,
-	pMin = -.1, newtonOptions = setproperties(optnew; tol = 1e-9, maxIter = 15),
-	maxSteps = 146, detectBifurcation = 3, nev = 15, nInversion = 4, plotEveryStep = 1)
+optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, p_max = 0.15,
+	p_min = -.1, newton_options = setproperties(optnew; tol = 1e-9, maxIter = 15),
+	max_steps = 146, detect_bifurcation = 3, nev = 15, n_inversion = 4, plot_every_step = 1)
 
-br = continuation( reMake(prob, u0 = zeros(N)),
+br = continuation( re_make(prob, u0 = zeros(N)),
   # we use a particular bordered linear solver to
   # take advantage of our specific linear solver
-  PALC(bls = BorderingBLS(solver = optnew.linsolver, checkPrecision = false)),
+  PALC(bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
   optcont;
   normC = x -> norm(x, Inf),
 	plot = true, verbosity = 3)
@@ -248,20 +248,20 @@ We get the following plot during computation:
 We can use [Branch switching](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/branchswitching/) to compute the different branches emanating from the bifurcation points. For example, the following code will perform automatic branch switching from the last bifurcation point of `br`. Note that this bifurcation point is 3d.
 
 ```julia
-br1 = @time continuation(br, 3, setproperties(optcont; saveSolEveryStep = 10,
-	detectBifurcation = 0, pMax = 0.1, plotEveryStep = 5, dsmax = 0.02);
+br1 = @time continuation(br, 3, setproperties(optcont; save_sol_every_step = 10,
+	detect_bifurcation = 0, p_max = 0.1, plot_every_step = 5, dsmax = 0.02);
 	plot = true, verbosity = 3,
 	# to set initial point on the branch
 	δp = 0.01,
 	# remove display of deflated newton iterations
 	verbosedeflation = false,
 	alg = PALC(tangent = Bordered()),
-	linearAlgo = BorderingBLS(solver = optnew.linsolver, checkPrecision = false),
+	linear_algo = BorderingBLS(solver = optnew.linsolver, check_precision = false),
 	# to compute the normal form, so we don't have to
 	# compute the left eigenvectors
 	issymmetric = true,
-	plotSolution = (ax, x, p) -> contour3dMakie(ax, x),
-	recordFromSolution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)),
+	plot_solution = (ax, x, p) -> contour3dMakie(ax, x),
+	record_from_solution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)),
 	normC = x -> norm(x, Inf))
 ```
 

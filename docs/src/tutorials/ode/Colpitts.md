@@ -33,12 +33,10 @@ x_{3}+I C\left(x_{1}, x_{2}\right) \\
 It is easy to encode the DAE as follows. The mass matrix is defined next.
 
 ```@example TUTDAE1
-using Revise, Parameters, Plots, LinearAlgebra
+using Revise, Parameters, Plots
 using BifurcationKit
+using LinearAlgebra # for eigen
 const BK = BifurcationKit
-
-# sup norm
-norminf(x) = norm(x, Inf)
 
 # function to record information from the soluton
 recordFromSolution(x, p) = (u1 = norminf(x), x1 = x[1], x2 = x[2], x3 = x[3], x4 = x[4])
@@ -48,7 +46,7 @@ f(x, p) = p.Is * (exp(p.q * x) - 1)
 IE(x1, x2, p) = -f(x2, p) + f(x1, p) / p.αF
 IC(x1, x2, p) = f(x2, p)/ p.αR - f(x1, p)
 
-function Colpitts!(dz, z, p, t=0)
+function Colpitts!(dz, z, p, t = 0)
 	@unpack C1, C2, L, R, Is, q, αF, αR, V, μ = p
 	x1, x2, x3, x4 = z
 	dz[1] = (x1 - V) / R + IE(x1, x2, p)
@@ -57,9 +55,6 @@ function Colpitts!(dz, z, p, t=0)
 	dz[4] = -μ+x2
 	dz
 end
-
-# we put the option t = 0 in order to use the function with DifferentialEquations
-Colpitts(z, p, t = 0) = Colpitts!(similar(z), z, p, t)
 
 # parameter values
 par_Colpitts = (C1 = 1.0, C2 = 1.0, L = 1.0, R = 1/4., Is = 1e-16, q = 40., αF = 0.99, αR = 0.5, μ = 0.5, V = 6.)
@@ -71,7 +66,7 @@ z0 = [0.9957,0.7650,19.81,-19.81]
 Be = [-(par_Colpitts.C1+par_Colpitts.C2) par_Colpitts.C2 0 0;par_Colpitts.C2 -par_Colpitts.C2 0 0;par_Colpitts.C1 0 0 0; 0 0 par_Colpitts.L 0]
 
 # we group the differentials together
-prob = BifurcationProblem(Colpitts, z0, par_Colpitts, (@lens _.μ); recordFromSolution = recordFromSolution)
+prob = BifurcationProblem(Colpitts!, z0, par_Colpitts, (@lens _.μ); record_from_solution = recordFromSolution)
 
 nothing #hide
 ```
@@ -92,9 +87,9 @@ function (eig::EigenDAE)(Jac, nev; k...)
 end
 
 # continuation options
-optn = NewtonPar(tol = 1e-13, maxIter = 10, eigsolver = EigenDAE(Be))
-opts_br = ContinuationPar(pMin = -0.4, pMax = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plotEveryStep = 3, maxSteps = 1000, newtonOptions = optn)
-	opts_br = @set opts_br.newtonOptions.verbose = false
+optn = NewtonPar(tol = 1e-13, max_iterations = 10, eigsolver = EigenDAE(Be))
+opts_br = ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plot_every_step = 3, max_steps = 1000, newton_options = optn)
+	opts_br = @set opts_br.newton_options.verbose = false
 	br = continuation(prob, PALC(), opts_br; normC = norminf)
 
 scene = plot(br, vars = (:param, :x1))
@@ -114,14 +109,14 @@ using DifferentialEquations
 
 # this is the ODEProblem used with `DiffEqBase.solve`
 # we  set  the initial conditions
-prob_dae = ODEFunction{false}(Colpitts; mass_matrix = Be)
+prob_dae = ODEFunction(Colpitts!; mass_matrix = Be)
 probFreez_ode = ODEProblem(prob_dae, z0, (0., 1.), par_Colpitts)
 
 # we lower the tolerance of newton for the periodic orbits
 optnpo = @set optn.tol = 1e-9
 @set! optnpo.eigsolver = DefaultEig()
 
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, pMin = 0.2, maxSteps = 50, newtonOptions = optnpo, nev = 4, tolStability = 1e-3, plotEveryStep = 5)
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, p_min = 0.2, max_steps = 50, newton_options = optnpo, nev = 4, tol_stability = 1e-3, plot_every_step = 5)
 
 
 # Shooting functional. Note the  stringent tolerances used to cope with
@@ -131,24 +126,24 @@ probSH = ShootingProblem(10, probFreez_ode, Rodas5P(); reltol = 1e-10, abstol = 
 # automatic branching from the Hopf point
 br_po = continuation(br, 1, opts_po_cont, probSH;
 	plot = true, verbosity = 3,
-	linearAlgo = MatrixBLS(),
+	linear_algo = MatrixBLS(),
 	# δp is use to parametrise the first parameter point on the
 	# branch of periodic orbits
 	δp = 0.001,
-	recordFromSolution = (u, p) -> begin
-		outt = BK.getPeriodicOrbit(p.prob, u, (@set  par_Colpitts.μ=p.p))
+	record_from_solution = (u, p) -> begin
+		outt = BK.get_periodic_orbit(p.prob, u, (@set  par_Colpitts.μ=p.p))
 		m = maximum(outt[1,:])
 		return (s = m, period = u[end])
 	end,
 	# plotting of a solution
-	plotSolution = (x, p; k...) -> begin
-		outt = BK.getPeriodicOrbit(p.prob, x, (@set  par_Colpitts.μ=p.p))
+	plot_solution = (x, p; k...) -> begin
+		outt = BK.get_periodic_orbit(p.prob, x, (@set  par_Colpitts.μ=p.p))
 		plot!(outt.t, outt[2,:], subplot = 3)
 		plot!(br, vars = (:param, :x1), subplot = 1)
 	end,
 	# the newton Callback is used to reject residual > 1
 	# this is to avoid numerical instabilities from DE.jl
-	callbackN = BK.cbMaxNorm(1.0),
+	callback_newton = BK.cbMaxNorm(1.0),
 	normC = norminf)
 ```
 

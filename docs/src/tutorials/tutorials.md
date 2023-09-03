@@ -1,5 +1,10 @@
 # Tutorials
 
+```@contents
+Pages = ["tutorials.md"]
+Depth = 2
+```
+
 There are three levels of tutorials:
 
 1. fully **automatic bifurcation diagram** (**aBD**) computation (only for equilibria): one uses the function `bifurcationdiagram` and let it compute the diagram fully automatically. Another possibility is to use **deflated continuation**.
@@ -10,11 +15,14 @@ There are three levels of tutorials:
 
 We present examples in the case of ODEs. Although `BifurcationKit.jl` is not geared towards them, we provide some specific methods which allow to study the bifurcations of ODE in a relatively efficient way.
 
+### Study of equilibria
+
 ```@contents
 Pages = ["ode/tutorialsODE.md","ode/tutorialCO.md","ode/lorenz84.md", "ode/tutorialPP2.md",]
 Depth = 1
 ```
 
+### Periodic orbits
 Here are some examples more oriented towards the computation of periodic orbits. Here is one for aBS from **period-doubling** bifurcations of periodic orbits
 ```@contents
 Pages = ["ode/tutorialsODE-PD.md"]
@@ -67,27 +75,27 @@ Pages = ["ode/NME-MTK.md"]
 Depth = 1
 ```
 
-## Bifurcation of Equilibria
+## PDEs: bifurcations of equilibria
 ```@contents
 Pages = ["tutorials1.md", "tutorials1b.md", "tutorials2.md", "mittelmann.md", "tutorials2b.md", "tutorialsSH3d.md"]
 Depth = 1
 ```
 
-### Automatic bifurcation diagram
+## PDEs: automatic bifurcation diagram
 ```@contents
 Pages = ["Swift-Hohenberg1d.md", "tutorialCarrier.md", "ks1d.md", "mittelmannAuto.md", "ks2d.md"]
 Depth = 1
 ```
 
-### Solving PDEs using Finite elements with [Gridap.jl](https://github.com/gridap/Gridap.jl)
+## PDEs: bifurcations of periodic orbits
 ```@contents
-Pages = ["mittelmannGridap.md"]
+Pages = ["tutorials3.md","tutorials3b.md", "BrusselatorFF.md", "tutorialsPD.md", "tutorialsCGL.md", "tutorialsCGLShoot.md","Langmuir.md"]
 Depth = 1
 ```
 
-## Bifurcation diagrams with periodic orbits
+## PDEs based on FEM with [Gridap.jl](https://github.com/gridap/Gridap.jl)
 ```@contents
-Pages = ["tutorials3.md","tutorials3b.md", "BrusselatorFF.md", "tutorialsPD.md", "tutorialsCGL.md", "tutorialsCGLShoot.md","Langmuir.md"]
+Pages = ["mittelmannGridap.md"]
 Depth = 1
 ```
 

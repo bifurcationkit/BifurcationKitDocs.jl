@@ -32,7 +32,7 @@ $$\begin{bmatrix} F(x,p) \\	N(x,p)\end{bmatrix} = 0\tag{PALC}$$
 
 Let us discuss more about the norm and dot product. First, the option `normC` [`continuation`](@ref) specifies the norm used to evaluate the residual in the following way: $max(normC(F(x,p)), |N(x,p)|)<tol$. It is thus used as a stopping criterion for the corrector. The dot product (resp. norm) used in $N$ and in the (iterative) linear solvers is `LinearAlgebra.dot` (resp. `LinearAlgebra.norm`). It can be changed by importing these functions and redefining it. Note that by default, the $\mathcal L^2$ norm is used. These details are important because of the constraint $N$ which incorporates the factor `length`. For some custom composite type implementing a Vector space, the dot product could already incorporates the `length` factor in which case you should either redefine the dot product or change $\theta$.
 
-The linear solver for the linear problem associated to (PALC) is set by the option `linearAlgo` in [`continuation`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
+The linear solver for the linear problem associated to (PALC) is set by the option `linear_algo` in [`continuation`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
 
 ## Dot product
 

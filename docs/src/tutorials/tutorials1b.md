@@ -75,7 +75,7 @@ sol = Fun(x -> x * (1-x), Interval(0.0, 1.0))
 # set of parameters
 par_af = (α = 3., β = 0.01, Δ = Δ)
 
-prob = BifurcationProblem(F_chan, sol, par_af, (@lens _.α); J = Jac_chan, plotSolution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...))
+prob = BifurcationProblem(F_chan, sol, par_af, (@lens _.α); J = Jac_chan, plot_solution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...))
 ```
 
 Finally, we need to provide some parameters for the Newton iterations. This is done by calling
@@ -109,7 +109,7 @@ and you should see
 We can also perform numerical continuation with respect to the parameter $\alpha$. Again, we need to provide some parameters for the continuation:
 
 ```julia
-optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.05, ds= 0.005, pMax = 4.1, plotEveryStep = 10, newtonOptions = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), detectBifurcation = 0, maxSteps = 200)
+optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.05, ds= 0.005, p_max = 4.1, plot_every_step = 10, newton_options = NewtonPar(tol = 1e-8, max_iterations = 20, verbose = true), detect_bifurcation = 0, max_steps = 200)
 ```
 
 
@@ -118,9 +118,9 @@ Then, we can call the continuation routine.
 ```julia
 # we need a specific bordered linear solver
 # we use the BorderingBLS one to rely on ApproxFun.\
-br = continuation(prob, PALC(bls = BorderingBLS(solver = optnewton.linsolver, checkPrecision = false)), optcont,
+br = continuation(prob, PALC(bls = BorderingBLS(solver = optnewton.linsolver, check_precision = false)), optcont,
 	plot = true,
-	plotSolution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...),
+	plot_solution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...),
 	verbosity = 2,
 	normC = x -> norm(x, Inf64))
 ```
@@ -143,16 +143,16 @@ $$N(x, p)={\theta}\left\langle x-x_{0}, d x_{0}\right\rangle+(1-\theta) \cdot\le
 This can be done as follows:
 
 ```julia
-optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 4.1, plotEveryStep = 10, newtonOptions = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), maxSteps = 300, θ = 0.2, detectBifurcation = 0)
+optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 4.1, plot_every_step = 10, newton_options = NewtonPar(tol = 1e-8, maxIter = 20, verbose = true), max_steps = 300, θ = 0.2, detect_bifurcation = 0)
 
-br = continuation(prob, PALC(bls=BorderingBLS(solver = optnewton.linsolver, checkPrecision = false)), optcont,
+br = continuation(prob, PALC(bls=BorderingBLS(solver = optnewton.linsolver, check_precision = false)), optcont,
 	plot = true,
 	# specify the dot product used in PALC
 	dotPALC = BK.DotTheta(dot),
 	# we need a specific bordered linear solver
 	# we use the BorderingBLS one to rely on ApproxFun.\
-	linearAlgo = BorderingBLS(solver = DefaultLS(), checkPrecision = false),
-	plotSolution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...),
+	linear_algo = BorderingBLS(solver = DefaultLS(), check_precision = false),
+	plot_solution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...),
 	verbosity = 2,
 	normC = x -> norm(x, Inf64))
 ```

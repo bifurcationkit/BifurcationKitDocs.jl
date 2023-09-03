@@ -9,7 +9,7 @@ $$\tag{1} \frac{d x}{d t}=f(x)$$
 and we write $\phi^t(x_0)$ the associated flow (or semigroup of solutions).
 
 !!! tip "Tip about convenience functions"
-    For convenience, we provide some functions `plotPeriodicShooting` for plotting, `getAmplitude` (resp. `getMaximum`) for getting the amplitude (resp. maximum) of the solution encoded by a shooting problem. See the tutorials for examples of use.
+    For convenience, we provide some functions `plotPeriodicShooting` for plotting, `get_amplitude` (resp. `get_maximum`) for getting the amplitude (resp. maximum) of the solution encoded by a shooting problem. See the tutorials for examples of use.
 
 ## Standard Shooting
 ### Simple shooting
@@ -146,7 +146,7 @@ newton(prob::BifurcationKit.AbstractShootingProblem,
 
 Have a look at the [Continuation of periodic orbits (Standard Shooting)](@ref) example for the Brusselator.
 
-In order to plot the orbit during continuation, one has to recompute the orbit inside a `plotSolution` function passed to `continuation`. This is simplified by the function `getPeriodicOrbit` which returns a solution to be plotted. We refer to [Period doubling in Lur'e problem (PD aBS)](@ref) for an example of use.
+In order to plot the orbit during continuation, one has to recompute the orbit inside a `plotSolution` function passed to `continuation`. This is simplified by the function `get_periodic_orbit` which returns a solution to be plotted. We refer to [Period doubling in Lur'e problem (PD aBS)](@ref) for an example of use.
 
 The docs for this specific `continuation` are located at [`continuation`](@ref).
 
@@ -154,7 +154,7 @@ The docs for this specific `continuation` are located at [`continuation`](@ref).
 continuation(probPO::BifurcationKit.AbstractShootingProblem, orbitguess,
 						alg::BifurcationKit.AbstractContinuationAlgorithm,
 						contParams::ContinuationPar,
-						linearAlgo::BifurcationKit.AbstractBorderedLinearSolver;
+						linear_algo::BifurcationKit.AbstractBorderedLinearSolver;
 						δ = convert(eltype(orbitguess), 1e-8),
 						kwargs...,
 					)

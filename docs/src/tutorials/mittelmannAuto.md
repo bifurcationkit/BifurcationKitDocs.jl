@@ -24,7 +24,6 @@ using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
 const BK = BifurcationKit
 
 # define the sup norm
-norminf(x) = norm(x, Inf)
 norm2(x) = norm(x) / sqrt(length(x))
 normbratu(x) = norm(x .* w) / sqrt(length(x)) # the weight w is defined below
 
@@ -102,8 +101,8 @@ sol0 = 0*ones(Nx, Ny) |> vec
 
 # Bifurcation Problem
 prob = BifurcationProblem(Fmit, sol0, par_mit, (@lens _.λ),; J = JFmit,
-  recordFromSolution = (x, p) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
-  plotSolution = (x, p; k...) -> plotsol!(x ; k...))
+  record_from_solution = (x, p) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
+  plot_solution = (x, p; k...) -> plotsol!(x ; k...))
 ```
 
 To compute the eigenvalues, we opt for the solver in `KrylovKit.jl`
@@ -113,14 +112,14 @@ To compute the eigenvalues, we opt for the solver in `KrylovKit.jl`
 eigls = EigKrylovKit(dim = 70)
 
 # options for Newton solver
-opt_newton = NewtonPar(tol = 1e-8, verbose = true, eigsolver = eigls, maxIter = 20)
+opt_newton = NewtonPar(tol = 1e-8, verbose = true, eigsolver = eigls, max_iterations = 20)
 
 # options for continuation, we want to locate very precisely the
 # bifurcation points, so we tune the bisection accordingly
-opts_br = ContinuationPar(dsmin = 0.0001, dsmax = 0.04, ds = 0.005, pMax = 3.5, pMin = 0.01, detectBifurcation = 3, nev = 50, plotEveryStep = 10, newtonOptions = (@set opt_newton.verbose = false), maxSteps = 251, tolStability = 1e-6, nInversion = 6, dsminBisection = 1e-7, maxBisectionSteps = 25, tolBisectionEigenvalue = 1e-19)
+opts_br = ContinuationPar(dsmin = 0.0001, dsmax = 0.04, ds = 0.005, p_max = 3.5, p_min = 0.01, detect_bifurcation = 3, nev = 50, plot_every_step = 10, newton_options = (@set opt_newton.verbose = false), max_steps = 251, tol_stability = 1e-6, n_inversion = 6, dsmin_bisection = 1e-7, max_bisection_steps = 25, tol_bisection_eigenvalue = 1e-19)
 ```	 
 
-Note that we put the option `detectBifurcation = 3` to detect bifurcations precisely with a **bisection** method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.
+Note that we put the option `detect_bifurcation = 3` to detect bifurcations precisely with a **bisection** method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.
 
 In order to have an output like Auto07p, we provide the finaliser (see arguments of [`continuation`](@ref))
 
@@ -157,9 +156,9 @@ function optionsCont(x,p,l; opt0 = opts_br)
 	if l == 1
 		return opt0
 	elseif l==2
-		return setproperties(opt0 ;detectBifurcation = 3,ds = 0.001, a = 0.75)
+		return setproperties(opt0 ;detect_bifurcation = 3,ds = 0.001, a = 0.75)
 	else
-		return setproperties(opt0 ;detectBifurcation = 3,ds = 0.00051, dsmax = 0.01)
+		return setproperties(opt0 ;detect_bifurcation = 3,ds = 0.00051, dsmax = 0.01)
 	end
 end
 ```
@@ -173,9 +172,9 @@ diagram = @time bifurcationdiagram(prob, PALC(),
 	5,
 	optionsCont;
 	verbosity = 0, plot = true,
-	callbackN = cb,
+	callback_newton = cb,
 	usedeflation = true,
-	finaliseSolution = finSol,
+	finalise_solution = finSol,
 	normC = norminf)
 ```
 this gives using `plot(diagram; plotfold = false, putspecialptlegend=false, markersize=2, title = "#branches = $(size(diagram))")`:
@@ -216,18 +215,14 @@ We can see that the non-simple 2d branch points (magenta points) have produced n
 Let's say you have been cautious and did not launch a deep bifurcation diagram computation by using a small recursion level 2:
 
 ```julia
-diagram = bifurcationdiagram(jet...,
-	sol0, par_mit, (@lens _.λ),
+diagram = bifurcationdiagram(prob, PALC(),
 	# here the recursion level is
 	2,
 	optionsCont;
 	verbosity = 0, plot = true,
-	recordFromSolution = (x, p) -> (n2 = norm2(x), nw = normbratu(x), n∞ = norminf(x)),
-	callbackN = cb,
-	tangentAlgo = BorderedPred(),
+	callback_newton = cb,
 	usedeflation = true,
-	finaliseSolution = finSol,
-	plotSolution = (x, p; kwargs...) -> plotsol!(x ; kwargs...),
+	finalise_solution = finSol,
 	normC = norminf)
 ```
 
@@ -238,17 +233,15 @@ You would end up with this diagram
 How can we complete this diagram without recomputing it from scratch? It is easy! For example, let us complete the magenta branches as follow
 
 ```julia
-bifurcationdiagram!(jet...,
+bifurcationdiagram!(prob,
 	# this improves the first branch on the violet curve. Note that
 	# for symmetry reasons, the first bifurcation point
 	# has 8 branches
-	getBranch(diagram, (1,)), 6, optionsCont;
+	get_branch(diagram, (1,)), 6, optionsCont;
 	verbosity = 0, plot = true,
-	recordFromSolution = (x, p) -> (n2 = norm2(x), nw = normbratu(x), n∞ = norminf(x)),
-	callbackN = cb,
-	finaliseSolution = finSol,
+	callback_newton = cb,
+	finalise_solution = finSol,
 	usedeflation = true,
-	plotSolution = (x, p; kwargs...) -> plotsol!(x ; kwargs...),
 	normC = norminf)
 ```
 

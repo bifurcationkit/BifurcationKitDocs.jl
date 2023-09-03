@@ -13,21 +13,19 @@ $$\left\{\begin{array}{l}
 \dot{u}=U E(1-u)-\tau_{F}^{-1}(u-U)
 \end{array}\right.$$
 
+We use this model as a mean to introduce the basics of `BifurcationKit.jl`, namely the continuation of equilibria and periodic orbits (with the different methods).
 
-The model is interesting because the branch of periodic solutions converges to an homoclinic orbit which is challenging to compute with our methods. We provide three different ways to compute these periodic orbits and highlight their pro / cons.
+The model is interesting on its own because the branch of periodic solutions converges to an homoclinic orbit which can be challenging to compute. We provide three different ways to compute these periodic orbits and highlight their pro / cons.
 
 It is easy to encode the ODE as follows
 
 ```@example TUTODE
-using Revise, ForwardDiff, Parameters, Plots, LinearAlgebra
+using Revise, Parameters, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
-# sup norm
-norminf(x) = norm(x, Inf)
-
 # vector field
-function TMvf!(dz, z, p, t)
+function TMvf!(dz, z, p, t = 0)
 	@unpack J, α, E0, τ, τD, τF, U0 = p
 	E, x, u = z
 	SS0 = J * u * x * E + E0
@@ -38,9 +36,6 @@ function TMvf!(dz, z, p, t)
 	dz
 end
 
-# out of place method
-TMvf(z, p) = TMvf!(similar(z), z, p, 0)
-
 # parameter values
 par_tm = (α = 1.5, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.200, U0 = 0.3, τF = 1.5, τS = 0.007)
 
@@ -48,8 +43,8 @@ par_tm = (α = 1.5, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.200, U0 = 0.3, τF 
 z0 = [0.238616, 0.982747, 0.367876]
 
 # Bifurcation Problem
-prob = BifurcationProblem(TMvf, z0, par_tm, (@lens _.E0);
-	recordFromSolution = (x, p) -> (E = x[1], x = x[2], u = x[3]),)
+prob = BifurcationProblem(TMvf!, z0, par_tm, (@lens _.E0);
+	record_from_solution = (x, p) -> (E = x[1], x = x[2], u = x[3]),)
 
 nothing #hide
 ```
@@ -58,13 +53,12 @@ We first compute the branch of equilibria
 
 ```@example TUTODE
 # continuation options
-opts_br = ContinuationPar(pMin = -10.0, pMax = -0.9,
+opts_br = ContinuationPar(p_min = -10.0, p_max = -0.9,
 	# parameters to have a smooth continuation curve
 	ds = 0.04, dsmax = 0.05,)
 
 # continuation of equilibria
-br = continuation(prob, PALC(tangent=Bordered()), opts_br;
-	plot = true, normC = norminf)
+br = continuation(prob, PALC(tangent=Bordered()), opts_br; normC = norminf)
 
 scene = plot(br, plotfold=false, markersize=3, legend=:topleft)
 ```
@@ -81,23 +75,23 @@ We then compute the branch of periodic orbits from the last Hopf bifurcation poi
 
 ```@example TUTODE
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-8,  maxIter = 10)
+optn_po = NewtonPar(tol = 1e-8,  max_iterations = 12)
 
 # continuation parameters
 opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds = -0.001, dsmin = 1e-4,
-	maxSteps = 90, newtonOptions = optn_po, tolStability = 1e-8)
+	max_steps = 90, newton_options = optn_po, tol_stability = 1e-8)
 
 # arguments for periodic orbits
 # one function to record information and one
 # function for plotting
-args_po = (	recordFromSolution = (x, p) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
+args_po = (	record_from_solution = (x, p) -> begin
+		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
-				period = getPeriod(p.prob, x, p.p))
+				period = getperiod(p.prob, x, p.p))
 	end,
-	plotSolution = (x, p; k...) -> begin
-		xtt = BK.getPeriodicOrbit(p.prob, x, p.p)
+	plot_solution = (x, p; k...) -> begin
+		xtt = get_periodic_orbit(p.prob, x, p.p)
 		arg = (marker = :d, markersize = 1)
 		plot!(xtt.t, xtt[1,:]; label = "E", arg..., k...)
 		plot!(xtt.t, xtt[2,:]; label = "x", arg..., k...)
@@ -107,7 +101,7 @@ args_po = (	recordFromSolution = (x, p) -> begin
 	# we use the supremum norm
 	normC = norminf)
 
-Mt = 200 # number of time sections
+Mt = 250 # number of time sections
 br_potrap = continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
@@ -133,7 +127,7 @@ for sol in br_potrap.sol[1:2:40]
 	# periodic orbit
 	po = sol.x
 	# get the mesh and trajectory
-	traj = BK.getPeriodicOrbit(br_potrap.prob, po, @set par_tm.E0 = sol.p)
+	traj = get_periodic_orbit(br_potrap.prob, po, @set par_tm.E0 = sol.p)
 	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
 end
 title!("")
@@ -146,8 +140,8 @@ We compute the branch of periodic orbits from the last Hopf bifurcation point (o
 ```@example TUTODE
 # continuation parameters
 opts_po_cont = ContinuationPar(opts_br, dsmax = 0.15, ds= -0.001, dsmin = 1e-4,
-	maxSteps = 100, newtonOptions = (@set optn_po.tol = 1e-8),
-	tolStability = 1e-5)
+	max_steps = 100, newton_options = (@set optn_po.tol = 1e-8),
+	tol_stability = 1e-5)
 
 br_pocoll = @time continuation(
 	# we want to branch form the 4th bif. point
@@ -157,7 +151,7 @@ br_pocoll = @time continuation(
 	# regular continuation options
 	verbosity = 2, plot = true,
 	# we reject the newton step if the residual is high
-	callbackN = BK.cbMaxNorm(100.),
+	callback_newton = BK.cbMaxNorm(100.),
 	args_po...)
 
 Scene = title!("")
@@ -173,7 +167,7 @@ using DifferentialEquations
 # this is the ODEProblem used with `DiffEqBase.solve`
 probsh = ODEProblem(TMvf!, copy(z0), (0., 1.), par_tm; abstol = 1e-12, reltol = 1e-10)
 
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, maxSteps = 100, tolStability = 1e-4)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, max_steps = 100, tol_stability = 1e-4)
 
 br_posh = @time continuation(
 	br, 4, opts_po_cont,
@@ -187,7 +181,7 @@ br_posh = @time continuation(
 	verbosity = 2, plot = true,
 	args_po...,
 	# we reject the step when the residual is high
-	callbackN = BK.cbMaxNorm(10)
+	callback_newton = BK.cbMaxNorm(10)
 	)
 
 Scene = title!("")

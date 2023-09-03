@@ -29,7 +29,6 @@ using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Setfield, Parameters
 const BK = BifurcationKit
 
 f1(u, v) = u * u * v
-norminf(x) = norm(x, Inf)
 
 function Fbru!(f, x, p, t = 0)
 	@unpack α, β, D1, D2, l = p
@@ -113,8 +112,8 @@ sol0 = vcat(par_bru.α * ones(n), par_bru.β/par_bru.α * ones(n))
 # bifurcation problem
 probBif = BK.BifurcationProblem(Fbru, sol0, par_bru, (@lens _.l);
   J = Jbru_sp,
-  plotSolution = (x, p; kwargs...) -> (plotsol(x; label="", kwargs... )),
-  recordFromSolution = (x, p) -> x[div(n,2)])
+  plot_solution = (x, p; kwargs...) -> (plotsol(x; label="", kwargs... )),
+  record_from_solution = (x, p) -> x[div(n,2)])
 nothing #hide
 ```
 
@@ -130,10 +129,10 @@ We continue the trivial equilibrium to find the Hopf points
 ```@example TUTBRUmanual
 opt_newton = NewtonPar(eigsolver = eigls, tol = 1e-9)
 opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.001,
-	pMax = 1.9, detectBifurcation = 3, nev = 21,
-	newtonOptions = opt_newton, maxSteps = 1000,
+	p_max = 1.9, detect_bifurcation = 3, nev = 21,
+	newton_options = opt_newton, max_steps = 1000,
 	# specific options for precise localization of Hopf points
-	nInversion = 6)
+	n_inversion = 6)
 
 br = continuation(probBif, PALC(),opts_br_eq, verbosity = 0, normC = norminf)
 ```
@@ -149,7 +148,7 @@ scene = plot(br)
 We can compute the normal form of the Hopf points as follows
 
 ```@example TUTBRUmanual
-hopfpt = getNormalForm(br, 1)
+hopfpt = get_normal_form(br, 1)
 ```
 
 ## Continuation of Hopf points
@@ -171,21 +170,21 @@ We now perform a Hopf continuation with respect to the parameters `l, β`
     You don't need to call `newton` first in order to use `continuation`.
 
 ```@example TUTBRUmanual
-optcdim2 = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 6.5, pMin = 0.0, newtonOptions = opt_newton, detectBifurcation = 0)
+optcdim2 = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 6.5, p_min = 0.0, newton_options = opt_newton, detect_bifurcation = 0)
 br_hopf = continuation(br, ind_hopf, (@lens _.β), optcdim2, normC = norminf, jacobian_ma = :minaug)
 scene = plot(br_hopf)
 ```
 
 ## Continuation of periodic orbits (Finite differences)
 
-Here, we perform continuation of periodic orbits branching from the Hopf bifurcation points.We need an educated guess for the periodic orbit which is given by `guessFromHopf`:
+Here, we perform continuation of periodic orbits branching from the Hopf bifurcation points.We need an educated guess for the periodic orbit which is given by `guess_from_hopf`:
 
 ```@example TUTBRUmanual
 # number of time slices
 M = 51
 
-l_hopf, Th, orbitguess2, hopfpt, vec_hopf = guessFromHopf(br, ind_hopf,
-	opts_br_eq.newtonOptions.eigsolver,
+l_hopf, Th, orbitguess2, hopfpt, vec_hopf = BK.guess_from_hopf(br, ind_hopf,
+	opts_br_eq.newton_options.eigsolver,
 	M, 2.7; phase = 0.25)
 
 nothing #hide
@@ -193,7 +192,7 @@ nothing #hide
 We wish to make two remarks at this point. The first is that an initial guess is composed of a space time solution and of the guess for the period `Th` of the solution. Note that the argument `2.7` is a guess for the amplitude of the orbit.
 
 ```@example TUTBRUmanual
-# orbit initial guess from guessFromHopf, is not a vector, so we reshape it
+# orbit initial guess from guess_from_hopf, is not a vector, so we reshape it
 orbitguess_f2 = reduce(vcat, orbitguess2)
 orbitguess_f = vcat(vec(orbitguess_f2), Th) |> vec
 
@@ -216,7 +215,7 @@ poTrap = PeriodicOrbitTrapProblem(
 	real.(vec_hopf),	 # used to set ϕ, see the phase constraint
 	hopfpt.u,          # used to set uhopf, see the phase constraint
 	M, 2n;             # number of time slices
-  jacobian = :FullSparseInplace) # jacobian of PO functional			      
+	jacobian = :FullSparseInplace) # jacobian of PO functional			      
 
 nothing #hide 	
 ```
@@ -230,7 +229,7 @@ For convenience, we provide a simplified newton / continuation methods for perio
 
 ```@example TUTBRUmanual
 # we use the linear solver LSFromBLS to speed up the computations
-opt_po = NewtonPar(tol = 1e-10, verbose = true, maxIter = 14, linsolver = BK.LSFromBLS())
+opt_po = NewtonPar(tol = 1e-10, verbose = true, max_iterations = 14, linsolver = BK.LSFromBLS())
 
 # we set the parameter values
 poTrap = @set poTrap.prob_vf.params = (@set par_bru.l = l_hopf + 0.01)
@@ -238,7 +237,7 @@ poTrap = @set poTrap.prob_vf.params = (@set par_bru.l = l_hopf + 0.01)
 outpo_f = @time newton(poTrap, orbitguess_f, opt_po, normN = norminf)
 BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], ", amplitude = ", BK.amplitude(outpo_f.u, n, M; ratio = 2),"\n")
 # plot of the periodic orbit
-BK.plotPeriodicPOTrap(outpo_f.u, n, M; ratio = 2)
+BK.plot_periodic_potrap(outpo_f.u, n, M; ratio = 2)
 ```
 
 and obtain
@@ -263,14 +262,14 @@ Finally, we can perform continuation of this periodic orbit using the specialize
 ```@example TUTBRUmanual
 opt_po = @set opt_po.eigsolver = EigArpack(; tol = 1e-5, v0 = rand(2n))
 opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.03, ds= 0.01,
-	pMax = 3.0, maxSteps = 20,
-	newtonOptions = opt_po, nev = 5, tolStability = 1e-8, detectBifurcation = 0)
+	p_max = 3.0, max_steps = 20,
+	newton_options = opt_po, nev = 5, tol_stability = 1e-8, detect_bifurcation = 0)
 
 br_po = continuation(poTrap,
 	outpo_f.u, PALC(),
 	opts_po_cont;
 	verbosity = 2,	plot = true,
-	plotSolution = (x, p;kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
+	plot_solution = (x, p;kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
 	normC = norminf)
 
 Scene = title!("")
@@ -295,10 +294,10 @@ A basic method for computing Floquet coefficients based on the eigenvalues of th
 
 ```julia
 opt_po = @set opt_po.eigsolver = DefaultEig()
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds= -0.01, pMax = 3.0, maxSteps = 200, newtonOptions = opt_po, nev = 5, tolStability = 1e-6, detectBifurcation = 3)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds= -0.01, p_max = 3.0, max_steps = 200, newton_options = opt_po, nev = 5, tol_stability = 1e-6, detect_bifurcation = 3)
 br_po = @time continuation(poTrap, outpo_f.u, PALC(),
 	opts_po_cont; verbosity = 3, plot = true,
-	plotSolution = (x, p;kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...), normC = norminf)
+	plot_solution = (x, p;kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...), normC = norminf)
 ```
 
 A more complete diagram can be obtained combining the methods (essentially deflation and Floquet) described above. It shows the period of the periodic orbits as function of `l`. See `example/brusselator.jl` for more information.
@@ -323,12 +322,12 @@ n = 100
 # different parameters to define the Brusselator model and guess for the stationary solution
 par_bru = (α = 2., β = 5.45, D1 = 0.008, D2 = 0.004, l = 0.3)
 sol0 = vcat(par_bru.α * ones(n), par_bru.β/par_bru.α * ones(n))
-probBif = reMake(probBif, u0 = sol0)
+probBif = re_make(probBif, u0 = sol0)
 
 eigls = EigArpack(1.1, :LM)
-opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.00615, ds = 0.0061, pMax = 1.9,
-	detectBifurcation = 3, nev = 21, plotEveryStep = 50,
-	newtonOptions = NewtonPar(eigsolver = eigls, tol = 1e-9), maxSteps = 1060)
+opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.00615, ds = 0.0061, p_max = 1.9,
+	detect_bifurcation = 3, nev = 21, plot_every_step = 50,
+	newton_options = NewtonPar(eigsolver = eigls, tol = 1e-9), max_steps = 1060)
 
 br = @time continuation(probBif, PALC(), opts_br_eq, normC = norminf)
 ```
@@ -342,8 +341,8 @@ M = 5
 # index of the Hopf point in the branch br
 ind_hopf = 1
 
-l_hopf, Th, orbitguess2, hopfpt, vec_hopf = BK.guessFromHopf(br, ind_hopf,
-	opts_br_eq.newtonOptions.eigsolver, M, 22*0.075)
+l_hopf, Th, orbitguess2, hopfpt, vec_hopf = BK.guess_from_hopf(br, ind_hopf,
+	opts_br_eq.newton_options.eigsolver, M, 22*0.075)
 #
 orbitguess_f2 = reduce(hcat, orbitguess2)
 orbitguess_f = vcat(vec(orbitguess_f2), Th) |> vec
@@ -402,14 +401,14 @@ probSh = ShootingProblem(
   par = par_hopf,
 
   # jacobian of the periodic orbit functional
-  jacobian = :FiniteDifferences)
+  jacobian = BK.FiniteDifferencesMF())
 ```
 
 We are now ready to call `newton`
 
 ```julia
 ls = GMRESIterativeSolvers(reltol = 1e-7, N = length(initpo), maxiter = 100)
-optn_po = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 20, linsolver = ls)
+optn_po = NewtonPar(verbose = true, tol = 1e-9,  max_iterations = 20, linsolver = ls)
 outpo = @time newton(probSh, initpo, optn_po; normN = norminf)
 plot(initpo[1:end-1], label = "Init guess")
 plot!(outpo.u[1:end-1], label = "sol")
@@ -476,17 +475,17 @@ Finally, we can perform continuation of this periodic orbit using a specialized 
 ```julia
 # note the eigensolver computes the eigenvalues of the monodromy matrix. Hence
 # the dimension of the state space for the eigensolver is 2n
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, pMax = 1.5,
-	maxSteps = 500, newtonOptions = (@set optn_po.tol = 1e-7), nev = 25,
-	tolStability = 1e-8, detectBifurcation = 0)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 1.5,
+	max_steps = 500, newton_options = (@set optn_po.tol = 1e-7), nev = 25,
+	tol_stability = 1e-8, detect_bifurcation = 0)
 
 br_po = @time continuation(probSh, outpo.u, PALC(),
 	opts_po_cont; verbosity = 2,
 	# specific bordered linear solver
-	linearAlgo = MatrixFreeBLS(@set ls.N = ls.N+1),
+	linear_algo = MatrixFreeBLS(@set ls.N = ls.N+1),
 	plot = true,
-	plotSolution = (x, p; kwargs...) -> BK.plotPeriodicShooting!(x[1:end-1], length(1:dM:M); kwargs...),
-	recordFromSolution = (u, p) -> u[end], normC = norminf)
+	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_shooting!(x[1:end-1], length(1:dM:M); kwargs...),
+	record_from_solution = (u, p) -> u[end], normC = norminf)
 ```
 
 We can observe that simple shooting is faster but the Floquet multipliers are less accurate than for multiple shooting. Also, when the solution is very unstable, simple shooting can have spurious branch switching. Finally, note the $0=\log 1$ eigenvalue of the monodromy matrix in the graph below.
@@ -529,7 +528,7 @@ probHPsh = PoincareShootingProblem(
   par = par_hopf,
 
   # jacobian of the periodic orbit functional
-  jacobian = :FiniteDifferences)
+  jacobian = BK.FiniteDifferencesMF())
 ```
 
 Let us now compute an initial guess for the periodic orbit, it must live in the hyperplanes $\Sigma_i$. Fortunately, we provide projections on these hyperplanes.
@@ -548,21 +547,21 @@ eig = EigKrylovKit(tol= 1e-12, x₀ = rand(2n-1), dim = 40)
 ls = GMRESIterativeSolvers(reltol = 1e-11, N = length(vec(initpo_bar)), maxiter = 500)
 
 # newton options
-optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 140, linsolver = ls)
+optn = NewtonPar(verbose = true, tol = 1e-9,  max_iterations = 140, linsolver = ls)
 
 # continuation options
 opts_po_cont_floquet = ContinuationPar(dsmin = 0.0001, dsmax = 0.05, ds= 0.001,
-	pMax = 2.5, maxSteps = 500, nev = 10,
-	tolStability = 1e-5, detectBifurcation = 3, plotEveryStep = 3)
-opts_po_cont_floquet = @set opts_po_cont_floquet.newtonOptions =
+	p_max = 2.5, max_steps = 500, nev = 10,
+	tol_stability = 1e-5, detect_bifurcation = 3, plot_every_step = 3)
+opts_po_cont_floquet = @set opts_po_cont_floquet.newton_options =
 	NewtonPar(linsolver = ls, eigsolver = eig, tol = 1e-9, verbose = true)
 
 # continuation run
 br_po = @time continuation(probHPsh, vec(initpo_bar), PALC(),
 	opts_po_cont_floquet; verbosity = 3,
-	linearAlgo = MatrixFreeBLS(@set ls.N = ls.N+1),
+	linear_algo = MatrixFreeBLS(@set ls.N = ls.N+1),
 	plot = true,
-	plotSolution = (x, p; kwargs...) -> BK.plot!(x; label="", kwargs...),
+	plot_solution = (x, p; kwargs...) -> BK.plot!(x; label="", kwargs...),
 	normC = norminf)		
 ```
 

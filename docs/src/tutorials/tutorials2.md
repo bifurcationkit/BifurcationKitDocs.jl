@@ -71,23 +71,23 @@ sol0 = [(cos(x) + cos(x/2) * cos(sqrt(3) * y/2) ) for x in X, y in Y]
 	heatmap(sol0',color=:viridis)
 
 # define parameters for the PDE
-Δ, _ = Laplacian2D(Nx, Ny, lx, ly)
-L1 = (I + Δ)^2
-par = (l = -0.1, ν = 1.3, L1 = L1)
+Δ, _ = Laplacian2D(Nx, Ny, lx, ly);
+L1 = (I + Δ)^2;
+par = (l = -0.1, ν = 1.3, L1 = L1);
 
 # Bifurcation Problem
 prob = BifurcationProblem(F_sh, vec(sol0), par, (@lens _.l);
-    J = dF_sh,
-		plotSolution = (x, p; kwargs...) -> (heatmapsol!(x; label="", kwargs...)),
-		recordFromSolution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)),
+		J = dF_sh,
+		plot_solution = (x, p; kwargs...) -> (heatmapsol!(x; label="", kwargs...)),
+		record_from_solution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)),
 		d2F = d2F_sh,
 		d3F = d3F_sh)
 
 # newton corrections of the initial guess
-optnewton = NewtonPar(verbose = true, tol = 1e-8, maxIter = 20)
-	sol_hexa = @time newton(prob, optnewton)
-	println("--> norm(sol) = ",norm(sol_hexa.u, Inf64))
-	heatmapsol(sol_hexa.u)
+optnewton = NewtonPar(verbose = true, tol = 1e-8, max_iterations = 20)
+sol_hexa = @time newton(prob, optnewton)
+println("--> norm(sol) = ",norm(sol_hexa.u, Inf64))
+heatmapsol(sol_hexa.u)
 ```
 which produces the results
 
@@ -123,32 +123,32 @@ We can now continue this solution as follows. We want to detect bifurcations alo
 ```julia
 # compute the jacobian
 J0 = dF_sh(sol_hexa.u, par)
-
-# compute 10 eigenvalues
-eig(J0, 10)
 ```
 
 The reason is that the jacobian operator is not very well conditioned unlike its inverse. We thus opt for the *shift-invert* method (see [Eigen solvers (Eig)](@ref) for more information) with shift `0.1`:
 
 ```julia
 eig = EigArpack(0.1, :LM)
+
+# compute 10 eigenvalues
+eig(J0, 10)
 ```
 
-If we want to compute the bifurcation points along the branches, we have to tell the solver by setting `detectBifurcation = 2`. However, this won't be very precise and each bifurcation point will be located at best at the step size precision. We can use bisection to locate this points more precisely using the option `detectBifurcation = 3` (see [Detection of bifurcation points of Equilibria](@ref) for more information).
+If we want to compute the bifurcation points along the branches, we have to tell the solver by setting `detect_bifurcation = 2`. However, this won't be very precise and each bifurcation point will be located at best at the step size precision. We can use bisection to locate this points more precisely using the option `detect_bifurcation = 3` (see [Detection of bifurcation points of Equilibria](@ref) for more information).
 
 We are now ready to compute the branches:
 
 ```julia
-optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, pMax = 0.00, pMin = -1.0,
-	newtonOptions = setproperties(optnewton; tol = 1e-9, maxIter = 15), maxSteps = 125,
-	detectBifurcation = 3, nev = 40, detectFold = false,
-	dsminBisection =1e-7, saveSolEveryStep = 4)
-	optcont = @set optcont.newtonOptions.eigsolver = EigArpack(0.1, :LM)
+optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, p_max = 0.00, p_min = -1.0,
+	newton_options = setproperties(optnewton; tol = 1e-9, max_iterations = 15), max_steps = 125,
+	detect_bifurcation = 3, nev = 40, detect_fold = false,
+	dsmin_bisection =1e-7, save_sol_every_step = 4)
+optcont = @set optcont.newton_options.eigsolver = EigArpack(0.1, :LM)
 
-	br = continuation(
-	  reMake(prob, u0 = sol_hexa.u), PALC(), optcont;
-		plot = true,
-		normC = x -> norm(x, Inf))
+br = continuation(
+	re_make(prob, u0 = sol_hexa.u), PALC(), optcont;
+	plot = true,
+	normC = norminf)
 ```
 
 Note that we can get some information about the branch as follows. The `[converged]` indicates if the bisection routine was successful, otherwise it shows `[guess]`. Finally `δ = ( 2,  0)` says that the bifurcation point has been detected by 2 new eigenvalues with zero real part among which zero have non zero imaginary part. A Hopf bifurcation point would thus have `δ = ( 2,  2)` or `δ = ( -2,  2)`.
@@ -202,13 +202,13 @@ which penalizes `sol_hexa`.
 # this define the above penalizing factor with p=2, sigma=1, norm associated to dot
 # and the set of sol_{hexa} is of length ns=1
 deflationOp = DeflationOperator(2, 1.0, [sol_hexa.u])
-optnewton = @set optnewton.maxIter = 250
+optnewton = @set optnewton.max_iterations = 250
 outdef = newton(
-				reMake(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x+lx)^2/25) for x in X, y in Y])),
+				re_make(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x+lx)^2/25) for x in X, y in Y])),
 				deflationOp,
-				optnewton, normN = x -> norm(x,Inf64))
-		heatmapsol(outdef.u) |> display
-		BK.converged(outdef) && push!(deflationOp, outdef.u)
+				optnewton, normN = norminf)
+heatmapsol(outdef.u) |> display
+BK.converged(outdef) && push!(deflationOp, outdef.u)
 ```
 which gives:
 
@@ -218,10 +218,10 @@ Note that `push!(deflationOp, outdef)` deflates the newly found solution so that
 
 ```julia
 outdef = newton(
-				reMake(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x)^2/25) for x in X, y in Y])),
-				deflationOp, optnewton, normN = x -> norm(x,Inf64))
-		heatmapsol(outdef.u) |> display
-		BK.converged(outdef) && push!(deflationOp, outdef.u)
+				re_make(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x)^2/25) for x in X, y in Y])),
+				deflationOp, optnewton, normN = norminf)
+heatmapsol(outdef.u) |> display
+BK.converged(outdef) && push!(deflationOp, outdef.u)
 ```
 
 ![](sh2dfrontmiddle.png)
@@ -235,7 +235,7 @@ Again, repeating this from random guesses, we find several more solutions, like 
 We can now continue the solutions located in `deflationOp.roots`
 
 ```julia
-br1 = @time continuation(reMake(prob, u0 = deflationOp[2]),
+br1 = @time continuation(re_make(prob, u0 = deflationOp[2]),
 	PALC(), optcont;
 	plot = true)
 ```
@@ -251,9 +251,9 @@ Note that the plot provides the stability of solutions and bifurcation points. I
 Instead of relying on deflated newton, we can use [Branch switching](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/branchswitching/) to compute the different branches emanating from the bifurcation point. For example, the following code will perform automatic branch switching from the second bifurcation point of `br`:
 
 ```julia
-br2 = continuation(br, 2, setproperties(optcont; ds = -0.001, detectBifurcation = 3, plotEveryStep = 5, maxSteps = 170);  nev = 30,
+br2 = continuation(br, 2, setproperties(optcont; ds = -0.001, detect_bifurcation = 3, plot_every_step = 5, max_steps = 170);  nev = 30,
 	plot = true, verbosity = 2,
-	normC = x -> norm(x, Inf))
+	normC = norminf)
 ```
 
 We can then plot the branches using `plot(br, br2, br3)` and get

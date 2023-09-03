@@ -1,5 +1,10 @@
 # Period-doubling point
 
+```@contents
+Pages = ["pd.md"]
+Depth = 2
+```
+
 At a period-doubling (PD) bifurcation of a periodic orbit $\gamma$ (with period $T$) for parameter value $p_0$ for the Cauchy problem 
 
 $$\frac{du}{dt}=F(u,p),\tag{E}$$
@@ -18,8 +23,10 @@ There are two ways to compute the normal form of this bifurcation
 You can obtain the normal form of a PD bifurcation using 
 
 ```
-pd = getNormalForm(br, ind)
+pd = get_normal_form(br, ind; prm = false)
 ```
+
+where `prm` indicated whether you want to use the method based on Poincaré return map (PRM) or the one based on Iooss method.
 
 
 ## Normal form based on Poincaré return map
@@ -38,12 +45,24 @@ $$\mathcal{A} p=-p, \mathcal{A}^{\mathrm{T}} p^*=-p^*$$
 
 ## Normal form based on Iooss method
 
-Not implemented.
+This is based on [^Iooss],[^Kuz2]. Suppose that the $T$ periodic orbit $\gamma(\tau)$ has a Period-Doubling bifurcation for a parameter value $p$.
+Locally, the orbits can be represented by 
+
+$$x(\tau) = \gamma(\tau)+Q_0(\tau)\xi+\Phi(\tau, \xi)$$
+
+where 
+
+$$\left\{\begin{array}{l}
+\frac{d \tau}{d t}=1+a \xi^2+\cdots \\
+\frac{d \xi}{d \tau}=c \xi^3+\cdots
+\end{array}\right.$$
+
+with center manifold correction $\Phi(\tau, \xi)$ being $2T$ periodic in $\tau$ and $Q_0(\tau)$ is the Floquet operator.
 
 ## References
 
-[^Kuznetsov] :> Yu. A. Kuznetsov, "Elements of Applied Bifurcation Theory", 2nd ed., 1998.
+[^Kuznetsov]: > Yu. A. Kuznetsov, "Elements of Applied Bifurcation Theory", 2nd ed., 1998.
 
-[^Kuz2] :> Kuznetsov et al., “Numerical Periodic Normalization for Codim 1 Bifurcations of Limit Cycles.”
+[^Kuz2]: > Kuznetsov et al., “Numerical Periodic Normalization for Codim 1 Bifurcations of Limit Cycles.”
 
-[^Iooss] :> Iooss, "Global Characterization of the Normal Form for a Vector Field near a Closed Orbit.", 1988
+[^Iooss]: > Iooss, "Global Characterization of the Normal Form for a Vector Field near a Closed Orbit.", 1988

@@ -49,7 +49,7 @@ return S
 The following piece of information is valuable in order to get the algorithm working in various conditions (see also [here](https://github.com/rveltz/BifurcationKit.jl/issues/33)) especially for small systems (e.g. dim<20):
 
 - `newton` is quite good and it is convenient to limit it otherwise it will be able to bypass the deflation. For example, you can use `maxIter = 10` in `NewtonPar`
-- try to limit the newton residual by using the argument `callbackN = BifurcationKit. cbMaxNorm(1e7)`. This will likely remove the occurrence of `┌ Error: Same solution found for identical parameter value!!`
+- try to limit the newton residual by using the argument `callback_newton = BifurcationKit.cbMaxNorm(1e7)`. This will likely remove the occurrence of `┌ Error: Same solution found for identical parameter value!!`
 - finally, you can try some aggressive shift (here `0.01` in the deflation operator, like `DeflationOperator(2, dot, 0.01, [sol])` but use it wisely.
 
 ## Basic example
@@ -69,15 +69,15 @@ Jac_m(x, p) = diagm(0 => p .+ x.^k)
 prob = BifurcationProblem(F, [0.], 0.5, (@lens _), J = Jac_m)
 
 # continuation options
-opts = BK.ContinuationPar(dsmax = 0.051, dsmin = 1e-3, ds=0.001, maxSteps = 140, pMin = -3., newtonOptions = NewtonPar(tol = 1e-8), saveEigenvectors = false)
+opts = BK.ContinuationPar(dsmax = 0.051, dsmin = 1e-3, ds=0.001, max_steps = 140, p_min = -3., newton_options = NewtonPar(tol = 1e-8), save_eigenvectors = false)
 
 # algorithm
-alg = BK.DefCont(deflationOperator = DeflationOperator(2, .001, [[0.]]), perturbSolution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))
+alg = BK.DefCont(deflation_operator = DeflationOperator(2, .001, [[0.]]), perturb_solution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))
 
 brdc = continuation(prob, alg,
-	ContinuationPar(opts, ds = -0.001, maxSteps = 800, newtonOptions = NewtonPar(verbose = false, maxIter = 6), plotEveryStep = 40),
+	ContinuationPar(opts, ds = -0.001, max_steps = 800, newton_options = NewtonPar(verbose = false, max_iterations = 6), plot_every_step = 40),
 	; plot=true, verbosity = 0,
-	callbackN = BK.cbMaxNorm(1e3) # reject newton step if residual too large
+	callback_newton = BK.cbMaxNorm(1e3) # reject newton step if residual too large
 	)
 plot(brdc)
 ```

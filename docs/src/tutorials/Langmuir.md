@@ -21,7 +21,6 @@ using BifurcationKit, LinearAlgebra, Plots, ForwardDiff
 const BK = BifurcationKit
 
 # norms
-norminf(x) = norm(x, Inf)
 normL2(x; r = sqrt(par.Δx / L)) = norm(x, 2) * r
 nothing #hide
 ```
@@ -111,8 +110,8 @@ end
 # we thus define a bifurcation problem
 prob  = BifurcationProblem(Flgvf, 0X .-0.9, par, (@lens _.ν );
 		J = JanaSP,
-		recordFromSolution = (x, p) -> normL2(x),
-		plotSolution = (x, p; kwargs...) -> plot!(X, x, subplot = 3, xlabel = "Nx = $(length(x))", label = ""))
+		record_from_solution = (x, p) -> normL2(x),
+		plot_solution = (x, p; kwargs...) -> plot!(X, x, subplot = 3, xlabel = "Nx = $(length(x))", label = ""))
 
 nothing #hide
 ```
@@ -124,7 +123,7 @@ We call the Krylov-Newton method to find a stationary solution. Note that for th
 
 ```@example TUTLangmuir
 # newton iterations to refine the guess
-opt_new = NewtonPar(tol = 1e-9, verbose = true, maxIter = 50)
+opt_new = NewtonPar(tol = 1e-9, verbose = true, max_iterations = 50)
 out = newton(prob, opt_new)
 out = @time newton(prob, opt_new)
 nothing #hide
@@ -140,17 +139,17 @@ We then continue the previous guess and find this very nice folded structure wit
 # careful here, in order to use Arpack.eig, you need rather big space
 # or compute ~100 eigenvalues
 opts_cont = ContinuationPar(
-	dsmin = 1e-5, dsmax = 0.04, ds= -0.001, pMin = -0.01, pMax = 10.1,
-	a = 0.75, plotEveryStep = 30, maxSteps = 600,
-	newtonOptions = setproperties(opt_new; tol = 1e-9, maxIter = 10, verbose = false),
-	nev = 10, saveEigenvectors = true, tolStability = 1e-5, detectBifurcation = 3,
-	dsminBisection = 1e-8, maxBisectionSteps = 15, nInversion = 6, tolBisectionEigenvalue = 1e-9, saveSolEveryStep = 50)
+	dsmin = 1e-5, dsmax = 0.04, ds= -0.001, p_min = -0.01, p_max = 10.1,
+	a = 0.75, plot_every_step = 30, max_steps = 600,
+	newton_options = setproperties(opt_new; tol = 1e-9, max_iterations = 10, verbose = false),
+	nev = 10, save_eigenvectors = true, tol_stability = 1e-5, detect_bifurcation = 3,
+	dsmin_bisection = 1e-8, max_bisection_steps = 15, n_inversion = 6, tol_bisection_eigenvalue = 1e-9, save_sol_every_step = 50)
 
 # we opt for a fast Shift-Invert eigen solver
-@set! opts_cont.newtonOptions.eigsolver = EigArpack(0.1, :LM)
+@set! opts_cont.newton_options.eigsolver = EigArpack(0.1, :LM)
 
 br = @time continuation(
-	reMake(prob, params = (@set par.ν = 0.06), u0 = out.u),
+	re_make(prob, params = (@set par.ν = 0.06), u0 = out.u),
 	# we form a sparse matrix for the bordered linear problem
 	# and we adjust θ so that the continuation steps are larger
 	PALC(θ = 0.4, bls = MatrixBLS()), opts_cont,
@@ -175,13 +174,13 @@ Let us study the continuation of Hopf and Fold points and show that they merge a
 ```@example TUTLangmuir
 # compute branch of Fold points from 7th bifurcation point on br
 sn_codim2 = continuation(br, 7, (@lens _.Δx),
-	ContinuationPar(opts_cont, pMin = -2, pMax = 0.12, ds = -0.01, dsmax = 0.01, tolStability = 1e-8, maxSteps = 325, nev=23) ;
+	ContinuationPar(opts_cont, p_min = -2, p_max = 0.12, ds = -0.01, dsmax = 0.01, tol_stability = 1e-8, max_steps = 325, nev=23) ;
 	# start the problem with information from eigen elements
-	startWithEigen = true,
+	start_with_eigen = true,
 	# detection of codim 2 bifurcations with bisection
-	detectCodim2Bifurcation = 2,
+	detect_codim2_bifurcation = 2,
 	# we update the Fold problem at every continuation step
-	updateMinAugEveryStep = 1,
+	update_minaug_every_step = 1,
 	# compute both sides of the initial condition
 	bothside = true,
 	# we invert the Fold linear problem using Min. Aug.
@@ -189,13 +188,13 @@ sn_codim2 = continuation(br, 7, (@lens _.Δx),
 	)
 
 # compute branch of Hopf points from 5th bifurcation point on br
-hp_codim2 = continuation(br, 5, (@lens _.Δx), ContinuationPar(opts_cont, pMax = 0.1, ds = -0.01, dsmax = 0.01, maxSteps = 230, tolStability = 1e-8) ;
+hp_codim2 = continuation(br, 5, (@lens _.Δx), ContinuationPar(opts_cont, p_max = 0.1, ds = -0.01, dsmax = 0.01, max_steps = 230, tol_stability = 1e-8) ;
 	# start the problem with information from eigen elements
-	startWithEigen = true,
+	start_with_eigen = true,
 	# we update the Hopf problem at every continuation step
-	updateMinAugEveryStep = 1,
+	update_minaug_every_step = 1,
 	# detection of codim 2 bifurcations with bisection
-	detectCodim2Bifurcation = 2,
+	detect_codim2_bifurcation = 2,
 	# we invert the Hopf linear problem using Min. Aug.
 	jacobian_ma = :minaug,
 	)
@@ -212,12 +211,12 @@ We would like to compute the branches of periodic solutions from the Hopf points
 
 ```julia
 # parameters for newton
-opt_po = NewtonPar(tol =  1e-10, verbose = true, maxIter = 50)
+opt_po = NewtonPar(tol =  1e-10, verbose = true, max_iterations = 50)
 
 # parameters for continuation
 opts_po_cont = ContinuationPar(dsmin = 1e-5, dsmax = 0.35, ds= -0.001,
-	pMax = 1.0, maxSteps = 3, θ = 0.75, detectBifurcation = 0,
-	newtonOptions = setproperties(opt_po; maxIter = 15, tol = 1e-6), plotEveryStep = 1)
+	p_max = 1.0, max_steps = 3, detect_bifurcation = 0,
+	newton_options = setproperties(opt_po; max_iterations = 15, tol = 1e-6), plot_every_step = 1)
 
 # spatio-temporal norm
 normL2T(x; r = sqrt(par.Δx / L), M = 1) = norm(x, 2) * r * sqrt(1/M)
@@ -227,16 +226,16 @@ br_potrap = continuation(
 	# arguments for branch switching
 	br, 5,
 	# arguments for continuation
-	opts_po_cont, PeriodicOrbitTrapProblem(M = M, jacobian = :FullSparseInplace, updateSectionEveryStep = 1);
+	opts_po_cont, PeriodicOrbitTrapProblem(M = M, jacobian = :FullSparseInplace, update_section_every_step = 1);
 	# parameter value used for branching
 	δp = 1e-5,
 	# use deflated Newton to find non-trivial solutions
 	usedeflation = true,
 	# algorithm to solve linear associated with periodic orbit problem
 	# tangent algorithm along the branch, linear algo specific to PALC
-	alg = PALC(tangent = Bordered(), bls = BorderingBLS(solver = DefaultLS(), checkPrecision = false)),
+	alg = PALC(tangent = Bordered(), bls = BorderingBLS(solver = DefaultLS(), check_precision = false)),
 	verbosity = 3, plot = true,
-	recordFromSolution = (x, p) -> normL2T(x[1:end-1], M = M),
+	record_from_solution = (x, p) -> normL2T(x[1:end-1], M = M),
 	plotSolution  = (x, p; kwargs...) -> begin
 			heatmap!(reshape(x[1:end-1], N, M)'; ylabel="T=$(round(x[end]))", color=:viridis, kwargs...)
 			plot!(br, subplot=1, label="")

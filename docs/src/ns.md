@@ -1,5 +1,10 @@
 # Neimark-Sacker point
 
+```@contents
+Pages = ["ns.md"]
+Depth = 2
+```
+
 At a Neimark-Sacker (NS) bifurcation of a periodic orbit $\gamma$ (with period $T$) for parameter value $p_0$ for the Cauchy problem 
 
 $$\frac{du}{dt}=F(u,p),\tag{E}$$
@@ -20,8 +25,10 @@ There are two ways to compute the normal form of this bifurcation
 You can obtain the normal form of a NS bifurcation using 
 
 ```
-pd = getNormalForm(br, ind)
+pd = get_normal_form(br, ind; prm = false)
 ```
+
+where `prm` indicated whether you want to use the method based on Poincaré return map (PRM) or the one based on Iooss method.
 
 
 ## Normal form based on Poincaré return map
@@ -42,10 +49,11 @@ $$\mathcal{A} v=e^{i \theta} v, \mathcal{A}^{\mathrm{T}} v^*=e^{-i \theta} v^*, 
 
 Not implemented.
 
+
 ## References
 
-[^Kuznetsov] :> Yu. A. Kuznetsov, "Elements of Applied Bifurcation Theory", 2nd ed., 1998.
+[^Kuznetsov]: > Yu. A. Kuznetsov, "Elements of Applied Bifurcation Theory", 2nd ed., 1998.
 
-[^Kuz2] :> Kuznetsov et al., “Numerical Periodic Normalization for Codim 1 Bifurcations of Limit Cycles.”
+[^Kuz2]: > Kuznetsov et al., “Numerical Periodic Normalization for Codim 1 Bifurcations of Limit Cycles.”
 
-[^Iooss] :> Iooss, "Global Characterization of the Normal Form for a Vector Field near a Closed Orbit.", 1988
+[^Iooss]: > Iooss, "Global Characterization of the Normal Form for a Vector Field near a Closed Orbit.", 1988

@@ -68,11 +68,11 @@ end
 
 sol0 = zeros(2)
 par = (α = 0.0, )
-prob = BifurcationProblem(F, sol0, par, (@lens _.α); recordFromSolution = (x,p) -> norminf(x))
+prob = BifurcationProblem(F, sol0, par, (@lens _.α); record_from_solution = (x,p) -> norminf(x))
 ```
 
 ```@example ANM
-optanm = ContinuationPar(dsmin = 0.01, dsmax = 0.15, detectBifurcation = 3, ds= 0.01, newtonOptions = NewtonPar(tol = 1e-9, verbose = false), nInversion = 6, maxBisectionSteps = 15, maxSteps = 15, )
+optanm = ContinuationPar(dsmin = 0.01, dsmax = 0.15, detect_bifurcation = 3, ds= 0.01, newton_options = NewtonPar(tol = 1e-9, verbose = false), n_inversion = 6, max_bisection_steps = 15, max_steps = 15, )
 
 branm = continuation(prob, ANM(20, 1e-8), optanm, normC = norminf, verbosity = 2)
 ```
@@ -95,7 +95,7 @@ Finally, for each series, we ca evaluate the residual norm:
 plot()
 for ii in eachindex(branm.polU)
 	s = LinRange(-0*branm.radius[ii], branm.radius[ii], 20)
-	plot!([branm.polp[ii].(s)], [norminf(F(branm.polU[ii](_s), BK.setParam(prob,branm.polp[ii](_s)))) for _s in s], legend = false, linewidth=5)#, marker=:d)
+	plot!([branm.polp[ii].(s)], [norminf(F(branm.polU[ii](_s), BK.setparam(prob,branm.polp[ii](_s)))) for _s in s], legend = false, linewidth=5)#, marker=:d)
 end
 title!("")
 ```

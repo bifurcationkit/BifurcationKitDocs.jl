@@ -14,7 +14,7 @@ We collect in the following table the list of automatic branch switching (aBS) f
 | function | ind-th bif. point | Type `T` | description |
 |---|---|---|---|
 |  `continuation(br::ContResult{T}, ind::Int; kw...)` | `:bp`, `:nd`| `EquilibriumCont`  |  aBS from equilibria to equilibria  |
-|  `continuation(br::ContResult{T}, ind::Int, lens2::Lens; kw...)` | `:bp`, `:hopf`| `EquilibriumCont` | Fold/Hopf continuation w.r.t. parameters `getLens(br)` and `lens2`  |
+|  `continuation(br::ContResult{T}, ind::Int, lens2::Lens; kw...)` | `:bp`, `:hopf`| `EquilibriumCont` | Fold/Hopf continuation w.r.t. parameters `getlens(br)` and `lens2`  |
 |  `continuation(br::ContResult{T}, ind::Int; kw...)` | `:bt,:zh,:hh`| ` FoldCont,HopfCont` | switch to Fold/Hopf continuation from Hopf/Fold w.r.t. parameters of codim 2 `br`  |
 | `continuation(br::ContResult{T}, ind_hopf::Int, ::ContinuationPar, prob::AbstractPeriodicOrbitProblem)`   | `:hopf` |  `EquilibriumCont` | Branch switching from Hopf point to periodic orbits |
 | `continuation(br::ContResult{T}, ind::Int, kw...)`   | `:bp,:pd` |  `PeriodicOrbitCont` | Branch switching from Branch / Period-doubling point of periodic orbits to curve of periodic orbits |
@@ -44,22 +44,22 @@ F(x, p) = [x[1] * (p.μ - x[1])]
 par = (μ = -0.2, )
 
 # problem (automatic differentiation)
-prob = BifurcationProblem(F, [0.], par, (@lens _.μ); recordFromSolution = (x, p) -> x[1])
+prob = BifurcationProblem(F, [0.], par, (@lens _.μ); record_from_solution = (x, p) -> x[1])
 
 # compute branch of trivial equilibria (=0) and detect a bifurcation point
-opts_br = ContinuationPar(detectBifurcation = 3)
+opts_br = ContinuationPar(detect_bifurcation = 3)
 br = continuation(prob, PALC(), opts_br)
 	
 # perform branch switching on one side of the bifurcation point
-br1Top = continuation(br, 1, setproperties(opts_br; maxSteps = 14) )
+br1Top = continuation(br, 1, setproperties(opts_br; max_steps = 14) )
 
 # on the other side
-br1Bottom = continuation(br, 1, setproperties(opts_br; ds = -opts_br.ds, maxSteps = 14))
+br1Bottom = continuation(br, 1, setproperties(opts_br; ds = -opts_br.ds, max_steps = 14))
 
 scene = plot(br, br1Top, br1Bottom; branchlabel = ["br", "br1Top", "br1Bottom"], legend = :topleft)
 ```
 
-## Algorithms
+### Algorithms
 - for the pitchfork bifurcation, the normal form is computed and non-trivial zeros are used to produce guesses for points on the bifurcated branch.
 
 
@@ -125,8 +125,8 @@ We provide an automatic branch switching method in this case (see for example [E
 continuation(br::ContResult, ind_BT::Int,
 	options_cont::ContinuationPar = br.contparams;
 	nev = options_cont.nev,
-	detectCodim2Bifurcation::Int = 0,
-	startWithEigen = false,
+	detect_codim2_bifurcation::Int = 0,
+	start_with_eigen = false,
 	autodiff = false,
 	Teigvec = getvectortype(br),
 	scaleζ = norm,
@@ -145,8 +145,8 @@ We provide an automatic branch switching method in this case (see for example [E
 continuation(br::ContResult, ind_ZH::Int,
 	options_cont::ContinuationPar = br.contparams;
 	nev = options_cont.nev,
-	detectCodim2Bifurcation::Int = 0,
-	startWithEigen = false,
+	detect_codim2_bifurcation::Int = 0,
+	start_with_eigen = false,
 	autodiff = false,
 	Teigvec = getvectortype(br),
 	scaleζ = norm,
@@ -166,8 +166,8 @@ continuation(br::ContResult, ind_HH::Int,
 	options_cont::ContinuationPar = br.contparams;
 	δp = nothing, ampfactor::Real = 1,
 	nev = options_cont.nev,
-	detectCodim2Bifurcation::Int = 0,
-	startWithEigen = false,
+	detect_codim2_bifurcation::Int = 0,
+	start_with_eigen = false,
 	autodiff = false,
 	Teigvec = getvectortype(br),
 	scaleζ = norm,

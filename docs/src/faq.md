@@ -2,14 +2,14 @@
 
 ### How can I save a solution every n steps, or at specific parameter values?
 
-You can use the callback `finaliseSolution` in the function call `continuation`. For example, you can use something like this to save all steps
+You can use the callback `finalise_solution` in the function call `continuation`. For example, you can use something like this to save all steps
 
 ```julia
 function mySave(u, tau, step, contResult, personaldata)
 	push!(personaldata, u)
 end
 ```
-and pass it like `continuation(prob, alg, opts; finaliseSolution = (z, tau, step, contResult; k...) -> mySave(z, tau, step, contResult, myData))`
+and pass it like `continuation(prob, alg, opts; finalise_solution = (z, tau, step, contResult; k...) -> mySave(z, tau, step, contResult, myData))`
 
 ### The Fold / Hopf Continuation does not work, why?
 
@@ -25,7 +25,7 @@ The easiest way to achieve this is by using the callbacks provided by `newton` a
 
 ### How can I implement my own bifurcation detection method?
 
-You can use the callback `finaliseSolution` but the best way is probably to use the [Iterator Interface](@ref) to inject your code anywhere in the continuation procedure.
+You can use the callback `finalise_solution` but the best way is probably to use the [Iterator Interface](@ref) to inject your code anywhere in the continuation procedure.
 
 ### How do I dissociate the computation of eigenvalues from the jacobian that I passed?
 
@@ -36,7 +36,7 @@ Sometimes, for example when implementing boundary conditions, you pass a jacobia
 You can print the eigenvalues using the following callback:
 
 ```juliaw
-finaliseSolution = (z, tau, step, contResult; k...) -> begin
+finalise_solution = (z, tau, step, contResult; k...) -> begin
 		BK.haseigenvalues(contResult) && Base.display(contResult.eig[end].eigenvals)
 		return true
 	end,
@@ -44,7 +44,7 @@ finaliseSolution = (z, tau, step, contResult; k...) -> begin
 
 ### How can I reject a Newton Step?
 
-You can reject a newton step by passing to `continuation` the argument `callbackN`
+You can reject a newton step by passing to `continuation` the argument `callback_newton`
 
 ```julia
 function mycallback((x, f, J, res, iteration, itlinear, options); kwargs...)
@@ -59,7 +59,7 @@ end
 
 ### How do I stop `continuation`?
 
-Using the argument `finaliseSolution` in `continuation`. Simply make this function `finaliseSolution` return false.
+Using the argument `finalise_solution` in `continuation`. Simply make this function `finalise_solution` return false.
 
 ### How do I compute both sides of a branch?
 

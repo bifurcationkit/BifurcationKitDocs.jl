@@ -68,17 +68,17 @@ par_ks = (Δ = Δ, Δ2 = Δ2, λ = 0.75, N = N)
 
 # we define a Bifurcation Problem
 prob = BifurcationProblem(Fks1d, zeros(N), par_ks, (@lens _.λ),
-  recordFromSolution = (x, p) -> (s = sum(x), u2 = x[3], nrm = norm(x)),
-  plotSolution = (x, p; kwargs...) -> plot!(Fun(SinSpace(), x) ; kwargs...),)
+  record_from_solution = (x, p) -> (s = sum(x), u2 = x[3], nrm = norm(x)),
+  plot_solution = (x, p; kwargs...) -> plot!(Fun(SinSpace(), x) ; kwargs...),)
 ```
 
 and continuation options
 
 ```julia
-optn = NewtonPar(verbose = false, tol = 1e-9, maxIter = 15)
-	optc = ContinuationPar(pMin = 1/150., pMax = 1., maxSteps = 700, newtonOptions = optn,
-	dsmax = 0.01, dsmin = 1e-4, ds = -0.001, detectBifurcation = 3, nev = N, nInversion = 8,
-	maxBisectionSteps = 30, dsminBisection = 1e-10, plotEveryStep = 50)
+optn = NewtonPar(verbose = false, tol = 1e-9, max_iterations = 15)
+	optc = ContinuationPar(p_min = 1/150., p_max = 1., max_steps = 700, newton_options = optn,
+	dsmax = 0.01, dsmin = 1e-4, ds = -0.001, detect_bifurcation = 3, nev = N, n_inversion = 8,
+	max_bisection_steps = 30, dsmin_bisection = 1e-10, plot_every_step = 50)
 
 kwargscont = (verbosity = 2, plot = true, normC = norm)
 ```
@@ -90,11 +90,11 @@ kwargscont = (verbosity = 2, plot = true, normC = norm)
 function optrec(x, p, l; opt = optc)
 	level = l
 	if level <= 2
-		return setproperties(opt;  dsmax = 0.005, maxSteps = 2000,
-		detectBifurcation = 3, detectLoop = true, nInversion = 6)
+		return setproperties(opt;  dsmax = 0.005, max_steps = 2000,
+		detect_bifurcation = 3, detect_loop = true, n_inversion = 6)
 	else
-		return setproperties(opt;  dsmax = 0.005, maxSteps = 2000,
-		detectBifurcation = 3, detectLoop = true, nInversion = 6)
+		return setproperties(opt;  dsmax = 0.005, max_steps = 2000,
+		detect_bifurcation = 3, detect_loop = true, n_inversion = 6)
 	end
 end
 

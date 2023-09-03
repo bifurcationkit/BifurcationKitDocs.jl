@@ -28,25 +28,25 @@ dFbpSecBif(x,p) =  ForwardDiff.jacobian( z-> FbpSecBif(z,p), x)
 # bifurcation problem
 prob = BifurcationProblem(FbpSecBif, [0.0], -0.2, 
 	# specify the continuation parameter
-	(@lens _), J = dFbpSecBif, recordFromSolution = (x, p) -> x[1])
+	(@lens _), J = dFbpSecBif, record_from_solution = (x, p) -> x[1])
 
 # options for Krylov-Newton
-opt_newton = NewtonPar(tol = 1e-9, maxIter = 20)
+opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)
 
 # options for continuation
 opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds = 0.01,
-	maxSteps = 100, nev = 2, newtonOptions = opt_newton,
+	max_steps = 100, nev = 2, newton_options = opt_newton,
 	# parameter interval
-	pMax = 0.4, pMin = -0.5,
+	p_max = 0.4, p_min = -0.5,
 	# detect bifurcations with bisection method
-	detectBifurcation = 3, nInversion = 4, tolBisectionEigenvalue = 1e-8, dsminBisection = 1e-9)
+	detect_bifurcation = 3, n_inversion = 4, tol_bisection_eigenvalue = 1e-8, dsmin_bisection = 1e-9)
 
 diagram = bifurcationdiagram(prob, PALC(),
 	# very important parameter. This specifies the maximum amount of recursion
 	# when computing the bifurcation diagram. It means we allow computing branches of branches 
 	# at most in the present case.
 	2,
-	(args...) -> setproperties(opts_br; pMin = -1.0, pMax = .3, ds = 0.001, dsmax = 0.005, nInversion = 8, detectBifurcation = 3, dsminBisection =1e-18, maxBisectionSteps=20))
+	(args...) -> setproperties(opts_br; p_min = -1.0, p_max = .3, ds = 0.001, dsmax = 0.005, n_inversion = 8, detect_bifurcation = 3, dsmin_bisection =1e-18, max_bisection_steps=20))
 	
 # You can plot the diagram like 
 plot(diagram; putspecialptlegend=false, markersize=2, plotfold=false, title = "#branches = $(size(diagram))")
@@ -66,7 +66,6 @@ To show the ability of the branch switching method to cope with non simple branc
 using Revise, Plots
 using BifurcationKit, Setfield, ForwardDiff, LinearAlgebra
 const BK = BifurcationKit
-norminf = x -> norm(x, Inf)
 
 function FbpD6(x, p)
 	return [ p.μ * x[1] + (p.a * x[2] * x[3] - p.b * x[1]^3 - p.c*(x[2]^2 + x[3]^2) * x[1]),
@@ -81,15 +80,15 @@ pard6 = (μ = -0.2, a = 0.3, b = 1.5, c = 2.9)
 prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@lens _.μ); J = (x, p) -> ForwardDiff.jacobian(z -> FbpD6(z, p), x))
 
 # newton options
-opt_newton = NewtonPar(tol = 1e-9, maxIter = 20)
+opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)
 
 # continuation options
-opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds = 0.01, pMax = 0.4, pMin = -0.5, detectBifurcation = 2, nev = 2, newtonOptions = opt_newton, maxSteps = 100, nInversion = 4, tolBisectionEigenvalue = 1e-8, dsminBisection = 1e-9)
+opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds = 0.01, p_max = 0.4, p_min = -0.5, detect_bifurcation = 2, nev = 2, newton_options = opt_newton, max_steps = 100, n_inversion = 4, tol_bisection_eigenvalue = 1e-8, dsmin_bisection = 1e-9)
 
 bdiag = bifurcationdiagram(prob, PALC(), 3,
-	(args...) -> setproperties(opts_br; pMin = -0.250, pMax = .4, ds = 0.001, dsmax = 0.005, nInversion = 4, detectBifurcation = 3, maxBisectionSteps=20, newtonOptions = opt_newton);
-	recordFromSolution = (x, p) -> norminf(x),
-	xwnormC = norminf)
+	(args...) -> setproperties(opts_br; p_min = -0.250, p_max = .4, ds = 0.001, dsmax = 0.005, n_inversion = 4, detect_bifurcation = 3, max_bisection_steps=20, newton_options = opt_newton);
+	record_from_solution = (x, p) -> norminf(x),
+	normC = norminf)
 ```
 
 We can now plot the result:
@@ -110,8 +109,8 @@ plot(bdiag; putspecialptlegend =false, markersize=2, plotfold=false, title="#bra
  bifurcationdiagram!(jet...,
 	# this resume the computation of the diagram from the 2nd node
 	# bdiag is written inplace
-	getBranch(bdiag, (2,)), (current = 3, maxlevel = 6), 
-	(args...) -> setproperties(opts_br; pMin = -0.250, pMax = .4, ds = 0.001, dsmax = 0.005, nInversion = 4, detectBifurcation = 3, dsminBisection =1e-18, tolBisectionEigenvalue=1e-11, maxBisectionSteps=20, newtonOptions = (@set opt_newton.verbose=false)))
+	get_branch(bdiag, (2,)), (current = 3, maxlevel = 6), 
+	(args...) -> setproperties(opts_br; p_min = -0.250, p_max = .4, ds = 0.001, dsmax = 0.005, n_inversion = 4, detect_bifurcation = 3, dsmin_bisection =1e-18, tol_bisection_eigenvalue=1e-11, max_bisection_steps=20, newton_options = (@set opt_newton.verbose = false)))
 ```
  
 ## Printing the structure of the diagram

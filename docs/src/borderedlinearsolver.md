@@ -38,7 +38,7 @@ It is very efficient for large scale problems because it is entirely Matrix-Free
 
 > 1. In the case where `ls = DefaultLS()`, the factorisation of `A` is cached so the second linear solve is very fast
 
-There are more options to `BorderingBLS`. First, the residual can be checked using the option `checkPrecision = true`. If the residual is above a prescribed tolerance, an iterative method is used based on several bordering transformations. This is the *BEC+k* algorithm in [^Govaerts].
+There are more options to `BorderingBLS`. First, the residual can be checked using the option `check_precision = true`. If the residual is above a prescribed tolerance, an iterative method is used based on several bordering transformations. This is the *BEC+k* algorithm in [^Govaerts].
 
 ## Full Matrix-Free `MatrixFreeBLS`
 

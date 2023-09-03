@@ -9,7 +9,7 @@ The general method is very well exposed in [^Dankowicz],[^Doedel] and we adopt t
 
 We look for periodic orbits as solutions $(x(0), T)$ of
 
-$$\dot x = T\cdot F(x),\ x(0)=x(1).$$
+$$\dot x = T\cdot F(x),\ x(0)=x(1)\in\mathbb R^n.$$
 
 We focus on the differential equality and consider a partition of the time domain
 
@@ -47,11 +47,21 @@ The **nodes** $(z_l)$ are associated with a Gauss–Legendre quadrature.
 
 In order to have a unique solution, we need to remove the phase freedom. This is done by imposing a *phase* condition.
 
+## Number of unknowns
+
+Putting the period unknown aside, we have to find the $x_{j,k}$ which gives $n\times N_{tst}\times (m+1)$ unknowns. 
+
+The equations $E_j^2$ provides $n\times N_{tst}\times m$ plus the $(N_{tst}-1)\times n$ equations for the continuity equations. This makes a total of $(N_{tst}-1)\times m\times n+n\times N_{tst}\times m = n[N_{tst}(m+1)-1]$ equations to which we add the $n$ equations for the periodic boundary condition. In total, we have
+
+$$n\times N_{tst}\times (m+1)$$
+
+equations which matches the number of unknowns.
+
 ## Phase condition
 
 To ensure uniqueness of the solution to the functional, we add the following phase condition
 
-$$\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_0(s)\right\rangle d s \approx  \sum_{j=1}^{N_{tst}}\sum_{i=1}^{m}\omega_i\left\langle x_{i,j}, \phi_{i,j}\right\rangle=0$$
+$$\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_0(s)\right\rangle d s =0$$
 
 > During continuation at step $k$, we use $\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_{k-1}(s)\right\rangle d s$
 
@@ -74,16 +84,16 @@ The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@r
 We provide three methods to compute the Floquet coefficients.
 
 - The algorithm (Default) `FloquetColl` is based on the condensation of parameters described in [^Doedel]. It is the fastest method.
-- The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here.
+- The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here but this can be used to check the results of the previous method.
 
-These methods allow to detect bifurcations of periodic orbits. It seems to work reasonably well for the tutorials considered here. However they are imprecise.
+These methods allow to detect bifurcations of periodic orbits. It seems to work reasonably well for the tutorials considered here. However they may be imprecise[^Lust].
 
 - The state of the art method is based on a Periodic Schur decomposition. It is available through the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
 
 
 ## Computation with `newton`
 
-We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `jacobianPO` to select one of the many ways to deal with the above linear problem. The default solver `jacobianPO` is `:autodiffDense`.
+We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `jacobianPO` to select one of the many ways to deal with the jacobian of the above problem. The default solver `jacobianPO` is `:autodiffDense`.
 
 The docs for this specific `newton` are located at [`newton`](@ref).
 
@@ -104,3 +114,6 @@ We refer to [`continuation`](@ref) for more information regarding the arguments.
 [^Fairgrieve]:> Fairgrieve, Thomas F., and Allan D. Jepson. “O. K. Floquet Multipliers.” SIAM Journal on Numerical Analysis 28, no. 5 (October 1991): 1446–62. https://doi.org/10.1137/0728075.
 
 [^Russell]:> Russell, R. D., and J. Christiansen. “Adaptive Mesh Selection Strategies for Solving Boundary Value Problems.” SIAM Journal on Numerical Analysis 15, no. 1 (February 1978): 59–80. https://doi.org/10.1137/0715004.
+
+[^Lust]:> Lust, Kurt. “Improved Numerical Floquet Multipliers.” International Journal of Bifurcation and Chaos 11, no. 09 (September 2001): 2389–2410. https://doi.org/10.1142/S0218127401003486.
+
