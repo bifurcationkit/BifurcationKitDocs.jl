@@ -57,16 +57,16 @@ sol0 = [(cos(x) .* cos(y )) for x in X, y in Y, z in Z]
 	sol0 .*= 1.7
 
 # parameters for PDE
-Δ, D2x = Laplacian3D(Nx, Ny, Nz, lx, ly, lz, :Neumann)
-L1 = (I + Δ)^2
-par = (l = 0.1, ν = 1.2, L1 = L1)</code></pre><h2 id="Choice-of-linear-solver"><a class="docs-heading-anchor" href="#Choice-of-linear-solver">Choice of linear solver</a><a id="Choice-of-linear-solver-1"></a><a class="docs-heading-anchor-permalink" href="#Choice-of-linear-solver" title="Permalink"></a></h2><p>Let us run a quick benchmark to evaluate the direct linear solvers:</p><pre><code class="language-julia hljs">julia&gt; @time cholesky(L1) \ sol_hexa;
+Δ, D2x = Laplacian3D(Nx, Ny, Nz, lx, ly, lz, :Neumann);
+L1 = (I + Δ)^2;
+par = (l = 0.1, ν = 1.2, L1 = L1);</code></pre><h2 id="Choice-of-linear-solver"><a class="docs-heading-anchor" href="#Choice-of-linear-solver">Choice of linear solver</a><a id="Choice-of-linear-solver-1"></a><a class="docs-heading-anchor-permalink" href="#Choice-of-linear-solver" title="Permalink"></a></h2><p>Let us run a quick benchmark to evaluate the direct linear solvers:</p><pre><code class="language-julia hljs">julia&gt; @time cholesky(L1) \ sol_hexa;
   0.152849 seconds (54 allocations: 87.273 MiB)
 
 julia&gt; @time lu(L1) \ sol_hexa;
   0.556157 seconds (87 allocations: 226.210 MiB, 0.49% compilation time)
 
 julia&gt; @time qr(L1) \ sol_hexa;
-  1.609175 seconds (8.96 k allocations: 989.285 MiB, 2.67% gc time, 0.67% compilation time)</code></pre><p>Hence, <code>cholesky</code> is the big winner but it requires a positive matrix so let&#39;s see how to do that.</p><p>As said in the introduction, the LU linear solver does not scale well with dimension <span>$N$</span>. Hence, we do something else. We note that the matrix <span>$L_1$</span> is hermitian positive and use it as a preconditioner. Thus, we pre-factorize it using a Cholesky decomposition:</p><pre><code class="language-julia hljs">Pr = cholesky(L1)
+  1.609175 seconds (8.96 k allocations: 989.285 MiB, 2.67% gc time, 0.67% compilation time)</code></pre><p>Hence, <code>cholesky</code> is the big winner but it requires a positive matrix so let&#39;s see how to do that.</p><p>As said in the introduction, the LU linear solver does not scale well with dimension <span>$N$</span>. Hence, we do something else. We note that the matrix <span>$L_1$</span> is hermitian positive and use it as a preconditioner. Thus, we pre-factorize it using a Cholesky decomposition:</p><pre><code class="language-julia hljs">Pr = cholesky(L1);
 using SuiteSparse
 # we need this &quot;hack&quot; to be able to use Pr as a preconditioner.
 LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= -(P \ v)
@@ -75,10 +75,10 @@ LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector
 # we know that the jacobian is symmetric so we tell the solver
 ls = GMRESKrylovKit(verbose = 0, rtol = 1e-9, maxiter = 150, ishermitian = true, Pl = Pr)</code></pre><p>Let&#39;s try this on a Krylov-Newton computation to refine the guess <code>sol0</code>:</p><pre><code class="language-julia hljs">prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@lens _.l),
 	J = (x, p) -&gt; (dx -&gt; dF_sh(x, p, dx)),
-	plotSolution = (ax, x, p) -&gt; contour3dMakie(ax, x),
-	recordFromSolution = (x, p) -&gt; (n2 = norm(x), n8 = norm(x, 8)))
+	plot_solution = (ax, x, p) -&gt; contour3dMakie(ax, x),
+	record_from_solution = (x, p) -&gt; (n2 = norm(x), n8 = norm(x, 8)))
 
-optnew = NewtonPar(verbose = true, tol = 1e-8, maxIter = 20, linsolver = ls)
+optnew = NewtonPar(verbose = true, tol = 1e-8, max_iterations = 20, linsolver = ls)
 sol_hexa = @time newton(prob, optnew)</code></pre><p>which gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
@@ -119,14 +119,14 @@ function (sheig::SH3dEig)(J, nev::Int; verbosity = 0, kwargs...)
 	Ind = sortperm(vals2, by = real, rev = true)
 	return vals2[Ind], vec[Ind], true, info.numops
 end</code></pre><p>We can then declare our eigensolver and pass it to the newton parameters</p><pre><code class="language-julia hljs">eigSH3d = SH3dEig((@set ls.rtol = 1e-9), 0.1)
-@set! optnew.eigsolver = eigSH3d</code></pre><p>We are now ready to perform continuation and detection of bifurcation points:</p><pre><code class="language-julia hljs">optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, pMax = 0.15,
-	pMin = -.1, newtonOptions = setproperties(optnew; tol = 1e-9, maxIter = 15),
-	maxSteps = 146, detectBifurcation = 3, nev = 15, nInversion = 4, plotEveryStep = 1)
+@set! optnew.eigsolver = eigSH3d</code></pre><p>We are now ready to perform continuation and detection of bifurcation points:</p><pre><code class="language-julia hljs">optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, p_max = 0.15,
+	p_min = -.1, newton_options = setproperties(optnew; tol = 1e-9, maxIter = 15),
+	max_steps = 146, detect_bifurcation = 3, nev = 15, n_inversion = 4, plot_every_step = 1)
 
-br = continuation( reMake(prob, u0 = zeros(N)),
+br = continuation( re_make(prob, u0 = zeros(N)),
   # we use a particular bordered linear solver to
   # take advantage of our specific linear solver
-  PALC(bls = BorderingBLS(solver = optnew.linsolver, checkPrecision = false)),
+  PALC(bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
   optcont;
   normC = x -&gt; norm(x, Inf),
 	plot = true, verbosity = 3)</code></pre><p>The following result shows the detected bifurcation points (its takes ~300s)</p><pre><code class="language-julia hljs">julia&gt; br
@@ -137,20 +137,20 @@ Bifurcation points:
  (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
 - #  1,    bp at l ≈ +0.06243495 ∈ (+0.06243495, +0.06287689), |δp|=4e-04, [converged], δ = (-1,  0), step =   8, eigenelements in eig[  9], ind_ev =  10
 - #  2,    nd at l ≈ +0.06069653 ∈ (+0.06069653, +0.06069826), |δp|=2e-06, [converged], δ = (-6,  0), step =   9, eigenelements in eig[ 10], ind_ev =   9
-- #  3,    nd at l ≈ -0.00007046 ∈ (-0.00007046, +0.00015051), |δp|=2e-04, [converged], δ = (-3,  0), step =  18, eigenelements in eig[ 19], ind_ev =   3</code></pre><p>We get the following plot during computation:</p><p><img src="../sh3dfrontleft.png" alt/></p><div class="admonition is-success"><header class="admonition-header">Tip</header><div class="admonition-body"><p>We don&#39;t need to call <code>newton</code> first in order to use <code>continuation</code>.</p></div></div><h2 id="Automatic-branch-switching"><a class="docs-heading-anchor" href="#Automatic-branch-switching">Automatic branch switching</a><a id="Automatic-branch-switching-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching" title="Permalink"></a></h2><div class="admonition is-warning"><header class="admonition-header">Computation time</header><div class="admonition-body"><p>The following computation takes ~1.5h</p></div></div><p>We can use <a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/branchswitching/">Branch switching</a> to compute the different branches emanating from the bifurcation points. For example, the following code will perform automatic branch switching from the last bifurcation point of <code>br</code>. Note that this bifurcation point is 3d.</p><pre><code class="language-julia hljs">br1 = @time continuation(br, 3, setproperties(optcont; saveSolEveryStep = 10,
-	detectBifurcation = 0, pMax = 0.1, plotEveryStep = 5, dsmax = 0.02);
+- #  3,    nd at l ≈ -0.00007046 ∈ (-0.00007046, +0.00015051), |δp|=2e-04, [converged], δ = (-3,  0), step =  18, eigenelements in eig[ 19], ind_ev =   3</code></pre><p>We get the following plot during computation:</p><p><img src="../sh3dfrontleft.png" alt/></p><div class="admonition is-success"><header class="admonition-header">Tip</header><div class="admonition-body"><p>We don&#39;t need to call <code>newton</code> first in order to use <code>continuation</code>.</p></div></div><h2 id="Automatic-branch-switching"><a class="docs-heading-anchor" href="#Automatic-branch-switching">Automatic branch switching</a><a id="Automatic-branch-switching-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching" title="Permalink"></a></h2><div class="admonition is-warning"><header class="admonition-header">Computation time</header><div class="admonition-body"><p>The following computation takes ~1.5h</p></div></div><p>We can use <a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/branchswitching/">Branch switching</a> to compute the different branches emanating from the bifurcation points. For example, the following code will perform automatic branch switching from the last bifurcation point of <code>br</code>. Note that this bifurcation point is 3d.</p><pre><code class="language-julia hljs">br1 = @time continuation(br, 3, setproperties(optcont; save_sol_every_step = 10,
+	detect_bifurcation = 0, p_max = 0.1, plot_every_step = 5, dsmax = 0.02);
 	plot = true, verbosity = 3,
 	# to set initial point on the branch
 	δp = 0.01,
 	# remove display of deflated newton iterations
 	verbosedeflation = false,
 	alg = PALC(tangent = Bordered()),
-	linearAlgo = BorderingBLS(solver = optnew.linsolver, checkPrecision = false),
+	linear_algo = BorderingBLS(solver = optnew.linsolver, check_precision = false),
 	# to compute the normal form, so we don&#39;t have to
 	# compute the left eigenvectors
 	issymmetric = true,
-	plotSolution = (ax, x, p) -&gt; contour3dMakie(ax, x),
-	recordFromSolution = (x, p) -&gt; (n2 = norm(x), n8 = norm(x, 8)),
+	plot_solution = (ax, x, p) -&gt; contour3dMakie(ax, x),
+	record_from_solution = (x, p) -&gt; (n2 = norm(x), n8 = norm(x, 8)),
 	normC = x -&gt; norm(x, Inf))</code></pre><p>We can then plot the branches using <code>BK.plotBranch(br, branches...)</code> where green (resp. red) means stable (resp. unstable) solution.</p><p><img src="../sh3dbranches.png" alt/></p><p>There are 19 banches that were discovered. You can plot the solutions on the branches using</p><pre><code class="language-julia hljs">fig = Figure(resolution = (1200, 900))
 	for i=1:length(br1)
 		ix = div(i,5)+1; iy = i%5+1
@@ -160,4 +160,4 @@ Bifurcation points:
 		contour3dMakie!(ax, br1[i].sol[2].x)
 		ax.protrusions = (0, 0, 0, 10)
 	end
-	display(fig)</code></pre><p><img src="../sh3dallSols.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 1 August 2023 16:11">Tuesday 1 August 2023</span>. Using Julia version 1.9.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	display(fig)</code></pre><p><img src="../sh3dallSols.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 22 September 2023 16:24">Friday 22 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

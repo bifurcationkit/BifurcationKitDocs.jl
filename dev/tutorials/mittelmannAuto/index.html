@@ -5,7 +5,6 @@ using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
 const BK = BifurcationKit
 
 # define the sup norm
-norminf(x) = norm(x, Inf)
 norm2(x) = norm(x) / sqrt(length(x))
 normbratu(x) = norm(x .* w) / sqrt(length(x)) # the weight w is defined below
 
@@ -66,16 +65,16 @@ sol0 = 0*ones(Nx, Ny) |&gt; vec
 
 # Bifurcation Problem
 prob = BifurcationProblem(Fmit, sol0, par_mit, (@lens _.λ),; J = JFmit,
-  recordFromSolution = (x, p) -&gt; (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
-  plotSolution = (x, p; k...) -&gt; plotsol!(x ; k...))</code></pre><p>To compute the eigenvalues, we opt for the solver in <code>KrylovKit.jl</code></p><pre><code class="language-julia hljs"># eigensolver
+  record_from_solution = (x, p) -&gt; (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
+  plot_solution = (x, p; k...) -&gt; plotsol!(x ; k...))</code></pre><p>To compute the eigenvalues, we opt for the solver in <code>KrylovKit.jl</code></p><pre><code class="language-julia hljs"># eigensolver
 eigls = EigKrylovKit(dim = 70)
 
 # options for Newton solver
-opt_newton = NewtonPar(tol = 1e-8, verbose = true, eigsolver = eigls, maxIter = 20)
+opt_newton = NewtonPar(tol = 1e-8, verbose = true, eigsolver = eigls, max_iterations = 20)
 
 # options for continuation, we want to locate very precisely the
 # bifurcation points, so we tune the bisection accordingly
-opts_br = ContinuationPar(dsmin = 0.0001, dsmax = 0.04, ds = 0.005, pMax = 3.5, pMin = 0.01, detectBifurcation = 3, nev = 50, plotEveryStep = 10, newtonOptions = (@set opt_newton.verbose = false), maxSteps = 251, tolStability = 1e-6, nInversion = 6, dsminBisection = 1e-7, maxBisectionSteps = 25, tolBisectionEigenvalue = 1e-19)</code></pre><p>Note that we put the option <code>detectBifurcation = 3</code> to detect bifurcations precisely with a <strong>bisection</strong> method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.</p><p>In order to have an output like Auto07p, we provide the finaliser (see arguments of <a href="../../library/#BifurcationKit.continuation"><code>continuation</code></a>)</p><pre><code class="language-julia hljs">function finSol(z, tau, step, br; k...)
+opts_br = ContinuationPar(dsmin = 0.0001, dsmax = 0.04, ds = 0.005, p_max = 3.5, p_min = 0.01, detect_bifurcation = 3, nev = 50, plot_every_step = 10, newton_options = (@set opt_newton.verbose = false), max_steps = 251, tol_stability = 1e-6, n_inversion = 6, dsmin_bisection = 1e-7, max_bisection_steps = 25, tol_bisection_eigenvalue = 1e-19)</code></pre><p>Note that we put the option <code>detect_bifurcation = 3</code> to detect bifurcations precisely with a <strong>bisection</strong> method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.</p><p>In order to have an output like Auto07p, we provide the finaliser (see arguments of <a href="../../library/#BifurcationKit.continuation"><code>continuation</code></a>)</p><pre><code class="language-julia hljs">function finSol(z, tau, step, br; k...)
 	if length(br.specialpoint)&gt;0
 		if br.specialpoint[end].step == step
 			BK._show(stdout, br.specialpoint[end], step)
@@ -93,9 +92,9 @@ end</code></pre><p>Finally, before calling the automatic <code>bifurcationdiagra
 	if l == 1
 		return opt0
 	elseif l==2
-		return setproperties(opt0 ;detectBifurcation = 3,ds = 0.001, a = 0.75)
+		return setproperties(opt0 ;detect_bifurcation = 3,ds = 0.001, a = 0.75)
 	else
-		return setproperties(opt0 ;detectBifurcation = 3,ds = 0.00051, dsmax = 0.01)
+		return setproperties(opt0 ;detect_bifurcation = 3,ds = 0.00051, dsmax = 0.01)
 	end
 end</code></pre><p>We are then ready to compute the bifurcation diagram. If we choose a level 5 of recursion like</p><pre><code class="language-julia hljs">diagram = @time bifurcationdiagram(prob, PALC(),
 	# important argument: this is the maximal
@@ -103,31 +102,25 @@ end</code></pre><p>We are then ready to compute the bifurcation diagram. If we c
 	5,
 	optionsCont;
 	verbosity = 0, plot = true,
-	callbackN = cb,
+	callback_newton = cb,
 	usedeflation = true,
-	finaliseSolution = finSol,
+	finalise_solution = finSol,
 	normC = norminf)</code></pre><p>this gives using <code>plot(diagram; plotfold = false, putspecialptlegend=false, markersize=2, title = &quot;#branches = $(size(diagram))&quot;)</code>:</p><p><img src="../mittlemanBD.png" alt/></p><p>We can zoom in on the left part to get</p><p><img src="../mittlemanBD1.png" alt/></p><p>Actually, this plot is misleading because of the symmetries. If we chose a weighted norm which breaks those symmetries and use it to print the solution, we get</p><pre><code class="language-julia hljs">plot(diagram; plotfold = false, putspecialptlegend=false, markersize=2,
-	title = &quot;#branches = $(size(diagram))&quot;, vars = (:param, :nw))</code></pre><p><img src="../mittlemannBD-1.png" alt/></p><p>We can make more sense of these spaghetti by only plotting the first two levels of recursion</p><pre><code class="language-julia hljs">plot(diagram; level = (1, 2), plotfold = false, putspecialptlegend=false, markersize=2, vars = (:param, :nw))</code></pre><p><img src="../mittlemannBD-2.png" alt/></p><h2 id="Interactive-exploration"><a class="docs-heading-anchor" href="#Interactive-exploration">Interactive exploration</a><a id="Interactive-exploration-1"></a><a class="docs-heading-anchor-permalink" href="#Interactive-exploration" title="Permalink"></a></h2><p>We can see that the non-simple 2d branch points (magenta points) have produced non trivial branches. For example, we can look at the second bifurcation point (the first is the fold) which is composed of 8 branches</p><p><code>plot(getBranchesFromBP(diagram, 2); plotfold = false, legend = false, vars = (:param, :nw))</code></p><p><img src="../mittlemannBD-2-1.png" alt/></p><h2 id="Interactive-computation"><a class="docs-heading-anchor" href="#Interactive-computation">Interactive computation</a><a id="Interactive-computation-1"></a><a class="docs-heading-anchor-permalink" href="#Interactive-computation" title="Permalink"></a></h2><p>Let&#39;s say you have been cautious and did not launch a deep bifurcation diagram computation by using a small recursion level 2:</p><pre><code class="language-julia hljs">diagram = bifurcationdiagram(jet...,
-	sol0, par_mit, (@lens _.λ),
+	title = &quot;#branches = $(size(diagram))&quot;, vars = (:param, :nw))</code></pre><p><img src="../mittlemannBD-1.png" alt/></p><p>We can make more sense of these spaghetti by only plotting the first two levels of recursion</p><pre><code class="language-julia hljs">plot(diagram; level = (1, 2), plotfold = false, putspecialptlegend=false, markersize=2, vars = (:param, :nw))</code></pre><p><img src="../mittlemannBD-2.png" alt/></p><h2 id="Interactive-exploration"><a class="docs-heading-anchor" href="#Interactive-exploration">Interactive exploration</a><a id="Interactive-exploration-1"></a><a class="docs-heading-anchor-permalink" href="#Interactive-exploration" title="Permalink"></a></h2><p>We can see that the non-simple 2d branch points (magenta points) have produced non trivial branches. For example, we can look at the second bifurcation point (the first is the fold) which is composed of 8 branches</p><p><code>plot(getBranchesFromBP(diagram, 2); plotfold = false, legend = false, vars = (:param, :nw))</code></p><p><img src="../mittlemannBD-2-1.png" alt/></p><h2 id="Interactive-computation"><a class="docs-heading-anchor" href="#Interactive-computation">Interactive computation</a><a id="Interactive-computation-1"></a><a class="docs-heading-anchor-permalink" href="#Interactive-computation" title="Permalink"></a></h2><p>Let&#39;s say you have been cautious and did not launch a deep bifurcation diagram computation by using a small recursion level 2:</p><pre><code class="language-julia hljs">diagram = bifurcationdiagram(prob, PALC(),
 	# here the recursion level is
 	2,
 	optionsCont;
 	verbosity = 0, plot = true,
-	recordFromSolution = (x, p) -&gt; (n2 = norm2(x), nw = normbratu(x), n∞ = norminf(x)),
-	callbackN = cb,
-	tangentAlgo = BorderedPred(),
+	callback_newton = cb,
 	usedeflation = true,
-	finaliseSolution = finSol,
-	plotSolution = (x, p; kwargs...) -&gt; plotsol!(x ; kwargs...),
-	normC = norminf)</code></pre><p>You would end up with this diagram</p><p><img src="../mittlemanBD2.png" alt/></p><p>How can we complete this diagram without recomputing it from scratch? It is easy! For example, let us complete the magenta branches as follow</p><pre><code class="language-julia hljs">bifurcationdiagram!(jet...,
+	finalise_solution = finSol,
+	normC = norminf)</code></pre><p>You would end up with this diagram</p><p><img src="../mittlemanBD2.png" alt/></p><p>How can we complete this diagram without recomputing it from scratch? It is easy! For example, let us complete the magenta branches as follow</p><pre><code class="language-julia hljs">bifurcationdiagram!(prob,
 	# this improves the first branch on the violet curve. Note that
 	# for symmetry reasons, the first bifurcation point
 	# has 8 branches
-	getBranch(diagram, (1,)), 6, optionsCont;
+	get_branch(diagram, (1,)), 6, optionsCont;
 	verbosity = 0, plot = true,
-	recordFromSolution = (x, p) -&gt; (n2 = norm2(x), nw = normbratu(x), n∞ = norminf(x)),
-	callbackN = cb,
-	finaliseSolution = finSol,
+	callback_newton = cb,
+	finalise_solution = finSol,
 	usedeflation = true,
-	plotSolution = (x, p; kwargs...) -&gt; plotsol!(x ; kwargs...),
-	normC = norminf)</code></pre><p>This gives the following diagram. Using this call, you can pinpoint the particular location where to refine the diagram.</p><p><img src="../mittlemanBD3.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 1 August 2023 16:11">Tuesday 1 August 2023</span>. Using Julia version 1.9.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	normC = norminf)</code></pre><p>This gives the following diagram. Using this call, you can pinpoint the particular location where to refine the diagram.</p><p><img src="../mittlemanBD3.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 22 September 2023 16:24">Friday 22 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

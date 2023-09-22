@@ -4,8 +4,6 @@
 	using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
 	const BK = BifurcationKit
 
-norminf(x) = norm(x, Inf)
-
 function Laplacian2D(Nx, Ny, lx, ly)
 	hx = 2lx/Nx
 	hy = 2ly/Ny
@@ -83,13 +81,13 @@ f2 = NL!
 prob_sp = SplitODEProblem(f1, f2, sol0_f, (0.0, 120.0), (@set par_cgl.r = 1.2), dt = 0.1)
 # we solve the PDE!!!
 sol = @time solve(prob_sp, ETDRK2(krylov=true); abstol=1e-14, reltol=1e-14)</code></pre><h2 id="Automatic-branch-switching-from-the-Hopf-points"><a class="docs-heading-anchor" href="#Automatic-branch-switching-from-the-Hopf-points">Automatic branch switching from the Hopf points</a><a id="Automatic-branch-switching-from-the-Hopf-points-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching-from-the-Hopf-points" title="Permalink"></a></h2><p>We show how to use automatic branch switching from the Hopf points computed in the previous section. To compute the periodic orbits, we use a Standard Shooting method.</p><p>We first recompute the Hopf points as in the previous tutorial:</p><pre><code class="language-julia hljs">eigls = EigArpack(1.0, :LM)
-opt_newton = NewtonPar(tol = 1e-9, verbose = true, eigsolver = eigls, maxIter = 20)
-opts_br = ContinuationPar(dsmax = 0.02, ds = 0.01, pMax = 2., detectBifurcation = 3, nev = 15, newtonOptions = (@set opt_newton.verbose = false), nInversion = 4)
+opt_newton = NewtonPar(tol = 1e-9, verbose = true, eigsolver = eigls, max_iterations = 20)
+opts_br = ContinuationPar(dsmax = 0.02, ds = 0.01, p_max = 2., detect_bifurcation = 3, nev = 15, newton_options = (@set opt_newton.verbose = false), n_inversion = 4)
 
 br = @time continuation(prob, PALC(), opts_br, verbosity = 0)</code></pre><p>We then compute the differentials of the vector field, this is needed by the branch switching method because it first computes the Hopf normal form. Thankfully, this is little work using Automatic Differentiation.</p><p>We define the linear solvers to be use by the (Matrix-Free) shooting method</p><pre><code class="language-julia hljs">ls = GMRESIterativeSolvers(reltol = 1e-4, maxiter = 50, verbose = false)
 eig = EigKrylovKit(tol = 1e-7, x₀ = rand(2Nx*Ny), verbose = 2, dim = 40)
-optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 25, linsolver = ls, eigsolver = eig)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, pMax = 2.5, maxSteps = 32, newtonOptions = optn, nev = 7, tolStability = 1e-3, detectBifurcation = 3, plotEveryStep = 1)</code></pre><p>as</p><pre><code class="language-julia hljs">Mt = 1 # number of time sections
+optn = NewtonPar(verbose = true, tol = 1e-9,  max_iterations = 25, linsolver = ls, eigsolver = eig)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, p_max = 2.5, max_steps = 32, newton_options = optn, nev = 7, tol_stability = 1e-3, detect_bifurcation = 3, plot_every_step = 1)</code></pre><p>as</p><pre><code class="language-julia hljs">Mt = 1 # number of time sections
 br_po = continuation(
 	# we want to compute the bifurcated branch from
 	# the first Hopf point
@@ -98,20 +96,20 @@ br_po = continuation(
 	opts_po_cont,
 	# this is how to pass the method to compute the periodic
 	# orbits. We shall use 1 section and the ODE solver ETDRK2
-	ShootingProblem(Mt, prob_sp, ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8, jacobian = :FiniteDifferences) ;
+	ShootingProblem(Mt, prob_sp, ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8, jacobian = BK.FiniteDifferencesMF()) ;
 	# linear solver for bordered linear system
 	# we combine the 2 solves. It is here faster than BorderingBLS()
-	linearAlgo = MatrixFreeBLS(@set ls.N = Mt*2n+2),
+	linear_algo = MatrixFreeBLS(@set ls.N = Mt*2n+2),
 	# to help branching from the Hopf point
 	ampfactor = 1.5, δp = 0.01,
 	# regular parameters for the continuation
 	verbosity = 3, plot = true,
 	# a few parameters saved during run
-	recordFromSolution = (u, p) -&gt; (amp = BK.getAmplitude(p.prob, u, (@set par_cgl.r = p.p)), period = u[end]),
+	record_from_solution = (u, p) -&gt; (amp = BK.getamplitude(p.prob, u, (@set par_cgl.r = p.p)), period = u[end]),
 	# plotting of a section
-	plotSolution = (x, p; k...) -&gt; heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, k...),
+	plot_solution = (x, p; k...) -&gt; heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, k...),
 	# print the Floquet exponent
-	finaliseSolution = (z, tau, step, contResult; k...) -&gt;
+	finalise_solution = (z, tau, step, contResult; k...) -&gt;
 		(Base.display(contResult.eig[end].eigenvals) ;true),
 	normC = norminf)</code></pre><p><img src="../cgl-sh-br.png" alt/></p><h2 id="Manual-branch-switching-from-the-Hopf-points"><a class="docs-heading-anchor" href="#Manual-branch-switching-from-the-Hopf-points">Manual branch switching from the Hopf points</a><a id="Manual-branch-switching-from-the-Hopf-points-1"></a><a class="docs-heading-anchor-permalink" href="#Manual-branch-switching-from-the-Hopf-points" title="Permalink"></a></h2><p>The goal of this section is to show how to use the package in case automatic branch switching fails. This can happen for tedious PDEs and &quot;one has to get his hands dirty&quot;.</p><p>We decide to use Standard Shooting and thus define a Shooting functional</p><pre><code class="language-julia hljs">probSh = ShootingProblem(
 	# we pass the ODEProblem encoding the flow and the time stepper
@@ -124,7 +122,7 @@ br_po = continuation(
 	lens = (@lens _.r),
 
 	# jacobian of the periodic orbit functional
-	jacobian = :FiniteDifferences,
+	jacobian = BK.FiniteDifferencesMF(),
 
 	# these are options passed to the ODE time stepper
 	abstol = 1e-14, reltol = 1e-14)</code></pre><p>We use the solution from the ODE solver as a starting guess for the shooting method.</p><pre><code class="language-julia hljs"># initial guess with period 6.9 using solution at time t = 116
@@ -134,15 +132,23 @@ initpo = vcat(sol(116.), 6.9) |&gt; vec
 ls = GMRESIterativeSolvers(reltol = 1e-4, N = 2Nx * Ny + 1, maxiter = 50, verbose = false)
 
 # newton parameters
-optn = NewtonPar(verbose = true, tol = 1e-9,  maxIter = 20, linsolver = ls)
+optn = NewtonPar(verbose = true, tol = 1e-9,  max_iterations = 20, linsolver = ls)
 
 # continuation parameters
 eig = EigKrylovKit(tol=1e-7, x₀ = rand(2Nx*Ny), verbose = 2, dim = 40)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds= -0.01, pMax = 1.5, maxSteps = 60, newtonOptions = (@set optn.eigsolver = eig), nev = 5, tolStability = 1e-3, detectBifurcation = 0)
+opts_po_cont = ContinuationPar(dsmin = 0.001,
+				dsmax = 0.01,
+				ds = -0.01,
+				p_max = 1.5,
+				max_steps = 60,
+				newton_options = (@set optn.eigsolver = eig),
+				nev = 5,
+				tol_stability = 1e-3,
+				detect_bifurcation = 0)
 
 br_po = @time continuation(probSh,
 	initpo, PALC(), opts_po_cont;
 	verbosity = 3, plot = true,
-	linearAlgo = MatrixFreeBLS(@set ls.N = probSh.M*2n+2),
-	plotSolution = (x, p; kwargs...) -&gt; heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, kwargs...),
-	recordFromSolution = (u, p) -&gt; BK.getAmplitude(probSh, u, (@set par_cgl.r = p.p); ratio = 2), normC = norminf)</code></pre></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 1 August 2023 16:11">Tuesday 1 August 2023</span>. Using Julia version 1.9.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	linear_algo = MatrixFreeBLS(@set ls.N = probSh.M*2n+2),
+	plot_solution = (x, p; kwargs...) -&gt; heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, kwargs...),
+	record_from_solution = (u, p) -&gt; BK.getamplitude(probSh, u, (@set par_cgl.r = p.p); ratio = 2), normC = norminf)</code></pre></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 22 September 2023 16:24">Friday 22 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

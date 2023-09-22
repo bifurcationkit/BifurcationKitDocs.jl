@@ -47,23 +47,23 @@ sol0 = [(cos(x) + cos(x/2) * cos(sqrt(3) * y/2) ) for x in X, y in Y]
 	heatmap(sol0&#39;,color=:viridis)
 
 # define parameters for the PDE
-Δ, _ = Laplacian2D(Nx, Ny, lx, ly)
-L1 = (I + Δ)^2
-par = (l = -0.1, ν = 1.3, L1 = L1)
+Δ, _ = Laplacian2D(Nx, Ny, lx, ly);
+L1 = (I + Δ)^2;
+par = (l = -0.1, ν = 1.3, L1 = L1);
 
 # Bifurcation Problem
 prob = BifurcationProblem(F_sh, vec(sol0), par, (@lens _.l);
-    J = dF_sh,
-		plotSolution = (x, p; kwargs...) -&gt; (heatmapsol!(x; label=&quot;&quot;, kwargs...)),
-		recordFromSolution = (x, p) -&gt; (n2 = norm(x), n8 = norm(x, 8)),
+		J = dF_sh,
+		plot_solution = (x, p; kwargs...) -&gt; (heatmapsol!(x; label=&quot;&quot;, kwargs...)),
+		record_from_solution = (x, p) -&gt; (n2 = norm(x), n8 = norm(x, 8)),
 		d2F = d2F_sh,
 		d3F = d3F_sh)
 
 # newton corrections of the initial guess
-optnewton = NewtonPar(verbose = true, tol = 1e-8, maxIter = 20)
-	sol_hexa = @time newton(prob, optnewton)
-	println(&quot;--&gt; norm(sol) = &quot;,norm(sol_hexa.u, Inf64))
-	heatmapsol(sol_hexa.u)</code></pre><p>which produces the results</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
+optnewton = NewtonPar(verbose = true, tol = 1e-8, max_iterations = 20)
+sol_hexa = @time newton(prob, optnewton)
+println(&quot;--&gt; norm(sol) = &quot;,norm(sol_hexa.u, Inf64))
+heatmapsol(sol_hexa.u)</code></pre><p>which produces the results</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       1.7391e+02     │        0       │
@@ -81,19 +81,19 @@ optnewton = NewtonPar(verbose = true, tol = 1e-8, maxIter = 20)
 │      12     │       8.8395e-09     │        1       │
 └─────────────┴──────────────────────┴────────────────┘
   1.441525 seconds (1.74 k allocations: 659.488 MiB, 1.25% gc time)</code></pre><p>with <code>sol_hexa</code> being</p><p><img src="../sh2dhexa.png" alt/></p><h2 id="Continuation-and-bifurcation-points"><a class="docs-heading-anchor" href="#Continuation-and-bifurcation-points">Continuation and bifurcation points</a><a id="Continuation-and-bifurcation-points-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-and-bifurcation-points" title="Permalink"></a></h2><p>We can now continue this solution as follows. We want to detect bifurcations along the branches. We thus need an eigensolver. However, if we use an iterative eigensolver, like <code>eig = EigArpack()</code>, it has trouble computing the eigenvalues. One can see that using</p><pre><code class="language-julia hljs"># compute the jacobian
-J0 = dF_sh(sol_hexa.u, par)
+J0 = dF_sh(sol_hexa.u, par)</code></pre><p>The reason is that the jacobian operator is not very well conditioned unlike its inverse. We thus opt for the <em>shift-invert</em> method (see <a href="../../eigensolver/#Eigen-solvers-(Eig)">Eigen solvers (Eig)</a> for more information) with shift <code>0.1</code>:</p><pre><code class="language-julia hljs">eig = EigArpack(0.1, :LM)
 
 # compute 10 eigenvalues
-eig(J0, 10)</code></pre><p>The reason is that the jacobian operator is not very well conditioned unlike its inverse. We thus opt for the <em>shift-invert</em> method (see <a href="../../eigensolver/#Eigen-solvers-(Eig)">Eigen solvers (Eig)</a> for more information) with shift <code>0.1</code>:</p><pre><code class="language-julia hljs">eig = EigArpack(0.1, :LM)</code></pre><p>If we want to compute the bifurcation points along the branches, we have to tell the solver by setting <code>detectBifurcation = 2</code>. However, this won&#39;t be very precise and each bifurcation point will be located at best at the step size precision. We can use bisection to locate this points more precisely using the option <code>detectBifurcation = 3</code> (see <a href="../../detectionBifurcation/#Detection-of-bifurcation-points-of-Equilibria">Detection of bifurcation points of Equilibria</a> for more information).</p><p>We are now ready to compute the branches:</p><pre><code class="language-julia hljs">optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, pMax = 0.00, pMin = -1.0,
-	newtonOptions = setproperties(optnewton; tol = 1e-9, maxIter = 15), maxSteps = 125,
-	detectBifurcation = 3, nev = 40, detectFold = false,
-	dsminBisection =1e-7, saveSolEveryStep = 4)
-	optcont = @set optcont.newtonOptions.eigsolver = EigArpack(0.1, :LM)
+eig(J0, 10)</code></pre><p>If we want to compute the bifurcation points along the branches, we have to tell the solver by setting <code>detect_bifurcation = 2</code>. However, this won&#39;t be very precise and each bifurcation point will be located at best at the step size precision. We can use bisection to locate this points more precisely using the option <code>detect_bifurcation = 3</code> (see <a href="../../detectionBifurcation/#Detection-of-bifurcation-points-of-Equilibria">Detection of bifurcation points of Equilibria</a> for more information).</p><p>We are now ready to compute the branches:</p><pre><code class="language-julia hljs">optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, p_max = 0.00, p_min = -1.0,
+	newton_options = setproperties(optnewton; tol = 1e-9, max_iterations = 15), max_steps = 125,
+	detect_bifurcation = 3, nev = 40, detect_fold = false,
+	dsmin_bisection =1e-7, save_sol_every_step = 4)
+optcont = @set optcont.newton_options.eigsolver = EigArpack(0.1, :LM)
 
-	br = continuation(
-	  reMake(prob, u0 = sol_hexa.u), PALC(), optcont;
-		plot = true,
-		normC = x -&gt; norm(x, Inf))</code></pre><p>Note that we can get some information about the branch as follows. The <code>[converged]</code> indicates if the bisection routine was successful, otherwise it shows <code>[guess]</code>. Finally <code>δ = ( 2,  0)</code> says that the bifurcation point has been detected by 2 new eigenvalues with zero real part among which zero have non zero imaginary part. A Hopf bifurcation point would thus have <code>δ = ( 2,  2)</code> or <code>δ = ( -2,  2)</code>.</p><pre><code class="language-julia hljs">julia&gt; br
+br = continuation(
+	re_make(prob, u0 = sol_hexa.u), PALC(), optcont;
+	plot = true,
+	normC = norminf)</code></pre><p>Note that we can get some information about the branch as follows. The <code>[converged]</code> indicates if the bisection routine was successful, otherwise it shows <code>[guess]</code>. Finally <code>δ = ( 2,  0)</code> says that the bifurcation point has been detected by 2 new eigenvalues with zero real part among which zero have non zero imaginary part. A Hopf bifurcation point would thus have <code>δ = ( 2,  2)</code> or <code>δ = ( -2,  2)</code>.</p><pre><code class="language-julia hljs">julia&gt; br
  ┌─ Branch number of points: 98
  ├─ Branch of Equilibrium
  ├─ Type of vectors: Vector{Float64}
@@ -125,18 +125,18 @@ ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]
 - # 20,    bp at l ≈ +0.00000000 ∈ (-0.00509751, +0.00000000), |δp|=5e-03, [    guess], δ = (-1,  0), step =  97, eigenelements in eig[ 98], ind_ev =   1</code></pre><p>We get the following plot during computation:</p><p><img src="../sh2dbrhexa.png" alt/></p><div class="admonition is-success"><header class="admonition-header">Tip</header><div class="admonition-body"><p>We don&#39;t need to call <code>newton</code> first in order to use <code>continuation</code>.</p></div></div><h2 id="Snaking-computed-with-deflation"><a class="docs-heading-anchor" href="#Snaking-computed-with-deflation">Snaking computed with deflation</a><a id="Snaking-computed-with-deflation-1"></a><a class="docs-heading-anchor-permalink" href="#Snaking-computed-with-deflation" title="Permalink"></a></h2><p>We know that there is snaking near the left fold. Let us look for other solutions like fronts. The problem is that if the guess is not precise enough, the newton iterations will converge to the solution with hexagons <code>sol_hexa</code>. We appeal to the technique initiated by P. Farrell and use a <strong>deflated problem</strong> (see <a href="../../library/#BifurcationKit.DeflationOperator"><code>DeflationOperator</code></a> and <a href="../../library/#BifurcationKit.DeflatedProblem"><code>DeflatedProblem</code></a> for more information). More precisely, we apply the newton iterations to the following functional <span>$u\to \Pi_{i=1}^{n_s}\left( \|u-sol_{hexa,i}\|^{-p} + \sigma\right)F_{sh}(u)$</span> which penalizes <code>sol_hexa</code>.</p><pre><code class="language-julia hljs"># this define the above penalizing factor with p=2, sigma=1, norm associated to dot
 # and the set of sol_{hexa} is of length ns=1
 deflationOp = DeflationOperator(2, 1.0, [sol_hexa.u])
-optnewton = @set optnewton.maxIter = 250
+optnewton = @set optnewton.max_iterations = 250
 outdef = newton(
-				reMake(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x+lx)^2/25) for x in X, y in Y])),
+				re_make(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x+lx)^2/25) for x in X, y in Y])),
 				deflationOp,
-				optnewton, normN = x -&gt; norm(x,Inf64))
-		heatmapsol(outdef.u) |&gt; display
-		BK.converged(outdef) &amp;&amp; push!(deflationOp, outdef.u)</code></pre><p>which gives:</p><p><img src="../sh2dfrontleft.png" alt/></p><p>Note that <code>push!(deflationOp, outdef)</code> deflates the newly found solution so that by repeating the process we find another one:</p><pre><code class="language-julia hljs">outdef = newton(
-				reMake(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x)^2/25) for x in X, y in Y])),
-				deflationOp, optnewton, normN = x -&gt; norm(x,Inf64))
-		heatmapsol(outdef.u) |&gt; display
-		BK.converged(outdef) &amp;&amp; push!(deflationOp, outdef.u)</code></pre><p><img src="../sh2dfrontmiddle.png" alt/></p><p>Again, repeating this from random guesses, we find several more solutions, like for example</p><p><img src="../sh2dsol4.png" alt/></p><p><img src="../sh2dsol5.png" alt/></p><p>We can now continue the solutions located in <code>deflationOp.roots</code></p><pre><code class="language-julia hljs">br1 = @time continuation(reMake(prob, u0 = deflationOp[2]),
+				optnewton, normN = norminf)
+heatmapsol(outdef.u) |&gt; display
+BK.converged(outdef) &amp;&amp; push!(deflationOp, outdef.u)</code></pre><p>which gives:</p><p><img src="../sh2dfrontleft.png" alt/></p><p>Note that <code>push!(deflationOp, outdef)</code> deflates the newly found solution so that by repeating the process we find another one:</p><pre><code class="language-julia hljs">outdef = newton(
+				re_make(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x)^2/25) for x in X, y in Y])),
+				deflationOp, optnewton, normN = norminf)
+heatmapsol(outdef.u) |&gt; display
+BK.converged(outdef) &amp;&amp; push!(deflationOp, outdef.u)</code></pre><p><img src="../sh2dfrontmiddle.png" alt/></p><p>Again, repeating this from random guesses, we find several more solutions, like for example</p><p><img src="../sh2dsol4.png" alt/></p><p><img src="../sh2dsol5.png" alt/></p><p>We can now continue the solutions located in <code>deflationOp.roots</code></p><pre><code class="language-julia hljs">br1 = @time continuation(re_make(prob, u0 = deflationOp[2]),
 	PALC(), optcont;
-	plot = true)</code></pre><p>and using <code>plot(br, br1)</code>, we obtain:</p><p><img src="../sh2dbranches.png" alt/></p><p>Note that the plot provides the stability of solutions and bifurcation points. Interested readers should consult the associated file <code>example/SH2d-fronts.jl</code> in the <code>example</code> folder.</p><h2 id="Automatic-branch-switching"><a class="docs-heading-anchor" href="#Automatic-branch-switching">Automatic branch switching</a><a id="Automatic-branch-switching-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching" title="Permalink"></a></h2><p>Instead of relying on deflated newton, we can use <a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/branchswitching/">Branch switching</a> to compute the different branches emanating from the bifurcation point. For example, the following code will perform automatic branch switching from the second bifurcation point of <code>br</code>:</p><pre><code class="language-julia hljs">br2 = continuation(br, 2, setproperties(optcont; ds = -0.001, detectBifurcation = 3, plotEveryStep = 5, maxSteps = 170);  nev = 30,
+	plot = true)</code></pre><p>and using <code>plot(br, br1)</code>, we obtain:</p><p><img src="../sh2dbranches.png" alt/></p><p>Note that the plot provides the stability of solutions and bifurcation points. Interested readers should consult the associated file <code>example/SH2d-fronts.jl</code> in the <code>example</code> folder.</p><h2 id="Automatic-branch-switching"><a class="docs-heading-anchor" href="#Automatic-branch-switching">Automatic branch switching</a><a id="Automatic-branch-switching-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching" title="Permalink"></a></h2><p>Instead of relying on deflated newton, we can use <a href="https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/branchswitching/">Branch switching</a> to compute the different branches emanating from the bifurcation point. For example, the following code will perform automatic branch switching from the second bifurcation point of <code>br</code>:</p><pre><code class="language-julia hljs">br2 = continuation(br, 2, setproperties(optcont; ds = -0.001, detect_bifurcation = 3, plot_every_step = 5, max_steps = 170);  nev = 30,
 	plot = true, verbosity = 2,
-	normC = x -&gt; norm(x, Inf))</code></pre><p>We can then plot the branches using <code>plot(br, br2, br3)</code> and get</p><p><img src="../SH2daBS.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 1 August 2023 16:11">Tuesday 1 August 2023</span>. Using Julia version 1.9.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	normC = norminf)</code></pre><p>We can then plot the branches using <code>plot(br, br2, br3)</code> and get</p><p><img src="../SH2daBS.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 22 September 2023 16:24">Friday 22 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

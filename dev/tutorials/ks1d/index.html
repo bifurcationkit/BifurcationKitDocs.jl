@@ -39,21 +39,21 @@ par_ks = (Δ = Δ, Δ2 = Δ2, λ = 0.75, N = N)
 
 # we define a Bifurcation Problem
 prob = BifurcationProblem(Fks1d, zeros(N), par_ks, (@lens _.λ),
-  recordFromSolution = (x, p) -&gt; (s = sum(x), u2 = x[3], nrm = norm(x)),
-  plotSolution = (x, p; kwargs...) -&gt; plot!(Fun(SinSpace(), x) ; kwargs...),)</code></pre><p>and continuation options</p><pre><code class="language-julia hljs">optn = NewtonPar(verbose = false, tol = 1e-9, maxIter = 15)
-	optc = ContinuationPar(pMin = 1/150., pMax = 1., maxSteps = 700, newtonOptions = optn,
-	dsmax = 0.01, dsmin = 1e-4, ds = -0.001, detectBifurcation = 3, nev = N, nInversion = 8,
-	maxBisectionSteps = 30, dsminBisection = 1e-10, plotEveryStep = 50)
+  record_from_solution = (x, p) -&gt; (s = sum(x), u2 = x[3], nrm = norm(x)),
+  plot_solution = (x, p; kwargs...) -&gt; plot!(Fun(SinSpace(), x) ; kwargs...),)</code></pre><p>and continuation options</p><pre><code class="language-julia hljs">optn = NewtonPar(verbose = false, tol = 1e-9, max_iterations = 15)
+	optc = ContinuationPar(p_min = 1/150., p_max = 1., max_steps = 700, newton_options = optn,
+	dsmax = 0.01, dsmin = 1e-4, ds = -0.001, detect_bifurcation = 3, nev = N, n_inversion = 8,
+	max_bisection_steps = 30, dsmin_bisection = 1e-10, plot_every_step = 50)
 
 kwargscont = (verbosity = 2, plot = true, normC = norm)</code></pre><h2 id="Computation-of-the-bifurcation-diagram"><a class="docs-heading-anchor" href="#Computation-of-the-bifurcation-diagram">Computation of the bifurcation diagram</a><a id="Computation-of-the-bifurcation-diagram-1"></a><a class="docs-heading-anchor-permalink" href="#Computation-of-the-bifurcation-diagram" title="Permalink"></a></h2><pre><code class="language-julia hljs"># function to adapt continuation option to recursion level
 function optrec(x, p, l; opt = optc)
 	level = l
 	if level &lt;= 2
-		return setproperties(opt;  dsmax = 0.005, maxSteps = 2000,
-		detectBifurcation = 3, detectLoop = true, nInversion = 6)
+		return setproperties(opt;  dsmax = 0.005, max_steps = 2000,
+		detect_bifurcation = 3, detect_loop = true, n_inversion = 6)
 	else
-		return setproperties(opt;  dsmax = 0.005, maxSteps = 2000,
-		detectBifurcation = 3, detectLoop = true, nInversion = 6)
+		return setproperties(opt;  dsmax = 0.005, max_steps = 2000,
+		detect_bifurcation = 3, detect_loop = true, n_inversion = 6)
 	end
 end
 
@@ -64,4 +64,4 @@ diagram = @time bifurcationdiagram(prob, PALC(), 4, optrec;
 		)</code></pre><p>Plotting the result can be done using</p><pre><code class="language-julia hljs">plot(diagram; code = (), plotfold = false,  markersize = 3, putspecialptlegend = false,
 	 plotcirclesbif = true, applytoX = x-&gt;2/x, vars = (:param, :nrm),
 	 xlim = (0,150), ylim=(0,8))
-title!(&quot;#branches = $(size(diagram))&quot;)</code></pre><p><img src="../ks1d-1.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 1 August 2023 16:11">Tuesday 1 August 2023</span>. Using Julia version 1.9.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+title!(&quot;#branches = $(size(diagram))&quot;)</code></pre><p><img src="../ks1d-1.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 22 September 2023 16:24">Friday 22 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
