@@ -71,7 +71,7 @@ solbt.u
 
 ## Newton refinement
 
-Once a Fold / Hopf point has been detected after a call to `br = continuation(...)`, it can be refined using `newton` iterations. Let us say that `ind_bif` is the index in `br.specialpoint` of a Bogdanov-Takens point. This guess can be refined as follows:
+Once a Bogdanov-Takens point has been detected after a call to `br = continuation(...)`, it can be refined using `newton` iterations. Let us say that `ind_bif` is the index in `br.specialpoint` of a Bogdanov-Takens point. This guess can be refined as follows:
 
 ```julia
 outfold = newton(br::AbstractBranchResult, ind_bif::Int;  
@@ -84,7 +84,7 @@ outfold = newton(br::AbstractBranchResult, ind_bif::Int;
 
 For the options parameters, we refer to [Newton](@ref).
 
-It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. Reader interested in this advanced usage should look at the code `example/chan.jl` of the tutorial [Temperature model (Simplest example)](@ref).
+It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. `BifurcationProblem` provide it by default using AD though.
 
 ## Advanced use
 

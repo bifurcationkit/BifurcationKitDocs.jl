@@ -13,9 +13,9 @@ There are three levels of tutorials:
 
 ## ODE examples
 
-We present examples in the case of ODEs. Although `BifurcationKit.jl` is not geared towards them, we provide some specific methods which allow to study the bifurcations of ODE in a relatively efficient way.
+These examples are specific to ODEs. 
 
-### Study of equilibria
+### Computation of equilibria
 
 ```@contents
 Pages = ["ode/tutorialsODE.md","ode/tutorialCO.md","ode/lorenz84.md", "ode/tutorialPP2.md",]
@@ -23,7 +23,8 @@ Depth = 1
 ```
 
 ### Periodic orbits
-Here are some examples more oriented towards the computation of periodic orbits. Here is one for aBS from **period-doubling** bifurcations of periodic orbits
+We provide some examples focused on the computation of periodic orbits.
+Here is one where we present the different ways to compute periodic orbits. 
 ```@contents
 Pages = ["ode/tutorialsODE-PD.md"]
 Depth = 1

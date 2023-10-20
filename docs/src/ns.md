@@ -47,7 +47,19 @@ $$\mathcal{A} v=e^{i \theta} v, \mathcal{A}^{\mathrm{T}} v^*=e^{-i \theta} v^*, 
 
 ## Normal form based on Iooss method
 
-Not implemented.
+This is based on [^Iooss],[^Kuz2]. Suppose that the $T$ periodic orbit $\gamma(\tau)$ has a Neimark-Sacker bifurcation for a parameter value $p$. We also assume that there are no strong resonances.
+Locally, the orbits can be represented by 
+
+$$x(\tau) = \gamma(\tau)+Q_0(\tau)\xi+\Phi(\tau, \xi)$$
+
+where 
+
+$$\left\{\begin{aligned}
+\frac{d \tau}{d t} & =1+a|\xi|^2+\cdots \\
+\frac{d \xi}{d t} & =\frac{i \theta}{T} \xi+d \xi|\xi|^2+\cdots
+\end{aligned}\right.$$
+
+with center manifold correction $\Phi(\tau, \xi)$ being $T$ periodic in $\tau$ and $Q_0(\tau)$ is the Floquet operator.
 
 
 ## References

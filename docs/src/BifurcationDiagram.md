@@ -20,33 +20,38 @@ Thanks to the functionality presented in this part, we can compute the bifurcati
 
 ```@example BDIAG
 using Revise, Plots
-using BifurcationKit, Setfield, ForwardDiff
-const BK = BifurcationKit
+using BifurcationKit, Setfield
 
-FbpSecBif(u, p) = @. -u * (p + u * (2-5u)) * (p -.15 - u * (2+20u))
-dFbpSecBif(x,p) =  ForwardDiff.jacobian( z-> FbpSecBif(z,p), x)
+Fbp(u, p) = @. -u * (p + u * (2-5u)) * (p -.15 - u * (2+20u))
+
 # bifurcation problem
-prob = BifurcationProblem(FbpSecBif, [0.0], -0.2, 
+prob = BifurcationProblem(Fbp, [0.0], -0.2, 
 	# specify the continuation parameter
-	(@lens _), J = dFbpSecBif, record_from_solution = (x, p) -> x[1])
+	(@lens _);
+	record_from_solution = (x, p) -> x[1])
 
-# options for Krylov-Newton
-opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)
+# options for newton
+# we reduce a bit the tolerances to ease automatic branching
+opt_newton = NewtonPar(tol = 1e-9)
 
 # options for continuation
-opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds = 0.01,
-	max_steps = 100, nev = 2, newton_options = opt_newton,
+opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.005, ds = 0.001,
+	newton_options = opt_newton,
+	nev = 1,
 	# parameter interval
-	p_max = 0.4, p_min = -0.5,
+	p_min = -1.0, p_max = .3,
 	# detect bifurcations with bisection method
-	detect_bifurcation = 3, n_inversion = 4, tol_bisection_eigenvalue = 1e-8, dsmin_bisection = 1e-9)
+	# we increase here the precision for the detection of
+	# bifurcation points
+	n_inversion = 8)
 
 diagram = bifurcationdiagram(prob, PALC(),
 	# very important parameter. This specifies the maximum amount of recursion
 	# when computing the bifurcation diagram. It means we allow computing branches of branches 
 	# at most in the present case.
 	2,
-	(args...) -> setproperties(opts_br; p_min = -1.0, p_max = .3, ds = 0.001, dsmax = 0.005, n_inversion = 8, detect_bifurcation = 3, dsmin_bisection =1e-18, max_bisection_steps=20))
+	(args...) -> opts_br,
+)
 	
 # You can plot the diagram like 
 plot(diagram; putspecialptlegend=false, markersize=2, plotfold=false, title = "#branches = $(size(diagram))")
@@ -64,7 +69,7 @@ To show the ability of the branch switching method to cope with non simple branc
 
 ```julia
 using Revise, Plots
-using BifurcationKit, Setfield, ForwardDiff, LinearAlgebra
+using BifurcationKit, Setfield, LinearAlgebra
 const BK = BifurcationKit
 
 function FbpD6(x, p)
@@ -77,17 +82,23 @@ end
 pard6 = (μ = -0.2, a = 0.3, b = 1.5, c = 2.9)
 
 # problem
-prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@lens _.μ); J = (x, p) -> ForwardDiff.jacobian(z -> FbpD6(z, p), x))
+prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@lens _.μ);
+		record_from_solution = (x, p) -> (n = norminf(x)))
 
 # newton options
 opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)
 
 # continuation options
-opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds = 0.01, p_max = 0.4, p_min = -0.5, detect_bifurcation = 2, nev = 2, newton_options = opt_newton, max_steps = 100, n_inversion = 4, tol_bisection_eigenvalue = 1e-8, dsmin_bisection = 1e-9)
+opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds = 0.01, 
+	# parameter interval
+	p_max = 0.4, p_min = -0.5, 
+	nev = 3, 
+	newton_options = opt_newton, 
+	max_steps = 1000, 
+	n_inversion = 4)
 
 bdiag = bifurcationdiagram(prob, PALC(), 3,
 	(args...) -> setproperties(opts_br; p_min = -0.250, p_max = .4, ds = 0.001, dsmax = 0.005, n_inversion = 4, detect_bifurcation = 3, max_bisection_steps=20, newton_options = opt_newton);
-	record_from_solution = (x, p) -> norminf(x),
 	normC = norminf)
 ```
 
@@ -106,7 +117,7 @@ plot(bdiag; putspecialptlegend =false, markersize=2, plotfold=false, title="#bra
  Finally, you can resume the computation of the bifurcation diagram if not complete by using the syntax
  
 ```julia
- bifurcationdiagram!(jet...,
+ bifurcationdiagram!(
 	# this resume the computation of the diagram from the 2nd node
 	# bdiag is written inplace
 	get_branch(bdiag, (2,)), (current = 3, maxlevel = 6), 

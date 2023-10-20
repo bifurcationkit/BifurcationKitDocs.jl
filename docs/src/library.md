@@ -181,11 +181,11 @@ getperiod
 ```
 
 ```@docs
-getAmplitude
+getamplitude
 ```
 
 ```@docs
-getMaximum
+getmaximum
 ```
 
 ```@docs

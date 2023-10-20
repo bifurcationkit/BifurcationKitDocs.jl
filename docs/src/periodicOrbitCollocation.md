@@ -2,8 +2,8 @@
 
 We compute `Ntst` time slices of a periodic orbit using orthogonal collocation. This is implemented in the structure `PeriodicOrbitOCollProblem`.
 
-!!! warning "Large scale"
-    The current implementation is not yet optimized for large scale problems. This will be improved in the future.    
+!!! tip "Large scale"
+    The current implementation is optimized for ODE and for large scale problems for which the jacobian is sparse.     
 
 The general method is very well exposed in [^Dankowicz],[^Doedel] and we adopt the notations of [^Dankowicz]. However our implementation is based on [^Doedel] because it is more economical (less equations) when it enforces the continuity of the solution.
 
@@ -73,11 +73,28 @@ BifurcationKit.POSolution
 
 ## Mesh adaptation
     
-The goal of this method[^Russell] is to adapt the mesh $\tau_i$ in order to minimize the error.
+The goal of this method[^Russell] is to adapt the mesh $\tau_i$ in order to minimize the error. It is particularly helpful near homoclinic solutions where the period diverge. It can also be useful in order to use a smaller $N_{tst}$.
 
 ## Encoding of the functional
 
 The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@ref). See the link for more information, in particular on how to access the underlying functional, its jacobian...
+
+## Jacobian and linear solvers
+
+We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the arguement `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal solvers and jacobian are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+
+### 1. `AutoDiffDenseAnalytical()`
+The jacobian is computed with an analytical formula, works for dense matrices. This is the default algorithm.
+
+### 2. `AutoDiffDense()`
+The jacobian is computed with automatic differentiation, works for dense matrices. Can be used for debugging.
+
+### 3. `FullSparse()`
+The jacobian is computed with an analytical formula, works for sparse matrices.
+
+### 3. `FullSparseInplace()`
+The jacobian is computed with an analytical formula when the sparsity of the jacobian of the vector field is constant. This is much faster than `FulSparse()`.
+
 
 ## Floquet multipliers computation
 
@@ -93,17 +110,17 @@ These methods allow to detect bifurcations of periodic orbits. It seems to work 
 
 ## Computation with `newton`
 
-We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `jacobianPO` to select one of the many ways to deal with the jacobian of the above problem. The default solver `jacobianPO` is `:autodiffDense`.
-
-The docs for this specific `newton` are located at [`newton`](@ref).
-
 ```@docs
 newton(prob::PeriodicOrbitOCollProblem, orbitguess, options::NewtonPar; kwargs...)
 ```
 
+We provide a simplified call to `newton` to locate the periodic orbits. `newton` will look for `prob.jacobian` in order to select the requested way to compute the jacobian.
+
+The docs for this specific `newton` are located at [`newton`](@ref).
+
 ## Continuation
 
-We refer to [`continuation`](@ref) for more information regarding the arguments.
+We refer to [`continuation`](@ref) for more information regarding the arguments. `continuation` will look for `prob.jacobian` in order to select the requested way to compute the jacobian.
 
 ## References
 

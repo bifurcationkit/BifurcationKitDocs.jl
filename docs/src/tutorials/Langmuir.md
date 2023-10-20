@@ -106,7 +106,6 @@ Flgvf(x, p, t = 0) = Flgvf!(similar(x), x, p, t)
 	return J
 end
 
-# It will prove useful to have access to higher derivatives as well
 # we thus define a bifurcation problem
 prob  = BifurcationProblem(Flgvf, 0X .-0.9, par, (@lens _.ν );
 		J = JanaSP,
@@ -123,9 +122,8 @@ We call the Krylov-Newton method to find a stationary solution. Note that for th
 
 ```@example TUTLangmuir
 # newton iterations to refine the guess
-opt_new = NewtonPar(tol = 1e-9, verbose = true, max_iterations = 50)
+opt_new = NewtonPar(tol = 1e-9, verbose = true, max_iterations = 10)
 out = newton(prob, opt_new)
-out = @time newton(prob, opt_new)
 nothing #hide
 ```
 
@@ -139,9 +137,10 @@ We then continue the previous guess and find this very nice folded structure wit
 # careful here, in order to use Arpack.eig, you need rather big space
 # or compute ~100 eigenvalues
 opts_cont = ContinuationPar(
-	dsmin = 1e-5, dsmax = 0.04, ds= -0.001, p_min = -0.01, p_max = 10.1,
-	a = 0.75, plot_every_step = 30, max_steps = 600,
-	newton_options = setproperties(opt_new; tol = 1e-9, max_iterations = 10, verbose = false),
+	p_min = -0.01, p_max = 10.1,
+	dsmin = 1e-5, dsmax = 0.04, ds= -0.001,
+	a = 0.75, max_steps = 600,
+	newton_options = setproperties(opt_new; verbose = false),
 	nev = 10, save_eigenvectors = true, tol_stability = 1e-5, detect_bifurcation = 3,
 	dsmin_bisection = 1e-8, max_bisection_steps = 15, n_inversion = 6, tol_bisection_eigenvalue = 1e-9, save_sol_every_step = 50)
 

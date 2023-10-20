@@ -7,9 +7,9 @@ Depth = 2
 
 In this page, we explain how to perform continuation of Fold / Hopf points and detect the associated bifurcations.
 
-For this to work best, it is advised to have an analytical expression for the jacobian. See the tutorial [Temperature model (Simplest example)](@ref) for more details.
+For this to work best, it is advised to have an analytical expression for the jacobian. See the tutorial [Temperature model (Simplest example)](@ref) for more details although `BifurcationProblem` implement it with AD by default.
 
-A quite complete example for detection of codim 2 bifurcations of equilibria is [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) although it is for ODEs.
+A quite complete example for detection of codim 2 bifurcations of equilibria is [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz).
 
 ### List of detected codim 2 bifurcation points
 |Bifurcation|symbol used|
@@ -136,7 +136,7 @@ newtonFold
 ```
 
 ```@docs
-newtonHopf
+newton_hopf
 ```
 
 
@@ -145,7 +145,7 @@ continuationFold
 ```
 
 ```@docs
-continuationHopf
+continuation_hopf
 ```
 
 ## Algorithmic details (Fold)

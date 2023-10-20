@@ -6,11 +6,11 @@ It incorporates continuation algorithms (PALC, deflated continuation, ...) based
 
 > Despite initial focus on large scale problems, the package can easily handle low dimensional problems.
 
-By leveraging on the above method, the package can also seek for periodic orbits of Cauchy problems by casting them into an equation $F(u,p)=0$ of high dimension. **It is by now, one of the only softwares which provides shooting methods AND methods based on finite differences or collocation to compute periodic orbits.**
+The package can also seek for periodic orbits of Cauchy problems by casting them into an equation $F(u,p)=0$ of high dimension. **It is by now, one of the only softwares which provides shooting methods AND methods based on finite differences or collocation to compute periodic orbits.**
 
-The current package focuses on large scale nonlinear problems and multiple hardwares. Hence, the goal is to use Matrix Free methods on **GPU** (see [PDE example](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials2b/#d-Swift-Hohenberg-equation-(non-local)-on-the-GPU,-periodic-BC-(Advanced)) and [Periodic orbit example](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Continuation-of-periodic-orbits-on-the-GPU-(Advanced))) or on a **cluster** to solve non linear PDE, nonlocal problems, compute sub-manifolds...
+Hence, large scale nonlinear problems and different hardwares are possible. The goal is to use Matrix Free methods on **GPU** (see [PDE example](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials2b/#d-Swift-Hohenberg-equation-(non-local)-on-the-GPU,-periodic-BC-(Advanced)) and [Periodic orbit example](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Continuation-of-periodic-orbits-on-the-GPU-(Advanced))) or on a **cluster** to solve non linear PDE, nonlocal problems, compute sub-manifolds...
 
-One design choice is that we try not to require `u` to be a subtype of an `AbstractArray` as this would forbid the use of spectral methods like the one from `ApproxFun.jl`. For now, our implementation does not allow this for Hopf continuation and computation of periodic orbits.
+One design choice is that we try not to require `u` to be a subtype of an `AbstractArray` as this would forbid the use of spectral methods like the one from `ApproxFun.jl`. For now, our implementation does not allow this for all methods of the package.
 
 ## Installation
 
@@ -64,16 +64,12 @@ Needless to say, if you use regular arrays, you don't need to worry about what f
 
 We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](https://jutho.github.io/KrylovKit.jl/stable/#Package-features-and-alternatives-1) for more information. We additionally require the following methods to be available:
 
-- `Base.length(x)`: it is used in the constraint equation of the pseudo arclength continuation method (see [`continuation`](@ref) for more details). If `length` is not available for your "vector", define it `length(x) = 1` and adjust tuning the parameter `theta` in `ContinuationPar`.
+- `Base.length(x)`: it is used in the constraint equation of the pseudo arclength continuation method (see [`continuation`](@ref) for more details). If `length` is not available for your "vector", define it `length(x) = 1` and adjust tuning the parameter `θ` in `PALC`.
 - `Base.copyto!(dest, in)` this is required to reduce the allocations by avoiding too many copies
 - `Base.eltype` must be extended to your vector type. It is mainly used for branching.
 
 ## Citations
 The papers citing this work are collected on [google scholar](https://scholar.google.fr/scholar?hl=fr&as_sdt=2005&cites=159498619004863176%2C8662907770106865595&scipsc=&as_ylo=&as_yhi=).
-
-## References
-
-[^Rankin]:> J. Rankin et al., "Continuation of localized coherent structures in nonlocal neural field equations", SIAM J. Scientific Computing 36, pp. B70–B93 (2014): https://epubs.siam.org/doi/10.1137/130918721
 
 ## Reproducibility
 ```@raw html
@@ -129,3 +125,7 @@ link = "https://github.com/bifurcationkit/"*name*".jl/tree/gh-pages/v"*version*"
 ```@raw html
 ">project</a> file.
 ```
+
+## References
+
+[^Rankin]:> J. Rankin et al., "Continuation of localized coherent structures in nonlocal neural field equations", SIAM J. Scientific Computing 36, pp. B70–B93 (2014): https://epubs.siam.org/doi/10.1137/130918721
