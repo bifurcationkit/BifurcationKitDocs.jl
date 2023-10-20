@@ -91,7 +91,7 @@ It is important to note that for improved performances, a function implementing 
 Here, we expose the solvers that are used to perform newton refinement. This is useful in case it is too involved to expose the linear solver options.
 
 ```@docs
-BifurcationKit.newtonBT
+BifurcationKit.newton_bt
 ```
 
 ## References
