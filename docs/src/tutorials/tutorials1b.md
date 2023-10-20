@@ -1,4 +1,4 @@
-# Temperature model with `ApproxFun`, no `AbstractArray` (intermediate)
+# 🟡 Temperature model with `ApproxFun`, no `AbstractArray`
 
 ```@contents
 Pages = ["tutorials1b.md"]

@@ -1,4 +1,4 @@
-# 2d Swift-Hohenberg equation (non-local) on the GPU, periodic BC (Advanced)
+# 🟠 2d Swift-Hohenberg equation (non-local) on the GPU, periodic BC
 
 ```@contents
 Pages = ["tutorials2b.md"]

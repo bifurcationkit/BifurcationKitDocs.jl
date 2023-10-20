@@ -1,4 +1,4 @@
-# Steinmetz-Larter model
+# 🟠 Steinmetz-Larter model
 
 ```@contents
 Pages = ["steinmetz.md"]

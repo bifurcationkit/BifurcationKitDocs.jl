@@ -1,4 +1,4 @@
-# 1d Swift-Hohenberg equation (Automatic)
+# 🟡 1d Swift-Hohenberg equation (Automatic)
 
 ```@contents
 Pages = ["Swift-Hohenberg1d.md"]

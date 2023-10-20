@@ -1,4 +1,4 @@
-# Fronts in 1d autocatalytic model (Automatic)
+# 🟠 Fronts in 1d autocatalytic model (Automatic)
 
 ```@contents
 Pages = ["autocatalyticAuto.md"]

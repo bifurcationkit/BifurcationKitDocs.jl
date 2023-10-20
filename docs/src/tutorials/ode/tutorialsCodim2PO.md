@@ -1,4 +1,4 @@
-# Periodic predator-prey model
+# 🟠 Periodic predator-prey model
 
 ```@contents
 Pages = ["tutorialsCodim2PO.md"]

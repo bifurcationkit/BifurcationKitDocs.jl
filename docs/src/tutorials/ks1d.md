@@ -1,4 +1,4 @@
-# 1d Kuramoto–Sivashinsky Equation
+# 🟢 1d Kuramoto–Sivashinsky Equation
 
 ```@contents
 Pages = ["ks1d.md"]

@@ -1,4 +1,4 @@
-# 2d Bratu–Gelfand problem with [Gridap.jl](https://github.com/gridap/Gridap.jl) (Intermediate)
+# 🟡 2d Bratu–Gelfand problem with [Gridap.jl](https://github.com/gridap/Gridap.jl)
 
 ```@contents
 Pages = ["mittelmannGridap.md"]

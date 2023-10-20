@@ -1,4 +1,4 @@
-# Period doubling in the Barrio-Varea-Aragon-Maini model
+# 🟡 Period doubling in the Barrio-Varea-Aragon-Maini model
 
 ```@contents
 Pages = ["tutorialsPD.md"]

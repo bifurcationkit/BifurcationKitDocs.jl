@@ -1,4 +1,4 @@
-# 2d generalized Bratu–Gelfand problem
+# 🟤 2d generalized Bratu–Gelfand problem
 
 ```@contents
 Pages = ["mittelmann.md"]

@@ -1,4 +1,4 @@
-# Modulated fronts in 1d autocatalytic model (Manual)
+# 🟤 Modulated fronts in 1d autocatalytic model (Manual)
 
 ```@contents
 Pages = ["autocatalytic.md"]

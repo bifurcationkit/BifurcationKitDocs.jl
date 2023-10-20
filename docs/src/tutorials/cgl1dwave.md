@@ -1,4 +1,4 @@
-# 1d Ginzburg-Landau equation (TW)
+# 🟤 1d Ginzburg-Landau equation (TW)
 
 ```@contents
 Pages = ["cgl1dwave.md"]

@@ -1,4 +1,4 @@
-# 2d Swift-Hohenberg equation: snaking, Finite Differences
+# 🟡 2d Swift-Hohenberg equation: snaking, Finite Differences
 
 ```@contents
 Pages = ["tutorials2.md"]

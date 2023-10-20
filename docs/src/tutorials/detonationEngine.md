@@ -1,4 +1,4 @@
-# Detonation engine
+# 🟠 Detonation engine
 
 ```@contents
 Pages = ["detonationEngine.md"]

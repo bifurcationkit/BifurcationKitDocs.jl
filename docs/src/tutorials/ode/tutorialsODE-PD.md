@@ -1,4 +1,4 @@
-# Period doubling in Lur'e problem (PD aBS)
+# 🟡 Period doubling in Lur'e problem (PD aBS)
 
 ```@contents
 Pages = ["tutorialsODE-PD.md"]

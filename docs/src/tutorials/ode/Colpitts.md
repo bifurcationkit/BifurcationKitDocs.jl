@@ -1,4 +1,4 @@
-# Colpitts–type Oscillator (Intermediate)
+# 🟡 Colpitts–type Oscillator
 
 ```@contents
 Pages = ["Colpitts.md"]

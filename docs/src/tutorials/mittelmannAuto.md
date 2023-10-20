@@ -1,4 +1,4 @@
-# Automatic diagram of 2d Bratu–Gelfand problem (Intermediate)
+# 🟡 Automatic diagram of 2d Bratu–Gelfand problem
 
 ```@contents
 Pages = ["mittelmannAuto.md"]

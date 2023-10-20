@@ -1,4 +1,4 @@
-# 3d Swift-Hohenberg equation, Finite differences
+# 🟠 3d Swift-Hohenberg equation, Finite differences
 
 ```@contents
 Pages = ["tutorialsSH3d.md"]

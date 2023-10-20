@@ -1,4 +1,4 @@
-# Neural mass equation - MTK
+# 🟢 Neural mass equation - MTK
 
 
 ```@contents

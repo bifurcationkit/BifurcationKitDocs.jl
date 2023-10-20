@@ -1,5 +1,4 @@
-# Brusselator 1d with periodic BC using `FourierFlows.jl` (experienced user)
-
+# 🟠 Brusselator 1d with periodic BC using `FourierFlows.jl`
 ```@contents
 Pages = ["BrusselatorFF.md"]
 Depth = 3
