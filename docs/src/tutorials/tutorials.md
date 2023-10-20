@@ -5,11 +5,19 @@ Pages = ["tutorials.md"]
 Depth = 2
 ```
 
-There are three levels of tutorials:
+The tutorials are rated by the following scale of difficulty
 
-1. fully **automatic bifurcation diagram** (**aBD**) computation (only for equilibria): one uses the function `bifurcationdiagram` and let it compute the diagram fully automatically. Another possibility is to use **deflated continuation**.
+1. 🟢 basic knowledge of (numerical) bifurcation theory (following equilibria / periodic orbits)
+2. 🟡 advanced knowledge of (numerical) bifurcation theory (codim 2 bifurcations of equilibria)
+2. 🟠 high level of knowledge of (numerical) bifurcation theory (codim 2 bifurcations of periodic orbits, tweaking the methods)
+2. 🟤 very advanced tutorial, research level
+
+There are three levels of automatization of the computation in these tutorials:
+
+1. fully **automatic bifurcation diagram** (**aBD**) computation (only for equilibria): one uses `bifurcationdiagram` and let it compute the diagram fully automatically. Another possibility is to use **deflated continuation**.
 2. semi-automatic bifurcation diagram computation: one uses **automatic branch switching** (**aBS**) to compute branches at specified bifurcation points
 3. manual bifurcation diagram computation: one does not use automatic branch switching. This has only educational purposes or for complex problems where aBS fails.
+
 
 ## ODE examples
 
@@ -18,13 +26,27 @@ These examples are specific to ODEs.
 ### Computation of equilibria
 
 ```@contents
-Pages = ["ode/tutorialsODE.md","ode/tutorialCO.md","ode/lorenz84.md", "ode/tutorialPP2.md",]
+Pages = ["ode/tutorialsBasic1.md", "ode/tutorials1.md", "ode/tutorialPP2.md",]
+Depth = 1
+```
+
+### Codimension 2 bifurcations of equilibria
+
+```@contents
+Pages = ["ode/tutorialCO.md","ode/lorenz84.md",]
 Depth = 1
 ```
 
 ### Periodic orbits
 We provide some examples focused on the computation of periodic orbits.
 Here is one where we present the different ways to compute periodic orbits. 
+
+```@contents
+Pages = ["ode/tutorialsODE.md"]
+Depth = 1
+```
+
+Here is one for aBS from **period-doubling** bifurcations of periodic orbits
 ```@contents
 Pages = ["ode/tutorialsODE-PD.md"]
 Depth = 1
@@ -55,8 +77,8 @@ Depth = 1
 
 Based on the package [HclinicBifurcationKit.jl](https://github.com/bifurcationkit/HclinicBifurcationKit.jl) and its [docs](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/).
 
-- [Autonomous electronic circuit (aBS from BT)](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/tutorialsFreire/#Autonomous-electronic-circuit-(aBS-from-BT))
-- [Nonlinear laser model](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/OPL/#Nonlinear-laser-model)
+- 🟡 [Autonomous electronic circuit (aBS from BT)](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/tutorialsFreire/#Autonomous-electronic-circuit-(aBS-from-BT))
+- 🟡 [Nonlinear laser model](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/OPL/#Nonlinear-laser-model)
 
 ## DAE examples
 
