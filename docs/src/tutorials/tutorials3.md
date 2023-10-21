@@ -1,4 +1,4 @@
-# 🟡 1d Brusselator (automatic)
+# 🟡 [1d Brusselator (automatic)](@id brusauto)
 
 ```@contents
 Pages = ["tutorials3.md"]

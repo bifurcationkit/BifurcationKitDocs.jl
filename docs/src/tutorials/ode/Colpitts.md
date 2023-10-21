@@ -188,7 +188,7 @@ scene = plot(solFreez, vars = [2], xlims=(195,200), title="μ = $(probFreez_ode.
 ```
 
 
-## References
+## References 
 
 [^Rabier]:> Rabier, Patrick J. “The Hopf Bifurcation Theorem for Quasilinear Differential-Algebraic Equations.” Computer Methods in Applied Mechanics and Engineering 170, no. 3–4 (March 1999): 355–71. https://doi.org/10.1016/S0045-7825(98)00203-5.
 

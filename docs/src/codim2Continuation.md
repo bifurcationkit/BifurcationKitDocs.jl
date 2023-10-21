@@ -7,7 +7,7 @@ Depth = 2
 
 In this page, we explain how to perform continuation of Fold / Hopf points and detect the associated bifurcations.
 
-For this to work best, it is advised to have an analytical expression for the jacobian. See the tutorial [Temperature model (Simplest example)](@ref) for more details although `BifurcationProblem` implement it with AD by default.
+For this to work best, it is advised to have an analytical expression for the jacobian. See the tutorial [Temperature model](@ref temperature) for more details although `BifurcationProblem` implement it with AD by default.
 
 A quite complete example for detection of codim 2 bifurcations of equilibria is [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz).
 
@@ -110,7 +110,7 @@ outfold = newton(br::AbstractBranchResult, ind_bif::Int;
 
 For the options parameters, we refer to [Newton](@ref).
 
-It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. Reader interested in this advanced usage should look at the code `example/chan.jl` of the tutorial [Temperature model (Simplest example)](@ref).
+It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. Reader interested in this advanced usage should look at the code `example/chan.jl` of the tutorial [Temperature model](@ref temperature).
 
 ## Codim 2 continuation
 
@@ -125,7 +125,7 @@ To compute the codim 2 curve of Fold / Hopf points, one can call [`continuation`
 where the options are as above except with have an additional parameter axis `lens2` which is used to locate the bifurcation points.
 
 
-See [Temperature model (Simplest example)](@ref) for an example of use.
+See [Temperature model](@ref temperature) for an example of use.
 
 ## Advanced use
 

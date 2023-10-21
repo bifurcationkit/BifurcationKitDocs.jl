@@ -146,7 +146,7 @@ newton(prob::BifurcationKit.AbstractShootingProblem,
 
 Have a look at the [Continuation of periodic orbits (Standard Shooting)](@ref) example for the Brusselator.
 
-In order to plot the orbit during continuation, one has to recompute the orbit inside a `plotSolution` function passed to `continuation`. This is simplified by the function `get_periodic_orbit` which returns a solution to be plotted. We refer to [Period doubling in Lur'e problem (PD aBS)](@ref) for an example of use.
+In order to plot the orbit during continuation, one has to recompute the orbit inside a `plotSolution` function passed to `continuation`. This is simplified by the function `get_periodic_orbit` which returns a solution to be plotted. We refer to [Period doubling in Lur'e problem](@ref pdlure) for an example of use.
 
 The docs for this specific `continuation` are located at [`continuation`](@ref).
 

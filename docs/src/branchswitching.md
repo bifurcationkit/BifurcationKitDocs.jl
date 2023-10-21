@@ -28,7 +28,7 @@ You can perform automatic branch switching by calling `continuation` with the fo
 continuation(br::ContResult, ind_bif::Int, optionsCont::ContinuationPar; kwargs...)
 ```
 
-where `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled. This call computes the branch bifurcating from the `ind_bif `th bifurcation point in `br`. An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
+where `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled. This call computes the branch bifurcating from the `ind_bif `th bifurcation point in `br`. An example of use is provided in [2d Bratu–Gelfand problem](@ref gelfand).
 
 > See [Branch switching (branch point)](@ref) precise method definition
 
@@ -72,7 +72,7 @@ continuation(br::ContResult, ind_bif::Int, optionsCont::ContinuationPar;
 	kwargs...)
 ```
 
-An example of use is provided in [2d generalized Bratu–Gelfand problem](@ref).
+An example of use is provided in [2d Bratu–Gelfand problem](@ref gelfand).
 
 > See [Branch switching (branch point)](@ref) for the precise method definition
 
@@ -100,7 +100,7 @@ We refer to [`continuation`](@ref) for more information about the arguments. Her
 
 - For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `ShootingProblem(M, odeprob, Euler())` or `PoincareShootingProblem(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
 
-Several examples are provided in [1d Brusselator (automatic)](@ref) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl).
+Several examples are provided in [Brusselator](@ref brusauto) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl).
 
 > See [Branch switching (Hopf point)](@ref) for the precise method definition
 
@@ -110,7 +110,7 @@ We do not provide (for now) the automatic branching procedure for these bifurcat
 
 We provide the branching method for the following methods to compute periodic orbits: [`PeriodicOrbitTrapProblem`](@ref),[`ShootingProblem`](@ref) and [`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching.
 
-An example of use is provided in [Period doubling in Lur'e problem (PD aBS)](@ref).
+An example of use is provided in [Period doubling in Lur'e problem](@ref pdlure).
 
 ```julia
 continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;

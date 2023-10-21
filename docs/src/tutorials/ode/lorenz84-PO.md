@@ -11,7 +11,7 @@ In this tutorial, we study the extended Lorenz-84 model which is also treated in
 - NS of periodic orbits from ZH bifurcation point
 - NS of periodic orbits from HH bifurcation point.
 
-> As this model has been studied in this [tutorial](@ref lorenz), we do not give much details and refer to the corresponding tutorial to get the 2 parameters curves of Hopf / Fold bifurcations.
+> As this model has been studied in this [tutorial](@ref lorenz), we do not give much details and refer to the corresponding tutorial to get the 2 parameters curves of Hopf / Fold bifurcations. 
 
 The model is as follows
 

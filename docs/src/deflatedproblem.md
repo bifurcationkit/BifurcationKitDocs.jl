@@ -20,13 +20,13 @@ A composite type [`DeflationOperator`](@ref) implements this functional. Given a
 
 > the `dot` argument in `DeflationOperator` lets you specify a dot product from which the norm is derived in the expression of $M$.
 
-See example [Snaking computed with deflation](@ref).
+See example [Snaking computed with deflation](@ref sh2dfd).
 
 Note that you can add new solution `x0` to `M` by doing `push!(M, x0)`. Also `M[i]` returns `xi`.
 
 ## Computation with `newton`
 
-Most newton functions can be used with a deflated problem, see for example [Snaking computed with deflation](@ref). The idea is to pass the deflation operator `M`. For example, we have the following overloaded method, which works on GPUs:
+Most newton functions can be used with a deflated problem, see for example [Snaking computed with deflation](@ref sh2dfd). The idea is to pass the deflation operator `M`. For example, we have the following overloaded method, which works on GPUs:
 
 ```julia
 newton(prob::BifurcationKit.AbstractBifurcationProblem,

@@ -1,4 +1,4 @@
-# 🟢 2d Ginzburg-Landau equation (Shooting)
+# 🟢 [2d Ginzburg-Landau equation (Shooting)](@id cglshoot)
 
 ```@contents
 Pages = ["tutorialsCGLShoot.md"]

@@ -9,7 +9,7 @@ See [`DefCont`](@ref) for more information.
 
 However, unlike the regular continuation method, deflated continuation allows to compute **disconnected** bifurcation diagrams, something that is impossible for our [Automatic Bifurcation diagram computation](@ref) which is limited to the connected component of the initial point.
 
-You can find an example of use of the method in [Deflated Continuation in the Carrier Problem](@ref). We reproduce below the result of the computation which shows various disconnected components arising form Fold bifurcations that  are found seemingly by the method.
+You can find an example of use of the method in [Carrier Problem](@ref carrier). We reproduce below the result of the computation which shows various disconnected components arising form Fold bifurcations that  are found seemingly by the method.
 
 ![](carrier.png)
 

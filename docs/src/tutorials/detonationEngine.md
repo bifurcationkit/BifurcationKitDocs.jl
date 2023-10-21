@@ -1,4 +1,4 @@
-# 🟠 Detonation engine
+# 🟠 [Detonation engine](@id detonation)
 
 ```@contents
 Pages = ["detonationEngine.md"]

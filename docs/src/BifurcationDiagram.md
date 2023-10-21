@@ -65,7 +65,7 @@ diagram
 
 ## Example with nonsimple branch points
 
-To show the ability of the branch switching method to cope with non simple branch points, we look at the normal form of the Pitchfork with D6 symmetry which occurs frequently in problems with hexagonal symmetry. You may want to look at [Automatic diagram of 2d Bratu–Gelfand problem (Intermediate)](@ref) for a non trivial example of use.
+To show the ability of the branch switching method to cope with non simple branch points, we look at the normal form of the Pitchfork with D6 symmetry which occurs frequently in problems with hexagonal symmetry. You may want to look at [Bratu–Gelfand problem](@ref gelfandauto) for a non trivial example of use.
 
 ```julia
 using Revise, Plots

@@ -1,4 +1,4 @@
-# 🟡 Neural mass equation (Hopf aBS)
+# 🟡 [Neural mass equation (Hopf aBS)](@id nmepo)
 
 ```@contents
 Pages = ["tutorialsODE.md"]

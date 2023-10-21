@@ -49,5 +49,5 @@ sol = newton(prob, NewtonPar(verbose = true))
 
 ## Example
 
-The (basic) tutorial [Temperature model (Simplest example)](@ref) presents all cases (direct and iterative ones).
+The (basic) tutorial [Temperature model](@ref temperature) presents all cases (direct and iterative ones).
 

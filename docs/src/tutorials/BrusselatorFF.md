@@ -245,5 +245,5 @@ which leads to
 ![](bruFFcont.png)
 
 
-## Reference(s)
+## References
 [^Tzou]:> Tzou, J. C., Y.-P. Ma, A. Bayliss, B. J. Matkowsky, and V. A. Volpert. **Homoclinic Snaking near a Codimension-Two Turing-Hopf Bifurcation Point in the Brusselator Model.**” Physical Review E 87, no. 2 (February 14, 2013): 022908. https://doi.org/10.1103/PhysRevE.87.022908.

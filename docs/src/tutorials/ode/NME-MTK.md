@@ -6,7 +6,7 @@ Pages = ["NME-MTK.md"]
 Depth = 3
 ```
 
-In this tutorial, we study the following model taken from [^Cortes]. It is essentially the same tutorial as in [Neural mass equation (Hopf aBS)](@ref) but treated with [ModelingToolkit.jl](https://mtk.sciml.ai/stable/).
+In this tutorial, we study the following model taken from [^Cortes]. It is essentially the same tutorial as in [Neural mass equation](@ref nmepo) but treated with [ModelingToolkit.jl](https://mtk.sciml.ai/stable/).
 
 $$\left\{\begin{array}{l}
 \tau \dot{E}=-E+g\left(J u x E+E_{0}\right) \\

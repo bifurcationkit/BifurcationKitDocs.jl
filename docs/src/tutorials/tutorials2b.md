@@ -1,4 +1,4 @@
-# 🟠 2d Swift-Hohenberg equation (non-local) on the GPU, periodic BC
+# 🟠 [2d Swift-Hohenberg equation (non-local) on the GPU](@id sh2dgpu)
 
 ```@contents
 Pages = ["tutorials2b.md"]
@@ -11,7 +11,7 @@ Here we give an example where the continuation can be done **entirely** on the G
 !!! info "Why this example?"
     This is not the simplest GPU example because we need a preconditioned linear solver and shift-invert eigen solver for this problem. On the other hand, you will be shown how to set up your own linear/eigen solver.
 
-We choose the 2d Swift-Hohenberg as an example and consider a larger grid. See [2d Swift-Hohenberg equation: snaking, Finite Differences](@ref) for more details. Solving the sparse linear problem in $v$
+We choose the 2d Swift-Hohenberg as an example and consider a larger grid. See [2d Swift-Hohenberg equation](@ref sh2dfd) for more details. Solving the sparse linear problem in $v$
 
 $$-(I+\Delta)^2 v+(l +2\nu u-3u^2)v = rhs$$
 

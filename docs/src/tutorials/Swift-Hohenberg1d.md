@@ -1,4 +1,4 @@
-# 🟡 1d Swift-Hohenberg equation (Automatic)
+# 🟡 [1d Swift-Hohenberg equation (Automatic)](@id sh1d)
 
 ```@contents
 Pages = ["Swift-Hohenberg1d.md"]
@@ -174,4 +174,4 @@ plot(diagram; code = (1,), plotfold = false,  markersize = 2, putspecialptlegend
 
 ![](BDSH1d-1.png)
 
-## References
+## References 

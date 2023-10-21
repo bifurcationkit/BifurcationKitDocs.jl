@@ -1,4 +1,4 @@
-# 🟡 Temperature model (codim 2)
+# 🟡 [Temperature model (codim 2)](@id temperature)
 
 ```@contents
 Pages = ["tutorials1.md"]

@@ -5,7 +5,7 @@ Pages = ["tutorials1b.md"]
 Depth = 3
 ```
 
-We reconsider the example [Temperature model (Simplest example)](@ref) by relying on the package `ApproxFun.jl` which allows very precise function approximation. This is an interesting example because we have to change the scalar product of [PALC](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/PALC/) for the method to work well.
+We reconsider the example [Temperature model](@ref temperature) by relying on the package `ApproxFun.jl` which allows very precise function approximation. This is an interesting example because we have to change the scalar product of [PALC](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/PALC/) for the method to work well.
 
 > This is one example where the state space, the space of solutions to the nonlinear equation, is not a subtype of `AbstractArray`. See [Requested methods for Custom State](@ref) for more informations.
 

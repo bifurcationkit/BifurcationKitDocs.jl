@@ -1,4 +1,4 @@
-# 🟠 1d Langmuir–Blodgett transfer model
+# 🟠 [1d Langmuir–Blodgett transfer model](@id langmuir)
 
 In this tutorial, we try to replicate some of the results of the amazing paper [^Köpf]. This example is quite a marvel in the realm of bifurcation analysis, featuring a harp-like bifurcation diagram. The equations of the thin film are as follows:
 

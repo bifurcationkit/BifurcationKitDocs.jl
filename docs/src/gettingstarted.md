@@ -33,7 +33,7 @@ prob = BifurcationProblem(F, [-2.], (μ = -1.,), (@lens _.μ);
         record_from_solution = (x,p) -> (x = x[1]))
 ```
 
-Note that BifurcationKit.jl will choose the types for the problem based on the types used to define the problem type. For our example, notice that `u0` is a `Vector{Float64}`, and therefore this will solve with the dependent variables being `Vector{Float64}`. You can use this to choose to solve with `Float32` for example to run this on the GPU (see [example]()).
+Note that BifurcationKit.jl will choose the types for the problem based on the types used to define the problem type. For our example, notice that `u0` is a `Vector{Float64}`, and therefore this will solve with the dependent variables being `Vector{Float64}`. You can use this to choose to solve with `Float32` for example to run this on the GPU (see [example](@ref sh2dgpu)).
 
 You can customize a few scalar indicators for each step (for example if you don't want to save all solutions) by providing a function `record_from_solution`. You can also control how the solution is plotted during a continuation run by providing a function `plot_solution`. This is especially useful when studying PDE for example.
 
@@ -117,7 +117,7 @@ plot(br)
 scene = plot(br) #hide
 ```
 
-## Example 2: solving the transcritical equation
+## Example 2: simple branching
 
 In this example, we will solve the equation
 

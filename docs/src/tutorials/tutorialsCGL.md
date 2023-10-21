@@ -1,4 +1,4 @@
-# 🟠 2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@id cgl)
+# 🟠 [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@id cgl)
 
 ```@contents
 Pages = ["tutorialsCGL.md"]
