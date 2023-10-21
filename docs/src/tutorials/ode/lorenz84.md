@@ -1,4 +1,4 @@
-# 🟡 [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@id lorenz)
+# [🟡 Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@id lorenz)
 
 
 ```@contents

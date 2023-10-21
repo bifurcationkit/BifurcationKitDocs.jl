@@ -1,4 +1,4 @@
-# 🟠 [3d Swift-Hohenberg equation, Finite differences](@id sh3d)
+# [🟠 3d Swift-Hohenberg equation, Finite differences](@id sh3d)
 
 ```@contents
 Pages = ["tutorialsSH3d.md"]

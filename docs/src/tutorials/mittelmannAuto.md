@@ -1,4 +1,4 @@
-# 🟡 [Automatic diagram of 2d Bratu–Gelfand problem](@id gelfandauto)
+# [🟡 Automatic diagram of 2d Bratu–Gelfand problem](@id gelfandauto)
 
 ```@contents
 Pages = ["mittelmannAuto.md"]

@@ -1,4 +1,4 @@
-# 🟤 [2d generalized Bratu–Gelfand problem](@id gelfand)
+# [🟤 2d generalized Bratu–Gelfand problem](@id gelfand)
 
 ```@contents
 Pages = ["mittelmann.md"]

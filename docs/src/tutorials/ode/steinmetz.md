@@ -1,4 +1,4 @@
-# 🟠 [Steinmetz-Larter model](@id steinmetz)
+# [🟠 Steinmetz-Larter model](@id steinmetz)
 
 ```@contents
 Pages = ["steinmetz.md"]

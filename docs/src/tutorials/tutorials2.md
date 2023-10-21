@@ -1,4 +1,4 @@
-# 🟡 [2d Swift-Hohenberg equation: snaking, Finite Differences](@id sh2dfd)
+# [🟡 2d Swift-Hohenberg equation: snaking, Finite Differences](@id sh2dfd)
 
 ```@contents
 Pages = ["tutorials2.md"]

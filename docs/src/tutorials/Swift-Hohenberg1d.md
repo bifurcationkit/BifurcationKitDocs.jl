@@ -1,4 +1,4 @@
-# 🟡 [1d Swift-Hohenberg equation (Automatic)](@id sh1d)
+# [🟡 1d Swift-Hohenberg equation (Automatic)](@id sh1d)
 
 ```@contents
 Pages = ["Swift-Hohenberg1d.md"]

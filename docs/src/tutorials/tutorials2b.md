@@ -1,4 +1,4 @@
-# 🟠 [2d Swift-Hohenberg equation (non-local) on the GPU](@id sh2dgpu)
+# [🟠 2d Swift-Hohenberg equation (non-local) on the GPU](@id sh2dgpu)
 
 ```@contents
 Pages = ["tutorials2b.md"]

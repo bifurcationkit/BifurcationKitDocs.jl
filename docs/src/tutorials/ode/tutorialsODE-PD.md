@@ -1,4 +1,4 @@
-# 🟡 [Period doubling in Lur'e problem (PD aBS)](@id pdlure)
+# [🟡 Period doubling in Lur'e problem (PD aBS)](@id pdlure)
 
 ```@contents
 Pages = ["tutorialsODE-PD.md"]

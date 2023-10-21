@@ -8,7 +8,7 @@ It incorporates continuation algorithms (PALC, deflated continuation, ...) based
 
 The package can also seek for periodic orbits of Cauchy problems by casting them into an equation $F(u,p)=0$ of high dimension. **It is by now, one of the only softwares which provides shooting methods AND methods based on finite differences or collocation to compute periodic orbits.**
 
-Hence, large scale nonlinear problems and different hardwares are possible. The goal is to use Matrix Free methods on **GPU** (see [PDE example](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials2b/#d-Swift-Hohenberg-equation-(non-local)-on-the-GPU,-periodic-BC-(Advanced)) and [Periodic orbit example](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Continuation-of-periodic-orbits-on-the-GPU-(Advanced))) or on a **cluster** to solve non linear PDE, nonlocal problems, compute sub-manifolds...
+Hence, large scale nonlinear problems and different hardwares are possible. The goal is to use Matrix Free methods on **GPU** (see [PDE example](@ref sh2dgpu) and [Periodic orbit example](@ref cgl)) or on a **cluster** to solve non linear PDE, nonlocal problems, compute sub-manifolds...
 
 One design choice is that we try not to require `u` to be a subtype of an `AbstractArray` as this would forbid the use of spectral methods like the one from `ApproxFun.jl`. For now, our implementation does not allow this for all methods of the package.
 
@@ -55,9 +55,9 @@ In Julia, we also have [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl)
 
 ## A word on performance
 
-The examples which follow have not **all** been written with the goal of performance but rather simplicity (except maybe [2d Ginzburg-Landau equation](@ref cgl) and [1d Langmuir–Blodgett model](@ref langmuir)). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.
+The examples which follow have not **all** been written with the goal of performance but rather simplicity (except maybe [2d Ginzburg-Landau equation](@ref cgl) and [Langmuir–Blodgett model](@ref langmuir)). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.
 
-For example, in one of the simplest tutorials, [Temperature model (Simplest example)](@ref temperature), one could use `BandedMatrices.jl` for the jacobian and an inplace modification when the jacobian is called ; using a composite type would be favored. Porting them to GPU could be another option.
+For example, in one of the simplest tutorials, [Temperature model](@ref temperature), one could use `BandedMatrices.jl` for the jacobian and an inplace modification when the jacobian is called ; using a composite type would be favored. Porting them to GPU could be another option.
 
 ## Requested methods for Custom State
 Needless to say, if you use regular arrays, you don't need to worry about what follows.

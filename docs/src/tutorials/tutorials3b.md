@@ -1,4 +1,4 @@
-# 🟠 [1d Brusselator](@id bruss)
+# [🟠 1d Brusselator](@id bruss)
 
 ```@contents
 Pages = ["tutorials3b.md"]
