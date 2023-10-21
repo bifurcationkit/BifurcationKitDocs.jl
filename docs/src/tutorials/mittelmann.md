@@ -152,7 +152,7 @@ You should see the following result:
 title!("")
 ```
 
-We notice several simple bifurcation points for which the dimension of the kernel of the jacobian is one dimensional. In the above box, `δ = ( 1,  0)` gives the change in the stability. In this case, there is one vector in the kernel which is real. The bifurcation point 2 has a 2d kernel and is thus not amenable to automatic branch switching.
+We note several simple bifurcation points for which the dimension of the kernel of the jacobian is one dimensional. In the above box, `δ = ( 1,  0)` gives the change in the stability. In this case, there is one vector in the kernel which is real. The bifurcation point 2 has a 2d kernel and is thus not amenable to automatic branch switching.
 
 ## Automatic branch switching at simple branch points
 
@@ -174,6 +174,27 @@ We continue our journey and compute the branch bifurcating of the first bifurcat
 ```@example MITT
 br2 = continuation(br1, 1, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
 scene = plot(br,br1,br2)
+```
+
+## Automatic branch switching at the 2d-branch points
+
+We now show how to perform automatic branch switching at the nonsimple branch points. However, we think it is important that the user is able to use the previous tools in case automatic branch switching fails. This is explained in the next sections.
+
+The call for automatic branch switching is the same as in the case of simple branch points (see above) except that many branches are returned.
+
+```@example MITT
+branches = continuation(br, 2,
+	setproperties(opts_br; detect_bifurcation = 3, ds = 0.001, p_min = 0.01, max_steps = 32 ) ;
+  alg = PALC(tangent = Bordered()),
+	kwargsC...,
+	nev = 30,
+	)
+```
+
+You can plot the branches using
+
+```@example MITT
+scene = plot(br, branches...)
 ```
 
 ## Analysis at the 2d-branch points (manual)
@@ -301,20 +322,3 @@ brdef2 = continuation(
 thereby providing the following bifurcation diagram with `plot(br,br1,br2,brdef1, brdef2,plotfold=false, putbifptlegend = false)`
 
 ![](mittlemann6.png)
-
-## Automatic branch switching at the 2d-branch points
-
-We now show how to perform automatic branch switching at the nonsimple branch points. However, we think it is important that the user is able to use the previous tools in case automatic branch switching fails.
-
-The call for automatic branch switching is the same as in the case of simple branch points (see above) except that many branches are returned.
-
-```@example MITT
-branches = continuation(br, 2,
-	setproperties(opts_br; detect_bifurcation = 3, ds = 0.001, p_min = 0.01, max_steps = 32 ) ;
-  alg = PALC(tangent = Bordered()),
-	kwargsC...,
-	nev = 30,
-	)
-```
-
-You can plot the branches using `plot(branches...)`.

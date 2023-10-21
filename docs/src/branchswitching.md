@@ -100,7 +100,7 @@ We refer to [`continuation`](@ref) for more information about the arguments. Her
 
 - For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `ShootingProblem(M, odeprob, Euler())` or `PoincareShootingProblem(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
 
-Several examples are provided in [Brusselator](@ref brusauto) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl).
+Several examples are provided in [Brusselator](@ref brusauto) or [2d Ginzburg-Landau equation](@ref cgl).
 
 > See [Branch switching (Hopf point)](@ref) for the precise method definition
 
@@ -110,7 +110,7 @@ We do not provide (for now) the automatic branching procedure for these bifurcat
 
 We provide the branching method for the following methods to compute periodic orbits: [`PeriodicOrbitTrapProblem`](@ref),[`ShootingProblem`](@ref) and [`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching.
 
-An example of use is provided in [Period doubling in Lur'e problem](@ref pdlure).
+An example of use is provided in [Lur'e problem](@ref pdlure).
 
 ```julia
 continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
@@ -119,7 +119,7 @@ continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
 
 ## From Bogdanov-Takens (BT) point to Fold / Hopf curve
 
-We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model](@ref lorenz) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
 continuation(br::ContResult, ind_BT::Int,
@@ -139,7 +139,7 @@ where `ind_BT` is the index of the BT point in `br`. Note that the BT has been d
 
 ## From Zero-Hopf (ZH) point to Fold / Hopf curve
 
-We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model](@ref lorenz) or [2d Ginzburg-Landau](@ref cgl)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
 continuation(br::ContResult, ind_ZH::Int,
@@ -159,7 +159,7 @@ where `ind_ZH` is the index of the ZH point in `br`. Note that the ZH has been d
 
 ## From Hopf-Hopf (HH) point to Fold / Hopf curve
 
-We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) or [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method in this case (see for example [Extended Lorenz-84 model](@ref lorenz) or [2d Ginzburg-Landau equation](@ref cgl)). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
 continuation(br::ContResult, ind_HH::Int,
