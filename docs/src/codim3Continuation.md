@@ -9,7 +9,7 @@ The continuation of BT bifurcation points is based on a **Minimally Augmented**[
 
 $$G(u,p) = (F(u,p), g_1(u,p), g_2(u,p))\in\mathbb R^{n+2}\quad\quad (F_{bt})$$
 
-where the test function $g_1,g_2$ are solutions of
+where the test functions $g_1,g_2$ are solutions of
 
 $$\left[\begin{array}{cc}
 dF(u,p) & w \\

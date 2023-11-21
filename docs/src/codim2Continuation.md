@@ -28,7 +28,7 @@ The continuation of Fold bifurcation points is based on a **Minimally Augmented*
 
 $$G(u,p) = (F(u,p), \sigma(u,p))\in\mathbb R^{n+1}\quad\quad (F_f)$$
 
-where the test function $g$ is solution of
+where the test function $\sigma$ is solution of
 
 $$\left[\begin{array}{cc}
 dF(u,p) & w \\
@@ -59,7 +59,7 @@ The continuation of Fold bifurcation points is based on a **Minimally Augmented*
 
 $$G(u,\omega,p) = (F(u,\omega,p), \Re\sigma(u,\omega,p), \Im\sigma(u,\omega,p))\in\mathbb R^{n+2}\quad\quad (F_h)$$
 
-where the test function $g$ is solution of
+where the test function $\sigma$ is solution of
 
 $$\left[\begin{array}{cc}
 dF(u,p)-i\omega I_n & w \\
@@ -163,7 +163,7 @@ $$\left[\begin{array}{cc}
 
 ## Algorithmic details (Hopf)
 
-We recall that the unknowns are $(x,p,\omega)$. The jacobian of the Hopf functional to use for the Newton algorithm
+We recall that the unknowns are $(x,p,\omega)$. The jacobian of the Hopf functional to use for the Newton algorithm is
 
 $$\left[\begin{array}{ccc}
 \partial_{u}F & \partial_pF & 0 \\
