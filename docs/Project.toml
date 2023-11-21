@@ -15,8 +15,8 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 SparseDiffTools = "47a9eef4-7e08-11e9-0b38-333d64bd3804"
 
 [compat]
-BifurcationKit = "0.3.0"
 DiffEqOperators = "4.34.0"
+BifurcationKit = "0.3.2"
 DifferentialEquations = "6.19.0, ^7.1.0"
 Documenter = "0.27"
 ModelingToolkit = "7.0, ^8.1"
