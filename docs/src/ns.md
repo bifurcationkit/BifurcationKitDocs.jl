@@ -13,7 +13,7 @@ the eigenvalues (Floquet coefficients) of the monodromy operator $\mathcal M=Y(T
 
 $$\frac{dY}{dt}=A(t)Y(t), Y(0)=I_n$$
 
-contains the eigenvalues $e^{\pm i \theta}$ with $\theta$ and 
+contain the eigenvalues $e^{\pm i \theta}$ with $\theta$ and 
 
 $$e^{i q \theta}-1 \neq 0, \quad q=1,2,3,4 \text { (no strong resonances). }$$
 
@@ -28,12 +28,12 @@ You can obtain the normal form of a NS bifurcation using
 pd = get_normal_form(br, ind; prm = false)
 ```
 
-where `prm` indicated whether you want to use the method based on Poincaré return map (PRM) or the one based on Iooss method.
+where `prm` indicates whether you want to use the method based on Poincaré return map (PRM) or the one based on Iooss method.
 
 
 ## Normal form based on Poincaré return map
 
-Given a transversal section $\Sigma$ to $\gamma$ at $\gamma(0)$, the Poincaré return map $\mathcal P$ associates to each point $x\in\Sigma$ close to $\gamma(0)$ the point $\mathcal P(x,p)\in\Sigma$ where the orbit of (E) with initial condition $x$ intersects again $\Sigma$ at $\mathcal P(x,p)$. Hence, the discrete map $x_{n+1}=\mathcal P(x_n,p)$ has normal form
+Given a transversal section $\Sigma$ to $\gamma$ at $\gamma(0)$, the Poincaré return map $\mathcal P$ associates to each point $x\in\Sigma$ close to $\gamma(0)$ the first point $\mathcal P(x,p)\in\Sigma$ where the orbit of (E) with initial condition $x$ intersects again $\Sigma$ at $\mathcal P(x,p)$. Hence, the discrete map $x_{n+1}=\mathcal P(x_n,p)$ has normal form
 
 $$z_{n+1} = z_ne^{i\theta}(1+d|z_n|^2)$$
 
@@ -47,7 +47,7 @@ $$\mathcal{A} v=e^{i \theta} v, \mathcal{A}^{\mathrm{T}} v^*=e^{-i \theta} v^*, 
 
 ## Normal form based on Iooss method
 
-This is based on [^Iooss],[^Kuz2]. Suppose that the $T$ periodic orbit $\gamma(\tau)$ has a Neimark-Sacker bifurcation for a parameter value $p$. We also assume that there are no strong resonances.
+This is based on [^Iooss],[^Kuz2]. Suppose that the $T$ periodic orbit $\gamma(\tau)$ has a Neimark-Sacker bifurcation for a parameter value $p_0$. We also assume that there are no strong resonances.
 Locally, the orbits can be represented by 
 
 $$x(\tau) = \gamma(\tau)+Q_0(\tau)\xi+\Phi(\tau, \xi)$$

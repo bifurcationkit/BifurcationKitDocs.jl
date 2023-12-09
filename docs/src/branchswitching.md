@@ -65,7 +65,7 @@ scene = plot(br, br1Top, br1Bottom; branchlabel = ["br", "br1Top", "br1Bottom"],
 
 ## [From non simple branch point to equilibria](@id abs-simple-eq)
 
-We provide an automatic branch switching method in this case. The method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and use it to compute the nearby solutions. These solutions are seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method in this case. The underlying method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and use it to compute the nearby solutions. These solutions are then seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
 continuation(br::ContResult, ind_bif::Int, optionsCont::ContinuationPar;
@@ -100,7 +100,7 @@ We refer to [`continuation`](@ref) for more information about the arguments. Her
 
 - For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `ShootingProblem(M, odeprob, Euler())` or `PoincareShootingProblem(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
 
-Several examples are provided in [Brusselator](@ref brusauto) or [2d Ginzburg-Landau equation](@ref cgl).
+Several examples are provided in [example ODE](@ref nmepo). In case of PDE, you can have a look at [Brusselator](@ref brusauto) or [2d Ginzburg-Landau equation](@ref cgl).
 
 > See [Branch switching (Hopf point)](@ref) for the precise method definition
 
@@ -108,7 +108,7 @@ Several examples are provided in [Brusselator](@ref brusauto) or [2d Ginzburg-La
 
 We do not provide (for now) the automatic branching procedure for these bifurcations of periodic orbits. As a consequence, the user is asked to provide the amplitude of the bifurcated solution.
 
-We provide the branching method for the following methods to compute periodic orbits: [`PeriodicOrbitTrapProblem`](@ref),[`ShootingProblem`](@ref) and [`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching.
+We provide the branching method for the following methods to compute periodic orbits: [`PeriodicOrbitTrapProblem`](@ref),[`PeriodicOrbitOCollProblem`](@ref), [`ShootingProblem`](@ref) and [`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching.
 
 An example of use is provided in [Lur'e problem](@ref pdlure).
 
@@ -178,9 +178,9 @@ where `ind_HH` is the index of the HH point in `br`. Note that the HH has been d
 
 > Check the docs of [Fold / Hopf Continuation](@ref) and particularly [Setting the jacobian](@ref jac-fold) for improving the speed of computation for large scale systems.
 
-## From Bautin point to curve Folds of period orbits
+## From Bautin point to curve Folds of periodic orbits
 
-From the [Bautin normal form](http://scholarpedia.org/article/Bautin_bifurcation), we know that there is a curve of Fold of periodic orbits which branches from it.
+From the [Bautin normal form](http://scholarpedia.org/article/Bautin_bifurcation), we know that there is a curve of Fold of periodic orbits near the bifurcation point.
 
 We provide an automatic branch switching method in this case which reads as follows:
 
@@ -195,9 +195,11 @@ where `prob` is a method to compute periodic orbits (see [From Hopf point to per
 
 Note that the two parameters in `br` will be used for the continuation of Fold points of periodic orbits.
 
-## From Zero-Hopf (ZH) point to curve NS of period orbits
+See [ODE](@id lorenz98-take2) for an example of use.
 
-From the [Zero-Hopf normal form](http://scholarpedia.org/article/Zero-Hopf_bifurcation), we know that there is a curve of Neimark-Sacker (NS) bifurcations of periodic orbits which branches from it.
+## From Zero-Hopf (ZH) point to curve NS of periodic orbits
+
+From the [Zero-Hopf normal form](http://scholarpedia.org/article/Zero-Hopf_bifurcation), we know that there is a curve of Neimark-Sacker (NS) bifurcations of periodic orbits near the bifurcation point.
 
 We provide an automatic branch switching method in this case which reads as follows:
 
@@ -212,9 +214,9 @@ where `prob` is a method to compute periodic orbits (see [From Hopf point to per
 
 Note that the two parameters in `br` will be used for the continuation of NS points of periodic orbits.
 
-## From Hopf-Hopf (HH) point to curve NS of period orbits
+## From Hopf-Hopf (HH) point to curve NS of periodic orbits
 
-From the [Hopf-Hopf normal form](http://scholarpedia.org/article/Hopf-Hopf_bifurcation), we know that there are two curves of Neimark-Sacker (NS) bifurcations of periodic orbits which branches from it.
+From the [Hopf-Hopf normal form](http://scholarpedia.org/article/Hopf-Hopf_bifurcation), we know that there are two curves of Neimark-Sacker (NS) bifurcations of periodic orbits near the bifurcation point.
 
 We provide an automatic branch switching method in this case which reads as follows:
 
@@ -231,4 +233,6 @@ where `prob` is a method to compute periodic orbits (see [From Hopf point to per
 The option `whichns` which belongs to {1,2} controls which NS curve you want to compute. 
 
 Note that the two parameters in `br` will be used for the continuation of NS points of periodic orbits.
+
+See [ODE](@id lorenz98-take2) for an example of use.
 	

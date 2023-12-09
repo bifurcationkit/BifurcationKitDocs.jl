@@ -110,7 +110,9 @@ outfold = newton(br::AbstractBranchResult, ind_bif::Int;
 
 For the options parameters, we refer to [Newton](@ref).
 
-It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. Reader interested in this advanced usage should look at the code `example/chan.jl` of the tutorial [Temperature model](@ref temperature).
+It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. `BifurcationProblem` provides it by default using AD though.
+
+Reader interested in this advanced usage should look at the code `example/chan.jl` of the tutorial [Temperature model](@ref temperature).
 
 ## Codim 2 continuation
 

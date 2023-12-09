@@ -81,7 +81,7 @@ The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@r
 
 ## Jacobian and linear solvers
 
-We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the arguement `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal solvers and jacobian are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal solvers and jacobian are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
 ### 1. `AutoDiffDenseAnalytical()`
 The jacobian is computed with an analytical formula, works for dense matrices. This is the default algorithm.
@@ -93,7 +93,7 @@ The jacobian is computed with automatic differentiation, works for dense matrice
 The jacobian is computed with an analytical formula, works for sparse matrices.
 
 ### 3. `FullSparseInplace()`
-The jacobian is computed with an analytical formula when the sparsity of the jacobian of the vector field is constant. This is much faster than `FulSparse()`.
+The jacobian is computed in place, limiting memory allocations, with an analytical formula when the sparsity of the jacobian of the vector field is constant. This is much faster than `FulSparse()`.
 
 
 ## Floquet multipliers computation
