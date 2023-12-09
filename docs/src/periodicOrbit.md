@@ -52,7 +52,7 @@ If you pass a `finalise_solution` function to [`continuation`](@ref), the follow
 1. If the newton solve was successful, we update the phase condition every `update_section_every_step`
 2. we call the user defined finalizer `finalise_solution`
 
-### 3. record_from_solution
+### 3. Record from solution
 
 You can pass your own function to [`continuation`](@ref). In the particular case of periodic orbits, the method is called like `record_from_solution(x, opt; k...)` where `opt.p` is the current value of the continuation parameter and `opt.prob` is the current state of the continuation problem. You can then obtain the current periodic orbit using (see above)
 
@@ -60,7 +60,7 @@ You can pass your own function to [`continuation`](@ref). In the particular case
 xtt = get_periodic_orbit(x, opt.p)
 ``` 
 
-### 4. plot_solution
+### 4. Plot solution
 
 Similarly to `record_from_solution`, the method is called like `plot_solution(x, opt; k...)` where `opt.p` is the current value of the continuation parameter and `opt.prob` is the current state of the continuation problem.
 
@@ -69,6 +69,6 @@ The state of the art method is based on a Periodic Schur decomposition. It is av
 
 ### 6. Misc
 
-set_params_po
-generate_ci_problem
-generate_solution
+`set_params_po`
+`generate_ci_problem`
+`generate_solution`
