@@ -41,6 +41,8 @@ In order to apply the newton algorithm to the PD functional, one needs to invert
 - for `jacobian_ma = :finiteDifferences`, same as `jacobian_ma = :autodiff` but the jacobian is computed using finite differences.
 - for `jacobian_ma = :minaug`, a specific procedure for evaluating the jacobian and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions.
 
+> For the case `jacobian_ma = :minaug`, when the shooting method is employed, the adjoint of the flow is required. This can usually be computed with `ReverseDiff.jl`.
+
 ## Codim 2 continuation
 
 To compute the codim 2 curve of PD points of periodic orbits, one can call [`continuation`](@ref) with the following options

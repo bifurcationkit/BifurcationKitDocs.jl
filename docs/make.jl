@@ -97,7 +97,7 @@ makedocs(doctest = false,
 				]
 		],
 		"Frequently asked questions" => "faq.md",
-		"Migration to v0.2.x" => "migration.md",
+		"Migration from old versions" => "migration.md",
 		"Library" => "library.md"
 	]
 	)

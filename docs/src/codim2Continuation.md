@@ -153,10 +153,10 @@ continuation_hopf
 ## Algorithmic details (Fold)
 
 If we write $(s,\sigma)$ the solution of the adjoint problem associated to $(M_f)$, one can show[^Govaerts] that the differential of $\sigma$ satisfies:
-$$
-\partial \sigma + \langle s,\partial dF \cdot r\rangle = 0
-$$
-This allows to compute the jacobian of the Fold functional to use for the Newton algorithm
+
+$$\partial \sigma + \langle s,\partial dF \cdot r\rangle = 0$$
+
+This allows to compute the jacobian of the Fold functional to use for the Newton algorithm:
 
 $$\left[\begin{array}{cc}
 \partial_{u}F(u,p) & \partial_pF(u,p) \\
@@ -171,7 +171,9 @@ $$\left[\begin{array}{ccc}
 \partial_{u}F & \partial_pF & 0 \\
 \partial_x\sigma_r & \partial_p\sigma_r & \partial_\omega\sigma_r\\
 \partial_x\sigma_i & \partial_p\sigma_i & \partial_\omega\sigma_i
-\end{array}\right].$$
+\end{array}\right]$$
+
+using a similar formula for $\partial\sigma$ as in the Fold case.
 
 ## References
 

@@ -1,7 +1,7 @@
 # Moore-Penrose continuation
 
 !!! warning "WIP"
-    This is work in progress. The interface will be improved inn the future.
+    This is work in progress. The interface will be improved in the future.
 
 This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `alg = MoorePenrose()` in [`continuation`](@ref). See also [`MoorePenrose`](@ref) for more information.
 
