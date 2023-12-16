@@ -172,7 +172,7 @@ You can plot the diagram like
 plot(diagram)
 ```
 
-## Example 3: continuing periodic orbits
+## [Example 3: continuing periodic orbits](@id gt-hopf)
 
 In this example, we will compute periodic orbits of the Stuart-Landau oscillator:
 
