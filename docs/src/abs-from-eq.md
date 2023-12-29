@@ -20,7 +20,7 @@ where `br` is a branch computed after a call to `continuation` with detection of
 
 > See [Branch switching (branch point)](@ref) precise method definition
 
-### Simple example
+### Simple example: transcritical bifurcation
 
 ```@example TUT1_ABS_EQ_EQ
 using BifurcationKit, Setfield, Plots
@@ -34,8 +34,33 @@ par = (μ = -0.2, )
 # problem (automatic differentiation)
 prob = BifurcationProblem(F, [0.], par, (@lens _.μ); record_from_solution = (x, p) -> x[1])
 
-# compute branch of trivial equilibria (=0) and detect a bifurcation point
-opts_br = ContinuationPar(detect_bifurcation = 3)
+# compute branch of trivial equilibria and detect a bifurcation point
+opts_br = ContinuationPar()
+br = continuation(prob, PALC(), opts_br)
+	
+# perform branch switching on both sides of the bifurcation point
+br1 = continuation(br, 1, setproperties(opts_br; max_steps = 14), bothside = true )
+
+scene = plot(br, br1; branchlabel = ["br", "br1"], legend = :topleft)
+```
+
+### Simple example: pitchfork bifurcation
+
+```@example TUT1b_ABS_EQ_EQ
+using BifurcationKit, Setfield, Plots
+
+# vector field of pitchfork bifurcation
+F(x, p) = [x[1] * (p.μ - x[1]^2)]
+
+# parameters of the vector field
+par = (μ = -0.2, )
+
+# problem (automatic differentiation)
+prob = BifurcationProblem(F, [0.], par, (@lens _.μ); record_from_solution = (x, p) -> x[1])
+
+# compute branch of trivial equilibria and 
+# detect a bifurcation point with improved precision
+opts_br = ContinuationPar(n_inversion = 6)
 br = continuation(prob, PALC(), opts_br)
 	
 # perform branch switching on both sides of the bifurcation point
