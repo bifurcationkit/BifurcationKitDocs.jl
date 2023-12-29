@@ -28,7 +28,7 @@ We refer to [`continuation`](@ref) for more information about the arguments. Her
 
 - For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `ShootingProblem(M, odeprob, Euler())` or `PoincareShootingProblem(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
 
-> See [Branch switching (Hopf point)](@ref) for the precise method.definition
+> See [Branch switching (Hopf point)](@ref) for the precise method definition
 
 ### Algorithm
 
@@ -69,8 +69,38 @@ br_po = continuation(br, 2, opts,
         )
 plot(br, br_po)
 ```
+## From Period-doubling point to curve of periodic orbits
 
-## From Branch / Period-doubling point to curve of periodic orbits
+### Case of Shooting and Collocation
+
+We provide an automatic branching procedure in this case. In essence, all you have to do is to call
+
+```julia
+continuation(br::ContResult, ind_PD::Int, _contParams::ContinuationPar;
+    prm = true,
+    kwargs...)
+```
+
+The option `prm=true` enforces that the period-doubling normal form is computed using the Poincaré return map ; this is only necessary in case of use of the collocation method. Indeed, in the case of the collocation method, an automatic procedure based on the Iooss normal form has yet to be implemented.
+
+### Case of Trapezoid method
+
+We do not provide (for now) the automatic branching procedure for these bifurcations of periodic orbits. As a consequence, the user is asked to provide the amplitude of the bifurcated solution.
+
+The call is as follows. Please note that a deflation is included in this method to simplify branch switching.
+
+```julia
+continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
+	δp = 0.1, ampfactor = 1, usedeflation = false, kwargs...)
+```
+
+An example of use is provided in [Lur'e problem](@ref pdlure).
+
+### Algorithm
+
+The algorithm proceeds as follows. The normal form of the Period-doubling bifurcation is first computed. Then a predictor for the bifurcated branch of periodic orbits is generated from the normal form. Finally, this predictor is used as a guess for the computation of periodic orbits.
+
+## From Branch point to curve of periodic orbits
 
 We do not provide (for now) the automatic branching procedure for these bifurcations of periodic orbits. As a consequence, the user is asked to provide the amplitude of the bifurcated solution.
 

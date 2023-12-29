@@ -65,6 +65,30 @@ $$\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_0(s)\right\rangle d s =0$$
 
 > During continuation at step $k$, we use $\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_{k-1}(s)\right\rangle d s$
 
+
+## Discretization of the BVP and jacobian
+We only focus on the differential part. Summing up, we obtained the following equations for the $x_{j,l}\in\mathbb R^n$:
+
+$$\sum\limits_{k=1}^{m+1}\mathcal L_k'(z_l)x_{j,k} = F\left(\sum\limits_{k=1}^{m+1}\mathcal L_k(z_l)x_{j,k}\right)$$
+
+The jacobian in the case $m=2$ is given by: 
+
+| $x_{0,0}$ | $x_{0,1}$ | $x_{1,0}$ | $x_{1,1}$ | $x_{2,0}$ | $x_{2,1}$ | $x_{3,0}$ | T |
+|---------|---------|---------|---------|---------|---------|---------|---------|
+| $H_{0,0}^0$ | $H_{0,1}^0$ | $H_{1,0}^0$ |         |         |         |         |       * |
+| $H_{0,0}^1$ | $H_{0,1}^1$ | $H_{1,0}^1$ |         |         |         |         |       * |
+|   |   | $H_{1,0}^0$ |  $H_{1,1}^0$  | $H_{2,0}^0$   |    |         |       * |
+|   |   | $H_{1,0}^1$ |  $H_{1,1}^1$  | $H_{2,0}^1$   |    |         |       * |
+|   |   |   |     |   $H_{2,0}^0$ |   $H_{2,1}^0$ |  $H_{3,0}^0$  |   * |
+|   |   |   |     |   $H_{2,0}^1$ |   $H_{2,1}^1$ |  $H_{3,0}^1$  |   * |
+|   $I$     |         |         |         |         |         |     $-I$   |       * |
+|         *|         *|         *|         *|         *|         *|         *|       * |
+
+
+where
+
+$$H_{k,l}^{l_2} = \mathcal L'_{l_2,l}\cdot I_n - T\frac{\tau_{j+1}-\tau_j}{2}\cdot\mathcal L_{l_2,l}\cdot dF\left(x_{k,l}\right).$$
+
 ## Interpolation
 
 ```@docs
