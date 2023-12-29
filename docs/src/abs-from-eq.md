@@ -84,4 +84,92 @@ continuation(br::ContResult,
 	kwargs...)
 ```
 
-An example of use is provided in [2d Bratu–Gelfand problem](@ref gelfand).	
+### Examples
+
+An example of use is provided in [2d Bratu–Gelfand problem](@ref gelfand). A much simpler example is given now. It is a bit artificial because the vector field is its own normal form at the bifurcation point located at 0.
+
+```@example TUT2_ABS_EQ_EQ
+using BifurcationKit, Plots
+
+function FbpD6(x, p)
+    return [p.μ * x[1] + (p.a * x[2] * x[3] - p.b * x[1]^3 - p.c*(x[2]^2 + x[3]^2) * x[1]),
+           p.μ * x[2] + (p.a * x[1] * x[3] - p.b * x[2]^3 - p.c*(x[3]^2 + x[1]^2) * x[2]),
+           p.μ * x[3] + (p.a * x[1] * x[2] - p.b * x[3]^3 - p.c*(x[2]^2 + x[1]^2) * x[3])]
+end
+
+# model parameters
+pard6 = (μ = -0.2, a = 0.3, b = 1.5, c = 2.9)
+
+# problem
+prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@lens _.μ);
+	record_from_solution = (x, p) -> (n = norminf(x)))
+
+# newton options
+opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)
+
+# continuation options
+opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds = 0.01, 
+	# parameter interval
+	p_max = 0.4, p_min = -0.2, 
+	nev = 3, 
+	newton_options = opt_newton, 
+	max_steps = 1000, 
+	n_inversion = 6)
+
+br = continuation(prob, PALC(), opts_br)
+```
+
+You can now branch from the `nd` point
+
+```@example TUT2_ABS_EQ_EQ
+br2 = continuation(br, 1, opts_br; δp = 0.02)
+
+plot(br, br2...)
+```
+
+## Assisted branching from non-simple bifurcation point
+
+It may happen that the general procedure fails. We thus expose the procedure `multicontinuation` in order to let the user tune it to its need.
+
+The first step is to compute the reduced equation, say of the first bifurcation point in `br`.
+
+```@example TUT2_ABS_EQ_EQ
+bp = get_normal_form(br, 1)
+```
+
+Next, we want to find the zeros of the reduced equation. This is usually achieved by calling the predictor
+
+```@example TUT2_ABS_EQ_EQ
+δp = 0.005
+pred = predictor(bp, δp)
+```
+
+which returns zeros of `bp` before and after the bifurcation point. You could also use your preferred procedure from `Roots.jl` (or other) to find the zeros of the polynomials `bp(Val(:reducedForm), z, p)`.
+
+We can use these zeros to form guesses to apply Newton for the full functional:
+
+```@example TUT2_ABS_EQ_EQ
+pts = BifurcationKit.get_first_points_on_branch(br, bp, pred, opts_br; δp =  δp)
+```
+
+We can then use this to continue the different branches
+
+```@example TUT2_ABS_EQ_EQ
+brbp = BifurcationKit.multicontinuation(br, bp, pts.before, pts.after, opts_br)
+
+plot(br, brbp...)
+```
+
+Note that you can chose another predictor which uses all vertices of the cube as initial guesses
+
+```@example TUT2_ABS_EQ_EQ
+pred = predictor(bp, Val(:exhaustive), δp)
+pts = BifurcationKit.get_first_points_on_branch(br, bp, pred, opts_br; δp =  δp)
+```
+
+```@example TUT2_ABS_EQ_EQ
+brbp = BifurcationKit.multicontinuation(br, bp, pts.before, pts.after, opts_br)
+
+plot(br, brbp...)
+```
+## predictors ```@docsBifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, δp::T; k...) where T``````@docsBifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, algo::Val{:exhaustive}, δp::T;k...) where T```
