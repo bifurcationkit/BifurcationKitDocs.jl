@@ -72,12 +72,9 @@ br
 We then compute the branch of periodic orbits from the last Hopf bifurcation point (on the right). We use finite differences to discretize the problem of finding periodic orbits. Obviously, this will be problematic when the period of the limit cycle grows unbounded close to the homoclinic orbit.
 
 ```@example TUTODE
-# newton parameters for the computation of periodic orbits
-optn_po = NewtonPar(tol = 1e-8,  max_iterations = 12)
-
 # continuation parameters
 opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds = -0.001, dsmin = 1e-4,
-	max_steps = 80, newton_options = optn_po, tol_stability = 1e-8)
+	max_steps = 80, tol_stability = 1e-8)
 
 # arguments for periodic orbits
 # one function to record information and one
@@ -137,8 +134,8 @@ We compute the branch of periodic orbits from the last Hopf bifurcation point (o
 
 ```@example TUTODE
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, ds= 0.001, dsmin = 1e-4, dsmax=0.1,
-	max_steps = 150, newton_options = (@set optn_po.tol = 1e-8),
+opts_po_cont = ContinuationPar(opts_br, ds= 0.001, dsmin = 1e-4, dsmax = 0.1,
+	max_steps = 150,
 	tol_stability = 1e-5)
 
 br_pocoll = @time continuation(
@@ -147,7 +144,7 @@ br_pocoll = @time continuation(
 	# we want to use the Collocation method to locate PO, with polynomial degree 4
 	PeriodicOrbitOCollProblem(40, 4; meshadapt = true);
 	# regular continuation options
-	verbosity = 0, plot = true,
+	plot = true,
 	# we reject the newton step if the residual is high
 	callback_newton = BK.cbMaxNorm(100.),
 	args_po...)
@@ -173,7 +170,7 @@ br_posh = @time continuation(
 	# with 15 time sections
 	ShootingProblem(15, probsh, Rodas5(), parallel = true);
 	# regular continuation parameters
-	verbosity = 2, plot = true,
+	plot = true,
 	args_po...,
 	# we reject the step when the residual is high
 	callback_newton = BK.cbMaxNorm(10)

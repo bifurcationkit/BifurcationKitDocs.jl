@@ -65,7 +65,6 @@ We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to 
 
 ```@example LORENZ84V2
 sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, detect_bifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10, save_sol_every_step = 1, max_steps = 130, max_bisection_steps = 55) ; plot = true,
-	verbosity = 0,
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
 	update_minaug_every_step = 1,
