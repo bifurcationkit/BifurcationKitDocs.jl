@@ -32,6 +32,12 @@ $$\begin{aligned}
 -\mathbf{J} \Psi_{110} &=2 \mathbf{F}_{20}(\zeta, \bar{\zeta}).
 \end{aligned}$$
 
+and where
+
+$$\mathbf{F}(x,p)-\mathbf{J}x := \sum_{1\leq q+l\leq p}\mathbf{F}_{ql}(x^{(q)},p^{(l)})+o(\|u\|+\|p\|)^p. $$
+
+with $\mathbf{F}_{ql}$ a $(q+l)$-linear map 
+
 ## Normal form computation
 
 The normal form (E) is automatically computed as follows

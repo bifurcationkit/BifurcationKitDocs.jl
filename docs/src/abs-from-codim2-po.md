@@ -2,7 +2,7 @@
 
 ```@contents
 Pages = ["abs-from-codim2-po.md"]
-Depth = 2
+Depth = 3
 ```
 
 ## From Bautin point to curve Folds of periodic orbits

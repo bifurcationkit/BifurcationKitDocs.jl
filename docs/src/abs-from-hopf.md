@@ -1,6 +1,5 @@
 # From Hopf / PD / Branch point to periodic orbits
 
-
 ```@contents
 Pages = ["abs-from-hopf.md"]
 Depth = 3
@@ -29,13 +28,47 @@ We refer to [`continuation`](@ref) for more information about the arguments. Her
 
 - For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `ShootingProblem(M, odeprob, Euler())` or `PoincareShootingProblem(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
 
-
-The simplest example is from the [getting-started section](@ref gt-hopf).
-Several examples are provided in [example ODE](@ref nmepo). In case of PDE, you can have a look at [Brusselator](@ref brusauto) or [2d Ginzburg-Landau equation](@ref cgl).
-
-> See [Branch switching (Hopf point)](@ref) for the precise method definition
+> See [Branch switching (Hopf point)](@ref) for the precise method.definition
 
 ### Algorithm
+
+The algorithm proceeds as follows. The normal form of the Hopf bifurcation is first computed. Then a predictor for the bifurcated branch of periodic orbits is generated from the normal form. Finally, this predictor is used as a guess for the computation of periodic orbits.
+
+### Example
+
+The simplest example is from the [getting-started section](@ref gt-hopf) which we repeat partially below.
+Several examples are provided in [example ODE](@ref nmepo). In the case of PDE, you can have a look at [Brusselator](@ref brusauto) or [2d Ginzburg-Landau equation](@ref cgl).
+
+We compute a branch with a Hopf bifurcation:
+
+```@example hopf_abs
+using BifurcationKit, Parameters, Plots
+
+function Fsl(X, p)
+    @unpack r, μ, ν, c3 = p
+    u, v = X
+    ua = u^2 + v^2
+    [
+        r * u - ν * v - ua * (c3 * u - μ * v)
+        r * v + ν * u - ua * (c3 * v + μ * u)
+    ]
+end
+
+par_sl = (r = 0.1, μ = 0., ν = 1.0, c3 = 1.0)
+u0 = zeros(2)
+prob = BifurcationProblem(Fsl, u0, par_sl, (@lens _.r))
+opts = ContinuationPar()
+br = continuation(prob, PALC(), opts, bothside = true)
+```
+
+We then compute the branch of periodic solutions using orthogonal collocation (for example):
+
+```@example hopf_abs
+br_po = continuation(br, 2, opts,
+        PeriodicOrbitOCollProblem(20, 5)
+        )
+plot(br, br_po)
+```
 
 ## From Branch / Period-doubling point to curve of periodic orbits
 

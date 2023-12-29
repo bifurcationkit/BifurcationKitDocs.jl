@@ -102,10 +102,13 @@ Mt = 101 # number of time sections
 	PeriodicOrbitTrapProblem(M = Mt;
 	    # specific linear solver for ODEs
     	jacobian = :Dense);
-	record_from_solution = (x, p) -> (xtt=reshape(x[1:end-1],2,Mt);
+
+	record_from_solution = (x, p) -> begin
+		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),
-			period = x[end])),
+			period = x[end])
+	end,
 	finalise_solution = (z, tau, step, contResult; prob = nothing, kwargs...) -> begin
 		# limit the period
 		z.u[end] < 100
@@ -113,7 +116,7 @@ Mt = 101 # number of time sections
 	normC = norminf)
 
 
-plot(diagram); plot!(br_po, label = "Periodic orbits", legend = :bottomright)
+plot(diagram); plot!(br_po, branchlabel = "Periodic orbits", legend = :bottomright)
 ```
 
 Let us now plot an orbit
@@ -121,6 +124,6 @@ Let us now plot an orbit
 ```@example TUTPP2
 # extract the different components
 orbit = get_periodic_orbit(br_po, 10)
-plot(orbit.t, orbit.u[1,:]; label = "u1", markersize = 2)
-plot!(orbit.t, orbit.u[2,:]; label = "u2", xlabel = "time", title = "period = $(orbit.t[end])")
+plot(orbit.t, orbit[1,:]; label = "u1", markersize = 2)
+plot!(orbit.t, orbit[2,:]; label = "u2", xlabel = "time", title = "period = $(orbit.t[end])")
 ```

@@ -83,7 +83,7 @@ The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@r
 
 We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal solvers and jacobian are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
-### 1. `AutoDiffDenseAnalytical()`
+### 1. `DenseAnalytical()`
 The jacobian is computed with an analytical formula, works for dense matrices. This is the default algorithm.
 
 ### 2. `AutoDiffDense()`
@@ -98,7 +98,7 @@ The jacobian is computed in place, limiting memory allocations, with an analytic
 
 ## Floquet multipliers computation
 
-We provide three methods to compute the Floquet coefficients.
+We provide two methods to compute the Floquet coefficients.
 
 - The algorithm (Default) `FloquetColl` is based on the condensation of parameters described in [^Doedel]. It is the fastest method.
 - The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here but this can be used to check the results of the previous method.

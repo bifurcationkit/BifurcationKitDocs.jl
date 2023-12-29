@@ -2,7 +2,7 @@
 
 ```@contents
 Pages = ["abs-from-eq.md"]
-Depth = 2
+Depth = 3
 ```
 
 ## From simple branch point to equilibria
@@ -22,7 +22,7 @@ where `br` is a branch computed after a call to `continuation` with detection of
 
 ### Simple example
 
-```@example TUT1
+```@example TUT1_ABS_EQ_EQ
 using BifurcationKit, Setfield, Plots
 
 # vector field of transcritical bifurcation
@@ -38,25 +38,24 @@ prob = BifurcationProblem(F, [0.], par, (@lens _.μ); record_from_solution = (x,
 opts_br = ContinuationPar(detect_bifurcation = 3)
 br = continuation(prob, PALC(), opts_br)
 	
-# perform branch switching on one side of the bifurcation point
-br1Top = continuation(br, 1, setproperties(opts_br; max_steps = 14) )
+# perform branch switching on both sides of the bifurcation point
+br1 = continuation(br, 1, setproperties(opts_br; max_steps = 14), bothside = true )
 
-# on the other side
-br1Bottom = continuation(br, 1, setproperties(opts_br; ds = -opts_br.ds, max_steps = 14))
-
-scene = plot(br, br1Top, br1Bottom; branchlabel = ["br", "br1Top", "br1Bottom"], legend = :topleft)
+scene = plot(br, br1; branchlabel = ["br", "br1"], legend = :topleft)
 ```
 
-### Algorithms
-- for the pitchfork bifurcation, the normal form is computed and non-trivial zeros are used to produce guesses for points on the bifurcated branch.
+### Algorithm
+- the normal form is computed and non-trivial zeros are used to produce guesses for points on the bifurcated branch.
 
 
 ## [From non simple branch point to equilibria](@id abs-simple-eq)
 
-We provide an automatic branch switching method in this case. The underlying method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and use it to compute the nearby solutions. These solutions are then seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method in this case. The underlying method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and its zeros. These zeros are then seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
-continuation(br::ContResult, ind_bif::Int, optionsCont::ContinuationPar;
+continuation(br::ContResult, 
+	ind_bif::Int,
+	optionsCont::ContinuationPar;
 	kwargs...)
 ```
 

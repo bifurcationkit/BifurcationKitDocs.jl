@@ -3,7 +3,7 @@
 
 ```@contents
 Pages = ["abs-from-codim2-eq.md"]
-Depth = 2
+Depth = 3
 ```
 
 

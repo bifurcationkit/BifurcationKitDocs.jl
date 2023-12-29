@@ -37,7 +37,7 @@ function TMvf!(dz, z, p, t = 0)
 end
 
 # parameter values
-par_tm = (α = 1.5, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.200, U0 = 0.3, τF = 1.5, τS = 0.007)
+par_tm = (α = 1.4, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.20, U0 = 0.3, τF = 1.5)
 
 # initial condition
 z0 = [0.238616, 0.982747, 0.367876]
@@ -53,9 +53,7 @@ We first compute the branch of equilibria
 
 ```@example TUTODE
 # continuation options
-opts_br = ContinuationPar(p_min = -10.0, p_max = -0.9,
-	# parameters to have a smooth continuation curve
-	ds = 0.04, dsmax = 0.05,)
+opts_br = ContinuationPar(p_min = -2.0, p_max = -1.)
 
 # continuation of equilibria
 br = continuation(prob, PALC(tangent=Bordered()), opts_br; normC = norminf)
@@ -79,7 +77,7 @@ optn_po = NewtonPar(tol = 1e-8,  max_iterations = 12)
 
 # continuation parameters
 opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds = -0.001, dsmin = 1e-4,
-	max_steps = 90, newton_options = optn_po, tol_stability = 1e-8)
+	max_steps = 80, newton_options = optn_po, tol_stability = 1e-8)
 
 # arguments for periodic orbits
 # one function to record information and one
@@ -139,17 +137,17 @@ We compute the branch of periodic orbits from the last Hopf bifurcation point (o
 
 ```@example TUTODE
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.15, ds= -0.001, dsmin = 1e-4,
-	max_steps = 100, newton_options = (@set optn_po.tol = 1e-8),
+opts_po_cont = ContinuationPar(opts_br, ds= 0.001, dsmin = 1e-4, dsmax=0.1,
+	max_steps = 150, newton_options = (@set optn_po.tol = 1e-8),
 	tol_stability = 1e-5)
 
 br_pocoll = @time continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Collocation method to locate PO, with polynomial degree 4
-	PeriodicOrbitOCollProblem(30, 4; meshadapt = true);
+	PeriodicOrbitOCollProblem(40, 4; meshadapt = true);
 	# regular continuation options
-	verbosity = 2, plot = true,
+	verbosity = 0, plot = true,
 	# we reject the newton step if the residual is high
 	callback_newton = BK.cbMaxNorm(100.),
 	args_po...)
@@ -167,16 +165,13 @@ using DifferentialEquations
 # this is the ODEProblem used with `DiffEqBase.solve`
 probsh = ODEProblem(TMvf!, copy(z0), (0., 1.), par_tm; abstol = 1e-12, reltol = 1e-10)
 
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, max_steps = 100, tol_stability = 1e-4)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, max_steps = 110, tol_stability = 1e-4)
 
 br_posh = @time continuation(
 	br, 4, opts_po_cont,
 	# this is where we tell that we want Standard Shooting
 	# with 15 time sections
 	ShootingProblem(15, probsh, Rodas5(), parallel = true);
-	# this to help branching: 
-	# specify guess for parameter value
-	δp = 0.0005,
 	# regular continuation parameters
 	verbosity = 2, plot = true,
 	args_po...,

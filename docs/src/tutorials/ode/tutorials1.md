@@ -87,10 +87,10 @@ You should see
 scene = title!("") #hide		
 ```
 
-The left figure is the norm of the solution as function of the parameter $p=\alpha$, the *y-axis* can be changed by passing a different `recordFromSolution` to `BifurcationProblem `. The top right figure is the value of $\alpha$ as function of the iteration number. The bottom right is the solution for the current value of the parameter. This last plot can be modified by changing the argument `plotSolution` to `BifurcationProblem `.
+The left figure is the norm of the solution as function of the parameter $p=\alpha$, the *y-axis* can be changed by passing a different `record_from_solution` to `BifurcationProblem `. The top right figure is the value of $\alpha$ as function of the iteration number. The bottom right is the solution for the current value of the parameter. This last plot can be modified by changing the argument `plot_solution` to `BifurcationProblem `.
 
 !!! note "Bif. point detection"
-    Two Fold points were detected. This can be seen by looking at `br.specialpoint`, by the black	dots on the continuation plots when doing `plot(br, plotfold=true)` or by typing `br` in the REPL. Note that the bifurcation points are located in `br.specialpoint`.
+    Two Fold points were detected. This can be seen by looking at `show(br)` or `br.specialpoint`, by the black	dots on the continuation plots when doing `plot(br, plotfold=true)` or by typing `br` in the REPL. Note that the bifurcation points are located in `br.specialpoint`.
 
 What if we want to compute to continue both ways in one call?
 

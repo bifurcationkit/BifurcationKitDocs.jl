@@ -50,7 +50,7 @@ We first compute the branch of equilibria
 
 ```@example TUTLURE
 # continuation options
-opts_br = ContinuationPar(p_min = -1.4, p_max = 1.8, ds = 0.01, dsmax = 0.01, plot_every_step = 20, max_steps = 1000)
+opts_br = ContinuationPar(p_min = -1.4, p_max = 1.8, dsmax = 0.01, max_steps = 1000)
 
 # computation of the branch
 br = continuation(prob, PALC(), opts_br)
@@ -91,17 +91,13 @@ end
 We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching as follows
 
 ```@example TUTLURE
-# newton parameters
-optn_po = NewtonPar(tol = 1e-8,  max_iterations = 25)
-
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.02, ds= 0.01, dsmin = 1e-4, p_max = 1.8, p_min=-1., max_steps = 80, newton_options =  optn_po, tol_stability = 1e-4)
+opts_po_cont = ContinuationPar(dsmax = 0.02, ds= 0.01, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
 
 Mt = 120 # number of time sections
 br_po = continuation(
 	br, 1, opts_po_cont,
 	PeriodicOrbitTrapProblem(M = Mt);
-	δp = 0.01,
 	record_from_solution = recordPO,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -118,7 +114,7 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40);
-	verbosity = 3, plot = true,
+	plot = true,
 	ampfactor = .2, δp = -0.005,
 	usedeflation = true,
 	plot_solution = (x, p; k...) -> begin
@@ -144,21 +140,16 @@ We use a different method to compute periodic orbits: we rely on a fixed point o
 using DifferentialEquations
 
 # ODE problem for using DifferentialEquations
-probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; abstol = 1e-10, reltol = 1e-7)
-
-# newton parameters
-optn_po = NewtonPar(tol = 1e-7, max_iterations = 25)
+probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; abstol = 1e-11, reltol = 1e-9)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, max_steps = 130, newton_options = optn_po, tol_stability = 1e-5, detect_bifurcation = 3, plot_every_step = 10, n_inversion = 6, nev = 2)
+opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, max_steps = 130, tol_stability = 1e-5,plot_every_step = 10)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 15 sections
 	ShootingProblem(15, probsh, Rodas5(); parallel = true);
-	# first parameter value on the branch
-	δp = 0.005,
-	verbosity = 3, plot = true,
+	plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
 	# limit the residual, useful to help DifferentialEquations
@@ -173,7 +164,7 @@ We do not provide Automatic Branch Switching as we do not have the PD normal for
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40, dsmax = 0.01, plot_every_step = 10, ds = 0.01);
-	verbosity = 3, plot = true,
+	plot = true,
 	ampfactor = .1, δp = -0.005,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -185,7 +176,7 @@ br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40
 	callback_newton = BK.cbMaxNorm(10),
 	)
 
-scene = plot(br_po, br_po_pd)
+scene = plot(br, br_po, br_po_pd)
 ```
 
 ## Periodic orbits with orthogonal collocation
@@ -193,17 +184,13 @@ scene = plot(br_po, br_po_pd)
 We now rely on a the state of the art method for computing periodic orbits of ODE: orthogonal collocation.
 
 ```@example TUTLURE
-# newton parameters
-optn_po = NewtonPar(tol = 1e-10,  max_iterations = 10)
-
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds= 0.01, dsmin = 1e-4, max_steps = 80, newton_options = optn_po, tol_stability = 1e-4, plot_every_step = 20, n_inversion = 6)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds = 0.01, dsmin = 1e-4, max_steps = 70, tol_stability = 1e-4, plot_every_step = 20)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
-	PeriodicOrbitOCollProblem(20, 4);
-	ampfactor = 1., δp = 0.01,
-	verbosity = 2,	plot = true,
+	PeriodicOrbitOCollProblem(40, 4);
+	plot = true,
 	record_from_solution = recordPO,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -218,8 +205,8 @@ We do not provide Automatic Branch Switching as we do not have the PD normal for
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40, ds = 0.01, dsmax = 0.05, plot_every_step = 10);
-	verbosity = 3, plot = true,
+br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 80, dsmax = 0.02, plot_every_step = 10);
+	plot = true,
 	ampfactor = .3, δp = -0.005,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
