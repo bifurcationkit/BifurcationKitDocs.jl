@@ -42,6 +42,70 @@ continuation(br, ind_bif, options_cont;
 ## Branch switching of non-simple bifurcation points
 
 We refer to [Branch switching](@ref abs-nonsimple-eq) for more details.
+
+## Graph of bifurcations
+
+We provide a graph of bifurcations of equilbria and periodic orbits that can be detected in `BifurcationKit`. An arrow from say `Equilibrium` to `Hopf` means that Hopf bifurcations can be detected while continuing equilibria. Each object of codim 0 (resp. 1) can be continued in one (resp. 2) parameters.
+
+
+```@diagram mermaid
+graph LR
+    S[  ]
+    C[ Equilibrium ]
+    PO[ Periodic orbit ]
+    BP[ Fold/simple branch point ]
+    H[ Hopf \n :hopf]
+    CP[Cusp]
+    BT[ Bogdanov-Takens ]
+    ZH[ZH]
+    HH[HH]
+    GH[Bautin]
+    FPO[ Fold Periodic orbit ]
+    NS[ Neimark-Sacker ]
+    PD[ Period Doubling ]
+    BPC[BPC]
+
+    S --> C
+    S --> PO
+    C --> nBP[ non simple\n branch point ]
+    C --> BP
+    C --> H
+
+    BP --> CP
+    BP --> BT
+
+    PO --> H
+    PO --> FPO
+    PO --> NS
+    PO --> PD
+
+    FPO --> GH
+    FPO --> BPC
+    FPO --> R1
+
+    NS --> R1
+    NS --> R3
+    NS --> R4
+    NS --> CH
+    NS --> LPNS
+    NS --> PDNS
+    NS --> R2
+    NS --> NSNS
+
+    PD --> PDNS
+    PD --> R2
+    PD --> LPPD
+    PD --> GPD
+
+    H --> BT
+    H --> ZH
+    BP --> ZH
+    H --> HH
+    H --> GH
+
+    Codim --> Codim0 --> Codim1 --> Codim2
+```
+
 ## Summary of branching procedures
 
 We collect in the following table the list of automatic branch switching (aBS) functions. Their detailed explanation follows in this page.
