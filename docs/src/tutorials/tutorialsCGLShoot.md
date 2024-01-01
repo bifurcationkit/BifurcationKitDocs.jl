@@ -13,9 +13,9 @@ where $A$ is the infinitesimal generator of a $C_0$-semigroup. We use the same b
 
 ```julia
 using Revise
-	using DiffEqOperators, DifferentialEquations
-	using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
-	const BK = BifurcationKit
+using DiffEqOperators, DifferentialEquations
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters
+const BK = BifurcationKit
 
 function Laplacian2D(Nx, Ny, lx, ly)
 	hx = 2lx/Nx

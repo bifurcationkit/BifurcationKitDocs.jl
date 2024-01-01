@@ -21,11 +21,10 @@ It is straightforward to implement this problem as follows:
 ```@example TUTAUTOCATauto
 using Revise
 using ForwardDiff, SparseArrays
-using BifurcationKit, LinearAlgebra, Plots, Setfield
+using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
 # supremum norm
-norminf(x) = norm(x, Inf)
 f(u) = u^9 # solutions are positive, so remove the heaviside
 
 # helper function to plot solutions

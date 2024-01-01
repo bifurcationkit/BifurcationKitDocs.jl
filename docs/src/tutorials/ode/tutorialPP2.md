@@ -95,9 +95,6 @@ opts_po_cont = ContinuationPar(dsmax = 0.1, ds= 0.0001, dsmin = 1e-4,
 br_po = continuation(
 	brH, 1, opts_po_cont,
 	PeriodicOrbitOCollProblem(20, 4);
-	# PeriodicOrbitTrapProblem(M = Mt;
-	#     # specific linear solver for ODEs
-    # 	jacobian = :Dense);
 	plot = true, verbosity = 2,
 	record_from_solution = (x, p) -> begin
 		xtt = get_periodic_orbit(p.prob, x, p.p)
@@ -105,13 +102,9 @@ br_po = continuation(
 			min = minimum(xtt[1,:]),
 			period = x[end])
 	end,
-	plot_solution = (x, p; k...) -> begin
-		xtt = get_periodic_orbit(p.prob, x, p.p)
-		plot!(xtt.t, xtt[1,:]; k...)
-	end,
 	finalise_solution = (z, tau, step, contResult; prob = nothing, kwargs...) -> begin
 		# limit the period
-		z.u[end] < 50
+		getperiod(prob, z.u, nothing) < 50
 		end,
 	normC = norminf)
 
@@ -123,7 +116,7 @@ Let us now plot an orbit
 
 ```@example TUTPP2
 # extract the different components
-orbit = get_periodic_orbit(br_po, 10)
+orbit = get_periodic_orbit(br_po, 30)
 plot(orbit.t, orbit[1,:]; label = "u1", markersize = 2)
 plot!(orbit.t, orbit[2,:]; label = "u2", xlabel = "time", title = "period = $(orbit.t[end])")
 ```

@@ -21,11 +21,10 @@ It is straightforward to implement this problem as follows:
 ```@example TUTAUTOCAT
 using Revise
 using ForwardDiff, SparseArrays
-using BifurcationKit, LinearAlgebra, Plots, Setfield
+using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
 # supremum norm
-norminf(x) = norm(x, Inf)
 f(u) = u^9 # solutions are positive, so remove the heaviside
 
 # helper function to plot solutions
@@ -161,8 +160,10 @@ Let us find the front using `newton`
 
 ```@example TUTAUTOCAT
 # we define a problem for solving for the wave
-probtw = BifurcationProblem(FcatWave, vcat(U0, -1.), par_cat_wave, (@lens _.a);J = JcatWave, record_from_solution = (x,p) -> (s = x[end], nrm = norm(x[1:end-1])),
-plot_solution = (x, p; k...) -> plotsol!(x[1:end-1];k...))
+probtw = BifurcationProblem(FcatWave, vcat(U0, -1.), par_cat_wave, (@lens _.a);
+	J = JcatWave,
+	record_from_solution = (x,p) -> (s = x[end], nrm = norm(x[1:end-1])),
+	plot_solution = (x, p; k...) -> plotsol!(x[1:end-1];k...))
 
 front = newton(probtw, NewtonPar())
 println("front speed s = ", front.u[end], ", norm = ", front.u[1:end-1] |> norminf)
@@ -206,9 +207,9 @@ function (eig::EigenWave)(Jac, nev; k...)
 	return Complex.(F.values[I[J[1:nev2]]]), Complex.(F.vectors[:, I[J[1:nev2]]]), true, 1
 end
 
-optn = NewtonPar(tol = 1e-8, verbose = true, eigsolver = EigenWave())
+optn = NewtonPar(tol = 1e-8, eigsolver = EigenWave())
 opt_cont_br = ContinuationPar(p_min = 0.05, p_max = 1., newton_options = optn, ds= -0.001, plot_every_step = 2, detect_bifurcation = 3, nev = 10, n_inversion = 6)
-	br  = continuation(probtw, PALC(), opt_cont_br)
+br  = continuation(probtw, PALC(), opt_cont_br)
 plot(br)
 ```
 
@@ -231,8 +232,8 @@ probTP = PeriodicOrbitTrapProblem(M = Mt ;
 		jacobian = :BorderedLU)
 
 opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds= -0.001, p_min = 0.05, max_steps = 130, newton_options = optn, nev = 7, tol_stability = 1e-3, detect_bifurcation = 0, plot_every_step = 1)
-	opts_po_cont = @set opts_po_cont.newton_options.max_iterations = 10
-	opts_po_cont = @set opts_po_cont.newton_options.tol = 1e-6
+opts_po_cont = @set opts_po_cont.newton_options.max_iterations = 10
+opts_po_cont = @set opts_po_cont.newton_options.tol = 1e-6
 
 br_po = continuation(
 	# we want to compute the bifurcated branch from
@@ -244,7 +245,7 @@ br_po = continuation(
 	probTP ;
 	# OPTIONAL parameters
 	# we want to jump on the new branch at phopf + δp
-	δp = 0.0025,
+	δp = -0.0025,
 	# tangent predictor
 	alg = PALC(tangent = Secant(),
 			# linear solver specific to PALC
@@ -275,7 +276,7 @@ plot(br);plot!(br_po, label = "modulated fronts")
 Let us plot one modulated front:
 
 ```@example TUTAUTOCAT
-modfront = BK.get_periodic_orbit(br_po, length(br_po))
+modfront = get_periodic_orbit(br_po, length(br_po))
 plot(plot(modfront.t, modfront.u[end,:], xlabel = "t", ylabel = "s", label = ""),
 	contour(modfront.t, X, modfront.u[1:N,:], color = :viridis, xlabel = "t", title = "u for a = $(round(br_po.sol[length(br_po)].p,digits=4))", fill = true, ylims=(-10,10)))
 ```

@@ -1,6 +1,11 @@
 # [Branch switching](@id Branch-switching-page)
 
-The precise definition of the methods are given in [Branch switching (branch point)](@ref) and [Branch switching (Hopf point)](@ref).
+```@contents
+Pages = ["intro-abs.md"]
+Depth = 3
+```
+
+The precise definition of the methods is given in [Branch switching (branch point)](@ref) and [Branch switching (Hopf point)](@ref).
 
 ## Summary of branching procedures
 

@@ -22,8 +22,8 @@ We start by coding the bifurcation problem.
 
 ```@example STEINMETZ
 using Revise
-using Test, ForwardDiff, Parameters, Plots
-using BifurcationKit, Test
+using ForwardDiff, Parameters, Plots
+using BifurcationKit
 const BK = BifurcationKit
 
 function SL!(du, u, p, t = 0)
@@ -74,7 +74,7 @@ sol = solve(prob_de, alg_ode)
 plot(sol)
 ```
 
-We generate a shooting problem form the computed trajectories and continue the periodic orbits as function of $k_8$
+We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of $k_8$
 
 ```@example STEINMETZ
 probsh, cish = generate_ci_problem( ShootingProblem(M=4), prob, prob_de, sol, 16.; reltol = 1e-10, abstol = 1e-12, parallel = true)

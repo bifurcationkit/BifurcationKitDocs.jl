@@ -34,9 +34,9 @@ $$\begin{aligned}
 
 and where
 
-$$\mathbf{F}(x,p)-\mathbf{J}x := \sum_{1\leq q+l\leq p}\mathbf{F}_{ql}(x^{(q)},p^{(l)})+o(\|u\|+\|p\|)^p. $$
+$$\mathbf{F}(x,p)-\mathbf{J}x := \sum_{1\leq q+l\leq p}\mathbf{F}_{ql}(x^{(q)},p^{(l)})+o(\|u\|+\|p\|)^p.$$
 
-with $\mathbf{F}_{ql}$ a $(q+l)$-linear map 
+with $\mathbf{F}_{ql}$ a $(q+l)$-linear map. 
 
 ## Normal form computation
 

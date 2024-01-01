@@ -179,7 +179,7 @@ scene = plot(br, br_po, br_po_pd)
 
 ## Branch of periodic orbits with finite differences
 
-We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching as follows
+We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching from the Hopf point as follows
 
 ```@example TUTLURE
 # continuation parameters
@@ -207,7 +207,6 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40);
 	plot = true,
 	ampfactor = .1, δp = -0.005,
-	# usedeflation = true,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## add previous branch

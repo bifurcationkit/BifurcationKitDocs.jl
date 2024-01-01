@@ -25,10 +25,8 @@ with Dirichlet boundary conditions. We discretize the square $\Omega = (0,L_x)\t
 ```@example CGL2d
 using Revise
 using DiffEqOperators, ForwardDiff
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters
 const BK = BifurcationKit
-
-norminf(x) = norm(x, Inf)
 
 function Laplacian2D(Nx, Ny, lx, ly)
 	hx = 2lx/Nx; hy = 2ly/Ny

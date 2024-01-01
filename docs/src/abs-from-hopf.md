@@ -81,7 +81,7 @@ continuation(br::ContResult, ind_PD::Int, _contParams::ContinuationPar;
     kwargs...)
 ```
 
-The option `prm=true` enforces that the period-doubling normal form is computed using the Poincaré return map ; this is only necessary in case of use of the collocation method. Indeed, in the case of the collocation method, an automatic procedure based on the Iooss normal form has yet to be implemented.
+The option `prm = true` enforces that the period-doubling normal form is computed using the Poincaré return map ; this is only necessary in case of use of the collocation method. Indeed, in the case of the collocation method, an automatic procedure based on the Iooss normal form has yet to be implemented.
 
 ### Case of Trapezoid method
 
