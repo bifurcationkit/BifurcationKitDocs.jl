@@ -1,8 +1,5 @@
 #  Asymptotic numerical method (ANM)
 
-!!! warning "Work in progress"
-    Automatic branch switching is being tested, it will be available soon.
-
 !!! warning "Dimensions"
     This is a method for small dimensions, less than several thousands.
 
@@ -49,12 +46,9 @@ See [`AsymptoticNumericalMethod.ANM`](@ref) for more information.
 We provide an example of use. We define a `BifurcationProblem` as usual and pass the continuation algorithm `ANM`.
 
 ```@example ANM
-using AsymptoticNumericalMethod, Plots, Parameters, Setfield
-using LinearAlgebra: norm
+using AsymptoticNumericalMethod, Plots, Parameters
 using BifurcationKit
 const BK = BifurcationKit
-
-norminf(x) = norm(x, Inf)
 
 function F(x, p)
 	@unpack α = p
@@ -72,7 +66,7 @@ prob = BifurcationProblem(F, sol0, par, (@lens _.α); record_from_solution = (x,
 ```
 
 ```@example ANM
-optanm = ContinuationPar(dsmin = 0.01, dsmax = 0.15, detect_bifurcation = 3, ds= 0.01, newton_options = NewtonPar(tol = 1e-9, verbose = false), n_inversion = 6, max_bisection_steps = 15, max_steps = 15, )
+optanm = ContinuationPar(dsmin = 0.01, dsmax = 0.15, detect_bifurcation = 3, ds= 0.01, newton_options = NewtonPar(tol = 1e-9), n_inversion = 6, max_bisection_steps = 15, max_steps = 15, )
 
 branm = continuation(prob, ANM(20, 1e-8), optanm, normC = norminf, verbosity = 2)
 ```

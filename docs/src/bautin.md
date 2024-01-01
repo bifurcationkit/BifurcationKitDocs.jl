@@ -21,7 +21,11 @@ $$l_2:=\frac{1}{12} \operatorname{Re} G_{32}.$$
 The normal form (E) can be automatically computed as follows
 
 ```julia
-get_normal_form(br::ContResult, ind_bif::Int ; verbose = false, ζs = nothing, lens = getlens(br))
+get_normal_form(br::ContResult, ind_bif::Int;
+    verbose = false, 
+    ζs = nothing, 
+    lens = getlens(br),
+    kwargs...)
 ```
 
 `br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`get_normal_form`](@ref). The result returns an object of type `Bautin`.

@@ -9,7 +9,7 @@ $$\tag{1} \frac{d x}{d t}=f(x)$$
 and we write $\phi^t(x_0)$ the associated flow (or semigroup of solutions).
 
 !!! tip "Tip about convenience functions"
-    For convenience, we provide some functions `plotPeriodicShooting` for plotting, `get_amplitude` (resp. `get_maximum`) for getting the amplitude (resp. maximum) of the solution encoded by a shooting problem. See the tutorials for examples of use.
+    For convenience, we provide some functions `plot_periodic_shooting` for plotting, `get_amplitude` (resp. `get_maximum`) for getting the amplitude (resp. maximum) of the solution encoded by a shooting problem. See the tutorials for examples of use.
 
 ## Standard Shooting
 ### Simple shooting
@@ -58,7 +58,7 @@ The functional is encoded in the composite type [`ShootingProblem`](@ref). In pa
 
 ## Poincaré shooting
 
-> The algorithm is based on the one described in **Newton–Krylov Continuation of Periodic Orbits for Navier–Stokes Flows.**, Sánchez, J., M. Net, B. Garcı́a-Archilla, and C. Simó (2004) and **Matrix-Free Continuation of Limit Cycles for Bifurcation Analysis of Large Thermoacoustic Systems.** Waugh, Iain, Simon Illingworth, and Matthew Juniper (2013). 
+ The algorithm is based on the one described in [^Sanchez] and [^Waugh]. 
 
 
 We look for periodic orbits solutions of (1) using the hyperplanes $\Sigma_i=\{x\ / \ \langle x-x^c_{I}, n_i\rangle=0\}$ for $i=1,\cdots,M$, centered on $x^c_i$, which intersect transversally an initial periodic orbit guess. We write $\Pi_i:\Sigma_i\to\Sigma_{mod(i+1,M)}$, the Poincaré return map to $\Sigma_{mod(i+1,M)}$. The main idea of the algorithm is to use the fact that the problem is $(N-1)\cdot M$ dimensional if $x_i\in\mathbb R^N$ because each $x_i$ lives in $\Sigma_i$. Hence, one has to constrain the unknowns to these hyperplanes otherwise the Newton algorithm does not converge well.
@@ -165,3 +165,8 @@ continuation(probPO::BifurcationKit.AbstractShootingProblem, orbitguess,
 [^Lust]:> **Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations**, Lust Kurt, 1997. 
 
 [^Umbria]:> J. S. Umbría and M. Net. **Numerical continuation methods for large-scale dissipative dynamical systems**. The European Physical Journal Special Topics, 225(13):2465–2486, 2016.
+
+[^Sanchez]:> Sánchez, J., M. Net, B. Garcı́a-Archilla, and C. Simó. “Newton–Krylov Continuation of Periodic Orbits for Navier–Stokes Flows.” Journal of Computational Physics 201, no. 1 (November 20, 2004): 13–33. https://doi.org/10.1016/j.jcp.2004.04.018.
+
+[^Waugh]:> Waugh, Iain, Simon Illingworth, and Matthew Juniper. “Matrix-Free Continuation of Limit Cycles for Bifurcation Analysis of Large Thermoacoustic Systems.” Journal of Computational Physics 240 (May 2013): 225–47. https://doi.org/10.1016/j.jcp.2012.12.034.
+

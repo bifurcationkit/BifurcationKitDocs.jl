@@ -25,7 +25,7 @@ Depth = 3
 
 ## (limited) Capabilities related to maps
 - continuation of fixed points of maps
-- computation of normal forms of Period-doubling, Neimark-Sacker bifurcations.
+- computation of normal form of Period-doubling and Neimark-Sacker bifurcations.
 
 **Note that you can combine most solvers, like use Deflation for Periodic orbit computation or Fold of periodic orbits family.**
 

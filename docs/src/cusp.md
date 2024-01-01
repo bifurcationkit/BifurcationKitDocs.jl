@@ -18,7 +18,10 @@ $$\dot{w}=c w^{3}+O\left(w^{4}\right).\tag{E}$$
 The normal form (E) can be automatically computed as follows
 
 ```julia
-get_normal_form(br::ContResult, ind_bif::Int ; verbose = false, ζs = nothing, lens = getlens(br))
+get_normal_form(br::ContResult, ind_bif::Int ; 
+    ζs = nothing,
+    lens = getlens(br)
+    )
 ```
 
 `br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`get_normal_form`](@ref). The result returns an object of type `Cusp`.

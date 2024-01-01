@@ -5,9 +5,6 @@ Pages = ["PDContinuationPO.md"]
 Depth = 2
 ```
 
-!!! warning "Work in progress"
-    Continuation of PD of POs is a recent addition. It has not been thoroughly tested.  
-
 In this page, we explain how to perform continuation of PD points of periodic orbits and detect the following codim 2 bifurcations.
 
 ### List of detected codim 2 bifurcation points

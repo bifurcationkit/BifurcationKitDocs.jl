@@ -39,7 +39,7 @@ Depending on the method used for computing the periodic orbits, you have several
 
 ## Normal form based on Poincaré return map
 
-Given a transversal section $\Sigma$ to $\gamma$ at $\gamma(0)$, the Poincaré return map $\mathcal P$ associates to each point $x\in\Sigma$ close to $\gamma(0)$ the first point $\mathcal P(x,p)\in\Sigma$ where the orbit of (E) with initial condition $x$ intersects again $\Sigma$ at $\mathcal P(x,p)$. Hence, the discrete map $x_{n+1}=\mathcal P(x_n,p)$ has normal form
+Given a transversal section $\Sigma$ to $x_0$ at $x_0(0)$, the Poincaré return map $\mathcal P$ associates to each point $x\in\Sigma$ close to $x_0(0)$ the first point $\mathcal P(x,p)\in\Sigma$ where the orbit of (E) with initial condition $x$ intersects again $\Sigma$ at $\mathcal P(x,p)$. Hence, the discrete map $x_{n+1}=\mathcal P(x_n,p)$ has normal form
 
 $$x_{n+1} = -x_n+cx_n^3+...$$
 
@@ -47,16 +47,16 @@ where [^Kuz2]
 
 $$c =\frac{1}{6}\left\langle p^*, \mathcal{C}(p, p, p)+3 \mathcal{B}\left(p,\left(I_{n-1}-\mathcal{A}\right)^{-1} \mathcal{B}(p, p)\right)\right\rangle$$
 
-where $\mathcal C=d^3\mathcal P(\gamma(0))$, $\mathcal B = d^2\mathcal P(\gamma(0))$ and $\mathcal A = d\mathcal P(\gamma(0))$. Also:
+where $\mathcal C=d^3\mathcal P(x_0(0))$, $\mathcal B = d^2\mathcal P(x_0(0))$ and $\mathcal A = d\mathcal P(x_0(0))$. Also:
 
 $$\mathcal{A} p=-p, \mathcal{A}^{\mathrm{T}} p^*=-p^*$$
 
 ## Normal form based on Iooss method
 
-This is based on [^Iooss],[^Kuz2]. Suppose that the $T$ periodic orbit $\gamma(\tau)$ has a Period-Doubling bifurcation for a parameter value $p_0$.
-Locally, the orbits can be represented by 
+This is based on [^Iooss],[^Kuz2]. Suppose that the $T$ periodic orbit $x_0(\tau)$ has a Period-Doubling bifurcation for a parameter value $p_0$.
+Locally, the orbits can be represented by $p-p_0:=\mu$ and
 
-$$x(\tau) = \gamma(\tau)+Q_0(\tau)\xi+\Phi(\tau, \xi)$$
+$$x(\tau) = x_0(\tau)+\xi v(\tau)+H(\tau, \xi, \mu)$$
 
 where 
 
@@ -65,7 +65,8 @@ $$\left\{\begin{array}{l}
 \frac{d \xi}{d \tau}=c_{11}\cdot(p-p_0)\xi+c_3 \xi^3+\cdots
 \end{array}\right.$$
 
-with center manifold correction $\Phi(\tau, \xi)$ being $2T$ periodic in $\tau$ and $Q_0(\tau)$ is the Floquet operator.
+with center manifold correction $H(\tau, \xi, \mu)$ being $2T$ periodic in $\tau$ and $v(\tau)$ is a Floquet eigenvector for the eigenvalue -1.
+
 
 ## References
 

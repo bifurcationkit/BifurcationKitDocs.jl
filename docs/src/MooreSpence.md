@@ -1,8 +1,5 @@
 # Moore-Penrose continuation
 
-!!! warning "WIP"
-    This is work in progress. The interface will be improved in the future.
-
 This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `alg = MoorePenrose()` in [`continuation`](@ref). See also [`MoorePenrose`](@ref) for more information.
 
 For solving
@@ -25,7 +22,12 @@ The corrector is the Gauss Newton algorithm applied to (MS).
 
 ## Linear Algebra
 
-Let us discuss more about the norm and dot product. First, the option `normC` [`continuation`](@ref) specifies the norm used to evaluate the distance in (MS). The dot product (resp. norm) used in the (iterative) linear solvers is `LinearAlgebra.dot` (resp. `LinearAlgebra.norm`). It can be changed by importing these functions and redefining it. Note that by default, the ``L^2`` norm is used.
+
+### Norm
+
+The option `normC` [`continuation`](@ref) specifies the norm used to evaluate the distance in (MS). The dot product (resp. norm) used in the (iterative) linear solvers is `LinearAlgebra.dot` (resp. `LinearAlgebra.norm`). It can be changed by importing these functions and redefining it. Note that by default, the ``L^2`` norm is used.
+
+### Linear problem
 
 The linear solver for the linear problem associated to (MS) is set by the option `linearAlgo` in [`continuation`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
 
