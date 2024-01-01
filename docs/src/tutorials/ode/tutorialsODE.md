@@ -67,15 +67,12 @@ With detailed information:
 br
 ```
 
-## Branch of periodic orbits with Trapezoid method
+## Branch of periodic orbits with Orthogonal Collocation
 
-We then compute the branch of periodic orbits from the last Hopf bifurcation point (on the right). We use finite differences to discretize the problem of finding periodic orbits. Obviously, this will be problematic when the period of the limit cycle grows unbounded close to the homoclinic orbit.
+
+We compute the branch of periodic orbits from the last Hopf bifurcation point (on the right). We use Orthogonal Collocation to discretize the problem of finding periodic orbits. This is vastly more precise than the following methods because we use mesh adaptation.
 
 ```@example TUTODE
-# continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds = -0.001, dsmin = 1e-4,
-	max_steps = 80, tol_stability = 1e-8)
-
 # arguments for periodic orbits
 # one function to record information and one
 # function for plotting
@@ -96,43 +93,6 @@ args_po = (	record_from_solution = (x, p) -> begin
 	# we use the supremum norm
 	normC = norminf)
 
-Mt = 250 # number of time sections
-br_potrap = continuation(
-	# we want to branch form the 4th bif. point
-	br, 4, opts_po_cont,
-	# we want to use the Trapeze method to locate PO
-	PeriodicOrbitTrapProblem(M = Mt);
-	args_po...,
-	)
-
-scene = plot(br, br_potrap, markersize = 3)
-plot!(scene, br_potrap.param, br_potrap.min, label = "")
-```
-
-We plot the maximum (resp. minimum) of the limit cycle. We can see that the min converges to the smallest equilibrium indicating a homoclinic orbit.
-
-### Plot of some of the periodic orbits as function of $E_0$
-
-We can plot some of the previously computed periodic orbits in the plane $(E,x)$ as function of $E_0$:
-
-```@example TUTODE
-plot()
-# fetch the saved solutions
-for sol in br_potrap.sol[1:2:40]
-	# periodic orbit
-	po = sol.x
-	# get the mesh and trajectory
-	traj = get_periodic_orbit(br_potrap.prob, po, @set par_tm.E0 = sol.p)
-	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
-end
-title!("")
-```
-
-## Branch of periodic orbits with Orthogonal Collocation
-
-We compute the branch of periodic orbits from the last Hopf bifurcation point (on the right). We use Orthogonal Collocation to discretize the problem of finding periodic orbits. This is vastly more precise than the previous method because we use mesh adaptation.
-
-```@example TUTODE
 # continuation parameters
 opts_po_cont = ContinuationPar(opts_br, ds= 0.001, dsmin = 1e-4, dsmax = 0.1,
 	max_steps = 150,
@@ -177,6 +137,51 @@ br_posh = @time continuation(
 	)
 
 Scene = title!("")
+```
+## Branch of periodic orbits with Trapezoid method
+
+We then compute the branch of periodic orbits from the last Hopf bifurcation point (on the right).
+We use finite differences to discretize the problem of finding periodic orbits. Obviously, this will be problematic when the period of the limit cycle grows unbounded close to the homoclinic orbit.
+
+```@example TUTODE
+# continuation parameters
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds = 0.004, dsmin = 1e-4,
+	max_steps = 80, tol_stability = 1e-7)
+
+@set! opts_po_cont.newton_options.tol = 1e-7
+
+Mt = 250 # number of time sections
+br_potrap = continuation(
+	# we want to branch form the 4th bif. point
+	br, 4, opts_po_cont,
+	# we want to use the Trapeze method to locate PO
+	PeriodicOrbitTrapProblem(M = Mt);
+	δp = 0.001,
+	verbosity = 2, plot=true,
+	args_po...,
+	)
+
+scene = plot(br, br_potrap, markersize = 3)
+plot!(scene, br_potrap.param, br_potrap.min, label = "")
+```
+
+We plot the maximum (resp. minimum) of the limit cycle. We can see that the min converges to the smallest equilibrium indicating a homoclinic orbit.
+
+### Plot of some of the periodic orbits as function of $E_0$
+
+We can plot some of the previously computed periodic orbits in the plane $(E,x)$ as function of $E_0$:
+
+```@example TUTODE
+plot()
+# fetch the saved solutions
+for sol in br_potrap.sol[1:2:40]
+	# periodic orbit
+	po = sol.x
+	# get the mesh and trajectory
+	traj = get_periodic_orbit(br_potrap.prob, po, @set par_tm.E0 = sol.p)
+	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
+end
+title!("")
 ```
 
 ## References

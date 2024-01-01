@@ -66,9 +66,11 @@ br
 
 We note the Hopf bifurcation point which we shall investigate now.
 
-## Branch of periodic orbits with finite differences
+## Periodic orbits with orthogonal collocation
 
 We compute the branch of periodic orbits from the Hopf bifurcation point.
+We rely on a the state of the art method for computing periodic orbits of ODE: orthogonal collocation.
+
 We first define a plotting function and a record function which are used for all cases below:
 
 ```@example TUTLURE
@@ -88,100 +90,7 @@ function recordPO(x, p)
 end
 ```
 
-We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching as follows
-
-```@example TUTLURE
-# continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.02, ds= 0.01, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
-
-Mt = 120 # number of time sections
-br_po = continuation(
-	br, 1, opts_po_cont,
-	PeriodicOrbitTrapProblem(M = Mt);
-	record_from_solution = recordPO,
-	plot_solution = (x, p; k...) -> begin
-		plotPO(x, p; k...)
-		## plot previous branch
-		plot!(br, subplot=1, putbifptlegend = false)
-		end,
-	normC = norminf)
-
-scene = plot(br, br_po)
-```
-
-Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching as we do not have the PD normal form computed in `BifurcationKit`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
-
-```@example TUTLURE
-# aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40);
-	plot = true,
-	ampfactor = .2, δp = -0.005,
-	usedeflation = true,
-	plot_solution = (x, p; k...) -> begin
-		plotPO(x, p; k...)
-		## add previous branch
-		plot!(br_po; legend=false, subplot=1)
-	end,
-	record_from_solution = recordPO,
-	normC = norminf
-	)
-Scene = title!("")
-```
-
-```@example TUTLURE
-plot(br, br_po, br_po_pd)
-```
-
-## Periodic orbits with Parallel Standard Shooting
-
-We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the previous one. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the previous method. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf **aBS**.
-
-```@example TUTLURE
-using DifferentialEquations
-
-# ODE problem for using DifferentialEquations
-probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; abstol = 1e-11, reltol = 1e-9)
-
-# continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, max_steps = 130, tol_stability = 1e-5,plot_every_step = 10)
-
-br_po = continuation(
-	br, 1, opts_po_cont,
-	# parallel shooting functional with 15 sections
-	ShootingProblem(15, probsh, Rodas5(); parallel = true);
-	plot = true,
-	record_from_solution = recordPO,
-	plot_solution = plotPO,
-	# limit the residual, useful to help DifferentialEquations
-	callback_newton = BK.cbMaxNorm(10),
-	normC = norminf)
-
-scene = title!("")
-```
-
-We do not provide Automatic Branch Switching as we do not have the PD normal form computed in `BifurcationKit`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
-
-```@example TUTLURE
-# aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40, dsmax = 0.01, plot_every_step = 10, ds = 0.01);
-	plot = true,
-	ampfactor = .1, δp = -0.005,
-	plot_solution = (x, p; k...) -> begin
-		plotPO(x, p; k...)
-		## add previous branch
-		plot!(br_po; subplot = 1)
-	end,
-	record_from_solution = recordPO,
-	normC = norminf,
-	callback_newton = BK.cbMaxNorm(10),
-	)
-
-scene = plot(br, br_po, br_po_pd)
-```
-
-## Periodic orbits with orthogonal collocation
-
-We now rely on a the state of the art method for computing periodic orbits of ODE: orthogonal collocation.
+Continuation of periodic orbits from the Hopf point:
 
 ```@example TUTLURE
 # continuation parameters
@@ -221,3 +130,95 @@ br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 80
 scene = plot(br_po, br_po_pd)
 ```
 
+## Periodic orbits with Parallel Standard Shooting
+
+We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the previous one. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the previous method. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf **aBS**.
+
+```@example TUTLURE
+using DifferentialEquations
+
+# ODE problem for using DifferentialEquations
+probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; abstol = 1e-11, reltol = 1e-9)
+
+# continuation parameters
+opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, max_steps = 130, tol_stability = 1e-5,plot_every_step = 10)
+
+br_po = continuation(
+	br, 1, opts_po_cont,
+	# parallel shooting functional with 15 sections
+	ShootingProblem(15, probsh, Rodas5(); parallel = true);
+	plot = true,
+	record_from_solution = recordPO,
+	plot_solution = plotPO,
+	# limit the residual, useful to help DifferentialEquations
+	callback_newton = BK.cbMaxNorm(10),
+	normC = norminf)
+
+scene = title!("")
+```
+
+We do not provide Automatic Branch Switching as we do not have the PD normal form computed in `BifurcationKit`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
+
+```@example TUTLURE
+# aBS from PD
+br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40, dsmax = 0.01, plot_every_step = 10, ds = -0.01);
+	plot = true,
+	ampfactor = .2, δp = -0.0015,
+	plot_solution = (x, p; k...) -> begin
+		plotPO(x, p; k...)
+		## add previous branch
+		plot!(br_po; subplot = 1)
+	end,
+	record_from_solution = recordPO,
+	normC = norminf,
+	callback_newton = BK.cbMaxNorm(10),
+	)
+
+scene = plot(br, br_po, br_po_pd)
+```
+
+## Branch of periodic orbits with finite differences
+
+We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching as follows
+
+```@example TUTLURE
+# continuation parameters
+opts_po_cont = ContinuationPar(dsmax = 0.02, ds= 0.01, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
+
+Mt = 120 # number of time sections
+br_po = continuation(
+	br, 1, opts_po_cont,
+	PeriodicOrbitTrapProblem(M = Mt);
+	record_from_solution = recordPO,
+	plot_solution = (x, p; k...) -> begin
+		plotPO(x, p; k...)
+		## plot previous branch
+		plot!(br, subplot=1, putbifptlegend = false)
+		end,
+	normC = norminf)
+
+scene = plot(br, br_po)
+```
+
+Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching as we do not have the PD normal form computed in `BifurcationKit`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
+
+```@example TUTLURE
+# aBS from PD
+br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40);
+	plot = true,
+	ampfactor = .1, δp = -0.005,
+	# usedeflation = true,
+	plot_solution = (x, p; k...) -> begin
+		plotPO(x, p; k...)
+		## add previous branch
+		plot!(br_po; legend=false, subplot=1)
+	end,
+	record_from_solution = recordPO,
+	normC = norminf
+	)
+Scene = title!("")
+```
+
+```@example TUTLURE
+plot(br, br_po, br_po_pd)
+```

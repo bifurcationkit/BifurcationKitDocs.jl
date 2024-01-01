@@ -78,7 +78,7 @@ scene = plot(diagram; code = (), title="$(size(diagram)) branches", legend = fal
 ```
 
 
-## Branch of periodic orbits with finite differences
+## Branch of periodic orbits with collocation method
 
 As you can see on the diagram, there is a Hopf bifurcation indicated by a red dot.  Let us compute the periodic orbit branching from the Hopf point.
 
@@ -88,30 +88,30 @@ We first find the branch
 # branch of the diagram with Hopf point
 brH = get_branch(diagram, (2,1)).γ
 
-# newton parameters
-optn_po = NewtonPar(tol = 1e-8,  max_iterations = 25)
-
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.1, ds= -0.001, dsmin = 1e-4,
- newton_options = (@set optn_po.tol = 1e-8), tol_stability = 1e-2,
- detect_bifurcation = 1)
+opts_po_cont = ContinuationPar(dsmax = 0.1, ds= 0.0001, dsmin = 1e-4,
+	tol_stability = 1e-4, plot_every_step = 1)
 
-Mt = 101 # number of time sections
-	br_po = continuation(
+br_po = continuation(
 	brH, 1, opts_po_cont,
-	PeriodicOrbitTrapProblem(M = Mt;
-	    # specific linear solver for ODEs
-    	jacobian = :Dense);
-
+	PeriodicOrbitOCollProblem(20, 4);
+	# PeriodicOrbitTrapProblem(M = Mt;
+	#     # specific linear solver for ODEs
+    # 	jacobian = :Dense);
+	plot = true, verbosity = 2,
 	record_from_solution = (x, p) -> begin
 		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),
 			period = x[end])
 	end,
+	plot_solution = (x, p; k...) -> begin
+		xtt = get_periodic_orbit(p.prob, x, p.p)
+		plot!(xtt.t, xtt[1,:]; k...)
+	end,
 	finalise_solution = (z, tau, step, contResult; prob = nothing, kwargs...) -> begin
 		# limit the period
-		z.u[end] < 100
+		z.u[end] < 50
 		end,
 	normC = norminf)
 
