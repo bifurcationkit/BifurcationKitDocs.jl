@@ -4,6 +4,7 @@ pkg"add https://github.com/bifurcationkit/AsymptoticNumericalMethod.jl"
 Pkg.add("BandedMatrices")
 
 using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
+using DocumenterDiagrams
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 
