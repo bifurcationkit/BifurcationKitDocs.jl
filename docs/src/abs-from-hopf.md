@@ -77,7 +77,7 @@ We provide an automatic branching procedure in this case. In essence, all you ha
 
 ```julia
 continuation(br::ContResult, ind_PD::Int, _contParams::ContinuationPar;
-    prm = true,
+    prm = true, detailed = true,
     kwargs...)
 ```
 
@@ -91,7 +91,9 @@ The call is as follows. Please note that a deflation is included in this method 
 
 ```julia
 continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
-	δp = 0.1, ampfactor = 1, usedeflation = false, kwargs...)
+	δp = 0.1, ampfactor = 1, 
+	usedeflation = false,
+	kwargs...)
 ```
 
 An example of use is provided in [Lur'e problem](@ref pdlure).

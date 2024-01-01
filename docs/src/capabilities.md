@@ -13,6 +13,7 @@ Depth = 3
 - Monitoring user functions along curves computed by continuation, see [events](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/EventCallback/)
 - Continuation methods: PALC, Moore Penrose, Multiple, Polynomial, Deflated continuation, ANM, ...
 - Bifurcation points located with bisection
+- compatible with GPU
 
 ## Capabilities related to equilibria
 - Detection of Branch, Fold, Hopf bifurcation points of stationary solutions and computation of their normal form.
@@ -21,6 +22,10 @@ Depth = 3
 - Fold / Hopf continuation based on Minimally Augmented formulation, with Matrix Free / Sparse / Dense Jacobian.
 - Detection of all codim 2 bifurcations of equilibria and computation of the normal forms of Bogdanov-Takens, Bautin and Cusp
 - Branching from Bogdanov-Takens / Zero-Hopf / Hopf-Hopf points to Fold / Hopf curve
+
+## (limited) Capabilities related to maps
+- continuation of fixed points of maps
+- computation of normal forms of Period-doubling, Neimark-Sacker bifurcations.
 
 **Note that you can combine most solvers, like use Deflation for Periodic orbit computation or Fold of periodic orbits family.**
 
@@ -42,12 +47,19 @@ Depth = 3
 | Branching from Bogdanov-Takens / Zero-Hopf / Hopf-Hopf to Fold / Hopf curve | Yes | `AbstractArray` | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/lorenz84/#Extended-Lorenz-84-model-(codim-2-BT/ZH-aBS))|  |
 
 
-## Capabilities related to Periodic orbits
+## Capabilities related to Periodic orbits (PO)
 
-- Periodic orbit computation and continuation using **parallel** (Standard or Poincaré) Shooting, Finite Differences or Orthogonal Collocation.
-- Automatic branch switching at simple Hopf points to periodic orbits
-- Detection of Branch, Fold, Neimark-Sacker, Period Doubling bifurcation points of periodic orbits.
-- Continuation of Fold of periodic orbits
+- PO computation and continuation using **parallel** (Standard or Poincaré) Shooting, Finite Differences or Orthogonal Collocation (mesh adaptive).
+- Automatic branch switching from simple Hopf points to PO
+- Automatic branch switching from simple Period-Doubling points to PO
+- Assisted branch switching from simple Branch points to PO
+- Detection of Branch, Fold, Neimark-Sacker (NS), Period Doubling (PD) bifurcation points of PO.
+- Fold / PD / NS continuation based on Minimally Augmented formulation (for shooting and collocation). Trapezoid method only allows continuing Fold of PO.
+- Detection of all codim 2 bifurcations of PO (R1, R2, R3, R4, GPD, NS-NS, Chenciner, Fold-Flip, Fold-NS, PD-NS)
+- Computation of the normal forms of PD, NS (for shooting and collocation) using the method based on Poincaré return map or the Iooss normal form (more precise).
+- automatic branching from Bautin to curve of Fold of PO
+- automatic branching from Zero-Hopf to curve of NS of PO
+- automatic branching from Hopf-Hopf to curve of NS of PO
 
 > Legend for the table: Standard shooting (SS), Poincaré shooting (PS), Orthogonal collocation (OC), trapezoid (T).
 

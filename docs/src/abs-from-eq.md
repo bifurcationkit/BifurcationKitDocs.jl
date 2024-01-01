@@ -73,7 +73,7 @@ scene = plot(br, br1; branchlabel = ["br", "br1"], legend = :topleft)
 - the normal form is computed and non-trivial zeros are used to produce guesses for points on the bifurcated branch.
 
 
-## [From non simple branch point to equilibria](@id abs-simple-eq)
+## [From non simple branch point to equilibria](@id abs-nonsimple-eq)
 
 We provide an automatic branch switching method in this case. The underlying method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and its zeros. These zeros are then seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 

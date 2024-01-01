@@ -5,9 +5,12 @@ Pages = ["migration.md"]
 Depth = 2
 ```
 
+## Migration from v0.2.x to v0.3.x
+
+A new version v0.3 has been tagged in which the function names, keyword arguments,... follow the Julia convention. There are a lot of breaking changes. For example, `callbackN` has been changed to `callback_newton`.
+
 ## Migration from v0.1.x to v0.2.x
 
-### IMPORTANT NOTICE
 New version of the package with modified interface. You are now required to define a `BifurcationProblem` to perform continuation or bifurcation analysis. The previous interface is available under the tag 0.1.12 which can be installed by doing
 
 `] add BifurcationKit@0.1.12`
@@ -35,7 +38,7 @@ prob = BifurcationProblem(F, x, p, lens)
 
 > There is nothing wrong in passing your own jacobian though
 
-### Error: no method matching iterate(::BifurcationKit.ContResult 
+### Error: no method matching iterate(::BifurcationKit.ContResult
 
 This is because you use the old syntax 
 
@@ -52,7 +55,3 @@ br = continuation(...)
 ### Arguments to `continuation`
 
 `recordFromSolution` and `plotFromSolution` should be passed to `BifurcationProblem` instead of `continuation`.
-
-## Migration from v0.2.x to v0.3.x
-
-A new version v0.3 has been tagged in which the function names, keyword arguments,... follow the Julia convention. There are a lot of breaking changes. For example, `callbackN` has been changed to `callback_newton`.

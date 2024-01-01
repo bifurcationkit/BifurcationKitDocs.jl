@@ -28,6 +28,14 @@ pd = get_normal_form(br, ind; prm = false)
 
 where `prm` indicates whether you want to use the method based on Poincaré return map (PRM) or the one based on Iooss method.
 
+## Which method to use?
+
+Depending on the method used for computing the periodic orbits, you have several possibilities:
+
+- For shooting, you can only the PRM method. Shooting is the preferred way for large scale systems. Note that the PRM method is not very precise numerically.
+- For collocation, you can use PRM and Iooss methods. Note that the Iooss method is the most precise.
+- For Trapezoid method, PD normal form is not yet implemented.
+
 
 ## Normal form based on Poincaré return map
 
@@ -53,8 +61,8 @@ $$x(\tau) = \gamma(\tau)+Q_0(\tau)\xi+\Phi(\tau, \xi)$$
 where 
 
 $$\left\{\begin{array}{l}
-\frac{d \tau}{d t}=1+a_0\cdot(p-p_0)+a \xi^2+\cdots \\
-\frac{d \xi}{d \tau}=c_0\cdot(p-p_0)\xi+c \xi^3+\cdots
+\frac{d \tau}{d t}=1+a_{01}\cdot(p-p_0)+a_2 \xi^2+\cdots \\
+\frac{d \xi}{d \tau}=c_{11}\cdot(p-p_0)\xi+c_3 \xi^3+\cdots
 \end{array}\right.$$
 
 with center manifold correction $\Phi(\tau, \xi)$ being $2T$ periodic in $\tau$ and $Q_0(\tau)$ is the Floquet operator.

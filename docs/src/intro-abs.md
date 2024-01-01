@@ -7,6 +7,41 @@ Depth = 3
 
 The precise definition of the methods is given in [Branch switching (branch point)](@ref) and [Branch switching (Hopf point)](@ref).
 
+## (Automatic) branch switching of simple bifurcation points
+
+Unlike other continuation softwares (Auto07p, MatCont, pde2path), `BifurcationKit` has methods for automatic branch switching where the user is only asked to provide the parameter distance from a point on the bifurcated branch to the bifurcation point. Let us explain this in more detail using the following figure.
+
+![](abs.png)
+
+Knowing a bifurcation point $X_0 = (x_0,p_0)$ on a branch `br`, we want to find the bifurcated (red) curve. To this, we need an initial guess $X_1$ on the bifurcated curve. Usually, the tangent $\vec v$ can be found which leaves two parameters `δp, ampfactor` to be determined. Note that both parameters needs to be small. For example, the default values are `δp = ds` (`ds` is in `ContinuationPar` ) and `ampfactor = 0.1`.
+
+- In case of **manual branch switching**, the user is asked to provide the couple `δp, ampfactor`. This can be tricky because minute errors in `δp, ampfactor` can imped newton correction. This is for example used in [Lur'e problem](@ref pdlure) for period-doubling with Trapezoid method. Thus, the general method is like
+```
+continuation(br, ind_bif, options_cont; 
+    δp = 0.1, ampfactor = 0.1,
+    kwargs...)
+```
+
+- In case of **automatic branch switching**, the user is only asked to provide `δp` while `ampfactor` is internally estimated using the normal form of the bifurcation point. When the user does not pass `δp`, the value of `ds` is in `ContinuationPar` is used. Thus, the general method is like
+```
+continuation(br, ind_bif, options_cont; kwargs...)
+```
+
+When the bifurcation diagram is very stiff, **automatic branch switching** may fail (for example `BifurcationKit` could return `ampfactor=1e6` or `ampfactor = 1e-10`). In this case, one can override **automatic branch switching** and specify `δp, ampfactor` directly as for **manual branch switching** using
+
+```
+continuation(br, ind_bif, options_cont; 
+    δp = 0.1, ampfactor = 0.1,
+    override = true,
+    kwargs...)
+```
+
+!!! tip "Manual branch switching"
+    Manual branch switching is automatically used by `BifurcationKit` when the normal form of the bifurcation point is not implemented (like PD normal form for Trapezoid method). You can force `BifurcationKit` to use it using the `override` key word.
+
+## Branch switching of non-simple bifurcation points
+
+We refer to [Branch switching](@ref abs-nonsimple-eq) for more details.
 ## Summary of branching procedures
 
 We collect in the following table the list of automatic branch switching (aBS) functions. Their detailed explanation follows in this page.
