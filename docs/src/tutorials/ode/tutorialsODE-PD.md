@@ -110,13 +110,14 @@ br_po = continuation(
 
 scene = plot(br, br_po)
 ```
-We do not provide Automatic Branch Switching as we do not have the PD normal form computed in `BifurcationKit`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
+
+We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 80, dsmax = 0.02, plot_every_step = 10);
-	plot = true,
-	ampfactor = .3, δp = -0.005,
+br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
+	plot = true, verbosity = 2,
+	prm = true, detailed = true,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## add previous branch
@@ -141,7 +142,7 @@ using DifferentialEquations
 probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; abstol = 1e-11, reltol = 1e-9)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, max_steps = 130, tol_stability = 1e-5,plot_every_step = 10)
+opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, max_steps = 130, tol_stability = 1e-5,plot_every_step = 10, n_inversion = 6)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
@@ -157,13 +158,14 @@ br_po = continuation(
 scene = title!("")
 ```
 
-We do not provide Automatic Branch Switching as we do not have the PD normal form computed in `BifurcationKit`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
+We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40, dsmax = 0.01, plot_every_step = 10, ds = -0.01);
-	plot = true,
-	ampfactor = .2, δp = -0.0015,
+br_po_pd = continuation(deepcopy(br_po), 1, 
+	setproperties(br_po.contparams, max_steps = 20, dsmax = 0.01, ds = -0.0025);
+	plot = true, verbosity = 2,
+	prm = true, detailed = true,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## add previous branch
