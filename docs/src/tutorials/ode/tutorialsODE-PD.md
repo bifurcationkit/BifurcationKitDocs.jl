@@ -104,7 +104,7 @@ br_po = continuation(
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## plot previous branch
-		plot!(br, subplot=1, putbifptlegend = false)
+		plot!(br, subplot = 1, putbifptlegend = false)
 		end,
 	normC = norminf)
 
@@ -116,7 +116,7 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
-	plot = true, verbosity = 2,
+	# plot = true, verbosity = 2,
 	prm = true, detailed = true,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -139,15 +139,18 @@ We use a different method to compute periodic orbits: we rely on a fixed point o
 using DifferentialEquations
 
 # ODE problem for using DifferentialEquations
-probsh = ODEProblem(lur!, copy(z0), (0., 1000.), par_lur; abstol = 1e-11, reltol = 1e-9)
+probsh = ODEProblem(lur!, copy(z0), (0., 1.), par_lur)
+
+# we decrease a bit the tolerances to help automatic branching from PD point
+optn_po = NewtonPar(tol = 1e-8)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.02, ds= -0.001, dsmin = 1e-4, max_steps = 130, tol_stability = 1e-5,plot_every_step = 10, n_inversion = 6)
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds= -0.001, newton_options = optn_po, tol_stability = 1e-5, n_inversion = 8, nev = 3)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 15 sections
-	ShootingProblem(15, probsh, Rodas5(); parallel = true);
+	ShootingProblem(15, probsh, Rodas5(); parallel = true, abstol = 1e-11, reltol = 1e-9);
 	plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -163,7 +166,7 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, 
-	setproperties(br_po.contparams, max_steps = 20, dsmax = 0.01, ds = -0.0025);
+	setproperties(br_po.contparams, max_steps = 20, ds = -0.008);
 	plot = true, verbosity = 2,
 	prm = true, detailed = true,
 	plot_solution = (x, p; k...) -> begin
