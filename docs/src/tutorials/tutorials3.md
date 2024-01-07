@@ -22,7 +22,7 @@ We start by writing the PDE
 
 ```@example TUTBRUaut
 using Revise
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Setfield, Parameters
+using BifurcationKit, Plots, SparseArrays, Parameters
 const BK = BifurcationKit
 
 f1(u, v) = u * u * v
@@ -127,7 +127,7 @@ We continue the trivial equilibrium to find the Hopf points
 ```@example TUTBRUaut
 opt_newton = NewtonPar(eigsolver = eigls, tol = 1e-9)
 opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.001,
-	p_max = 1.9, detect_bifurcation = 3, nev = 21,
+	p_max = 1.9, nev = 21,
 	newton_options = opt_newton, max_steps = 1000,
 	# specific options for precise localization of Hopf points
 	n_inversion = 6)
@@ -194,16 +194,12 @@ opt_po = NewtonPar(tol = 1e-10, verbose = true, max_iterations = 15)
 opts_po_cont = ContinuationPar(dsmin = 0.001,
 		dsmax = 0.04, ds = 0.01,
 		p_max = 2.2,
-		max_steps = 20,
+		max_steps = 30,
 		newton_options = opt_po,
-		save_sol_every_step = 2,
 		plot_every_step = 1,
 		nev = 11,
 		tol_stability = 1e-6,
-		detect_bifurcation = 3,
-		dsmin_bisection = 1e-6,
-		max_bisection_steps = 15,
-		n_inversion = 4)
+		)
 
 nothing #hide
 ```
@@ -222,12 +218,8 @@ br_po = continuation(
 	br, 1,
 	# arguments for continuation
 	opts_po_cont, probFD;
-	# OPTIONAL parameters
-	# we want to jump on the new branch at phopf + δp
-	# ampfactor is a factor to increase the amplitude of the guess
-	δp = 0.01, ampfactor = 1,
 	# regular options for continuation
-	verbosity = 3,	plot = true,
+	verbosity = 3, plot = true,
 	plot_solution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
 	normC = norminf)
 
@@ -249,7 +241,7 @@ br_po2 = continuation(
 	# arguments for continuation
 	opts_po_cont;
 	ampfactor = 1., δp = 0.01,
-	verbosity = 3,	plot = true,
+	verbosity = 3, plot = true,
 	plot_solution = (x, p; kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...),
 	normC = norminf)
 ```
@@ -278,19 +270,18 @@ eigls = EigArpack(1.1, :LM)
 opts_br_eq = ContinuationPar(dsmin = 0.001,
 		dsmax = 0.00615, ds = 0.0061,
 		p_max = 1.9,
-		detect_bifurcation = 3,
 		nev = 21,
 		plot_every_step = 50,
 		newton_options = NewtonPar(eigsolver = eigls,
 			tol = 1e-9), max_steps = 200)
 
-br = continuation(probBif, PALC(), opts_br_eq, verbosity = 0, plot = false, normC = norminf)
+br = continuation(probBif, PALC(), opts_br_eq, normC = norminf)
 ```
 
 We need to build a problem which encodes the Shooting functional. This done as follows where we first create the time stepper:
 
 ```julia
-using DifferentialEquations, DiffEqOperators
+using DifferentialEquations
 
 FOde(f, x, p, t) = Fbru!(f, x, p, t)
 
@@ -301,7 +292,7 @@ u0 = sol0 .+ 0.01 .* rand(2n)
 vf = ODEFunction(FOde, jac = (J,u,p,t) -> J .= Jbru_sp(u, p), jac_prototype = Jbru_sp(u0, par_bru))
 
 # this is the ODE time stepper when used with `solve`
-prob = ODEProblem(vf, u0, (0., 1000.), par_bru; abstol = 1e-10, reltol = 1e-8)
+prob_ode = ODEProblem(vf, u0, (0., 1000.), par_bru; abstol = 1e-10, reltol = 1e-8)
 ```
 
 !!! tip "Performance"
@@ -312,9 +303,8 @@ prob = ODEProblem(vf, u0, (0., 1000.), par_bru; abstol = 1e-10, reltol = 1e-8)
     jac_prototype.nzval .= ones(length(jac_prototype.nzval))
     _colors = matrix_colors(jac_prototype)
     vf = ODEFunction(FOde; jac_prototype = jac_prototype, colorvec = _colors)
-    probsundials = ODEProblem(vf,  u0, (0.0, 520.), par_bru) # gives 0.22s
+    prob_ode = ODEProblem(vf,  u0, (0.0, 520.), par_bru) # gives 0.22s
     ```
-
 
 We are now ready to call the automatic branch switching. Note how similar it is to the previous section based on finite differences. This case is more deeply studied in the tutorial [1d Brusselator (advanced user)](@ref). We use a parallel Shooting.
 
@@ -323,11 +313,14 @@ We are now ready to call the automatic branch switching. Note how similar it is 
 ls = GMRESIterativeSolvers(reltol = 1e-7, maxiter = 100)
 eig = EigKrylovKit(tol= 1e-12, x₀ = rand(2n), dim = 40)
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-7,  max_iterations = 25, linsolver = ls, eigsolver = eig)
+optn_po = NewtonPar(verbose = true, 
+	tol = 1e-7,
+	linsolver = ls,
+	eigsolver = eig)
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.01, p_max = 2.5, max_steps = 10,
 	newton_options = optn_po, nev = 15, tol_stability = 1e-3,
-	detect_bifurcation = 0, plot_every_step = 2)
+	plot_every_step = 2)
 
 Mt = 2 # number of shooting sections
 br_po = continuation(
@@ -335,8 +328,7 @@ br_po = continuation(
 	# arguments for continuation
 	opts_po_cont,
 	# this is where we tell that we want Parallel Standard Shooting
-	ShootingProblem(Mt, prob, Rodas4P(), abstol = 1e-10, reltol = 1e-8, parallel = true, jacobian = BK.FiniteDifferencesMF());
-	ampfactor = 1.0, δp = 0.0075,
+	ShootingProblem(Mt, prob_ode, Rodas4P(), parallel = true, jacobian = BK.FiniteDifferencesMF());
 	# the next option is not necessary
 	# it speeds up the newton iterations
 	# by combining the linear solves of the bordered linear system
@@ -361,9 +353,12 @@ We show how to use this method, the code is very similar to the case of the Para
 ls = GMRESIterativeSolvers(reltol = 1e-8, maxiter = 100)
 eig = EigKrylovKit(tol= 1e-12, x₀ = rand(2n-1), dim = 50)
 # newton parameters
-optn_po = NewtonPar(verbose = true, tol = 1e-7,  max_iterations = 15, linsolver = ls, eigsolver = eig)
+optn_po = NewtonPar(verbose = true, 
+	tol = 1e-7,
+	linsolver = ls,
+	eigsolver = eig)
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.005, p_max = 2.5, max_steps = 100, newton_options = optn_po, nev = 10, tol_stability = 1e-5, detect_bifurcation = 3, plot_every_step = 2)
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds = 0.005, p_max = 2.5, newton_options = optn_po, nev = 10, tol_stability = 1e-5, plot_every_step = 2)
 
 # number of time slices
 Mt = 2
@@ -371,13 +366,11 @@ br_po = continuation(
 	br, 1,
 	# arguments for continuation
 	opts_po_cont,
-  PoincareShootingProblem(Mt, prob, Rodas4P(); abstol = 1e-10, reltol = 1e-8,
-      jacobian = BK.FiniteDifferencesMF());
+	PoincareShootingProblem(Mt, prob_ode, Rodas4P(); jacobian = BK.FiniteDifferencesMF());
 	# the next option is not necessary
 	# it speeds up the newton iterations
 	# by combining the linear solves of the bordered linear system
 	linear_algo = MatrixFreeBLS(@set ls.N = (2n-1)*Mt+1),
-	ampfactor = 1.0, δp = 0.005,
 	verbosity = 3, plot = true,
 	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_shooting!(x[1:end-1], Mt; kwargs...),
 	normC = norminf)

@@ -13,7 +13,7 @@ We start with some import
 
 ```@example TUTCARRIER
 using Revise
-using LinearAlgebra, Parameters, Setfield, SparseArrays, BandedMatrices
+using LinearAlgebra, Parameters, SparseArrays, BandedMatrices
 
 using BifurcationKit, Plots
 const BK = BifurcationKit
@@ -64,7 +64,8 @@ recordFromSolution(x, p) = (x[2]-x[1]) * sum(x->x^2, x)
 prob = BifurcationProblem(F_carr, zeros(N), par_car, (@lens _.ϵ); J = Jac_carr, record_from_solution = recordFromSolution)
 
 optnew = NewtonPar(tol = 1e-8, verbose = true)
-	sol = @time newton(prob, optnew, normN = norminf)
+sol = newton(prob, optnew, normN = norminf) # hide
+sol = @time newton(prob, optnew, normN = norminf)
 nothing #hide
 ```
 
@@ -74,7 +75,7 @@ We can start by using our Automatic bifurcation method.
 
 ```@example TUTCARRIER
 
-optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, p_min = 0.05, plot_every_step = 10, newton_options = NewtonPar(tol = 1e-8, max_iterations = 20, verbose = true), max_steps = 300, detect_bifurcation = 3, nev = 40)
+optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, p_min = 0.05, plot_every_step = 10, newton_options = NewtonPar(tol = 1e-8, max_iterations = 20, verbose = true), max_steps = 300, nev = 40)
 
 diagram = bifurcationdiagram(prob,
     # particular bordered linear solver to use
@@ -118,7 +119,7 @@ br = @time continuation(
 	setproperties(optcont; ds = -0.00021, dsmin=1e-5, max_steps = 20000,
 		p_max = 0.7, p_min = 0.05, detect_bifurcation = 0, plot_every_step = 40,
 		newton_options = setproperties(optnew; tol = 1e-9, max_iterations = 100, verbose = false));
-	normN = x -> norm(x, Inf),
+	normN = norminf,
   verbosity = 0,
 	)
 

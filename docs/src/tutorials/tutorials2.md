@@ -11,9 +11,10 @@ $$-(I+\Delta)^2 u+l\cdot u +\nu u^2-u^3 = 0$$
 
 with Neumann boundary conditions. This full example is in the file `example/SH2d-fronts.jl`. This example is also treated in the MATLAB package [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/). We use a Sparse Matrix to express the operator $L_1=(I+\Delta)^2$.
 
-```julia
-using DiffEqOperators, Setfield, Parameters
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays
+```@example sh2d_fd
+using DiffEqOperators, Parameters
+using BifurcationKit, Plots, SparseArrays
+import LinearAlgebra: I, norm
 const BK = BifurcationKit
 
 # helper function to plot solution
@@ -64,11 +65,10 @@ Y = -ly .+ 2ly/(Ny) * collect(0:Ny-1)
 
 # initial guess for hexagons
 sol0 = [(cos(x) + cos(x/2) * cos(sqrt(3) * y/2) ) for x in X, y in Y]
-	sol0 .= sol0 .- minimum(vec(sol0))
-	sol0 ./= maximum(vec(sol0))
-	sol0 = sol0 .- 0.25
-	sol0 .*= 1.7
-	heatmap(sol0',color=:viridis)
+sol0 .= sol0 .- minimum(vec(sol0))
+sol0 ./= maximum(vec(sol0))
+sol0 = sol0 .- 0.25
+sol0 .*= 1.7
 
 # define parameters for the PDE
 Δ, _ = Laplacian2D(Nx, Ny, lx, ly);
@@ -85,10 +85,10 @@ prob = BifurcationProblem(F_sh, vec(sol0), par, (@lens _.l);
 
 # newton corrections of the initial guess
 optnewton = NewtonPar(verbose = true, tol = 1e-8, max_iterations = 20)
+sol_hexa = newton(prob, @set optnewton.verbose=false) # hide
 sol_hexa = @time newton(prob, optnewton)
-println("--> norm(sol) = ",norm(sol_hexa.u, Inf64))
-heatmapsol(sol_hexa.u)
 ```
+
 which produces the results
 
 ```julia
@@ -114,7 +114,10 @@ which produces the results
 
 with `sol_hexa` being
 
-![](sh2dhexa.png)
+```@example sh2d_fd
+println("--> norm(sol) = ",norminf(sol_hexa.u))
+heatmapsol(sol_hexa.u)
+```
 
 ## Continuation and bifurcation points
 
@@ -139,10 +142,10 @@ If we want to compute the bifurcation points along the branches, we have to tell
 We are now ready to compute the branches:
 
 ```julia
-optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, p_max = 0.00, p_min = -1.0,
-	newton_options = setproperties(optnewton; tol = 1e-9, max_iterations = 15), max_steps = 125,
-	detect_bifurcation = 3, nev = 40, detect_fold = false,
-	dsmin_bisection =1e-7, save_sol_every_step = 4)
+optcont = ContinuationPar(p_max = 0.0, p_min = -1.0,
+	dsmin = 0.0001, dsmax = 0.005, ds= -0.001, 
+	newton_options = setproperties(optnewton; tol = 1e-9),
+	nev = 40)
 optcont = @set optcont.newton_options.eigsolver = EigArpack(0.1, :LM)
 
 br = continuation(
@@ -155,35 +158,36 @@ Note that we can get some information about the branch as follows. The `[converg
 
 ```julia
 julia> br
- ┌─ Branch number of points: 98
- ├─ Branch of Equilibrium
+ ┌─ Curve type: EquilibriumCont
+ ├─ Number of points: 98
  ├─ Type of vectors: Vector{Float64}
  ├─ Parameter l starts at -0.1, ends at 0.0
+ ├─ Algo: PALC
  └─ Special points:
 
 If `br` is the name of the branch,
 ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`
 
-- #  1,    bp at l ≈ -0.21554719 ∈ (-0.21554719, -0.21554706), |δp|=1e-07, [converged], δ = ( 1,  0), step =  35, eigenelements in eig[ 36], ind_ev =   1
-- #  2,    bp at l ≈ -0.21551160 ∈ (-0.21552059, -0.21551160), |δp|=9e-06, [converged], δ = ( 1,  0), step =  36, eigenelements in eig[ 37], ind_ev =   2
-- #  3,    bp at l ≈ -0.21498624 ∈ (-0.21505972, -0.21498624), |δp|=7e-05, [converged], δ = ( 1,  0), step =  38, eigenelements in eig[ 39], ind_ev =   3
-- #  4,    bp at l ≈ -0.21288704 ∈ (-0.21296786, -0.21288704), |δp|=8e-05, [converged], δ = ( 1,  0), step =  41, eigenelements in eig[ 42], ind_ev =   4
-- #  5,    nd at l ≈ -0.20991950 ∈ (-0.21014903, -0.20991950), |δp|=2e-04, [converged], δ = ( 2,  0), step =  43, eigenelements in eig[ 44], ind_ev =   6
-- #  6,    nd at l ≈ -0.20625778 ∈ (-0.20683030, -0.20625778), |δp|=6e-04, [converged], δ = ( 2,  0), step =  45, eigenelements in eig[ 46], ind_ev =   8
-- #  7,    bp at l ≈ -0.19979039 ∈ (-0.19988091, -0.19979039), |δp|=9e-05, [converged], δ = ( 1,  0), step =  48, eigenelements in eig[ 49], ind_ev =   9
-- #  8,    bp at l ≈ -0.18865313 ∈ (-0.18887470, -0.18865313), |δp|=2e-04, [converged], δ = ( 1,  0), step =  52, eigenelements in eig[ 53], ind_ev =  10
-- #  9,    bp at l ≈ -0.18102735 ∈ (-0.18105752, -0.18102735), |δp|=3e-05, [converged], δ = ( 1,  0), step =  55, eigenelements in eig[ 56], ind_ev =  11
-- # 10,    bp at l ≈ -0.14472390 ∈ (-0.14531199, -0.14472390), |δp|=6e-04, [converged], δ = (-1,  0), step =  64, eigenelements in eig[ 65], ind_ev =  11
-- # 11,    bp at l ≈ -0.13818496 ∈ (-0.13878446, -0.13818496), |δp|=6e-04, [converged], δ = (-1,  0), step =  66, eigenelements in eig[ 67], ind_ev =  10
-- # 12,    bp at l ≈ -0.11129567 ∈ (-0.11161237, -0.11129567), |δp|=3e-04, [converged], δ = (-1,  0), step =  72, eigenelements in eig[ 73], ind_ev =   9
-- # 13,    bp at l ≈ -0.08978296 ∈ (-0.09010769, -0.08978296), |δp|=3e-04, [converged], δ = (-1,  0), step =  77, eigenelements in eig[ 78], ind_ev =   8
-- # 14,    bp at l ≈ -0.08976771 ∈ (-0.08977278, -0.08976771), |δp|=5e-06, [converged], δ = (-1,  0), step =  78, eigenelements in eig[ 79], ind_ev =   7
-- # 15,    bp at l ≈ -0.07014208 ∈ (-0.07145756, -0.07014208), |δp|=1e-03, [converged], δ = (-1,  0), step =  82, eigenelements in eig[ 83], ind_ev =   6
-- # 16,    bp at l ≈ -0.06091464 ∈ (-0.06223456, -0.06091464), |δp|=1e-03, [converged], δ = (-1,  0), step =  84, eigenelements in eig[ 85], ind_ev =   5
-- # 17,    bp at l ≈ -0.05306984 ∈ (-0.05315247, -0.05306984), |δp|=8e-05, [converged], δ = (-1,  0), step =  86, eigenelements in eig[ 87], ind_ev =   4
-- # 18,    bp at l ≈ -0.02468398 ∈ (-0.02534143, -0.02468398), |δp|=7e-04, [converged], δ = (-1,  0), step =  92, eigenelements in eig[ 93], ind_ev =   3
-- # 19,    bp at l ≈ -0.00509751 ∈ (-0.00639292, -0.00509751), |δp|=1e-03, [converged], δ = (-1,  0), step =  96, eigenelements in eig[ 97], ind_ev =   2
-- # 20,    bp at l ≈ +0.00000000 ∈ (-0.00509751, +0.00000000), |δp|=5e-03, [    guess], δ = (-1,  0), step =  97, eigenelements in eig[ 98], ind_ev =   1
+- #  1,       bp at l ≈ -0.21554729 ∈ (-0.21554729, -0.21554481), |δp|=2e-06, [converged], δ = ( 1,  0), step =  35, eigenelements in eig[ 36], ind_ev =   1
+- #  2,       bp at l ≈ -0.21551019 ∈ (-0.21551494, -0.21551019), |δp|=5e-06, [converged], δ = ( 1,  0), step =  36, eigenelements in eig[ 37], ind_ev =   2
+- #  3,       bp at l ≈ -0.21498022 ∈ (-0.21505410, -0.21498022), |δp|=7e-05, [converged], δ = ( 1,  0), step =  38, eigenelements in eig[ 39], ind_ev =   3
+- #  4,       bp at l ≈ -0.21287212 ∈ (-0.21295316, -0.21287212), |δp|=8e-05, [converged], δ = ( 1,  0), step =  41, eigenelements in eig[ 42], ind_ev =   4
+- #  5,       bp at l ≈ -0.20989694 ∈ (-0.21012690, -0.20989694), |δp|=2e-04, [converged], δ = ( 1,  0), step =  43, eigenelements in eig[ 44], ind_ev =   6
+- #  6,       bp at l ≈ -0.20683673 ∈ (-0.20687197, -0.20683673), |δp|=4e-05, [converged], δ = ( 1,  0), step =  45, eigenelements in eig[ 46], ind_ev =   7
+- #  7,       bp at l ≈ -0.20682087 ∈ (-0.20682308, -0.20682087), |δp|=2e-06, [converged], δ = ( 1,  0), step =  46, eigenelements in eig[ 47], ind_ev =   8
+- #  8,       bp at l ≈ -0.19968465 ∈ (-0.20040489, -0.19968465), |δp|=7e-04, [converged], δ = ( 1,  0), step =  49, eigenelements in eig[ 50], ind_ev =   9
+- #  9,       bp at l ≈ -0.18874190 ∈ (-0.18918387, -0.18874190), |δp|=4e-04, [converged], δ = ( 1,  0), step =  53, eigenelements in eig[ 54], ind_ev =  10
+- # 10,       bp at l ≈ -0.18097123 ∈ (-0.18109194, -0.18097123), |δp|=1e-04, [converged], δ = ( 1,  0), step =  56, eigenelements in eig[ 57], ind_ev =  11
+- # 11,       bp at l ≈ -0.14527574 ∈ (-0.14531247, -0.14527574), |δp|=4e-05, [converged], δ = (-1,  0), step =  65, eigenelements in eig[ 66], ind_ev =  11
+- # 12,       bp at l ≈ -0.13844755 ∈ (-0.13874721, -0.13844755), |δp|=3e-04, [converged], δ = (-1,  0), step =  67, eigenelements in eig[ 68], ind_ev =  10
+- # 13,       bp at l ≈ -0.11133440 ∈ (-0.11141358, -0.11133440), |δp|=8e-05, [converged], δ = (-1,  0), step =  73, eigenelements in eig[ 74], ind_ev =   9
+- # 14,       nd at l ≈ -0.08965981 ∈ (-0.08982220, -0.08965981), |δp|=2e-04, [converged], δ = (-2,  0), step =  78, eigenelements in eig[ 79], ind_ev =   8
+- # 15,       bp at l ≈ -0.07003255 ∈ (-0.07134810, -0.07003255), |δp|=1e-03, [converged], δ = (-1,  0), step =  82, eigenelements in eig[ 83], ind_ev =   6
+- # 16,       bp at l ≈ -0.06080467 ∈ (-0.06212463, -0.06080467), |δp|=1e-03, [converged], δ = (-1,  0), step =  84, eigenelements in eig[ 85], ind_ev =   5
+- # 17,       bp at l ≈ -0.05304226 ∈ (-0.05320751, -0.05304226), |δp|=2e-04, [converged], δ = (-1,  0), step =  86, eigenelements in eig[ 87], ind_ev =   4
+- # 18,       bp at l ≈ -0.02465608 ∈ (-0.02531351, -0.02465608), |δp|=7e-04, [converged], δ = (-1,  0), step =  92, eigenelements in eig[ 93], ind_ev =   3
+- # 19,       bp at l ≈ -0.00506953 ∈ (-0.00636490, -0.00506953), |δp|=1e-03, [converged], δ = (-1,  0), step =  96, eigenelements in eig[ 97], ind_ev =   2
+- # 20, endpoint at l ≈ +0.00000000,
 ```
 
 We get the following plot during computation:

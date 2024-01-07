@@ -13,7 +13,8 @@ with Dirichlet boundary conditions. We use a Sparse Matrix to express the operat
 
 ```julia
 using Revise
-using SparseArrays, LinearAlgebra, DiffEqOperators, Setfield, Parameters
+using SparseArrays, DiffEqOperators, Parameters
+import LinearAlgebra: I, norm
 using BifurcationKit
 using Plots
 const BK = BifurcationKit
@@ -68,11 +69,10 @@ prob = BifurcationProblem(R_SH, sol0, parSH, (@lens _.λ); J = Jac_sp,
 We then choose the parameters for [`continuation`](@ref) with precise detection of bifurcation points by bisection:
 
 ```julia
-optnew = NewtonPar(verbose = false, tol = 1e-12)
 opts = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds = 0.01, p_max = 1.,
-	newton_options = setproperties(optnew; max_iterations = 30, tol = 1e-8),
+	newton_options = NewtonPar(max_iterations = 30, tol = 1e-8),
 	max_steps = 300, plot_every_step = 40,
-	detect_bifurcation = 3, n_inversion = 4, tol_bisection_eigenvalue = 1e-17, dsmin_bisection = 1e-7)
+	n_inversion = 4, tol_bisection_eigenvalue = 1e-17, dsmin_bisection = 1e-7)
 ```
 
 Before we continue, it is useful to define a callback (see [`continuation`](@ref)) for [`newton`](@ref) to avoid spurious branch switching. It is not strictly necessary for what follows.
@@ -105,10 +105,10 @@ Depending on the level of recursion in the bifurcation diagram, we change a bit 
 function optrec(x, p, l; opt = opts)
 	level =  l
 	if level <= 2
-		return setproperties(opt; max_steps = 300, detect_bifurcation = 3,
+		return setproperties(opt; max_steps = 300,
 			nev = N, detect_loop = false)
 	else
-		return setproperties(opt; max_steps = 250, detect_bifurcation = 3,
+		return setproperties(opt; max_steps = 250,
 			nev = N, detect_loop = true)
 	end
 end

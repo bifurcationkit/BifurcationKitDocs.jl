@@ -5,13 +5,10 @@ Pages = ["tutorials3b.md"]
 Depth = 3
 ```
 
-!!! unknown "References"
-    This example is taken from **Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations,** Lust, 1997.
-
 !!! info "Goal"
     The goal of this tutorial is to show similar computations as in the previous tutorial but without using the automatic branch switching tools. This is for the experienced used who wants to dive more in the internals of the package.    
 
-We look at the Brusselator in 1d. The equations are as follows
+We look at the Brusselator in 1d (see [^Lust]). The equations are as follows
 
 $$\begin{aligned} \frac { \partial X } { \partial t } & = \frac { D _ { 1 } } { l ^ { 2 } } \frac { \partial ^ { 2 } X } { \partial z ^ { 2 } } + X ^ { 2 } Y - ( β + 1 ) X + α \\ \frac { \partial Y } { \partial t } & = \frac { D _ { 2 } } { l ^ { 2 } } \frac { \partial ^ { 2 } Y } { \partial z ^ { 2 } } + β X - X ^ { 2 } Y \end{aligned}$$
 
@@ -25,7 +22,7 @@ We start by writing the PDE
 
 ```@example TUTBRUmanual
 using Revise
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Setfield, Parameters
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters
 const BK = BifurcationKit
 
 f1(u, v) = u * u * v
@@ -65,6 +62,7 @@ function Jbru_sp(x, p)
 	@unpack α, β, D1, D2, l = p
 	# compute the Jacobian using a sparse representation
 	n = div(length(x), 2)
+	𝒯 = eltype(x)
 	h = 1.0 / n; h2 = h*h
 
 	c1 = D1 / p.l^2 / h2
@@ -73,12 +71,12 @@ function Jbru_sp(x, p)
 	u = @view x[1:n]
 	v = @view x[n+1:2n]
 
-	diag   = zeros(eltype(x), 2n)
-	diagp1 = zeros(eltype(x), 2n-1)
-	diagm1 = zeros(eltype(x), 2n-1)
+	diag   = zeros(𝒯, 2n)
+	diagp1 = zeros(𝒯, 2n-1)
+	diagm1 = zeros(𝒯, 2n-1)
 
-	diagpn = zeros(eltype(x), n)
-	diagmn = zeros(eltype(x), n)
+	diagpn = zeros(𝒯, n)
+	diagmn = zeros(𝒯, n)
 
 	@. diagmn = β - 2 * u * v
 	@. diagm1[1:n-1] = c1
@@ -107,7 +105,7 @@ n = 500
 
 # parameters of the Brusselator model and guess for the stationary solution
 par_bru = (α = 2., β = 5.45, D1 = 0.008, D2 = 0.004, l = 0.3)
-sol0 = vcat(par_bru.α * ones(n), par_bru.β/par_bru.α * ones(n))
+sol0 = vcat(par_bru.α * ones(n), par_bru.β / par_bru.α * ones(n))
 
 # bifurcation problem
 probBif = BK.BifurcationProblem(Fbru, sol0, par_bru, (@lens _.l);
@@ -128,13 +126,13 @@ We continue the trivial equilibrium to find the Hopf points
 
 ```@example TUTBRUmanual
 opt_newton = NewtonPar(eigsolver = eigls, tol = 1e-9)
-opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.001,
-	p_max = 1.9, detect_bifurcation = 3, nev = 21,
+opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.1,
+	p_max = 1.9, nev = 21,
 	newton_options = opt_newton, max_steps = 1000,
 	# specific options for precise localization of Hopf points
 	n_inversion = 6)
 
-br = continuation(probBif, PALC(),opts_br_eq, verbosity = 0, normC = norminf)
+br = continuation(probBif, PALC(),opts_br_eq, normC = norminf)
 ```
 
 We obtain the following bifurcation diagram with 3 Hopf bifurcation points
@@ -234,27 +232,11 @@ opt_po = NewtonPar(tol = 1e-10, verbose = true, max_iterations = 14, linsolver =
 # we set the parameter values
 poTrap = @set poTrap.prob_vf.params = (@set par_bru.l = l_hopf + 0.01)
 
+outpo_f = newton(poTrap, orbitguess_f, (@set opt_po.verbose = false), normN = norminf) # hide
 outpo_f = @time newton(poTrap, orbitguess_f, opt_po, normN = norminf)
 BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], ", amplitude = ", BK.amplitude(outpo_f.u, n, M; ratio = 2),"\n")
 # plot of the periodic orbit
 BK.plot_periodic_potrap(outpo_f.u, n, M; ratio = 2)
-```
-
-and obtain
-
-```julia
-┌─────────────────────────────────────────────────────┐
-│ Newton step         residual     linear iterations  │
-├─────────────┬──────────────────────┬────────────────┤
-│       0     │       1.5225e-03     │        0       │
-│       1     │       2.6324e-03     │        2       │
-│       2     │       3.0558e-04     │        2       │
-│       3     │       5.7499e-05     │        2       │
-│       4     │       2.0407e-06     │        2       │
-│       5     │       2.8184e-09     │        2       │
-│       6     │       8.3969e-14     │        2       │
-└─────────────┴──────────────────────┴────────────────┘
-  3.210008 seconds (77.85 k allocations: 2.497 GiB, 5.42% gc time)
 ```
 
 Finally, we can perform continuation of this periodic orbit using the specialized call `continuationPOTrap`
@@ -294,7 +276,7 @@ A basic method for computing Floquet coefficients based on the eigenvalues of th
 
 ```julia
 opt_po = @set opt_po.eigsolver = DefaultEig()
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds= -0.01, p_max = 3.0, max_steps = 200, newton_options = opt_po, nev = 5, tol_stability = 1e-6, detect_bifurcation = 3)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.04, ds= -0.01, p_max = 3.0, max_steps = 200, newton_options = opt_po, nev = 5, tol_stability = 1e-6)
 br_po = @time continuation(poTrap, outpo_f.u, PALC(),
 	opts_po_cont; verbosity = 3, plot = true,
 	plot_solution = (x, p;kwargs...) -> heatmap!(reshape(x[1:end-1], 2*n, M)'; ylabel="time", color=:viridis, kwargs...), normC = norminf)
@@ -577,5 +559,10 @@ Bifurcation points:
 - #  2,    ns at p ≈ 1.78687615 ∈ (1.77831727, 1.78687615), |δp|=9e-03, [converged], δ = ( 2,  2), step =  30, eigenelements in eig[ 31], ind_ev =   3
 - #  3,    pd at p ≈ 1.85103701 ∈ (1.84676466, 1.85103701), |δp|=4e-03, [converged], δ = ( 1,  1), step =  31, eigenelements in eig[ 32], ind_ev =   4
 - #  4,    ns at p ≈ 1.87667870 ∈ (1.86813520, 1.87667870), |δp|=9e-03, [converged], δ = ( 2,  2), step =  32, eigenelements in eig[ 33], ind_ev =   6
-
 ```
+
+# References
+
+[^Lust]:> **Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations,** Lust, 1997.
+
+

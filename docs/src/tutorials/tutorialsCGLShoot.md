@@ -123,7 +123,7 @@ We first recompute the Hopf points as in the previous tutorial:
 ```julia
 eigls = EigArpack(1.0, :LM)
 opt_newton = NewtonPar(tol = 1e-9, verbose = true, eigsolver = eigls, max_iterations = 20)
-opts_br = ContinuationPar(dsmax = 0.02, ds = 0.01, p_max = 2., detect_bifurcation = 3, nev = 15, newton_options = (@set opt_newton.verbose = false), n_inversion = 4)
+opts_br = ContinuationPar(dsmax = 0.02, ds = 0.01, p_max = 2., nev = 15, newton_options = (@set opt_newton.verbose = false))
 
 br = @time continuation(prob, PALC(), opts_br, verbosity = 0)
 ```
@@ -136,7 +136,7 @@ We define the linear solvers to be use by the (Matrix-Free) shooting method
 ls = GMRESIterativeSolvers(reltol = 1e-4, maxiter = 50, verbose = false)
 eig = EigKrylovKit(tol = 1e-7, x₀ = rand(2Nx*Ny), verbose = 2, dim = 40)
 optn = NewtonPar(verbose = true, tol = 1e-9,  max_iterations = 25, linsolver = ls, eigsolver = eig)
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, p_max = 2.5, max_steps = 32, newton_options = optn, nev = 7, tol_stability = 1e-3, detect_bifurcation = 3, plot_every_step = 1)
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, p_max = 2.5, max_steps = 32, newton_options = optn, nev = 7, tol_stability = 1e-3, plot_every_step = 1)
 ```
 
 as
@@ -155,8 +155,6 @@ br_po = continuation(
 	# linear solver for bordered linear system
 	# we combine the 2 solves. It is here faster than BorderingBLS()
 	linear_algo = MatrixFreeBLS(@set ls.N = Mt*2n+2),
-	# to help branching from the Hopf point
-	ampfactor = 1.5, δp = 0.01,
 	# regular parameters for the continuation
 	verbosity = 3, plot = true,
 	# a few parameters saved during run
