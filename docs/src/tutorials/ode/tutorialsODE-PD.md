@@ -141,7 +141,7 @@ using DifferentialEquations
 # ODE problem for using DifferentialEquations
 probsh = ODEProblem(lur!, copy(z0), (0., 1.), par_lur)
 
-# we decrease a bit the tolerances to help automatic branching from PD point
+# we decrease a bit the tolerances to help automatic branch switching from PD point
 optn_po = NewtonPar(tol = 1e-8)
 
 # continuation parameters
@@ -166,7 +166,7 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, 
-	setproperties(br_po.contparams, max_steps = 20, ds = -0.008);
+	setproperties(br_po.contparams, max_steps = 50, ds = 0.008);
 	plot = true, verbosity = 2,
 	prm = true, detailed = true,
 	plot_solution = (x, p; k...) -> begin
@@ -188,7 +188,7 @@ We use finite differences to discretize the problem for finding periodic orbits.
 
 ```@example TUTLURE
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.02, ds= 0.01, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
+opts_po_cont = ContinuationPar(dsmax = 0.02, ds = 0.01, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
 
 Mt = 120 # number of time sections
 br_po = continuation(
@@ -209,7 +209,7 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(br_po, 1, setproperties(br_po.contparams, max_steps = 40);
+br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, ds = 0.01, max_steps = 70);
 	plot = true,
 	ampfactor = .1, δp = -0.005,
 	plot_solution = (x, p; k...) -> begin

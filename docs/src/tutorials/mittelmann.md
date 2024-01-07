@@ -5,12 +5,7 @@ Pages = ["mittelmann.md"]
 Depth = 3
 ```
 
-!!! unknown "References"
-    The following example is exposed in Farrell, Patrick E., Casper H. L. Beentjes, and Ásgeir Birkisson. **The Computation of Disconnected Bifurcation Diagrams.** ArXiv:1603.00809 [Math], March 2, 2016. It is also treated in Michiel Wouters. **Automatic Exploration Techniques for the Numerical Continuation of Large–Scale Nonlinear Systems**, 2019.
-
-
-
-We consider the problem of Mittelmann:
+We consider the problem of Mittelmann [^Farrell] [^Wouters]:
 
 $$\Delta u + NL(\lambda,u) = 0$$
 
@@ -21,7 +16,7 @@ We start with some imports:
 ```@example MITT
 using Revise
 using DiffEqOperators, ForwardDiff
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters
 const BK = BifurcationKit
 
 # define the sup norm and a L2 norm
@@ -109,8 +104,8 @@ To compute the eigenvalues, we opt for the shift-invert strategy with shift `=0.
 # eigensolver
 eigls = EigKrylovKit(dim = 70)
 
-# options for Newton solver, we pass the eigensolverr
-opt_newton = BK.NewtonPar(tol = 1e-8, verbose = false, eigsolver = eigls, max_iterations = 20)
+# options for Newton solver, we pass the eigen solver
+opt_newton = BK.NewtonPar(tol = 1e-8, eigsolver = eigls, max_iterations = 20)
 
 # options for continuation
 opts_br = ContinuationPar(p_max = 3.5, p_min = 0.025,
@@ -118,14 +113,15 @@ opts_br = ContinuationPar(p_max = 3.5, p_min = 0.025,
 	dsmin = 0.001, dsmax = 0.05, ds = 0.01,
 	# number of eigenvalues to compute
 	nev = 30,
-	plot_every_step = 10, newton_options = (@set opt_newton.verbose = false),
-	max_steps = 100, tol_stability = 1e-6,
+	newton_options = (@set opt_newton.verbose = false),
+	tol_stability = 1e-6,
 	# detect codim 1 bifurcations
 	detect_bifurcation = 3,
 	# Optional: bisection options for locating bifurcations
 	n_inversion = 4, dsmin_bisection = 1e-7, max_bisection_steps = 25)
 nothing #hide
-```	 
+```
+
 Note that we put the option `detect_bifurcation = 3` to detect bifurcations precisely with a bisection method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.
 
 ## Branch of homogeneous solutions
@@ -184,7 +180,7 @@ The call for automatic branch switching is the same as in the case of simple bra
 
 ```@example MITT
 branches = continuation(br, 2,
-	setproperties(opts_br; detect_bifurcation = 3, ds = 0.001, p_min = 0.01, max_steps = 32 ) ;
+	setproperties(opts_br; detect_bifurcation = 3, ds = 0.001, p_min = 0.01, max_steps = 30 ) ;
   alg = PALC(tangent = Bordered()),
 	kwargsC...,
 	nev = 30,
@@ -206,7 +202,7 @@ The second bifurcation point on the branch `br` of homogeneous solutions has a 2
 We provide a generic way to study branch points of arbitrary dimensions by computing a reduced equation. The general method is based on a Lyapunov-Schmidt reduction. We can compute the information about the branch point using the generic function (valid for simple branch points, Hopf bifurcation points,...)
 
 ```@example MITT
-bp2d = get_normal_form(br, 2;  verbose=true, nev = 50)
+bp2d = get_normal_form(br, 2;  verbose = true, nev = 50)
 ```
 
 Note that this is a multivariate polynomials. For more information, see [Non-simple branch point](@ref).
@@ -322,3 +318,9 @@ brdef2 = continuation(
 thereby providing the following bifurcation diagram with `plot(br,br1,br2,brdef1, brdef2,plotfold=false, putbifptlegend = false)`
 
 ![](mittlemann6.png)
+
+# References
+
+[^Farrell]:> Farrell, Patrick E., Casper H. L. Beentjes, and Ásgeir Birkisson. **The Computation of Disconnected Bifurcation Diagrams.** ArXiv:1603.00809 [Math], March 2, 2016.
+
+[^Wouters]:> Wouters. **Automatic Exploration Techniques for the Numerical Continuation of Large–Scale Nonlinear Systems**, 2019.

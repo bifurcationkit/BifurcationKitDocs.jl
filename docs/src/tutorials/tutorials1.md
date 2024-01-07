@@ -10,7 +10,7 @@ Depth = 3
 This is a simple example in which we aim at solving $\Delta T+\alpha N(T,\beta)=0$ with boundary conditions $T(0) = T(1)=\beta$. This example is coded in `examples/chan.jl`. We start with some imports:
 
 ```@example TUT1
-using BifurcationKit, LinearAlgebra, Plots, Parameters
+using Revise, BifurcationKit, LinearAlgebra, Plots, Parameters
 const BK = BifurcationKit
 
 N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)

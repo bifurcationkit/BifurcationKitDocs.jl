@@ -58,10 +58,10 @@ Once the problem is set up, we can continue the state w.r.t. $q_2$ and detect co
 
 ```@example TUTCO
 # continuation parameters
-opts_br = ContinuationPar(p_min = 0., p_max = 1.9, ds = 0.002, dsmax = 0.01)
+opts_br = ContinuationPar(p_max = 1.9, dsmax = 0.01)
 
 # compute the branch of solutions
-br = continuation(prob, PALC(), opts_br; plot = true, verbosity = 2, normC = norminf)
+br = continuation(prob, PALC(), opts_br; plot = true, normC = norminf)
 ```
 
 ```@example TUTCO
@@ -77,12 +77,13 @@ We follow the Fold points in the parameter plane $(q_2, k)$. We tell the solver 
 sn_codim2 = continuation(br, 2, (@lens _.k),
 	ContinuationPar(opts_br, p_max = 2.2, ds = -0.001, dsmax = 0.05);
 	normC = norminf,
+	# compute both sides of the initial condition
+	bothside = true,
 	# detection of codim 2 bifurcations
 	detect_codim2_bifurcation = 2,
 	# update the Fold problem at every continuation step
 	update_minaug_every_step = 1,
-	# compute both sides of the initial condition
-	bothside = true,)
+	)
 
 scene = plot(sn_codim2, vars = (:q2, :x), branchlabel = "Fold")
 plot!(scene, br, xlims=(0.8, 1.8))
@@ -94,12 +95,11 @@ We tell the solver to consider `br.specialpoint[1]` and continue it.
 
 ```@example TUTCO
 hp_codim2 = continuation(br, 1, (@lens _.k),
-	ContinuationPar(opts_br, p_max = 2.8, ds = -0.001, dsmax = 0.05) ;
+	ContinuationPar(opts_br, p_max = 2.8, ds = -0.001, dsmax = 0.025) ;
 	normC = norminf,
 	# detection of codim 2 bifurcations
 	detect_codim2_bifurcation = 2,
 	# tell to start the Hopf problem using eigen elements: compute left eigenvector
-	#start_with_eigen = true,
 	# we update the Hopf problem at every continuation step
 	update_minaug_every_step = 1,
 	# compute both sides of the initial condition
@@ -115,4 +115,4 @@ plot!(scene, br, xlims = (0.6, 1.5))
 
 ## References
 
-[^Govaerts]: > Govaerts, Willy J. F. Numerical Methods for Bifurcations of Dynamical Equilibria. Philadelphia, Pa: Society for Industrial and Applied Mathematics, 2000.
+[^Govaerts]:> Govaerts, Willy J. F. Numerical Methods for Bifurcations of Dynamical Equilibria. Philadelphia, Pa: Society for Industrial and Applied Mathematics, 2000.

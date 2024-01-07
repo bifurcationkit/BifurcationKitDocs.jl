@@ -1,8 +1,5 @@
 # [Continuation of Fold of periodic orbits](@id fold-po)
 
-!!! warning "Work in progress"
-    Continuation of Fold of POs is a recent addition. It has not been thoroughly tested.
-
 In this page, we explain how to perform continuation of Fold points and detect the associated codim 2 bifurcations.
 
 ### List of detected codim 2 bifurcation points

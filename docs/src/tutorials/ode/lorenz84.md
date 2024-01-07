@@ -25,7 +25,7 @@ $$\left\{\begin{array}{l}
 We start with some imports:
 
 ```@example LORENZ84
-using Revise, Parameters, Setfield, Plots
+using Revise, Parameters, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -69,16 +69,16 @@ Once the problem is set up, we can continue the state w.r.t. $F$ to and detect c
 # continuation options
 opts_br = ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.15,
 	# Optional: bisection options for locating bifurcations
-	n_inversion = 6, max_bisection_steps = 25,
+	n_inversion = 6,
 	# number of eigenvalues
-	nev = 4, max_steps = 200)
+	nev = 4)
 
 # compute the branch of solutions
 br = continuation(prob, PALC(), opts_br;
 	normC = norminf,
 	bothside = true)
 
-scene = plot(br, plotfold=false, markersize=4, legend=:topleft)
+scene = plot(br, plotfold = false, markersize = 4, legend = :topleft)
 ```
 
 With detailed information:
@@ -93,7 +93,7 @@ We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to 
 
 ```@example LORENZ84
 # function to record the current state
-sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, detect_bifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10, max_steps = 130, max_bisection_steps = 55) ; normC = norminf,
+sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
 	# we update the Fold problem at every continuation step
@@ -123,7 +123,7 @@ get_normal_form(sn_codim2, 1; nev = 4)
 We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[3]` and continue it.
 
 ```@example LORENZ84
-hp_codim2_1 = continuation((@set br.alg.tangent = Bordered()), 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 6, detect_bifurcation = 1) ; normC = norminf,
+hp_codim2_1 = continuation(br, 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 6) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
 	# we update the Fold problem at every continuation step
@@ -135,8 +135,8 @@ hp_codim2_1 = continuation((@set br.alg.tangent = Bordered()), 3, (@lens _.T), C
 	)
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "Folds")
-	plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopfs")
-	ylims!(-0.7,0.7);xlims!(1,1.3)
+plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopfs")
+ylims!(-0.7,0.7);xlims!(1,1.3)
 ```
 
 ```@example LORENZ84
@@ -154,7 +154,7 @@ get_normal_form(hp_codim2_1, 3; nev = 4)
 When we computed the curve of Fold points, we detected a Bogdanov-Takens bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
 ```@example LORENZ84
-hp_from_bt = continuation((@set sn_codim2.alg.tangent = Bordered()), 4, ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4,
+hp_from_bt = continuation(sn_codim2, 4, ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4,
 	n_inversion = 6, detect_bifurcation = 1) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
@@ -165,9 +165,9 @@ hp_from_bt = continuation((@set sn_codim2.alg.tangent = Bordered()), 4, Continua
 	)
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "SN")
-	plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf1")
-	plot!(hp_from_bt, vars=(:X, :U), branchlabel = "Hopf2")
-	ylims!(-0.7,0.75);xlims!(0.95,1.3)
+plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf1")
+plot!(hp_from_bt, vars=(:X, :U), branchlabel = "Hopf2")
+ylims!(-0.7,0.75); xlims!(0.95,1.3)
 ```
 
 with detailed information
@@ -181,7 +181,7 @@ hp_from_bt
 When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
 ```@example LORENZ84
-hp_from_zh = continuation((@set sn_codim2.alg.tangent = Bordered()), 2, ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 6, detect_bifurcation = 1, max_steps = 150) ;
+hp_from_zh = continuation(sn_codim2, 2, ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02, n_inversion = 6, detect_bifurcation = 1, max_steps = 150) ;
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
 	update_minaug_every_step = 1,
@@ -192,10 +192,10 @@ hp_from_zh = continuation((@set sn_codim2.alg.tangent = Bordered()), 2, Continua
 	)
 
 plot(sn_codim2,vars=(:X, :U),)
-	plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf")
-	plot!(hp_from_bt, vars=(:X, :U),  branchlabel = "Hopf2")
-	plot!( hp_from_zh, vars=(:X, :U), branchlabel = "Hopf", plotspecialpoints = false, legend = :topleft)
-	ylims!(-0.7,0.75);xlims!(0.95,1.3)
+plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf")
+plot!(hp_from_bt, vars=(:X, :U),  branchlabel = "Hopf2")
+plot!( hp_from_zh, vars=(:X, :U), branchlabel = "Hopf", plotspecialpoints = false, legend = :topleft)
+ylims!(-0.7,0.75); xlims!(0.95,1.3)
 ```
 
 with detailed information
