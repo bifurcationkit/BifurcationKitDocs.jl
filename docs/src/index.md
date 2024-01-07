@@ -64,7 +64,7 @@ Needless to say, if you use regular arrays, you don't need to worry about what f
 
 We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](https://jutho.github.io/KrylovKit.jl/stable/#Package-features-and-alternatives-1) for more information. We additionally require the following methods to be available:
 
-- `Base.length(x)`: it is used in the constraint equation of the pseudo arclength continuation method (see [`continuation`](@ref) for more details). If `length` is not available for your "vector", define it `length(x) = 1` and adjust tuning the parameter `θ` in `PALC`.
+- `Base.length(x)`: it is used in the constraint equation of the pseudo arclength continuation method (see [`continuation`](@ref) for more details). If `length` is not available for your "vector", define `length(x) = 1` and adjust the parameter `θ` in `PALC`.
 - `Base.copyto!(dest, in)` this is required to reduce the allocations by avoiding too many copies
 - `Base.eltype` must be extended to your vector type. It is mainly used for branching.
 

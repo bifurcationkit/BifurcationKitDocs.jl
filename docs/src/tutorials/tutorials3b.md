@@ -561,7 +561,7 @@ Bifurcation points:
 - #  4,    ns at p ≈ 1.87667870 ∈ (1.86813520, 1.87667870), |δp|=9e-03, [converged], δ = ( 2,  2), step =  32, eigenelements in eig[ 33], ind_ev =   6
 ```
 
-# References
+## References
 
 [^Lust]:> **Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations,** Lust, 1997.
 

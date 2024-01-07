@@ -11,7 +11,7 @@ $$-(I+\Delta)^2 u+l\cdot u +\nu u^2-u^3 = 0$$
 
 with Neumann boundary conditions. This full example is in the file `example/SH2d-fronts.jl`. This example is also treated in the MATLAB package [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/). We use a Sparse Matrix to express the operator $L_1=(I+\Delta)^2$.
 
-```@example sh2d_fd
+```@example sh2dFD
 using DiffEqOperators, Parameters
 using BifurcationKit, Plots, SparseArrays
 import LinearAlgebra: I, norm
@@ -39,9 +39,10 @@ function Laplacian2D(Nx, Ny, lx, ly)
 	return A, D2x
 end
 ```
+
 We also write the functional and its Jacobian which is a Sparse Matrix
 
-```julia
+```@example sh2dFD
 function F_sh(u, p)
 	@unpack l, ν, L1 = p
 	return -L1 * u .+ (l .* u .+ ν .* u.^2 .- u.^3)
@@ -59,7 +60,7 @@ d3F_sh(u, p, dx1, dx2, dx3) = (-6 .* dx2 .* dx3) .* dx1
 
 We first look for hexagonal patterns. This is done with
 
-```julia
+```@example sh2dFD
 X = -lx .+ 2lx/(Nx) * collect(0:Nx-1)
 Y = -ly .+ 2ly/(Ny) * collect(0:Ny-1)
 
@@ -114,7 +115,7 @@ which produces the results
 
 with `sol_hexa` being
 
-```@example sh2d_fd
+```@example sh2dFD
 println("--> norm(sol) = ",norminf(sol_hexa.u))
 heatmapsol(sol_hexa.u)
 ```

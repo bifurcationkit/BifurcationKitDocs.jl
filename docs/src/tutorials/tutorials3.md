@@ -8,7 +8,7 @@ Depth = 3
 !!! unknown "References"
     This example is taken from **Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations,** Lust, 1997.
 
-We look at the Brusselator in 1d. The equations are as follows
+We look at the Brusselator in 1d (see [^Lust]). The equations are as follows
 
 $$\begin{aligned} \frac { \partial X } { \partial t } & = \frac { D _ { 1 } } { l ^ { 2 } } \frac { \partial ^ { 2 } X } { \partial z ^ { 2 } } + X ^ { 2 } Y - ( β + 1 ) X + α \\ \frac { \partial Y } { \partial t } & = \frac { D _ { 2 } } { l ^ { 2 } } \frac { \partial ^ { 2 } Y } { \partial z ^ { 2 } } + β X - X ^ { 2 } Y \end{aligned}$$
 
@@ -366,7 +366,7 @@ br_po = continuation(
 	br, 1,
 	# arguments for continuation
 	opts_po_cont,
-	PoincareShootingProblem(Mt, prob_ode, Rodas4P(); jacobian = BK.FiniteDifferencesMF());
+	PoincareShootingProblem(Mt, prob_ode, Rodas4P(); jacobian = BK.FiniteDifferencesMF(), update_section_every_step = 0);
 	# the next option is not necessary
 	# it speeds up the newton iterations
 	# by combining the linear solves of the bordered linear system
@@ -379,3 +379,8 @@ br_po = continuation(
 and you should see:
 
 ![](brus-psh-cont.png)
+
+
+## References
+
+[^Lust]:> **Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations,** Lust, 1997.
