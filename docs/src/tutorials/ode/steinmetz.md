@@ -84,9 +84,10 @@ opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.0
 @set! opts_po_cont.newton_options.verbose = false
 @set! opts_po_cont.newton_options.max_iterations = 10
 br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po_cont;
-	#verbosity = 3, plot = true,
+	# verbosity = 3, plot = true,
 	callback_newton = BK.cbMaxNorm(10),
 	argspo...)
+scene = plot(br_sh)
 ```
 
 ### Curve of Fold points of periodic orbits
@@ -94,16 +95,17 @@ br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po
 ```@example STEINMETZ
 opts_posh_fold = ContinuationPar(br_sh.contparams, detect_bifurcation = 2, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
 @set! opts_posh_fold.newton_options.tol = 1e-12
-@set! opts_posh_fold.newton_options.verbose = true
-fold_po_sh = @time continuation(br_sh, 2, (@lens _.k7), opts_posh_fold;
-		#verbosity = 3, plot = true,
-		detect_codim2_bifurcation = 2,
-		start_with_eigen = false,
+# @set! opts_posh_fold.newton_options.verbose = true
+fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@lens _.k7), opts_posh_fold;
+		# verbosity = 2, plot = true,
+		detect_codim2_bifurcation = 0,
+		update_minaug_every_step = 1,
+		start_with_eigen = true,
 		usehessian = false,
 		jacobian_ma = :minaug,
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
-		bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false),
+		# bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false),
 		)
 plot(fold_po_sh)
 ```
@@ -112,11 +114,12 @@ plot(fold_po_sh)
 ```@example STEINMETZ
 opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
 @set! opts_posh_ns.newton_options.tol = 1e-12
-ns_po_sh = continuation(br_sh, 1, (@lens _.k7), opts_posh_ns;
-		verbosity = 2, plot = false,
+# @set! opts_posh_ns.newton_options.verbose = true
+ns_po_sh = continuation(deepcopy(br_sh), 1, (@lens _.k7), opts_posh_ns;
+		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
+		update_minaug_every_step = 1,
 		start_with_eigen = false,
-		usehessian = false,
 		jacobian_ma = :minaug,
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
@@ -127,3 +130,54 @@ ns_po_sh = continuation(br_sh, 1, (@lens _.k7), opts_posh_ns;
 plot(ns_po_sh, fold_po_sh, branchlabel = ["NS","Fold"])
 ```
 
+## Computation with collocation
+
+```@example STEINMETZ
+probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4), prob, sol, 16.)
+
+opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0, 
+	ds = 0.002, dsmax = 0.05, 
+	# n_inversion = 6,
+	nev = 4,
+	max_steps = 50, 
+	tol_stability = 1e-5)
+br_coll = continuation(probcoll, cicoll, PALC(tangent = Bordered()), opts_po_cont;
+    # verbosity = 3, plot = true,
+    callback_newton = BK.cbMaxNorm(10),
+    argspo...)
+```
+
+### Curve of Fold points of periodic orbits
+
+```@example STEINMETZ
+opts_pocl_fold = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2)
+fold_po_cl = @time continuation(br_coll, 2, (@lens _.k7), opts_pocl_fold;
+        # verbosity = 3, plot = true,
+        detect_codim2_bifurcation = 2,
+        update_minaug_every_step = 1,
+        start_with_eigen = false,
+        usehessian = true,
+        jacobian_ma = :minaug,
+        normC = norminf,
+        callback_newton = BK.cbMaxNorm(1e1),
+        )
+```
+
+### Curve of NS points of periodic orbits
+
+```@example STEINMETZ
+opts_pocl_ns = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2)
+ns_po_cl = continuation(br_coll, 1, (@lens _.k7), opts_pocl_ns;
+        # verbosity = 3, plot = true,
+        detect_codim2_bifurcation = 2,
+        update_minaug_every_step = 1,
+        start_with_eigen = false,
+        jacobian_ma = :minaug,
+        normC = norminf,
+        callback_newton = BK.cbMaxNorm(1e1),
+        )
+```
+
+```@example STEINMETZ
+plot(ns_po_cl, fold_po_cl, branchlabel = ["NS","Fold"])
+```

@@ -203,7 +203,7 @@ br_po = continuation(
 scene = plot(br, br_po)
 ```
 
-Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching as we do not have the PD normal form computed in `BifurcationKit`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
+Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching as we do not have the PD normal form computed for `PeriodicOrbitTrapProblem`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
 
 ```@example TUTLURE
 # aBS from PD

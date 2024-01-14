@@ -96,8 +96,6 @@ We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to 
 sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
-	# we update the Fold problem at every continuation step
-	update_minaug_every_step = 1,
 	start_with_eigen = false,
 	# we save the different components for plotting
 	record_from_solution = recordFromSolutionLor,
@@ -126,8 +124,6 @@ We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to 
 hp_codim2_1 = continuation(br, 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 6) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
-	# we update the Fold problem at every continuation step
-	update_minaug_every_step = 1,
 	# we save the different components for plotting
 	record_from_solution = recordFromSolutionLor,
 	# compute both sides of the initial condition
@@ -158,8 +154,6 @@ hp_from_bt = continuation(sn_codim2, 4, ContinuationPar(opts_br, ds = -0.001, ds
 	n_inversion = 6, detect_bifurcation = 1) ; normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
-	# we update the Fold problem at every continuation step
-	update_minaug_every_step = 1,
 	# we save the different components for plotting
 	record_from_solution = recordFromSolutionLor,
 	)
@@ -184,7 +178,6 @@ When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. 
 hp_from_zh = continuation(sn_codim2, 2, ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02, n_inversion = 6, detect_bifurcation = 1, max_steps = 150) ;
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
-	update_minaug_every_step = 1,
 	start_with_eigen = true,
 	record_from_solution = recordFromSolutionLor,
 	bothside = false,

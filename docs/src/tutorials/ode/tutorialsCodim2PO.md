@@ -42,7 +42,7 @@ z0 = [0.1,0.1,1,0]
 prob = BifurcationProblem(Pop!, z0, par_pop, (@lens _.b0);
 	record_from_solution = (x, p) -> (x = x[1], y = x[2], u = x[3]))
 
-opts_br = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.01, n_inversion = 6, detect_bifurcation = 3, max_bisection_steps = 25, nev = 4, max_steps = 20000)
+opts_br = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.01, n_inversion = 6, nev = 4)
 
 nothing #hide
 ```
@@ -104,7 +104,6 @@ We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 ```@example TUTPPREY
 prob2 = @set probtrap.prob_vf.lens = @lens _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), opts_po_cont;
-	verbosity = 3, plot = true,
 	argspo...
 	)
 scene = plot(brpo_pd)
@@ -120,7 +119,6 @@ probsh, cish = generate_ci_problem( ShootingProblem(M=3),
 
 opts_po_cont = setproperties(opts_br, max_steps = 50, tol_stability = 1e-3)
 br_fold_sh = continuation(probsh, cish, PALC(tangent = Bordered()), opts_po_cont;
-	verbosity = 3, plot = true,
 	argspo...
 )
 
@@ -132,7 +130,6 @@ We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 ```@example TUTPPREY
 probsh2 = @set probsh.lens = @lens _.ϵ
 brpo_pd_sh = continuation(probsh2, cish, PALC(), opts_po_cont;
-	verbosity = 3, plot = true,
 	argspo...
 	)
 scene = plot(brpo_pd_sh)
@@ -144,12 +141,11 @@ We do the same as in the previous section but using orthogonal collocation. This
 
 ```@example TUTPPREY
 # this is the function which builds probcoll from sol
-probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(26, 3; update_section_every_step = 0),
+probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(26, 3),
 	prob, sol, 2.)
 
 opts_po_cont = setproperties(opts_br, max_steps = 50, tol_stability = 1e-8)
 brpo_fold = continuation(probcoll, ci, PALC(), opts_po_cont;
-	verbosity = 3, plot = true,
 	argspo...
 	)
 scene = plot(brpo_fold)
@@ -160,7 +156,6 @@ We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 ```@example TUTPPREY
 prob2 = @set probcoll.prob_vf.lens = @lens _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);
-	verbosity = 3, plot = true,
 	argspo...
 	)
 
@@ -176,7 +171,7 @@ opts_posh_fold = ContinuationPar(br_fold_sh.contparams, detect_bifurcation = 3, 
 @set! opts_posh_fold.newton_options.tol = 1e-12
 
 fold_po_sh2 = continuation(br_fold_sh, 1, (@lens _.ϵ), opts_posh_fold;
-		verbosity = 2, plot = true,
+		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = :minaug,
 		start_with_eigen = false,
@@ -185,7 +180,7 @@ fold_po_sh2 = continuation(br_fold_sh, 1, (@lens _.ϵ), opts_posh_fold;
 		)
 
 fold_po_sh1 = continuation(br_fold_sh, 2, (@lens _.ϵ), opts_posh_fold;
-		verbosity = 2, plot = true,
+		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = :minaug,
 		start_with_eigen = false,
@@ -206,18 +201,17 @@ probshpd, ci = generate_ci_problem(ShootingProblem(M=3), re_make(prob, params = 
 
 prob2 = @set probshpd.lens = @lens _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);
-	verbosity = 3, plot = true,
+	# verbosity = 3, plot = true,
 	argspo...,
 	bothside = true,
 	)
 
-opts_pocoll_pd = ContinuationPar(brpo_pd.contparams, detect_bifurcation = 3, max_steps = 40, p_min = 1.e-2, plot_every_step = 10, dsmax = 1e-2, ds = -1e-3)
+opts_pocoll_pd = ContinuationPar(brpo_pd.contparams, max_steps = 40, p_min = 1.e-2, dsmax = 1e-2, ds = -1e-3)
 @set! opts_pocoll_pd.newton_options.tol = 1e-12
 pd_po_sh2 = continuation(brpo_pd, 2, (@lens _.b0), opts_pocoll_pd;
-		verbosity = 3,
+		# verbosity = 3,
 		detect_codim2_bifurcation = 2,
 		start_with_eigen = false,
-		usehessian = false,
 		jacobian_ma = :minaug,
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(10),

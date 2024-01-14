@@ -50,9 +50,9 @@ prob = BK.BifurcationProblem(Lor, z0, parlor, (@lens _.F);
 	record_from_solution = (x, p) -> (X = x[1], Y = x[2], Z = x[3], U = x[4]),)
 
 opts_br = ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.05, n_inversion = 6, detect_bifurcation = 3, max_bisection_steps = 25, nev = 4, max_steps = 200, plot_every_step = 30)
-	@set! opts_br.newton_options.verbose = false
-	@set! opts_br.newton_options.tol = 1e-12
-	br = @time continuation(re_make(prob, params = setproperties(parlor;T=0.04,F=3.)),
+@set! opts_br.newton_options.verbose = false
+@set! opts_br.newton_options.tol = 1e-12
+br = @time continuation(re_make(prob, params = setproperties(parlor;T=0.04,F=3.)),
 	 	PALC(), opts_br;
 		normC = norminf, bothside = true)
 
@@ -64,19 +64,16 @@ scene = plot(br, plotfold=false, markersize=4, legend=:topleft)
 We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[5]` and continue it.
 
 ```@example LORENZ84V2
-sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, detect_bifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10, save_sol_every_step = 1, max_steps = 130, max_bisection_steps = 55) ; plot = true,
+sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, detect_bifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10, max_steps = 130, max_bisection_steps = 55) ; plot = true,
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
-	update_minaug_every_step = 1,
 	start_with_eigen = false,
 	bothside = false,
 	)
 
 hp_codim2_1 = continuation(br, 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 8, save_sol_every_step = 1, detect_bifurcation = 1) ; plot = false, verbosity = 0,
 	normC = norminf,
-	# tangentAlgo = BorderedPred(),
 	detect_codim2_bifurcation = 2,
-	update_minaug_every_step = 1,
 	start_with_eigen = true,
 	bothside = true,
 	)
@@ -122,7 +119,6 @@ ns_po1 = continuation(hp_codim2_1, 4, opts_ns_po,
 		# which of the 2 NS curves should we compute?
 		whichns = 1,
 		jacobian_ma = :minaug,
-		verbosity = 3,
 		)
 plot!(ns_po1, vars=(:F, :T), branchlabel = "NS1")
 ```

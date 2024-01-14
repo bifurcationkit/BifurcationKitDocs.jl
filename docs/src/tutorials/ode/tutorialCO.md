@@ -81,8 +81,6 @@ sn_codim2 = continuation(br, 2, (@lens _.k),
 	bothside = true,
 	# detection of codim 2 bifurcations
 	detect_codim2_bifurcation = 2,
-	# update the Fold problem at every continuation step
-	update_minaug_every_step = 1,
 	)
 
 scene = plot(sn_codim2, vars = (:q2, :x), branchlabel = "Fold")
@@ -99,9 +97,6 @@ hp_codim2 = continuation(br, 1, (@lens _.k),
 	normC = norminf,
 	# detection of codim 2 bifurcations
 	detect_codim2_bifurcation = 2,
-	# tell to start the Hopf problem using eigen elements: compute left eigenvector
-	# we update the Hopf problem at every continuation step
-	update_minaug_every_step = 1,
 	# compute both sides of the initial condition
 	bothside = true,
 	)
