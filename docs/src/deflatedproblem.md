@@ -59,10 +59,14 @@ F(x, p) = @. (x-1) * (x-2)
 # already know solution x = 1
 deflationOp = DeflationOperator(2, dot, 0.1, [ones(1)])
 # define a problem, this compute jacobian automatically
-prob = BifurcationProblem(F, rand(1), nothing)
+prob = BifurcationProblem(F, zeros(1), nothing)
 # call deflated newton
 sol = newton(prob, deflationOp, NewtonPar())
-println("We found the additional root: ", sol.u)
+if BifurcationKit.converged(sol)
+    println("We found the additional root: ", sol.u)
+else
+    println("Deflated newton did not converge!")
+end
 ```
 
 !!! tip "Tip"

@@ -64,7 +64,7 @@ With detailed information:
 br
 ```
 
-If you don't want to compute just the branch without the bifurcations (more information is provided here ), change the continuation options to
+If you want to compute just the branch without the bifurcations (more information is provided [Detection of bifurcation points of Equilibria](@ref) ), change the continuation options to
 
 ```@example TUTODE0
 opts_br = ContinuationPar(p_min = -4.0, p_max = -0.9,

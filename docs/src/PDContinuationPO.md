@@ -8,12 +8,12 @@ Depth = 2
 In this page, we explain how to perform continuation of PD points of periodic orbits and detect the following codim 2 bifurcations.
 
 ### List of detected codim 2 bifurcation points
-|Bifurcation|symbol used|
-|---|---|
-| Strong resonance 1:2 bifurcation | R2 |
-| Fold / Flip| foldFlip |
-| Period-Doubling / Neimark-Sacker | pdNS |
-| Generalized Period-Doubling | gpd |
+|Bifurcation|symbol used|Multipliers|
+|---|---|---|
+| Strong resonance 1:2 bifurcation | R2 | {1,-1,-1} |
+| Fold / Flip| foldFlip | {1,1,-1} |
+| Period-Doubling / Neimark-Sacker | pdNS | {-1,$e^{\pm i\alpha}$} |
+| Generalized Period-Doubling | gpd | {1,-1} |
 
 
 In a nutshell, all you have to do (see below) is to call `continuation(br, ind_bif, lens2)` to continue the bifurcation point stored in `br.specialpoint[ind_bif]` and set proper options.

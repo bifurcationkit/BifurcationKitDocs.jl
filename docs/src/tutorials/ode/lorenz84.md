@@ -11,7 +11,7 @@ In this tutorial, we study the extended Lorenz-84 model which is also treated in
 After this tutorial, you will be able to
 - detect codim 1 bifurcation Fold / Hopf / Branch point
 - follow Fold / Hopf points and detect codim 2 bifurcation points
-- branch from the detected codim 2 points to curves of Fold / Hopf points
+- branch from the codim 2 points to curves of Fold / Hopf points
 
 The model is as follows
 
@@ -33,7 +33,7 @@ nothing #hide
 ```
 
 ## Problem setting
-We can now encode the vector field (E) in a function and use automatic differentiation to compute its various derivatives.
+We can now encode the vector field (E) in a function.
 
 ```@example LORENZ84
 # vector field
@@ -52,7 +52,7 @@ end
 parlor = (α = 1//4, β = 1, G = .25, δ = 1.04, γ = 0.987, F = 1.7620532879639, T = .0001265)
 
 # initial condition
-z0 =  [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.02105288273117459]
+z0 = [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.02105288273117459]
 
 # bifurcation problem
 recordFromSolutionLor(x, p) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
@@ -63,7 +63,7 @@ nothing #hide
 
 ## Continuation and codim 1 bifurcations
 
-Once the problem is set up, we can continue the state w.r.t. $F$ to and detect codim 1 bifurcations. This is achieved as follows:
+Once the problem is set up, we can continue the state w.r.t. $F$ and detect codim 1 bifurcations. This is achieved as follows:
 
 ```@example LORENZ84
 # continuation options
@@ -93,7 +93,10 @@ We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to 
 
 ```@example LORENZ84
 # function to record the current state
-sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10) ; normC = norminf,
+sn_codim2 = continuation(br, 5, (@lens _.T), 
+	ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, 
+		dsmin=1e-5, ds = -0.001, dsmax = 0.005) ; 
+	normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
 	start_with_eigen = false,
@@ -121,7 +124,9 @@ get_normal_form(sn_codim2, 1; nev = 4)
 We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[3]` and continue it.
 
 ```@example LORENZ84
-hp_codim2_1 = continuation(br, 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 6) ; normC = norminf,
+hp_codim2_1 = continuation(br, 3, (@lens _.T), 
+	ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ;
+	normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
 	# we save the different components for plotting
@@ -150,8 +155,9 @@ get_normal_form(hp_codim2_1, 3; nev = 4)
 When we computed the curve of Fold points, we detected a Bogdanov-Takens bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
 ```@example LORENZ84
-hp_from_bt = continuation(sn_codim2, 4, ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4,
-	n_inversion = 6, detect_bifurcation = 1) ; normC = norminf,
+hp_from_bt = continuation(sn_codim2, 4, 
+	ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ; 
+	normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
 	# we save the different components for plotting
@@ -175,19 +181,17 @@ hp_from_bt
 When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
 ```@example LORENZ84
-hp_from_zh = continuation(sn_codim2, 2, ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02, n_inversion = 6, detect_bifurcation = 1, max_steps = 150) ;
+hp_from_zh = continuation(sn_codim2, 2, 
+	ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02) ;
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
-	start_with_eigen = true,
 	record_from_solution = recordFromSolutionLor,
-	bothside = false,
-	bdlinsolver = MatrixBLS(),
 	)
 
-plot(sn_codim2,vars=(:X, :U),)
-plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf")
+plot(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf")
 plot!(hp_from_bt, vars=(:X, :U),  branchlabel = "Hopf2")
-plot!( hp_from_zh, vars=(:X, :U), branchlabel = "Hopf", plotspecialpoints = false, legend = :topleft)
+plot!( hp_from_zh, vars=(:X, :U), branchlabel = "Hopf", legend = :topleft)
+plot!(sn_codim2,vars=(:X, :U),)
 ylims!(-0.7,0.75); xlims!(0.95,1.3)
 ```
 

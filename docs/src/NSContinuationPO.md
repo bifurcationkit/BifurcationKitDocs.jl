@@ -3,14 +3,15 @@
 In this page, we explain how to perform continuation of NS points of periodic orbits and detect the associated codim 2 bifurcations.
 
 ### List of detected codim 2 bifurcation points
-|Bifurcation|symbol used|
-|---|---|
-| Cusp | cusp |
-| Strong resonance 1:1 bifurcation | R1 |
-| Fold / Flip| foldFlip |
-| Fold / Neimark-Sacker | foldNS |
-| Double Niemark-Sacker | nsns |
-| Chenciner | ch |
+|Bifurcation|symbol used|Multipliers|
+|---|---|---|
+| Strong resonance 1:1 bifurcation | R1 | {1,1,1} |
+| Strong resonance 1:2 bifurcation | R2 | {1,-1,-1} |
+| Strong resonance 1:3 bifurcation | R3 | {1,$e^{\pm 2i\pi/3}$} |
+| Strong resonance 1:4 bifurcation | R4 | {1,$e^{\pm i\pi/2}$} |
+| Fold / Neimark-Sacker | foldNS | {1,1,$e^{\pm i\alpha}$} |
+| Double Niemark-Sacker | nsns | {$e^{\pm i\alpha}$, $e^{\pm i\beta}$} |
+| Chenciner | ch | {1,$e^{\pm i\alpha}$} |
 
 In a nutshell, all you have to do (see below) is to call `continuation(br, ind_bif, lens2)` to continue the bifurcation point stored in `br.specialpoint[ind_bif]` and set proper options.
 

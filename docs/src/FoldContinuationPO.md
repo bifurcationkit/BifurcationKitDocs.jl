@@ -3,12 +3,12 @@
 In this page, we explain how to perform continuation of Fold points and detect the associated codim 2 bifurcations.
 
 ### List of detected codim 2 bifurcation points
-|Bifurcation|symbol used|
-|---|---|
-| Cusp | cusp |
-| Strong resonance 1:1 bifurcation | R1 |
-| Fold / Flip| foldPD |
-| Fold / Neimark-Sacker | foldNS |
+|Bifurcation|symbol used|Multipliers
+|---|---|---|
+| Cusp | cusp | {1,1} |
+| Strong resonance 1:1 bifurcation | R1 | {1,1,1} |
+| Fold / Flip| foldPD | {1,1,-1} |
+| Fold / Neimark-Sacker | foldNS | {1,1,$e^{\pm i\alpha }$} |
 
 In a nutshell, all you have to do (see below) is to call `continuation(br, ind_bif, lens2)` to continue the bifurcation point stored in `br.specialpoint[ind_bif]` and set proper options.
 

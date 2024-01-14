@@ -95,21 +95,26 @@ args_po = (	record_from_solution = (x, p) -> begin
 
 # continuation parameters
 opts_po_cont = ContinuationPar(opts_br, ds= 0.001, dsmin = 1e-4, dsmax = 0.1,
-	max_steps = 150,
+	max_steps = 110,
 	tol_stability = 1e-5)
 
 br_pocoll = @time continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Collocation method to locate PO, with polynomial degree 4
-	PeriodicOrbitOCollProblem(40, 4; meshadapt = true);
+	PeriodicOrbitOCollProblem(50, 4; meshadapt = true);
 	# regular continuation options
 	plot = true,
-	# we reject the newton step if the residual is high
-	callback_newton = BK.cbMaxNorm(100.),
 	args_po...)
 
 Scene = title!("")
+```
+
+Let us plot the periodic orbit close to the end of the branch
+
+```@example TUTODE
+sol = get_periodic_orbit(br_pocoll, 100)
+plot(sol, title = "Periodic orbit")
 ```
 
 ## Periodic orbits with Parallel Standard Shooting
@@ -174,11 +179,8 @@ We can plot some of the previously computed periodic orbits in the plane $(E,x)$
 ```@example TUTODE
 plot()
 # fetch the saved solutions
-for sol in br_potrap.sol[1:2:40]
-	# periodic orbit
-	po = sol.x
-	# get the mesh and trajectory
-	traj = get_periodic_orbit(br_potrap.prob, po, @set par_tm.E0 = sol.p)
+for i_sol in 1:2:40
+	traj = get_periodic_orbit(br_potrap, i_sol)
 	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
 end
 title!("")

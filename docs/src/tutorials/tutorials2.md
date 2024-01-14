@@ -72,9 +72,9 @@ sol0 = sol0 .- 0.25
 sol0 .*= 1.7
 
 # define parameters for the PDE
-Δ, _ = Laplacian2D(Nx, Ny, lx, ly);
+Δ, = Laplacian2D(Nx, Ny, lx, ly);
 L1 = (I + Δ)^2;
-par = (l = -0.1, ν = 1.3, L1 = L1);
+par = (l = -0.1, ν = 1.3, L1);
 
 # Bifurcation Problem
 prob = BifurcationProblem(F_sh, vec(sol0), par, (@lens _.l);
@@ -90,33 +90,9 @@ sol_hexa = newton(prob, @set optnewton.verbose=false) # hide
 sol_hexa = @time newton(prob, optnewton)
 ```
 
-which produces the results
-
-```julia
-┌─────────────────────────────────────────────────────┐
-│ Newton step         residual     linear iterations  │
-├─────────────┬──────────────────────┬────────────────┤
-│       0     │       1.7391e+02     │        0       │
-│       1     │       5.0465e+03     │        1       │
-│       2     │       1.4878e+03     │        1       │
-│       3     │       4.3529e+02     │        1       │
-│       4     │       1.2560e+02     │        1       │
-│       5     │       3.5512e+01     │        1       │
-│       6     │       9.5447e+00     │        1       │
-│       7     │       2.1763e+00     │        1       │
-│       8     │       3.3503e-01     │        1       │
-│       9     │       7.7259e-02     │        1       │
-│      10     │       7.4767e-03     │        1       │
-│      11     │       7.9505e-05     │        1       │
-│      12     │       8.8395e-09     │        1       │
-└─────────────┴──────────────────────┴────────────────┘
-  1.441525 seconds (1.74 k allocations: 659.488 MiB, 1.25% gc time)
-```
-
 with `sol_hexa` being
 
 ```@example sh2dFD
-println("--> norm(sol) = ",norminf(sol_hexa.u))
 heatmapsol(sol_hexa.u)
 ```
 

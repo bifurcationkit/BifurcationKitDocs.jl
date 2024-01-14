@@ -4,9 +4,10 @@
 Pages = ["tutorialCO.md"]
 Depth = 3
 ```
+The goal of the tutorial is to show a simple example of how to perform codimension 2 bifurcation detection.
 
 In this tutorial, we study the Bykov–Yablonskii–Kim
-model of CO oxidation (see [^Govaerts]). The goal of the tutorial is to show a simple example of how to perform codimension 2 bifurcation detection.
+model of CO oxidation (see [^Govaerts]):
 
 $$\left\{\begin{array}{l}\dot{x}=2 q_{1} z^{2}-2 q_{5} x^{2}-q_{3} x y \\ \dot{y}=q_{2} z-q_{6} y-q_{3} x y \\ \dot{s}=q_{4} z-k q_{4} s\end{array}\right.\tag{E}$$
 
@@ -24,7 +25,7 @@ nothing # hide
 
 ## Problem setting
 
-We can now encode the vector field (E) in a function and use automatic differentiation to compute its various derivatives.
+We encode the vector field (E) in a function.
 
 ```@example TUTCO
 # vector field of the problem
@@ -61,7 +62,7 @@ Once the problem is set up, we can continue the state w.r.t. $q_2$ and detect co
 opts_br = ContinuationPar(p_max = 1.9, dsmax = 0.01)
 
 # compute the branch of solutions
-br = continuation(prob, PALC(), opts_br; plot = true, normC = norminf)
+br = continuation(prob, PALC(), opts_br; normC = norminf)
 ```
 
 ```@example TUTCO

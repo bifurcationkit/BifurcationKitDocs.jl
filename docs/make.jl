@@ -2,6 +2,7 @@
 using Pkg
 pkg"add https://github.com/bifurcationkit/AsymptoticNumericalMethod.jl"
 Pkg.add("BandedMatrices")
+pkg"add BifurcationKit#master"
 
 using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
 using DocumenterDiagrams

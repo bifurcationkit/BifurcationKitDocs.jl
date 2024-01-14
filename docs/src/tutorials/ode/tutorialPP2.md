@@ -52,8 +52,6 @@ We set up the options or the continuation
 ```@example TUTPP2
 # continuation options
 opts_br = ContinuationPar(p_min = 0.1, p_max = 1.0, dsmax = 0.01,
-	# options to detect bifurcations
-	detect_bifurcation = 3, n_inversion = 8, max_bisection_steps = 25,
 	# number of eigenvalues
 	nev = 2,
 	# maximum number of continuation steps
@@ -70,9 +68,8 @@ diagram = bifurcationdiagram(prob, PALC(),
 	# when computing the bifurcation diagram. It means we allow computing branches of branches of branches
 	# at most in the present case.
 	3,
-	(args...) -> setproperties(opts_br; ds = -0.001, dsmax = 0.01, n_inversion = 8, detect_bifurcation = 3);
-	# δp = -0.01,
-	verbosity = 0, plot = false)
+	(args...) -> setproperties(opts_br; ds = -0.001, dsmax = 0.01, n_inversion = 8, detect_bifurcation = 3)
+	)
 
 scene = plot(diagram; code = (), title="$(size(diagram)) branches", legend = false)
 ```
@@ -90,12 +87,12 @@ brH = get_branch(diagram, (2,1)).γ
 
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.1, ds= 0.0001, dsmin = 1e-4,
-	tol_stability = 1e-4, plot_every_step = 1)
+	tol_stability = 1e-4)
 
 br_po = continuation(
 	brH, 1, opts_po_cont,
 	PeriodicOrbitOCollProblem(20, 4);
-	plot = true, verbosity = 2,
+	# plot = true, verbosity = 2,
 	record_from_solution = (x, p) -> begin
 		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
