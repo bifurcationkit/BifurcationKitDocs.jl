@@ -74,6 +74,7 @@ sol = solve(prob_de, alg_ode)
 plot(sol)
 ```
 
+## Computation with Shooting
 We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of $k_8$
 
 ```@example STEINMETZ
@@ -88,7 +89,7 @@ br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po
 	argspo...)
 ```
 
-## Curve of Fold points of periodic orbits
+### Curve of Fold points of periodic orbits
 
 ```@example STEINMETZ
 opts_posh_fold = ContinuationPar(br_sh.contparams, detect_bifurcation = 2, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
@@ -107,7 +108,7 @@ fold_po_sh = @time continuation(br_sh, 2, (@lens _.k7), opts_posh_fold;
 plot(fold_po_sh)
 ```
 
-## Curve of NS points of periodic orbits
+### Curve of NS points of periodic orbits
 ```@example STEINMETZ
 opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
 @set! opts_posh_ns.newton_options.tol = 1e-12
