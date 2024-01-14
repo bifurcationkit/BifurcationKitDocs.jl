@@ -7,7 +7,7 @@ In this page, we explain how to perform continuation of Fold points and detect t
 |---|---|
 | Cusp | cusp |
 | Strong resonance 1:1 bifurcation | R1 |
-| Fold / Flip| foldFlip |
+| Fold / Flip| foldPD |
 | Fold / Neimark-Sacker | foldNS |
 
 In a nutshell, all you have to do (see below) is to call `continuation(br, ind_bif, lens2)` to continue the bifurcation point stored in `br.specialpoint[ind_bif]` and set proper options.
