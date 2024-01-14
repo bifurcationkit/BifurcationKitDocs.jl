@@ -128,7 +128,7 @@ br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_
 	callback_newton = BK.cbMaxNorm(10),
 	)
 
-scene = plot(br_po, br_po_pd)
+scene = plot(br_po, br_po_pd, title = "Collocation based")
 ```
 
 ## Periodic orbits with Parallel Standard Shooting
@@ -149,7 +149,7 @@ br_po = continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 5 sections
 	ShootingProblem(5, prob_ode, Rodas5(); parallel = true);
-	plot = true,
+	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
 	# limit the residual, useful to help DifferentialEquations
@@ -166,7 +166,7 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 br_po_pd = continuation(deepcopy(br_po), 1, 
 	setproperties(br_po.contparams, max_steps = 20, ds = 0.008);
 	plot = true, verbosity = 2,
-	prm = true, detailed = true,
+	δp = -0.005, override = true,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## add previous branch
@@ -177,7 +177,7 @@ br_po_pd = continuation(deepcopy(br_po), 1,
 	callback_newton = BK.cbMaxNorm(10),
 	)
 
-scene = plot(br, br_po, br_po_pd)
+scene = plot(br, br_po, br_po_pd, title = "Shooting based")
 ```
 
 ## Branch of periodic orbits with finite differences
@@ -208,7 +208,7 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_steps = 70);
-	plot = true,
+	# plot = true,
 	ampfactor = .2, δp = -0.005,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -222,5 +222,5 @@ Scene = title!("")
 ```
 
 ```@example TUTLURE
-plot(br, br_po, br_po_pd)
+plot(br, br_po, br_po_pd, title = "Trapezoid based")
 ```

@@ -18,7 +18,7 @@ $$\tag{E}\begin{aligned}
 \end{aligned}$$
 with Neumann boundary conditions. We start by encoding the model
 
-```julia
+```@example PDPDE
 using Revise
 using DiffEqOperators, ForwardDiff, DifferentialEquations, SparseArrays
 using BifurcationKit, LinearAlgebra, Plots
@@ -62,7 +62,7 @@ Jbr(x,p) = sparse(ForwardDiff.jacobian(x -> Fbr(x, p), x))
 
 We can now perform bifurcation of the following Turing solution:
 
-```julia
+```@example PDPDE
 N = 100
 n = 2N
 lx = 3pi/2
@@ -87,11 +87,9 @@ opts_br = ContinuationPar(dsmax = 0.04, ds = -0.01, p_min = -1.8,
 
 br = continuation(re_make(probBif, params = (@set par_br.C = -0.2)), PALC(), opts_br;
 	plot = true, verbosity = 3)
+
+scene = title!("")
 ```
-
-which yields
-
-![](br_pd1.png)
 
 ## Periodic orbits from the Hopf point (Standard Shooting)
 

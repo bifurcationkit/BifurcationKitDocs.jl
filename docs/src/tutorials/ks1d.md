@@ -75,10 +75,10 @@ prob = BifurcationProblem(Fks1d, zeros(N), par_ks, (@lens _.λ),
 and continuation options
 
 ```julia
-optn = NewtonPar(verbose = false, tol = 1e-9, max_iterations = 15)
-	optc = ContinuationPar(p_min = 1/150., p_max = 1., max_steps = 700, newton_options = optn,
-	dsmax = 0.01, dsmin = 1e-4, ds = -0.001, detect_bifurcation = 3, nev = N, n_inversion = 8,
-	max_bisection_steps = 30, dsmin_bisection = 1e-10, plot_every_step = 50)
+optn = NewtonPar(tol = 1e-9, max_iterations = 15)
+optc = ContinuationPar(p_min = 1/150., p_max = 1., max_steps = 700, newton_options = optn,
+dsmax = 0.01, dsmin = 1e-4, ds = -0.001, nev = N, n_inversion = 8,
+max_bisection_steps = 30, dsmin_bisection = 1e-10, plot_every_step = 50)
 
 kwargscont = (verbosity = 2, plot = true, normC = norm)
 ```
@@ -90,11 +90,9 @@ kwargscont = (verbosity = 2, plot = true, normC = norm)
 function optrec(x, p, l; opt = optc)
 	level = l
 	if level <= 2
-		return setproperties(opt;  dsmax = 0.005, max_steps = 2000,
-		detect_bifurcation = 3, detect_loop = true, n_inversion = 6)
+		return setproperties(opt;  dsmax = 0.005, max_steps = 2000, detect_loop = true, n_inversion = 6)
 	else
-		return setproperties(opt;  dsmax = 0.005, max_steps = 2000,
-		detect_bifurcation = 3, detect_loop = true, n_inversion = 6)
+		return setproperties(opt;  dsmax = 0.005, max_steps = 2000, detect_loop = true, n_inversion = 6)
 	end
 end
 
