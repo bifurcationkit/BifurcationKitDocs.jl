@@ -1,4 +1,4 @@
-# 🟢 pp2 example from AUTO07p (aBD + Hopf aBS)
+# [🟢 pp2 example from AUTO07p (aBD + Hopf aBS)](@id pp2)
 
 ```@contents
 Pages = ["tutorialsPP2.md"]
