@@ -35,7 +35,7 @@ This continuation method is `continuation(prob, Natural(), options)`.
 Each time the corrector phase failed, the step size ``ds`` is halved. This has the disadvantage of having lost Newton iterations (which costs time) and imposing small steps (which can be slow as well). To prevent this, the step size can be controlled internally with the idea of having a constant number of Newton iterations per point. This is in part controlled by the aggressiveness factor `a` in `ContinuationPar`.
 
 
-### References
+## References
 
 [^Kuz]:> Kuznetsov, Elements of Applied Bifurcation Theory.
 

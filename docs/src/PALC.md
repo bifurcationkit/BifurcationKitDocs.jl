@@ -1,5 +1,10 @@
 # Pseudo arclength continuation
 
+```@contents
+Pages = ["PALC.md"]
+Depth = 3
+```
+
 This is one of the continuation methods implemented in the package. It is set by the option `PALC(tangent = Bordered())` or `PALC(tangent = Secant())` in [`continuation`](@ref). See also [`PALC`](@ref) for more information.
 
 For solving
@@ -64,6 +69,6 @@ The linear solver for the linear problem associated to (PALC) is set by the opti
 Each time the corrector fails, the step size ``ds`` is halved. This has the disadvantage of having lost Newton iterations (which costs time) and imposing small steps (which can be slow as well). To prevent this, the step size is controlled internally with the idea of having a constant number of Newton iterations per point. This is in part controlled by the aggressiveness factor `a` in `ContinuationPar`.
 
 
-### References
+## References
 
 [^Keller]:> Keller, Herbert B. Lectures on Numerical Methods in Bifurcation Problems. Springer, 1988

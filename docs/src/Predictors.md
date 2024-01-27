@@ -1,13 +1,16 @@
 # Predictors - Correctors
 
+```@contents
+Pages = ["Predictors.md"]
+Depth = 3
+```
+
 The continuation method works with the following pattern (see [^Allgower1990]):
 
 1. compute **tangent**
 2. call **predictor** (based on tangent, mostly)
 3. call **corrector**
 
-
-[^Allgower1990]: > Allgower and Georg, Numerical Continuation Methods, 1990
 
 There are several couples predictor-tangent/corrector which can be used in **BifurcationKit.jl** as we now explain. The tangent computation is formally included in the predictor whereas it is a distinct function in the code.
 
@@ -41,7 +44,6 @@ The polynomial predictor is based on a fit (least square regression) of an $n$th
 
 This algorithm is parametrized by `alg = Polynomial(Fred, n, k, v0)` where `pred::AbstractTangentComputation` is the tangent predictor used only for the first $k$ solutions before the polynomial predictor is operational and `v0` is an example of guess. More information is available in [`Polynomial`](@ref).
 
-[^Waugh]: > Waugh, Illingworth, and Juniper, “Matrix-Free Continuation of Limit Cycles for Bifurcation Analysis of Large Thermoacoustic Systems.”
 
 ## 4. Multiple predictor (aka `pmcont` in `pde2path`)
 
@@ -55,4 +57,10 @@ otherwise the corrector fails. The solution that is returned is the one for the 
 
 This algorithm is parametrized by `alg = Multiple(pred, x0, α, nb)` where `τ` is an initial tangent vector (used to set the types) and `pred::PALC` is a predictor. The default value is `pred = PALC()`. More information is available in [`Multiple`](@ref).
 
+## References
+
+[^Allgower1990]: > Allgower and Georg, Numerical Continuation Methods, 1990
+
 [^Uecker2014]: > 1.Uecker, H. pde2path - A Matlab Package for Continuation and Bifurcation in 2D Elliptic Systems. NMTMA 7, 58–106 (2014).
+
+[^Waugh]: > Waugh, Illingworth, and Juniper, “Matrix-Free Continuation of Limit Cycles for Bifurcation Analysis of Large Thermoacoustic Systems.”
