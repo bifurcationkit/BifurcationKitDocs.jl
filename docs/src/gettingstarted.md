@@ -22,7 +22,7 @@ scene = plot(br) #hide
 ```
 where the pieces are described below.
 
-### Step 1: Defining a Problem
+### Step 1: Defining a problem
 
 To solve this numerically, we define a problem type by giving it the equation, the initial condition, the parameters and the parameter axis to solve over:
 
@@ -37,7 +37,7 @@ Note that BifurcationKit.jl will choose the types for the problem based on the t
 
 You can customize a few scalar indicators for each step (for example if you don't want to save all solutions) by providing a function `record_from_solution`. You can also control how the solution is plotted during a continuation run by providing a function `plot_solution`. This is especially useful when studying PDE for example.
 
-### Step 2: Solving a Problem
+### Step 2: Solving a problem
 
 After defining a problem, you "solve" it using `continuation`.
 
@@ -56,7 +56,7 @@ br = continuation(prob, PALC(), opts)
 scene = plot(br)
 ```
 
-### Choosing a continuation Algorithm
+### Choosing a continuation algorithm
 
 BifurcationKit.jl offers a much wider variety of continuation algorithms than traditional continuation softwares. Many of these algorithms are from recent research and have their own strengths and weaknesses. Each algoritm comes with a doc string, for example:
 
@@ -80,7 +80,7 @@ br = continuation(prob, MoorePenrose(), opts)
 scene = plot(br)
 ```
 
-### Step 3: Analyzing the Solution
+### Step 3: Analyzing the solution
 
 The result of `continuation` is a solution object. A summary of the result is provided by the `show` method:
 
@@ -189,9 +189,7 @@ using BifurcationKit, Parameters, Plots
 function Fsl(X, p)
     @unpack r, μ, ν, c3 = p
     u, v = X
-
     ua = u^2 + v^2
-
     [
         r * u - ν * v - ua * (c3 * u - μ * v)
         r * v + ν * u - ua * (c3 * v + μ * u)
@@ -214,7 +212,11 @@ opts = ContinuationPar()
 br = continuation(prob, PALC(), opts, bothside = true)
 ```
 
-Having found a Hopf bifurcation, we compute the branch of periodic orbits which is nearby. Thus, we provide the branch `br`, the index of the special point we want to branch from: 2 in this case and a method `PeriodicOrbitOCollProblem(20, 5)` to compute periodic orbits. You can look at [Periodic orbits computation](@ref) for a list of all methods. Suffice it to say that `PeriodicOrbitOCollProblem` is the default method in the case of ODEs.
+In the result above, we see that a Hopf bifurcation has been detected: 
+
+```- #  2,     hopf at r ≈ -0.00595553 ∈ (-0.00595553,...```
+
+We compute the branch of periodic orbits which is nearby. We thus provide the branch `br`, the index of the special point we want to branch from: 2 in this case and a method `PeriodicOrbitOCollProblem(20, 5)` to compute periodic orbits. You can look at [Periodic orbits computation](@ref) for a list of all methods. Suffice it to say that `PeriodicOrbitOCollProblem` is the default method in the case of ODEs.
 
 ```@example GETSTARTED3
 br_po = continuation(br, 2, opts,
@@ -222,7 +224,7 @@ br_po = continuation(br, 2, opts,
         )
 ```
 
-### Analyzing the Solution
+### Analyzing the solution
 
 The branch of periodic orbits has been computed. You can look at what is recorded in the first point on the branch:
 

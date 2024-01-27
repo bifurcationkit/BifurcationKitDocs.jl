@@ -17,16 +17,19 @@ Once such a solution (or several) $(x_0,p_0)$ is known, we can continue it by co
 
 ## Bifurcation analysis of Equilibria
 
-We can detect if the curve of solutions $\gamma$ crosses another curve of solutions $\gamma^{bif}$ *without knowing* $\gamma^{bif}$! The intersection point $(x^b,p^b)\in\gamma$ is called a bifurcation point and is such that $\partial_xF(x^b,p^b)$ is non invertible. When calling `γ = continuation(...)` with the option `detect_bifurcation > 1` inside [`ContinuationPar`](@ref), the bifurcation points are automatically detected and stored in `γ.specialpoints`.
+We can detect if the curve of solutions $\gamma$ crosses another curve of solutions $\gamma^{bif}$ *without knowing* $\gamma^{bif}$! The intersection point $(x^b,p^b)\in\gamma$ is called a bifurcation point and is such that $\partial_xF(x^b,p^b)$ is non invertible. When calling `γ = continuation(...)` with the option `detect_bifurcation > 1` inside [`ContinuationPar`](@ref), the bifurcation points are automatically detected.
 
 !!! warning "Eigenvalues"
     The rightmost eigenvalues are computed by default to detect bifurcations. Hence, the number of eigenvalues with positive real parts must be finite (*e.g.* small). This might require to consider $-F(x,p)=0$ instead of (E).
 
 ### Branch switching 
 
-In the simple case where $dim\ker \partial_xF(x^b,p^b) = 1$, we can compute automatically the **bifurcated branch** $\gamma^{bif}$ by calling [`continuation`](@ref) and passing $\gamma$. This is explained in [Branch switching from simple branch point to equilibria](@ref abs-simple-eq). Recursively, we can compute the curves of solutions which are connected to $(x_0,p_0)$, this is called a **bifurcation diagram**. This bifurcation diagram can be automatically computed using the function [`bifurcationdiagram`](@ref) with minimum input from the user. More information is provided in [Automatic Bifurcation diagram computation](@ref) and examples of use are [1d Swift-Hohenberg equation](@ref sh1d) and [Bratu–Gelfand problem](@ref gelfandauto).
+In the simple case where $dim\ker \partial_xF(x^b,p^b) = 1$, we can compute automatically the **bifurcated branch** $\gamma^{bif}$ by calling [`continuation`](@ref) and passing $\gamma$. This is explained in [Branch switching from simple branch point to equilibria](@ref abs-simple-eq). 
 
-When $d\equiv dim\ker \partial_xF(x^b,p^b) > 1$, you can still compute automatically the **bifurcated branches** $\gamma^{bif}$s by calling [`continuation`](@ref). It is based on a reduction of (E) to a *small* system of $d$ dimensional multivariate polynomial equations in $d$ unknowns whose solutions give the local topology of branches in the neighborhood of the bifurcation point $(x^b, p^b)$. The solutions of this **reduced equation** are then used as initial guesses for the call to Krylov-Newton. This is explained in [From simple branch point to equilibria](@ref abs-simple-eq) and examples of use are shown in [2d Bratu–Gelfand problem](@ref gelfand) and [Automatic 2d Bratu–Gelfand problem (Intermediate)](@ref gelfandauto).	
+Recursively, we can compute the curves of solutions which are connected to $(x_0,p_0)$, this is called a **bifurcation diagram**. This bifurcation diagram can be automatically computed using the function [`bifurcationdiagram`](@ref). More information is provided in [Automatic Bifurcation diagram computation](@ref) and a simple example is [provided](@ref pp2).
+
+When $d\equiv dim\ker \partial_xF(x^b,p^b) > 1$, you can still compute automatically the **bifurcated branches** $\gamma^{bif}$s by calling [`continuation`](@ref). It is based on a reduction of (E) to a *small* system of $d$ dimensional multivariate polynomial equations in $d$.
+
 > In the case $d=1$, the reduced equation can be further simplified into a **normal form**. This is also automatically computed by the package.
 
 !!! tip "Branch switching"
@@ -35,13 +38,13 @@ When $d\equiv dim\ker \partial_xF(x^b,p^b) > 1$, you can still compute automatic
 
 ## Bifurcation analysis of Cauchy problems
 
-The goal of this section is to study the dynamics of the Cauchy problem
+The goal of this part is to study the dynamics of the Cauchy problem
 
 $$\frac{d}{dt}x - F(x,p) = 0. \quad\tag{C}$$
 
-The equilibria are time independent solutions of (C) hence satisfying (E). The previous section can be applied to compute curves of equilibria. However, we can do more. By discretizing time, we can recast (C) in the general form (E) and look for time dependent solutions as well. 
+The equilibria are time independent solutions of (C) hence satisfying (E). The previous part can be applied to compute curves of equilibria. However, we can do more and look for time dependent solutions as well. 
 
-We can detect the existence of periodic solutions close to $\gamma$. This is done automatically and those bifurcation points are stored in `γ.specialpoint` as well with the name of **Hopf bifurcation points**.  
+We can detect the existence of periodic solutions close to $\gamma$. This is done automatically and those bifurcation points are called  **Hopf bifurcation points**.  
 
 ### Branch switching at Hopf points
 
@@ -49,7 +52,7 @@ We focus on computing the branch of periodic solutions branching from a Hopf poi
 
 ### Branch switching at bifurcation points of periodic orbits
 
-Let us consider the case where a branch of periodic orbits $\gamma^{po}$ have been computed (see for example previous section) and several bifurcation points have been detected (branch point, period doubling and Neimark Sacker). Can we compute bifurcated branches from $\gamma^{po}$? Automatically?
+Let us consider the case where a branch of periodic orbits $\gamma^{po}$ have been computed (see for example previous section) and several bifurcation points have been detected (branch point, period doubling and Neimark Sacker). We can compute the bifurcated branches from $\gamma^{po}$ automatically.
 
 We do not provide an *automatic* branch switching for those points and for all methods (Shooting, Finite differences). However, for branch points of periodic orbits, you can call [`continuation`](@ref) by passing $\gamma^{po}$ and some simple arguments (amplitude of the periodic orbits) to perform branch switching in a semi-automatic way. For the case of [Periodic orbits based on Trapezoidal rule](@ref), see [From Branch / Period-doubling point of curve of periodic orbits](@ref).
 

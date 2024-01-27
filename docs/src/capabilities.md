@@ -12,24 +12,24 @@ Depth = 3
 - Continuation written as an [iterator](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/iterator/)
 - Monitoring user functions along curves computed by continuation, see [events](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/EventCallback/)
 - Continuation methods: PALC, Moore Penrose, Multiple, Polynomial, Deflated continuation, ANM, ...
-- Bifurcation points located with bisection
-- compatible with GPU
+- Bifurcation points / events located with bisection
+- Compatible with GPU
 
 ## Capabilities related to equilibria
 - Detection of Branch, Fold, Hopf bifurcation points of stationary solutions and computation of their normal form.
 - Automatic branch switching at branch points (**whatever the dimension of the kernel**) to equilibria
 - **Automatic computation of bifurcation diagrams of equilibria**
 - Fold / Hopf continuation based on Minimally Augmented formulation, with Matrix Free / Sparse / Dense Jacobian.
-- Detection of all codim 2 bifurcations of equilibria and computation of the normal forms of Bogdanov-Takens, Bautin and Cusp
+- Detection of all codim 2 bifurcations of equilibria and computation of the normal forms of Bogdanov-Takens, Bautin, Cusp, Zero-Hopf. (Hopf-Hopf normal form not implemented)
 - Branching from Bogdanov-Takens / Zero-Hopf / Hopf-Hopf points to Fold / Hopf curve
 
 ## (limited) Capabilities related to maps
 - continuation of fixed points of maps
-- computation of normal form of Period-doubling and Neimark-Sacker bifurcations.
+- computation of normal form of Period-doubling, Neimark-Sacker, Branch point bifurcations.
 
 **Note that you can combine most solvers, like use Deflation for Periodic orbit computation or Fold of periodic orbits family.**
 
-> Custom state means, we can use something else than `AbstractArray`, for example your own `struct`.
+> Custom state means, you can use something else than `AbstractArray`, for example your own `struct`.
 
 |Features|Matrix Free|Custom state| [Tutorial](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/) | GPU |
 |---|---|---|---|---|

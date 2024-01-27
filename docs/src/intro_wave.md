@@ -1,6 +1,6 @@
 # Freezing problems, symmetries and waves
 
-This section is dedicated to the study of an equation (in `x`) `F(x,p)=0` where one wishes to freeze a continuous symmetry. When the equation $F(x, p) = 0$ has a continuous symmetry described by a Lie group $G$ and action $g\cdot x$ for $g\in G$, one can reduce the symmetry of the problem by considering the constrained problem[^Beyn]:
+This section is dedicated to the study of the equation `F(x,p)=0` where one wishes to freeze a continuous symmetry. When the equation $F(x, p) = 0$ has a continuous symmetry described by a Lie group $G$ and action $g\cdot x$ for $g\in G$, one can reduce the symmetry of `F` by considering the constrained problem[^Beyn]:
 
 $$\left\{
 \begin{array}{l}\tag{W}
@@ -18,15 +18,17 @@ F(x, p) - \sum\limits_{i=1}^{N_g}\ s_i\cdot T_i\cdot x=0 \\
 \langle T_i\cdot x_{ref},x-x_{ref}\rangle=0,\quad i=1,\cdots,N_g.
 \end{array}\right.$$
 
+> We call a solution `(x,p,s)` of (W) a **wave**.
+
 ## Wave stability
 
-There are several ways to compute the stability of a wave $(x^w,s^w)$. From [^Sandstede], this requires to compute the spectrum of
+There are several ways to compute the stability of a wave $(x^w,p,s^w)$. From [^Sandstede], this requires to compute the spectrum of
 
 $$d_1F(x,p)- \sum\limits_{i=1}^{N_g}\ s_i\cdot T_i\tag{EV}.$$
 
-However, there is (potentially) the zero eigenvalue associated to the eigenvectors $T_i\cdot x^w$. In practice, because the symmetry is discrete numerically, we find a small eigenvalue.
+However, there is (potentially) the zero eigenvalue associated to the eigenvectors $T_i\cdot x^w$. In practice, because the symmetry is discrete numerically, we find a small eigenvalue instead of 0.
 
-Another way to compute the same spectrum is to proceed as follows. Using (W) as a definition for the functional $G((x,s),p)\in\mathbb R^{N+1}$, the eigenproblem for computing the stability of a wave $(x^w,s^w)$ is
+Another way to compute the same spectrum is to proceed as follows. Using (W) as a definition of the functional $G((x,s),p)\in\mathbb R^{N+1}$, the eigenproblem for computing the stability of a wave $(x^w,s^w)$ is
 
 $$A x = σ Bx\tag{GEV}$$
 
