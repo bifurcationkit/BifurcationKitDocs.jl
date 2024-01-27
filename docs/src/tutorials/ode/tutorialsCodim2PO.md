@@ -115,7 +115,7 @@ We are now ready to build a periodic orbit problem from a solution `sol::ODEProb
 
 ```@example TUTPPREY
 probsh, cish = generate_ci_problem( ShootingProblem(M=3),
-	prob, prob_de, sol, 2.; alg = Rodas5())
+	prob, prob_de, sol, 2.; alg = Rodas5(), abstol = 1e-12, reltol = 1e-10)
 
 opts_po_cont = setproperties(opts_br, max_steps = 50, tol_stability = 1e-3)
 br_fold_sh = continuation(probsh, cish, PALC(tangent = Bordered()), opts_po_cont;
@@ -141,7 +141,7 @@ We do the same as in the previous section but using orthogonal collocation. This
 
 ```@example TUTPPREY
 # this is the function which builds probcoll from sol
-probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(26, 3),
+probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 4),
 	prob, sol, 2.)
 
 opts_po_cont = setproperties(opts_br, max_steps = 50, tol_stability = 1e-8)

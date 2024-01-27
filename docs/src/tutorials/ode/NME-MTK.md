@@ -132,11 +132,9 @@ We can plot some of the previously computed periodic orbits in the plane $(E,x)$
 ```@example TUTNMEMTK
 plot()
 # fetch the saved solutions
-for sol in br_pocoll.sol[1:2:40]
+for i_sol in 1:2:40
 	# periodic orbit
-	po = sol.x
-	# get the mesh and trajectory
-	traj = BK.get_periodic_orbit(br_pocoll.prob, po, @set par_tm[id_E0] = sol.p)
+	traj = BK.get_periodic_orbit(br_pocoll, i_sol)
 	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
 end
 title!("")

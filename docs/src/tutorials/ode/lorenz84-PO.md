@@ -43,14 +43,13 @@ end
 
 parlor = (α = 1//4, β = 1., G = .25, δ = 1.04, γ = 0.987, F = 1.7620532879639, T = .0001265)
 
-z0 =  [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.02105288273117459]
+z0 = [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.02105288273117459]
 
 recordFromSolutionLor(x, p) = (u = BK.getVec(x);(X = u[1], Y = u[2], Z = u[3], U = u[4]))
 prob = BK.BifurcationProblem(Lor, z0, parlor, (@lens _.F);
 	record_from_solution = (x, p) -> (X = x[1], Y = x[2], Z = x[3], U = x[4]),)
 
-opts_br = ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.05, n_inversion = 6, detect_bifurcation = 3, max_bisection_steps = 25, nev = 4, max_steps = 200, plot_every_step = 30)
-@set! opts_br.newton_options.verbose = false
+opts_br = ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.05, n_inversion = 6, nev = 4, max_steps = 200)
 @set! opts_br.newton_options.tol = 1e-12
 br = @time continuation(re_make(prob, params = setproperties(parlor;T=0.04,F=3.)),
 	 	PALC(), opts_br;
@@ -64,14 +63,16 @@ scene = plot(br, plotfold=false, markersize=4, legend=:topleft)
 We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[5]` and continue it.
 
 ```@example LORENZ84V2
-sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, detect_bifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10, max_steps = 130, max_bisection_steps = 55) ; plot = true,
+sn_codim2 = continuation(br, 5, (@lens _.T), ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, detect_bifurcation = 1, dsmin=1e-5, ds = -0.001, dsmax = 0.005, n_inversion = 10, max_steps = 130) ;
+	# plot = true,
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
 	start_with_eigen = false,
 	bothside = false,
 	)
 
-hp_codim2_1 = continuation(br, 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 8, save_sol_every_step = 1, detect_bifurcation = 1) ; plot = false, verbosity = 0,
+hp_codim2_1 = continuation(br, 3, (@lens _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 8, save_sol_every_step = 1, detect_bifurcation = 1) ;
+	# plot = false, verbosity = 0,
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
 	start_with_eigen = true,
@@ -87,8 +88,8 @@ plot!(hp_codim2_1, vars=(:F, :T), branchlabel = "Hopf1", xlims = (1,2.7), ylims 
 We compute the branch of Fold of periodic orbits from the Bautin bifurcation (labelled `:gh`) in the previous figure. In this tutorial, we focus on orthogonal collocation but standard shooting would do too.
 
 ```@example LORENZ84V2
-opts_fold_po = ContinuationPar(hp_codim2_1.contparams, dsmax = 0.01, detect_bifurcation = 0, max_steps = 30, detect_event = 0, ds = 0.001, plot_every_step = 10, a = 0.8)
-@set! opts_fold_po.newton_options.verbose = false
+opts_fold_po = ContinuationPar(hp_codim2_1.contparams, dsmax = 0.01, detect_bifurcation = 0, max_steps = 30, detect_event = 0, ds = 0.001, plot_every_step = 10)
+# @set! opts_fold_po.newton_options.verbose = false
 @set! opts_fold_po.newton_options.tol = 1e-8
 fold_po = continuation(hp_codim2_1, 3, opts_fold_po, 
 		PeriodicOrbitOCollProblem(20, 3, meshadapt = false);

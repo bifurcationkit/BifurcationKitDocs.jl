@@ -319,7 +319,7 @@ thereby providing the following bifurcation diagram with `plot(br,br1,br2,brdef1
 
 ![](mittlemann6.png)
 
-# References
+## References
 
 [^Farrell]:> Farrell, Patrick E., Casper H. L. Beentjes, and Ásgeir Birkisson. **The Computation of Disconnected Bifurcation Diagrams.** ArXiv:1603.00809 [Math], March 2, 2016.
 
