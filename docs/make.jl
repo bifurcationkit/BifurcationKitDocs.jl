@@ -75,8 +75,9 @@ makedocs(doctest = false,
 						"Hopf-Hopf" => "hh.md",
 								],
 			"Normal form (periodic orbits)" => [
+						"Simple branch point" => "bppo.md",
 						"Period-doubling" => "pd.md",
-						"Neimarck-Sacker" => "ns.md",
+						"Neimark-Sacker" => "ns.md",
 									],
 			"Branch switching" => [
 						"Introduction" => "intro-abs.md",

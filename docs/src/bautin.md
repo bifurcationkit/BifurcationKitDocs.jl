@@ -33,6 +33,14 @@ get_normal_form(br::ContResult, ind_bif::Int;
 !!! info "Note"
     You should not need to call `get_normal_form` except if you need the full information about the branch point.
 
+## Predictor
+
+The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the method
+
+```@docs
+predictor(gh::BifurcationKit.Bautin, ::Val{:FoldPeriodicOrbitCont}, ϵ::T; verbose = false, ampfactor = T(1)) where T
+```
+
 ## References
 
 

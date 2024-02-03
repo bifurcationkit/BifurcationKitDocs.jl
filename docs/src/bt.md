@@ -78,6 +78,23 @@ The above call returns a point with information needed to compute the bifurcated
 !!! info "Note"
     You should not need to call `get_normal_form` except if you need the full information about the branch point.
 
+
+## Predictors
+
+The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the method
+
+```@docs
+BifurcationKit.predictor(bt::BifurcationKit.BifurcationKit.BogdanovTakens, ::Val{:HopfCurve}, ds::T; verbose = false, ampfactor = T(1)) where T
+```
+
+```@docs
+BifurcationKit.predictor(bt::BifurcationKit.BogdanovTakens, ::Val{:FoldCurve}, ds::T; verbose = false, ampfactor = T(1)) where T
+```
+
+```@docs
+BifurcationKit.predictor(bt::BifurcationKit.BogdanovTakens, ::Val{:HomoclinicCurve}, ds::T; verbose = false, ampfactor = one(T)) where T
+```
+
 ## References
 
 [^Haragus]:> Haragus, Mariana, and Gérard Iooss. Local Bifurcations, Center Manifolds, and Normal Forms in Infinite-Dimensional Dynamical Systems. London: Springer London, 2011. https://doi.org/10.1007/978-0-85729-112-7.

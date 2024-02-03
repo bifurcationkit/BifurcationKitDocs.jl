@@ -60,3 +60,32 @@ julia> BifurcationKit.nf(bp2d)
 - You can evaluate the reduced equation as `bp2d(Val(:reducedForm), rand(2), 0.2)`. This can be used to find all the zeros of the reduced equation by sampling on a grid or using a general solver like  `Roots.jl`. 
 
 - Finally, given a $d$-dimensional vector $x$ and a parameter $\delta p$, you can have access to an initial guess $u$ (see above) by calling `bp2d(rand(2), 0.1)`
+
+## Predictor
+
+The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the method
+
+```@docs
+BifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, δp::T;
+        verbose::Bool = false,
+        ampfactor = T(1),
+        nbfailures = 30,
+        maxiter = 100,
+        perturb = identity,
+        J = nothing,
+        normN = norminf,
+        optn::NewtonPar) where T
+```
+
+```@docs
+BifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, ::Val{:exhaustive}, δp::T;
+                verbose::Bool,
+                ampfactor,
+                nbfailures,
+                maxiter,
+                perturb,
+                J,
+                igs,
+                normN,
+                optn::NewtonPar) where T
+```

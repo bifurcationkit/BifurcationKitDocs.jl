@@ -33,6 +33,18 @@ get_normal_form(br::ContResult, ind_bif::Int ; verbose = false, ζs = nothing, l
 !!! info "Note"
     You should not need to call `get_normal_form` except if you need the full information about the branch point.
 
+## Predictors
+
+The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the methods
+
+```@docs
+BifurcationKit.predictor(hh::BifurcationKit.HopfHopf, ::Val{:HopfCurve}, ds::T; verbose = false, ampfactor = T(1)) where T
+```
+
+```@docs
+BifurcationKit.predictor(hh::BifurcationKit.HopfHopf, ::Val{:NS}, ϵ::T; verbose = false, ampfactor = T(1)) where T
+```
+
 ## References
 
 

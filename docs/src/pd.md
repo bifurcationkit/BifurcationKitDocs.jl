@@ -36,6 +36,15 @@ Depending on the method used for computing the periodic orbits, you have several
 - For collocation, you can use PRM and Iooss methods. Note that the Iooss method is the most precise.
 - For Trapezoid method, PD normal form is not yet implemented.
 
+## Predictor
+
+The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the method
+
+```@docs
+predictor(hp::BifurcationKit.PeriodDoublingPO{ <: ShootingProblem }, δp, 
+                    ampfactor; 
+                    override = false)
+```
 
 ## Normal form based on Poincaré return map
 

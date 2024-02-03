@@ -14,8 +14,8 @@ More precisely, if $\ker dF(x_0,p_0) = \mathbb R\zeta$, one can show that $x_0+z
 In the above scalar equation,
 
 - if $a\neq 0$, this is a *Saddle-Node* bifurcation
-- if $a=0,b_2\neq 0$, the bifurcation point is a *Transcritical* one where the bifurcated branch exists on each side of $p$.
-- if $a=0,b_2=0, b_3\neq 0$, the bifurcation point is a *Pitchfork* one where the bifurcated branch only exists on one side of $p$. If it exists at smaller values then $p$, this is a *subcritical Pitchfork* bifurcation. In the other case, this is a *supercritical Pitchfork* bifurcation.
+- if $a=0,b_2\neq 0$, the bifurcation point is *Transcritical* and the bifurcated branch exists on each side of $p_0$.
+- if $a=0,b_2=0, b_3\neq 0$, the bifurcation point is a *Pitchfork* and the bifurcated branch only exists on one side of $p_0$.
 
 ## Normal form computation
 
@@ -30,3 +30,15 @@ where `prob` is the bifurcation problem. `br` is a branch computed after a call 
 
 !!! info "Note"
     You should not need to call `get_normal_form` except if you need the full information about the branch point.
+
+## Predictor
+
+The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the methods (depending on the type of the bifurcation point)
+
+```@docs
+BifurcationKit.predictor(bp::Union{BifurcationKit.Transcritical, BifurcationKit.TranscriticalMap}, ds::T; verbose = false, ampfactor = T(1)) where T
+```
+
+```@docs
+BifurcationKit.predictor(bp::Union{BifurcationKit.Pitchfork, BifurcationKit.PitchforkMap}, ds::T; verbose = false, ampfactor = T(1)) where T
+```
