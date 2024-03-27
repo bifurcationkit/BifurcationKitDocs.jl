@@ -8,7 +8,7 @@ In this example, we will solve the equation
 
 $$\mu + x-\frac{x^3}{3}=0$$
 
-as function of $\mu$ by looking at the solution in connected component of $(x_0,\mu_0)\approx(-2,-1)$. Here $u\in\mathbb R$ is the state variable and $\mu$ is our parameter. The general workflow is to define a problem, solve the problem, and then analyze the solution. The full code for solving this problem is:
+as function of $\mu$ by looking at the solution in connected component of $(x_0,\mu_0)\approx(-2,-1)$. Here $x\in\mathbb R$ is the state variable and $\mu$ is our parameter. The general workflow is to define a problem, solve the problem, and then analyze the solution. The full code for solving this problem is:
 
 ```@example GETSTARTED1
 using BifurcationKit, Plots
