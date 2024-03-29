@@ -1,5 +1,10 @@
 # Periodic orbits based on Trapezoidal rule
 
+```@contents
+Pages = ["periodicOrbitTrapeze.md"]
+Depth = 3
+```
+
 The Trapezoid method allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule	. The method is implemented in the structure `PeriodicOrbitTrapProblem`. The general method is very well exposed in [^Uecker],[^Lust] and we adopt the notations of the first reference.
 
 We look for periodic orbits as solutions $(x(0),T)$ of

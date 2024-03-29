@@ -6,7 +6,7 @@ The general method `continuation` is built upon this iterator interface and we r
 
 
 !!! warning "Warning"
-    The iterator provided below does not compute eigenvalues nor perform bifurcations detection. 
+    The iterator provided below does not compute eigenvalues nor performs bifurcations detection. 
     
 ## Initialization
 

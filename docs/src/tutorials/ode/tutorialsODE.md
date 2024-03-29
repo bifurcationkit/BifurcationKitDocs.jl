@@ -10,8 +10,14 @@ The following model is taken from [^Cortes]:
 $$\left\{\begin{array}{l}
 \tau \dot{E}=-E+g\left(J u x E+E_{0}\right) \\
 \dot{x}=\tau_{D}^{-1}(1-x)-u E x \\
-\dot{u}=U E(1-u)-\tau_{F}^{-1}(u-U)
+\dot{u}=U_0 E(1-u)-\tau_{F}^{-1}(u-U_0)
 \end{array}\right.$$
+
+with
+
+$$
+g(y):=\alpha\log(1+exp(y/\alpha)).
+$$
 
 We use this model as a mean to introduce the basics of `BifurcationKit.jl`, namely the continuation of equilibria and periodic orbits (with the different methods).
 
@@ -119,7 +125,7 @@ plot(sol, title = "Periodic orbit")
 
 ## Periodic orbits with Parallel Standard Shooting
 
-We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the Trapezoid method. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the two previous methods.
+We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the Trapezoid method. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the two other methods.
 
 ```@example TUTODE
 using DifferentialEquations

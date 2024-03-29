@@ -62,7 +62,7 @@ hopf_codim2 = continuation(br, 3, (@lens _.β2), ContinuationPar(opts_br, detect
 	)
 
 # refine BT point
-solbt = BifurcationKit.newton_bt(hopf_codim2, 2; start_with_eigen = true)
+solbt = BifurcationKit.newton_bt(hopf_codim2, 2)
 solbt.u
 ```
 

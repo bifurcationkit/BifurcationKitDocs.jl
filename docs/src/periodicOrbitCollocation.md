@@ -1,5 +1,10 @@
 # Periodic orbits based on orthogonal collocation
 
+```@contents
+Pages = ["periodicOrbitCollocation.md"]
+Depth = 3
+```
+
 We compute `Ntst` time slices of a periodic orbit using orthogonal collocation. This is implemented in the structure `PeriodicOrbitOCollProblem`.
 
 !!! tip "Large scale"
@@ -67,6 +72,7 @@ $$\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_0(s)\right\rangle d s =0$$
 
 
 ## Discretization of the BVP and jacobian
+
 We only focus on the differential part. Summing up, we obtained the following equations for the $x_{j,l}\in\mathbb R^n$:
 
 $$\sum\limits_{k=1}^{m+1}\mathcal L_k'(z_l)x_{j,k} = F\left(\sum\limits_{k=1}^{m+1}\mathcal L_k(z_l)x_{j,k}\right)$$
@@ -87,7 +93,7 @@ The jacobian in the case $m=2$ is given by:
 
 where
 
-$$H_{k,l}^{l_2} = \mathcal L'_{l_2,l}\cdot I_n - T\frac{\tau_{j+1}-\tau_j}{2}\cdot\mathcal L_{l_2,l}\cdot dF\left(x_{k,l}\right).$$
+$$H_{k,l}^{l_2} = \mathcal L'_{l_2,l}\cdot I_n - T\frac{\tau_{j+1}-\tau_j}{2}\cdot\mathcal L_{l_2,l}\cdot dF\left(x_{k,l}\right)\in\mathbb R^n.$$
 
 ## Interpolation
 
@@ -105,7 +111,7 @@ The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@r
 
 ## Jacobian and linear solvers
 
-We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal solvers and jacobian are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal linear solvers and jacobians are set up automatically so you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
 ### 1. `DenseAnalytical()`
 The jacobian is computed with an analytical formula, works for dense matrices. This is the default algorithm.
@@ -117,7 +123,7 @@ The jacobian is computed with automatic differentiation, works for dense matrice
 The jacobian is computed with an analytical formula, works for sparse matrices.
 
 ### 3. `FullSparseInplace()`
-The jacobian is computed in place, limiting memory allocations, with an analytical formula when the sparsity of the jacobian of the vector field is constant. This is much faster than `FulSparse()`.
+The sparse jacobian is computed in place, limiting memory allocations, with an analytical formula when the sparsity of the jacobian of the vector field is constant. This is much faster than `FullSparse()`.
 
 
 ## Floquet multipliers computation

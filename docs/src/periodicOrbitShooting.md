@@ -1,5 +1,10 @@
 # Periodic orbits based on the shooting method
 
+```@contents
+Pages = ["periodicOrbitShooting.md"]
+Depth = 3
+```
+
 A set of shooting algorithms is provided which are called either *Simple Shooting (SS)* if a single shooting is used and *Multiple Shooting (MS)* otherwise. For the exposition, we follow the PhD thesis[^Lust] and also [^Umbria].
 
 We aim at finding periodic orbits for the Cauchy problem 

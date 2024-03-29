@@ -19,9 +19,6 @@ Once such a solution (or several) $(x_0,p_0)$ is known, we can continue it by co
 
 We can detect if the curve of solutions $\gamma$ crosses another curve of solutions $\gamma^{bif}$ *without knowing* $\gamma^{bif}$! The intersection point $(x^b,p^b)\in\gamma$ is called a bifurcation point and is such that $\partial_xF(x^b,p^b)$ is non invertible. When calling `γ = continuation(...)` with the option `detect_bifurcation > 1` inside [`ContinuationPar`](@ref), the bifurcation points are automatically detected.
 
-!!! warning "Eigenvalues"
-    The rightmost eigenvalues are computed by default to detect bifurcations. Hence, the number of eigenvalues with positive real parts must be finite (*e.g.* small). This might require to consider $-F(x,p)=0$ instead of (E).
-
 ### Branch switching 
 
 In the simple case where $dim\ker \partial_xF(x^b,p^b) = 1$, we can compute automatically the **bifurcated branch** $\gamma^{bif}$ by calling [`continuation`](@ref) and passing $\gamma$. This is explained in [Branch switching from simple branch point to equilibria](@ref abs-simple-eq). 

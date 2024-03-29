@@ -34,7 +34,7 @@ The option `normC` [`continuation`](@ref) specifies the norm used to evaluate th
 
 ### Linear problem
 
-The linear solver for the linear problem associated to (MS) is set by the option `linearAlgo` in [`continuation`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
+The linear solver for the linear problem associated to (MS) is set by the option `linear_algo` in [`continuation`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
 
 ## Algorithm for solving (MS)
 
@@ -48,7 +48,7 @@ where the superscript $^+$ indicates the Moore-Penrose pseudoinverse of rank $N$
 ### Direct case
 In this case, triggered by the option `MoorePenrose(method = BifurcationKit.direct)`, the pseudoinverse is computed with `\`.
 
-the option `MoorePenrose(method = BifurcationKit.pInv)`, the pseudoinverse is computed with `pinv`.
+For the option `MoorePenrose(method = BifurcationKit.pInv)`, the pseudoinverse is computed with `pinv`.
 
 ### Iterative case
 In this case, triggered by the option `MoorePenrose(method = BifurcationKit.iterative)`, the pseudoinverse is computed with an iterative method described in [^Meijer]:

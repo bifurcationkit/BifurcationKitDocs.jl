@@ -62,10 +62,7 @@ We first compute the branch of equilibria
 opts_br = ContinuationPar(p_min = -10.0, p_max = -0.9,
 	# parameters to have a smooth result
 	ds = 0.04, dsmax = 0.05,
-	# this is to detect bifurcation points precisely with bisection
-	detect_bifurcation = 3,
-	# Optional: bisection options for locating bifurcations
-	n_inversion = 8, max_bisection_steps = 25, nev = 3)
+	nev = 3)
 
 # continuation of equilibria
 br = continuation(prob, PALC(tangent = Bordered()), opts_br; normC = norminf)
