@@ -27,16 +27,19 @@ This predictor is based on a computation of the tangent $\tau = (dx,dp)$ to the 
 **BifurcationKit.jl** provides two ways to compute the tangent $(dx, dp)$.
 
 ### 2a. Secant predictor
-This predictor is called **secant** and is parametrized by the algorithm `PALC(tangent = Secant())` in [`continuation`](@ref) with [`Secant`](@ref) .  It is computed by $(dx, dp) = (z_1, p_1) - (z_0, p_0)$ and normalized by the norm $\|(x, p)\|^2_\theta = \frac{\theta}{length(x)} \langle x,x\rangle + (1 - \theta)\cdot p^2$.
+This predictor is called **secant** and is parametrized by the algorithm `PALC(tangent = Secant())` in [`continuation`](@ref) with [`Secant`](@ref) .  It is computed with $\tau = (x_1, p_1) - (x_0, p_0)$ and normalized with the norm $\|(x, p)\|^2_\theta := \frac{\theta}{length(x)} \langle x,x\rangle + (1 - \theta)\cdot p^2$ for some $0<\theta<1$.
 
 !!! warning "Parameter `θ`"
-    The parameter `θ` in the struct `ContinuationPar`is very important. It should be tuned for the continuation to work properly especially in the case of large problems where the ``\langle x - x_0, dx_0\rangle`` component in the constraint might be favored too much. Also, large `θ`s favour `p` as the corresponding term in the constraint ``N`` involves the term ``1-θ``.
+    The parameter `θ` in the norm above (see also the struct `ContinuationPar`) is very important. It should be tuned for the continuation to work properly especially in the case of large problems where the ``\langle x - x_0, dx_0\rangle`` component in the [Pseudo arclength continuation
+](@ref) constraint might be favored too much. Also, large `θ`s favour `p` as the corresponding term in the constraint ``N`` involves the term ``1-θ``.
 
 ### 2b. Bordered predictor
-This predictor departs from the previous one in the way the tangent is estimated.
-It computes $(dx, dp)$ by solving solving the bordered linear system $$\begin{bmatrix} F_x & F_p	\\ \frac{\theta}{length(x)}dx_0 & (1-\theta)dp_0\end{bmatrix}\begin{bmatrix}dx \\  dp\end{bmatrix} =\begin{bmatrix}0 \\ 1\end{bmatrix}$$.
+This predictor departs from the previous one in the way the tangent $\tau$ is estimated.
+It computes $\tau:=(dx, dp)$ by solving solving the bordered linear system $$\begin{bmatrix} F_x & F_p	\\ \frac{\theta}{length(x)}dx_0 & (1-\theta)dp_0\end{bmatrix}\begin{bmatrix}dx \\  dp\end{bmatrix} =\begin{bmatrix}0 \\ 1\end{bmatrix}$$
 
-It is set by the algorithm `PALC(tangent = Bordered())` in [`continuation`](@ref) with [`Bordered`](@ref). The linear solver for the linear problem in $(dx, dp)$ is set by the option `bls` in [`PALC`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
+where $\tau_0:=(dx_0, dp_0)$ is the tangent at the previous continuation step.
+
+The predictor is set by the option `PALC(tangent = Bordered())` in [`continuation`](@ref) with [`Bordered`](@ref). The linear solver for the linear problem in $(dx, dp)$ is set by the option `bls` in [`PALC`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
 
 ## 3. Polynomial predictor
 

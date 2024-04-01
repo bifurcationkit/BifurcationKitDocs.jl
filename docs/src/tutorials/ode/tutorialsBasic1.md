@@ -5,8 +5,12 @@ The following model is taken from [^Cortes]:
 $$\left\{\begin{array}{l}
 \tau \dot{E}=-E+g\left(J u x E+E_{0}\right) \\
 \dot{x}=\tau_{D}^{-1}(1-x)-u E x \\
-\dot{u}=U E(1-u)-\tau_{F}^{-1}(u-U)
+\dot{u}=U_0 E(1-u)-\tau_{F}^{-1}(u-U_0)
 \end{array}\right.$$
+
+with
+
+$$g(y):=\alpha\log(1+exp(y/\alpha)).$$
 
 We use this model as a mean to introduce the basics of `BifurcationKit.jl`, namely the continuation of equilibria.
 
@@ -24,9 +28,9 @@ function TMvf(z, p)
 	SS0 = J * u * x * E + E0
 	SS1 = α * log(1 + exp(SS0 / α))
 	[
-	    (-E + SS1) / τ,
-       (1.0 - x) / τD - u * x * E,
-	    (U0 - u) / τF +  U0 * (1.0 - u) * E
+		(-E + SS1) / τ,
+		(1.0 - x) / τD - u * x * E,
+		(U0 - u) / τF +  U0 * (1.0 - u) * E
 	]
 end
 
@@ -64,7 +68,7 @@ With detailed information:
 br
 ```
 
-If you want to compute just the branch without the bifurcations (more information is provided [Detection of bifurcation points of Equilibria](@ref) ), change the continuation options to
+If you only  want to compute the branch without the bifurcations (more information is provided [Detection of bifurcation points of Equilibria](@ref) ), change the continuation options to
 
 ```@example TUTODE0
 opts_br = ContinuationPar(p_min = -4.0, p_max = -0.9,

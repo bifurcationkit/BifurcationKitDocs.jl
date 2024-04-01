@@ -15,9 +15,7 @@ $$\left\{\begin{array}{l}
 
 with
 
-$$
-g(y):=\alpha\log(1+exp(y/\alpha)).
-$$
+$$g(y):=\alpha\log(1+exp(y/\alpha)).$$
 
 We use this model as a mean to introduce the basics of `BifurcationKit.jl`, namely the continuation of equilibria and periodic orbits (with the different methods).
 
