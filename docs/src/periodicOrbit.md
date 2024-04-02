@@ -17,7 +17,7 @@ We provide 4 methods for computing periodic orbits (PO):
 2. one (Collocation) based on orthogonal collocation to discretize a Cauchy problem,
 3. two (Shooting) based on the flow associated to a Cauchy problem.
 
-It is important to understand the pro and cons of each method to compute PO in large dimensions.
+It is important to understand the pros and cons of each method to compute PO in large dimensions.
 
 
 ### Trapezoid method
@@ -28,7 +28,7 @@ The Trapezoid method (or the Collocation one) is usually faster than the ones ba
 The Collocation method is (for now) the slowest of the three methods implemented for computing periodic orbits. However, it is by far the most precise one. Additionally, the mesh can be automatically adapted during the continuation. The implementation will be improved for large dimensional systems like the Trapezoid method one.
 
 ### Shooting method
-The methods based on Shooting do not share the same drawbacks because the associated linear system is usually well conditioned, at least in the simple shooting case. There are thus often used **without preconditioner at all**. Even in the case of multiple shooting, this can be alleviated by a simple generic preconditioner based on deflation of eigenvalues (see [Linear solvers (LS)](@ref)). Also, the time stepper will automatically adapt to the stiffness of the problem, putting more time points where needed unlike the method based on finite differences which requires an adaptive (time) meshing to provide a similar property. Finally, we can use parallel Shooting to greatly increase the speed of computation.
+The methods based on Shooting do not share the same drawbacks because the associated linear system is usually well conditioned, at least in the simple shooting case. They are thus often used **without preconditioner at all**. Even in the case of multiple shooting, this can be alleviated by a simple generic preconditioner based on deflation of eigenvalues (see [Linear solvers (LS)](@ref)). Also, the time stepper will automatically adapt to the stiffness of the problem, putting more time points where needed unlike the method based on finite differences which requires an adaptive (time) meshing to provide a similar property. Finally, we can use parallel Shooting to greatly increase the speed of computation.
 
 The main drawback of the method is to find a fast time stepper, at least to compete with the method based on finite differences. The other drawback is the precision of the method which cannot compete with the collocation method.
 
