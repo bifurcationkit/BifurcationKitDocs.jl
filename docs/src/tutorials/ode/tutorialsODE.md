@@ -166,7 +166,7 @@ br_potrap = continuation(
 	# we want to use the Trapeze method to locate PO
 	PeriodicOrbitTrapProblem(M = Mt);
 	δp = 0.001,
-	verbosity = 2, plot=true,
+	plot = true,
 	args_po...,
 	)
 

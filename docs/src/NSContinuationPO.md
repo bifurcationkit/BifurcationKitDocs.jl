@@ -64,16 +64,6 @@ r \\
 1
 \end{array}\right].$$
 
-In the case of Multiple Standard Shooting, the matrix $N$ is based on the monodromy $M(x_i,T_i)$
-
-$$N:=\left(\begin{array}{cccccc}
-{M_1} & -I & {0} & {\cdots} & 0 \\
-0 & {M_2} & -I & {\cdots} & {0} \\
-{\vdots} & {\cdots} & {\ddots} & {\ddots} & {\vdots} \\
-{0} & {\cdots} & {\cdots} & {\ddots} & -I \\
-e^{i\omega}I & {\cdots} & {\cdots} & 0 & {M_{m}} \\
-\end{array}\right).$$
-
 The jacobian of the NS functional to use for the Newton algorithm
 
 $$\left[\begin{array}{ccc}
@@ -81,6 +71,17 @@ $$\left[\begin{array}{ccc}
 \partial_u\sigma_r & \partial_p\sigma_r & \partial_\omega\sigma_r\\
 \partial_u\sigma_i & \partial_p\sigma_i & \partial_\omega\sigma_i
 \end{array}\right].$$
+
+### Shooting
+In the case of Multiple Standard Shooting, the matrix $N$ is based on the monodromy $M(x_i,T_i)$
+
+$$N:=\left(\begin{array}{cccccc}
+{M_1} & -I & {0} & {\cdots} & 0 \\
+0 & {M_2} & -I & {\cdots} & {0} \\
+{\vdots} &  & {\ddots} & {\ddots} & {\vdots} \\
+{0} & {\cdots} & {\cdots} & {\ddots} & -I \\
+e^{i\omega}I & {\cdots} & {\cdots} & 0 & {M_{m}} \\
+\end{array}\right).$$
 
 ## References
 

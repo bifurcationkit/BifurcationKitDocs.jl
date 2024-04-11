@@ -71,22 +71,23 @@ r \\
 1
 \end{array}\right].$$
 
-In the case of Multiple Standard Shooting, the matrix $N$ is based on the monodromy $M(x_i,T_i)$
-
-$$N:=\left(\begin{array}{cccccc}
-{M_1} & -I & {0} & {\cdots} & 0 \\
-0 & {M_2} & -I & {\cdots} & {0} \\
-{\vdots} & {\cdots} & {\ddots} & {\ddots} & {\vdots} \\
-{0} & {\cdots} & {\cdots} & {\ddots} & -I \\
-I & {\cdots} & {\cdots} & 0 & {M_{m}} \\
-\end{array}\right).$$
-
 The jacobian of the PD functional to use for the Newton algorithm
 
 $$\left[\begin{array}{cc}
 \partial_{u}F_{po} & \partial_pF_{po} \\
 \partial_u\sigma & \partial_p\sigma
 \end{array}\right].$$
+
+### Shooting
+In the case of Multiple Standard Shooting, the matrix $N$ is based on the monodromy $M(x_i,T_i)$
+
+$$N:=\left(\begin{array}{cccccc}
+{M_1} & -I & {0} & {\cdots} & 0 \\
+0 & {M_2} & -I & {\cdots} & {0} \\
+{\vdots} &  & {\ddots} & {\ddots} & {\vdots} \\
+{0} & {\cdots} & {\cdots} & {\ddots} & -I \\
+I & {\cdots} & {\cdots} & 0 & {M_{m}} \\
+\end{array}\right).$$
 
 ## References
 

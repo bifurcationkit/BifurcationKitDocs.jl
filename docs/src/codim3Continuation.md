@@ -46,7 +46,7 @@ In order to apply the newton algorithm to $F_{bt}$, one needs to invert the jaco
 ## Example
 
 ```@example CODIM3
-using BifurcationKit, LinearAlgebra, Setfield, SparseArrays, ForwardDiff, Parameters
+using Revise, BifurcationKit
 Fbt(x, p) = [x[2], p.β1 + p.β2 * x[2] + p.a * x[1]^2 + p.b * x[1] * x[2]]
 par = (β1 = 0.01, β2 = -0.3, a = -1., b = 1.)
 prob  = BifurcationProblem(Fbt, [0.01, 0.01], par, (@lens _.β1))
