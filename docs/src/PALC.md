@@ -1,4 +1,4 @@
-# Pseudo arclength continuation
+# Pseudo arclength  continuation
 
 ```@contents
 Pages = ["PALC.md"]

@@ -67,14 +67,14 @@ We strongly advise you to use a preconditioner to deal with the above linear pro
 
 ## Linear solvers
 
-We provide many different linear solvers to take advantage of the formulations. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitTrapProblem`. For example, you can pass `jacobian  = :FullLU`. Note that all the internal solvers and jacobian are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+We provide many different linear solvers to take advantage of the formulations. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitTrapProblem`. For example, you can pass `jacobian  = :FullLU`. Note that all the internal solvers and Jacobians are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
 ### 1. FullLU
 
-When using `jacobianPO = :FullLU`, this triggers the computation of $\mathcal J$ as in (2) at each step of newton/continuation. The jacobian matrix $\mathcal J$ is stored a SparseArray. This can be quite costly flow large $n$ (see (1)). This jacobian is often used with the the linear solver `DefaultLS()`.
+When using `jacobianPO = :FullLU`, this triggers the computation of $\mathcal J$ as in (2) at each step of newton/continuation. The Jacobian matrix $\mathcal J$ is stored a SparseArray. This can be quite costly flow large $n$ (see (1)). This Jacobian is often used with the the linear solver `DefaultLS()`.
 
 ### 2. FullSparseInplace
-Same as `:FullLU` but the jacobian is allocated only once and updated inplace. This is much faster than `:FullLU` but the sparsity pattern of `dF` must be constant.
+Same as `:FullLU` but the Jacobian is allocated only once and updated inplace. This is much faster than `:FullLU` but the sparsity pattern of `dF` must be constant.
 
 ### 3. Dense
 Same as `: FullSparseInplace` above but the matrix `dG` is dense. It is also updated inplace. This is useful to study ODE of small dimension.
@@ -90,13 +90,13 @@ PeriodicOrbitTrapBLS = BorderingBLS(solver = AγLinearSolver(), check_precision 
 ```	
 
 ### 6. BorderedSparseInplace
-Same as `:BorderedLU ` but the jacobian is allocated only once and updated inplace. This is much faster than `:BorderedLU ` but the sparsity pattern of `dF` must be constant.
+Same as `:BorderedLU ` but the Jacobian is allocated only once and updated inplace. This is much faster than `:BorderedLU ` but the sparsity pattern of `dF` must be constant.
 
 ### 7. BorderedMatrixFree
 A matrix free linear solver is used but for $\mathcal J_c$ only: it means that `options.linsolver` is used to invert $\mathcal J_c$. 
 
 !!! info "Matrix-Free"
-    These two Matrix-Free options, `:FullMatrixFree ` and `:BorderedMatrixFree`, thus expose different part of the jacobian $\mathcal J$ in order to use specific preconditioners. For example, an ILU preconditioner on $\mathcal J_c$ could remove the constraints in $\mathcal J$ and lead to poor convergence. Of course, for these last two methods, a preconditioner is likely be required.
+    These two Matrix-Free options, `:FullMatrixFree ` and `:BorderedMatrixFree`, thus expose different part of the Jacobian $\mathcal J$ in order to use specific preconditioners. For example, an ILU preconditioner on $\mathcal J_c$ could remove the constraints in $\mathcal J$ and lead to poor convergence. Of course, for these last two methods, a preconditioner is likely be required.
 
 
 ## Floquet multipliers computation
