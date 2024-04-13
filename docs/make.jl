@@ -1,21 +1,26 @@
-# we use this hacky way because AsymptoticNumericalMethod is not registered
 using Pkg
-pkg"add https://github.com/bifurcationkit/AsymptoticNumericalMethod.jl"
-Pkg.add("BandedMatrices")
-pkg"add BifurcationKit#master"
+cd(@__DIR__)
+pkg" activate ."
+pkg" dev BandedMatrices AbstractTrees"
+pkg" dev BifurcationKit DocumenterMermaid AsymptoticNumericalMethod"
+
 
 using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
-using DocumenterDiagrams
+using DocumenterMermaid
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 
 # to display progress
 ENV["JULIA_DEBUG"] = Documenter
 
-makedocs(doctest = false,
+makedocs(
+	modules = [BifurcationKit],
+	doctest = false,
+	pagesonly = true, # this is on Documenter#master, do not compile what is not in pages =
+	draft = false,
+	warnonly = false,
 	sitename = "Bifurcation Analysis in Julia",
-	format = Documenter.HTML(collapselevel = 1,assets = ["assets/indigo.css"]),
-	# format = DocumenterLaTeX.LaTeX(),
+	format = Documenter.HTML(collapselevel = 1,),# assets = ["assets/indigo.css"]),
 	authors = "Romain Veltz",
 	pages = Any[
 		"Home" => "index.md",
@@ -111,7 +116,6 @@ makedocs(doctest = false,
 	]
 	)
 
-deploydocs(
+deploydocs(;
 	repo = "github.com/bifurcationkit/BifurcationKitDocs.jl.git",
-	devbranch = "main"
-)
+	push_preview=true, target="build", devbranch="main")
