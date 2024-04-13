@@ -1,7 +1,7 @@
 using Pkg
 cd(@__DIR__)
 pkg" activate ."
-pkg" dev BandedMatrices AbstractTrees"
+pkg" dev AbstractTrees"
 pkg" dev BifurcationKit DocumenterMermaid AsymptoticNumericalMethod"
 
 
@@ -17,7 +17,7 @@ makedocs(
 	modules = [BifurcationKit],
 	doctest = false,
 	pagesonly = true, # this is on Documenter#master, do not compile what is not in pages =
-	draft = false,
+	draft = true,
 	warnonly = false,
 	sitename = "Bifurcation Analysis in Julia",
 	format = Documenter.HTML(collapselevel = 1,),# assets = ["assets/indigo.css"]),
