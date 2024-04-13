@@ -51,13 +51,13 @@ There are many good softwares already available.
 - For large scale problems, there is the versatile and feature full [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/) but also [Trilinos-LOCA](https://trilinos.github.io/nox_and_loca.html), [CL_MATCONTL](https://github.com/careljonkhout/cl_matcontL), [COCO](https://sourceforge.net/projects/cocotools/), [GetFEM](https://getfem.org/userdoc/model_continuation.html) and the python libraries [pyNCT](https://pypi.org/project/PyNCT/) and [pacopy](https://github.com/nschloe/pacopy). There are also some nice [lectures](https://zenodo.org/record/3821169#.Y-zsAy8w08Q) by D. Avitabile *et al.* on matrix free secant continuation based on a concise Matlab implementation which are used in the influential paper [^Rankin]. At the time of initial release of `BifurcationKit.jl`, these [lectures](https://zenodo.org/record/3821169#.Y-zsAy8w08Q) provided one of the only libraries for matrix-free continuation, much easier to use than [Trilinos-LOCA](https://trilinos.github.io/nox_and_loca.html).
 - For *deflated continuation*, there is [defcont](https://bitbucket.org/pefarrell/defcon/src/master/) (by the inventor of the algo. P. E. Farrell) and this [code](https://github.com/evstigneevnm/deflated_continuation) by N. M. Evstigneev.
 
-In Julia, we also have [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl) which is unmaintained.
+In Julia, we have the following tools:
+- [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl) which is unmaintained.
+- [NumericalContinuation.jl](https://github.com/dawbarton/NumericalContinuation.jl) by David Barton.
 
 ## A word on performance
 
-The examples which follow have not **all** been written with the goal of performance but rather simplicity (except maybe [2d Ginzburg-Landau equation](@ref cgl) and [Langmuir–Blodgett model](@ref langmuir)). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.
-
-For example, in one of the simplest tutorials, [Temperature model](@ref temperature), one could use `BandedMatrices.jl` for the jacobian and an inplace modification when the jacobian is called.
+The tutorials have not **all** been written with the goal of performance but rather simplicity (except maybe [2d Ginzburg-Landau equation](@ref cgl) and [Langmuir–Blodgett model](@ref langmuir)). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.
 
 ## Requested methods for custom arrays
 Needless to say, if you use "regular" arrays, you don't need to worry about what follows.

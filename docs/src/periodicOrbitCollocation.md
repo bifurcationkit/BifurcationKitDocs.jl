@@ -64,7 +64,7 @@ equations which matches the number of unknowns.
 
 ## Phase condition
 
-To ensure uniqueness of the solution to the functional, we add the following phase condition
+To ensure uniqueness of the solution to the functional, we use the following phase condition
 
 $$\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_0(s)\right\rangle d s =0$$
 
@@ -79,16 +79,21 @@ $$\sum\limits_{k=1}^{m+1}\mathcal L_k'(z_l)x_{j,k} = F\left(\sum\limits_{k=1}^{m
 
 The jacobian in the case $m=2$ is given by: 
 
-| $x_{0,0}$ | $x_{0,1}$ | $x_{1,0}$ | $x_{1,1}$ | $x_{2,0}$ | $x_{2,1}$ | $x_{3,0}$ | T |
-|---------|---------|---------|---------|---------|---------|---------|---------|
-| $H_{0,0}^0$ | $H_{0,1}^0$ | $H_{1,0}^0$ |         |         |         |         |       * |
-| $H_{0,0}^1$ | $H_{0,1}^1$ | $H_{1,0}^1$ |         |         |         |         |       * |
-|   |   | $H_{1,0}^0$ |  $H_{1,1}^0$  | $H_{2,0}^0$   |    |         |       * |
-|   |   | $H_{1,0}^1$ |  $H_{1,1}^1$  | $H_{2,0}^1$   |    |         |       * |
-|   |   |   |     |   $H_{2,0}^0$ |   $H_{2,1}^0$ |  $H_{3,0}^0$  |   * |
-|   |   |   |     |   $H_{2,0}^1$ |   $H_{2,1}^1$ |  $H_{3,0}^1$  |   * |
-|   $I$     |         |         |         |         |         |     $-I$   |       * |
-|         *|         *|         *|         *|         *|         *|         *|       * |
+$$\begin{array}{llllllll}
+x_{0,0} & x_{0,1} & x_{1,0} & x_{1,1} & x_{2,0} & x_{2,1} & x_{3,0} &\quad \mathbf{T}
+\end{array}
+\\
+\left(\begin{array}{llllllll}
+H_{0,0}^0 & H_{0,1}^0 & H_{1,0}^0 & & & & & * \\
+H_{0,0}^1 & H_{0,1}^1 & H_{1,0}^1 & & & & & * \\
+& & H_{1,0}^0 & H_{1,1}^0 & H_{2,0}^0 & & & * \\
+& & H_{1,0}^1 & H_{1,1}^1 & H_{2,0}^1 & & & * \\
+& & & & H_{2,0}^0 & H_{2,1}^0 & H_{3,0}^0 & * \\
+& & & & H_{2,0}^1 & H_{2,1}^1 & H_{3,0}^1 & * \\
+& & & & & & & * \\
+I & & & & & & -I & * \\
+* & * & * & * & * & * & * & *
+\end{array}\right)$$
 
 
 where

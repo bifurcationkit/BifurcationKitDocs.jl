@@ -20,7 +20,7 @@ Thanks to the functionality presented in this part, we can compute the bifurcati
 
 ```@example BDIAG
 using Revise, Plots
-using BifurcationKit, Setfield
+using BifurcationKit
 
 Fbp(u, p) = @. -u * (p + u * (2-5u)) * (p -.15 - u * (2+20u))
 
@@ -50,7 +50,7 @@ diagram = bifurcationdiagram(prob, PALC(),
 	# when computing the bifurcation diagram. It means we allow computing branches of branches 
 	# at most in the present case.
 	2,
-	(args...) -> opts_br,
+	opts_br,
 )
 	
 # You can plot the diagram like 
@@ -67,9 +67,9 @@ diagram
 
 To show the ability of the branch switching method to cope with non simple branch points, we look at the normal form of the Pitchfork with D6 symmetry which occurs frequently in problems with hexagonal symmetry. You may want to look at [Bratu–Gelfand problem](@ref gelfandauto) for a non trivial example of use.
 
-```julia
+```@example BDIAG2
 using Revise, Plots
-using BifurcationKit, Setfield, LinearAlgebra
+using BifurcationKit
 const BK = BifurcationKit
 
 function FbpD6(x, p)
@@ -89,46 +89,48 @@ prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@lens _.μ);
 opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)
 
 # continuation options
-opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds = 0.01, 
+opts_br = ContinuationPar(
+	# we limit the step size to have smooth branches
+	dsmax = 0.005, ds = 0.001, 
 	# parameter interval
-	p_max = 0.4, p_min = -0.5, 
+	p_max = 0.4, p_min = -0.25, 
+	# number of eigenvalues to be computed
 	nev = 3, 
 	newton_options = opt_newton, 
-	max_steps = 1000, 
-	n_inversion = 4)
+	max_steps = 1000,
+	# increased precision for bifurcation points
+	n_inversion = 4, max_bisection_steps = 20)
 
-bdiag = bifurcationdiagram(prob, PALC(), 3,
-	(args...) -> setproperties(opts_br; p_min = -0.250, p_max = .4, ds = 0.001, dsmax = 0.005, n_inversion = 4, detect_bifurcation = 3, max_bisection_steps=20, newton_options = opt_newton);
+diagram = bifurcationdiagram(prob, PALC(), 3,
+	opts_br;
 	normC = norminf)
 ```
 
 We can now plot the result:
 
-```julia
-plot(bdiag; putspecialptlegend =false, markersize=2, plotfold=false, title="#branch = $(size(bdiag))")
+```@example BDIAG2
+plot(diagram; putspecialptlegend =false, markersize=2, plotfold=false, title="#branch = $(size(diagram))")
 ```
-
- ![](diagramD6.png)
  
- We can access the different branches with `BK.getBranch(bdiag, (1,))`. Alternatively, you can plot a specific branch:
+ We can access the different branches with `BK.getBranch(diagram, (1,))`. Alternatively, you can plot a specific branch:
  
  ![](diagramD6b.png)
  
  Finally, you can resume the computation of the bifurcation diagram if not complete by using the syntax
  
-```julia
- bifurcationdiagram!(
+```@example BDIAG2
+BK.bifurcationdiagram!(prob,
 	# this resume the computation of the diagram from the 2nd node
-	# bdiag is written inplace
-	get_branch(bdiag, (2,)), (current = 3, maxlevel = 6), 
-	(args...) -> setproperties(opts_br; p_min = -0.250, p_max = .4, ds = 0.001, dsmax = 0.005, n_inversion = 4, detect_bifurcation = 3, dsmin_bisection =1e-18, tol_bisection_eigenvalue=1e-11, max_bisection_steps=20, newton_options = (@set opt_newton.verbose = false)))
+	# diagram is written inplace
+	get_branch(diagram, (2,)), 6, 
+	(args...) -> opts_br)
 ```
  
 ## Printing the structure of the diagram
 
 It is sometimes useful to have a global representation of the bifurcation diagram. Here, we provide a text representation
 
-```julia
+```@example BDIAG2
 using AbstractTrees
 
 AbstractTrees.children(node::BK.BifDiagNode) = node.child
@@ -136,27 +138,7 @@ AbstractTrees.children(node::BK.BifDiagNode) = node.child
 ## Things that make printing prettier
 AbstractTrees.printnode(io::IO, node::BifDiagNode) = print(io, "$(node.code) [ $(node.level)]")
 
-print_tree(bdiag)
-```
-
-which should return
-
-```julia
-
-julia> print_tree(bdiag)
-0 [ 1]
-├─ 1 [ 2]
-│  ├─ 2 [ 3]
-│  ├─ 2 [ 3]
-│  ├─ 4 [ 3]
-│  ├─ 4 [ 3]
-│  ├─ 4 [ 3]
-│  ├─ 4 [ 3]
-│  ├─ 4 [ 3]
-│  └─ 4 [ 3]
-└─ 1 [ 2]
-   ├─ 2 [ 3]
-   └─ 2 [ 3]
+print_tree(diagram)
 ```
 
 ## Plotting the structure of the diagram

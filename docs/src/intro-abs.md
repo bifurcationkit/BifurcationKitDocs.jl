@@ -45,8 +45,7 @@ We refer to [Branch switching](@ref abs-nonsimple-eq) for more details.
 
 ## Graph of bifurcations
 
-We provide a graph of bifurcations of equilbria and periodic orbits that can be detected in `BifurcationKit`. An arrow from say `Equilibrium` to `Hopf` means that Hopf bifurcations can be detected while continuing equilibria. Each object of codim 0 (resp. 1) can be continued in one (resp. 2) parameters.
-
+We provide a graph of bifurcations of equilibria and periodic orbits that can be detected in `BifurcationKit`. An arrow from say `Equilibrium` to `Hopf` means that Hopf bifurcations can be detected while continuing equilibria. Each object of codim 0 (resp. 1) can be continued in one (resp. 2) parameters.
 
 
 ## Summary of branching procedures

@@ -23,7 +23,7 @@ where `br` is a branch computed after a call to `continuation` with detection of
 ### Simple example: transcritical bifurcation
 
 ```@example TUT1_ABS_EQ_EQ
-using BifurcationKit, Setfield, Plots
+using BifurcationKit, Plots
 
 # vector field of transcritical bifurcation
 F(x, p) = [x[1] * (p.μ - x[1])]
@@ -35,11 +35,10 @@ par = (μ = -0.2, )
 prob = BifurcationProblem(F, [0.], par, (@lens _.μ); record_from_solution = (x, p) -> x[1])
 
 # compute branch of trivial equilibria and detect a bifurcation point
-opts_br = ContinuationPar()
-br = continuation(prob, PALC(), opts_br)
+br = continuation(prob, PALC(), ContinuationPar())
 	
 # perform branch switching on both sides of the bifurcation point
-br1 = continuation(br, 1, setproperties(opts_br; max_steps = 14), bothside = true )
+br1 = continuation(br, 1; bothside = true )
 
 scene = plot(br, br1; branchlabel = ["br", "br1"], legend = :topleft)
 ```
@@ -47,7 +46,7 @@ scene = plot(br, br1; branchlabel = ["br", "br1"], legend = :topleft)
 ### Simple example: pitchfork bifurcation
 
 ```@example TUT1b_ABS_EQ_EQ
-using BifurcationKit, Setfield, Plots
+using BifurcationKit, Plots
 
 # vector field of pitchfork bifurcation
 F(x, p) = [x[1] * (p.μ - x[1]^2)]
@@ -60,11 +59,10 @@ prob = BifurcationProblem(F, [0.], par, (@lens _.μ); record_from_solution = (x,
 
 # compute branch of trivial equilibria and 
 # detect a bifurcation point with improved precision
-opts_br = ContinuationPar(n_inversion = 6)
-br = continuation(prob, PALC(), opts_br)
+br = continuation(prob, PALC(), ContinuationPar(n_inversion = 6))
 	
 # perform branch switching on both sides of the bifurcation point
-br1 = continuation(br, 1, setproperties(opts_br; max_steps = 14), bothside = true )
+br1 = continuation(br, 1; bothside = true )
 
 scene = plot(br, br1; branchlabel = ["br", "br1"], legend = :topleft)
 ```
@@ -104,15 +102,12 @@ pard6 = (μ = -0.2, a = 0.3, b = 1.5, c = 2.9)
 prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@lens _.μ);
 	record_from_solution = (x, p) -> (n = norminf(x)))
 
-# newton options
-opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)
-
 # continuation options
 opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds = 0.01, 
 	# parameter interval
 	p_max = 0.4, p_min = -0.2, 
 	nev = 3, 
-	newton_options = opt_newton, 
+	newton_options = NewtonPar(tol = 1e-10, max_iterations = 20), 
 	max_steps = 1000, 
 	n_inversion = 6)
 
@@ -149,7 +144,7 @@ which returns zeros of `bp` before and after the bifurcation point. You could al
 We can use these zeros to form guesses to apply Newton for the full functional:
 
 ```@example TUT2_ABS_EQ_EQ
-pts = BifurcationKit.get_first_points_on_branch(br, bp, pred, opts_br; δp =  δp)
+pts = BifurcationKit.get_first_points_on_branch(br, bp, pred, opts_br; δp)
 ```
 
 We can then use this to continue the different branches
@@ -164,7 +159,7 @@ Note that you can chose another predictor which uses all vertices of the cube as
 
 ```@example TUT2_ABS_EQ_EQ
 pred = predictor(bp, Val(:exhaustive), δp)
-pts = BifurcationKit.get_first_points_on_branch(br, bp, pred, opts_br; δp =  δp)
+pts = BifurcationKit.get_first_points_on_branch(br, bp, pred, opts_br; δp)
 ```
 
 ```@example TUT2_ABS_EQ_EQ

@@ -88,3 +88,83 @@ This is available through the plugin [HclinicBifurcationKit.jl](https://github.c
 - compute bifurcation of HomHS
 - start HomHS from a direct simulation
 - automatic branch switching to HomHS from Bogdanov-Takes bifurcation point
+
+## List of detected bifurcations
+
+A **left-to-right** arrow in the following graph from $E_1$ to $E_2$ means that $E_2$ can be detected when continuing an object of type $E_1$.
+
+A **right-to-left** arrow from $E_2$ to $E_1$ means that we can start the computation of object of type $E_1$ from $E_2$.
+
+Each object of codim 0 (resp. 1) can be continued with 1 (resp. 2) parameters.
+
+```mermaid
+graph LR
+    S[  ]
+    C[ Equilibrium ]
+    PO[ Periodic orbit ]
+    BP[ Fold/simple branch point ]
+    H[ Hopf \n :hopf]
+    CP[Cusp]
+    BT[ Bogdanov-Takens \n :bt ]
+    ZH[Zero-Hopf \n :zh]
+    GH[Bautin \n :gh]
+    HH[Hopf-Hopf \n :hh]
+    FPO[ Fold Periodic orbit ]
+    NS[ Neimark-Sacker \n :ns]
+    PD[ Period Doubling \n :pd ]
+    BPC[BPC]
+    CH[Chenciner \n :ch]
+    GPD[Generalized period doubling \n :gpd]
+    BPC[Branch point PO]
+    LPPD[Fold-Flip]
+    LPNS[Fold-NeimarkSacker]
+    R1[1:1 resonance point\n :R1]
+    R2[1:2 resonance point\n :R2]
+    R3[1:3 resonance point\n :R3]    
+    R4[1:4 resonance point\n :R4]
+
+    S --> C
+    S --> PO
+    C --> nBP[ non simple\n branch point ]
+    C --> BP
+    C --> H
+
+    BP --> CP
+    BP <--> BT
+
+    PO --> H
+    PO --> FPO
+    PO --> NS
+    PO --> PD
+
+    FPO <--> GH
+    FPO <--> BPC
+    FPO --> R1
+
+    NS --> R1
+    NS --> R3
+    NS --> R4
+    NS --> CH
+    NS --> LPNS
+    NS --> NSNS
+    NS --> R2
+    NS --> PDNS
+
+    PD --> PDNS
+    PD --> R2
+    PD --> LPPD
+    PD --> GPD
+
+    H <--> BT
+    H <--> ZH
+    BP <--> ZH
+    H <--> HH
+    H <--> GH
+    NS <--> ZH
+    PO <--> BPC
+    NS <--> HH
+    FPO --> LPNS
+    FPO --> LPPD
+
+    _ --> Codim0 --> Codim1 --> Codim2
+```

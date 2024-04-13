@@ -1,6 +1,6 @@
 # Getting Started with BifurcationKit
 
-This tutorial will introduce you to the functionality for computing bifurcation diagrams and follow branch of solutions.
+This tutorial will introduce you to the functionalities for computing bifurcation diagrams and follow branches of solutions.
 
 ## Example 1: solving the perturbed pitchfork equation
 
@@ -8,15 +8,14 @@ In this example, we will solve the equation
 
 $$\mu + x-\frac{x^3}{3}=0$$
 
-as function of $\mu$ by looking at the solution in connected component of $(x_0,\mu_0)\approx(-2,-1)$. Here $x\in\mathbb R$ is the state variable and $\mu$ is our parameter. The general workflow is to define a problem, solve the problem, and then analyze the solution. The full code for solving this problem is:
+as function of $\mu$ by looking at the solutions in the connected component of $(x_0,\mu_0)\approx(-2,-1)$. Here $x\in\mathbb R$ is the state variable and $\mu$ is our parameter. The general workflow is to define a problem, solve the problem, and then analyze the solution. The full code for solving this problem is:
 
 ```@example GETSTARTED1
 using BifurcationKit, Plots
 F(x, p) = @. p.μ + x - x^3/3
 prob = BifurcationProblem(F, [-2.], (μ = -1.,), (@lens _.μ);
         record_from_solution = (x,p) -> (x = x[1]))
-opts = ContinuationPar(p_min = -1., p_max = 1.)
-br = continuation(prob, PALC(), opts)
+br = continuation(prob, PALC(), ContinuationPar(p_min = -1., p_max = 1.))
 plot(br)
 scene = plot(br) #hide
 ```
@@ -42,8 +41,7 @@ You can customize a few scalar indicators for each step (for example if you don'
 After defining a problem, you "solve" it using `continuation`.
 
 ```@example GETSTARTED1
-opts = ContinuationPar(p_min = -1., p_max = 1.)
-br = continuation(prob, PALC(), opts)
+br = continuation(prob, PALC(), ContinuationPar(p_min = -1., p_max = 1.))
 nothing #hide
 ```
 
@@ -60,8 +58,8 @@ scene = plot(br)
 
 BifurcationKit.jl offers a much wider variety of continuation algorithms than traditional continuation softwares. Many of these algorithms are from recent research and have their own strengths and weaknesses. Each algoritm comes with a doc string, for example:
 
-```julia
-? PALC
+```@docs
+PALC
 ```
 
 For example, you can chose a different tangent predictor in `PALC`
@@ -208,8 +206,7 @@ prob = BifurcationProblem(Fsl, u0, par_sl, (@lens _.r))
 For this simple problem, we detect the existence of periodic orbits by locating a Hopf bifurcation. This is done as in the previous example by continuing the zero solution:
 
 ```@example GETSTARTED3
-opts = ContinuationPar()
-br = continuation(prob, PALC(), opts, bothside = true)
+br = continuation(prob, PALC(), ContinuationPar(), bothside = true)
 ```
 
 In the result above, we see that a Hopf bifurcation has been detected: 
@@ -219,7 +216,7 @@ In the result above, we see that a Hopf bifurcation has been detected:
 We compute the branch of periodic orbits which is nearby. We thus provide the branch `br`, the index of the special point we want to branch from: 2 in this case and a method `PeriodicOrbitOCollProblem(20, 5)` to compute periodic orbits. You can look at [Periodic orbits computation](@ref) for a list of all methods. Suffice it to say that `PeriodicOrbitOCollProblem` is the default method in the case of ODEs.
 
 ```@example GETSTARTED3
-br_po = continuation(br, 2, opts,
+br_po = continuation(br, 2, ContinuationPar(),
         PeriodicOrbitOCollProblem(20, 5)
         )
 ```

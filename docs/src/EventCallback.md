@@ -42,7 +42,7 @@ BifurcationKit.BifDetectEvent
 We show how to use the different events. We first set up a problem as usual.
 
 ```@example EVENT
-using Revise, BifurcationKit, Setfield, ForwardDiff
+using Revise, BifurcationKit
 using Plots
 const BK = BifurcationKit
 ####################################################################################################
@@ -57,21 +57,21 @@ function Feve(X, p)
 end
 
 # parameters for the vector field
-par = (p1 = -3., p2=-3., k=3)
+par = (p1 = -3., p2 = -3., k = 3)
 
 # bifurcation problem
 prob = BifurcationProblem(Feve, -2ones(2), par, (@lens _.p1);
-	record_from_solution = (x,p) -> x[1])
+	record_from_solution = (x, p) -> x[1])
 
 # parameters for the continuation
-opts = ContinuationPar(dsmax = 0.1, ds = 0.001, max_steps = 128, p_min = -3., p_max = 4.0, plot_every_step = 10,
-     newton_options = NewtonPar(tol = 1e-10, verbose = false, max_iterations = 5),
-     # parameters specific to event detection
-     detect_bifurcation = 0, detect_event = 2, n_inversion = 6, dsmin_bisection = 1e-9,
-     max_bisection_steps = 15, detect_fold=false)
-
+opts = ContinuationPar(max_steps = 150, p_min = -3., p_max = 4.0,
+    # we disable bifurcation detection to focus 
+    # on the user passed events
+    detect_bifurcation = 0, detect_fold = false,
+    # parameters specific to event detection
+    detect_event = 2)
 # arguments for continuation
-args = (prob, PALC(bls = MatrixBLS()), opts)
+args = (prob, PALC(), opts)
 kwargs = (plot = false, verbosity = 0,)
 nothing #hide
 ```
@@ -102,7 +102,7 @@ plot(br)
 You can also name the events as follows
 
 ```@example EVENT
- br = continuation(args...; kwargs...,
+br = continuation(args...; kwargs...,
  	event = BK.ContinuousEvent(2, 
  		(iter, state) -> (getp(state)+2, getx(state)[1]-1),
  		("event1", "event2")))

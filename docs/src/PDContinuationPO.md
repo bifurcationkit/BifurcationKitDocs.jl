@@ -89,6 +89,21 @@ $$N:=\left(\begin{array}{cccccc}
 I & {\cdots} & {\cdots} & 0 & {M_{m}} \\
 \end{array}\right).$$
 
+## 
+
+In the case of orthogonal collocation, the matrix $N$ is the jacobian of the periodic orbit functional stripped of the phase condition ($m=2$):
+
+$$\left(\begin{array}{lllllll}
+H_{0,0}^0 & H_{0,1}^0 & H_{1,0}^0 & & & & \\
+H_{0,0}^1 & H_{0,1}^1 & H_{1,0}^1 & & & & \\
+& & H_{1,0}^0 & H_{1,1}^0 & H_{2,0}^0 & & \\
+& & H_{1,0}^1 & H_{1,1}^1 & H_{2,0}^1 & & \\
+& & & & H_{2,0}^0 & H_{2,1}^0 & H_{3,0}^0 \\
+& & & & H_{2,0}^1 & H_{2,1}^1 & H_{3,0}^1 \\
+& & & & & & \\
+I & & & & & & I
+\end{array}\right)$$
+
 ## References
 
 [^Govaerts]:> Govaerts, Willy J. F. Numerical Methods for Bifurcations of Dynamical Equilibria. Philadelphia, Pa: Society for Industrial and Applied Mathematics, 2000.
