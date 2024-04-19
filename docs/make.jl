@@ -16,8 +16,8 @@ ENV["JULIA_DEBUG"] = Documenter
 makedocs(
 	modules = [BifurcationKit],
 	doctest = false,
-	pagesonly = true, # this is on Documenter#master, do not compile what is not in pages =
-	draft = true,
+	pagesonly = false, # this is on Documenter#master, do not compile what is not in pages =
+	draft = false,
 	warnonly = true,
 	sitename = "Bifurcation Analysis in Julia",
 	format = Documenter.HTML(collapselevel = 1,),# assets = ["assets/indigo.css"]),
