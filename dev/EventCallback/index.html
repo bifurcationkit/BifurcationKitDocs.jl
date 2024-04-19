@@ -22,27 +22,77 @@ prob = BifurcationProblem(Feve, -2ones(2), par, (@lens _.p1);
 
 # parameters for the continuation
 opts = ContinuationPar(max_steps = 150, p_min = -3., p_max = 4.0,
-    # we disable bifurcation detection to focus 
+    # we disable bifurcation detection to focus
     # on the user passed events
     detect_bifurcation = 0, detect_fold = false,
     # parameters specific to event detection
     detect_event = 2)
 # arguments for continuation
 args = (prob, PALC(), opts)
-kwargs = (plot = false, verbosity = 0,)
-nothing #hide</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><h3 id="Example-of-continuous-event"><a class="docs-heading-anchor" href="#Example-of-continuous-event">Example of continuous event</a><a id="Example-of-continuous-event-1"></a><a class="docs-heading-anchor-permalink" href="#Example-of-continuous-event" title="Permalink"></a></h3><p>In this first example, we build an event to detect when the parameter value is <code>-2</code> or when the first component of the solution is <code>1</code>.</p><pre><code class="language-julia hljs">br = continuation(args...; kwargs...,
-	event = BK.ContinuousEvent(2, 
+kwargs = (plot = false, verbosity = 0,)</code></pre><h3 id="Example-of-continuous-event"><a class="docs-heading-anchor" href="#Example-of-continuous-event">Example of continuous event</a><a id="Example-of-continuous-event-1"></a><a class="docs-heading-anchor-permalink" href="#Example-of-continuous-event" title="Permalink"></a></h3><p>In this first example, we build an event to detect when the parameter value is <code>-2</code> or when the first component of the solution is <code>1</code>.</p><pre><code class="language-julia hljs">br = continuation(args...; kwargs...,
+	event = BK.ContinuousEvent(2,
 		(iter, state) -&gt; (getp(state)+2, getx(state)[1]-1)),)
-nothing #hide		</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>gives</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>This shows for example that the first component of the event was detected <code>userC-1</code> first. This yields</p><pre><code class="language-julia hljs">plot(br)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>You can also name the events as follows</p><pre><code class="language-julia hljs">br = continuation(args...; kwargs...,
- 	event = BK.ContinuousEvent(2, 
+nothing #hide</code></pre><p>gives</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
+ ├─ Number of points: 115
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">p1</span></span> starts at -3.0, ends at 4.0
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1"> userC-1</span></span> at p1 ≈ -1.98380428 ∈ (-2.00059057, -1.98380428), |δp|=2e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  12
+- #  2, <span class="sgr34"><span class="sgr1"> userC-1</span></span> at p1 ≈ -2.00301167 ∈ (-2.00301167, -1.99953208), |δp|=3e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  28
+- #  3, <span class="sgr34"><span class="sgr1"> userC-2</span></span> at p1 ≈ -2.30722875 ∈ (-2.30888689, -2.30722875), |δp|=2e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  33
+- #  4, <span class="sgr34"><span class="sgr1"> userC-1</span></span> at p1 ≈ -1.99895595 ∈ (-2.01435831, -1.99895595), |δp|=2e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  36
+- #  5, <span class="sgr34"><span class="sgr1"> userC-2</span></span> at p1 ≈ -0.83478733 ∈ (-0.83598611, -0.83478733), |δp|=1e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  48
+- #  6, <span class="sgr34"><span class="sgr1"> userC-2</span></span> at p1 ≈ +1.15208549 ∈ (+1.14075593, +1.15208549), |δp|=1e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  92
+- #  7, <span class="sgr1">endpoint</span> at p1 ≈ +4.00000000,                                                                     step = 114
+</code></pre><p>This shows for example that the first component of the event was detected <code>userC-1</code> first. This yields</p><pre><code class="language-julia hljs">plot(br)</code></pre><img src="a2f59228.svg" alt="Example block output"/><p>You can also name the events as follows</p><pre><code class="language-julia hljs">br = continuation(args...; kwargs...,
+ 	event = BK.ContinuousEvent(2,
  		(iter, state) -&gt; (getp(state)+2, getx(state)[1]-1),
  		(&quot;event1&quot;, &quot;event2&quot;)))
-nothing #hide 		</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>And get:</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><pre><code class="language-julia hljs">plot(br)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><h3 id="Example-of-discrete-event"><a class="docs-heading-anchor" href="#Example-of-discrete-event">Example of discrete event</a><a id="Example-of-discrete-event-1"></a><a class="docs-heading-anchor-permalink" href="#Example-of-discrete-event" title="Permalink"></a></h3><p>You can also use discrete events to detect a change. For example, the following detect when the parameter value equals <code>-2</code>:</p><pre><code class="language-julia hljs">br = continuation(args...; kwargs...,
-	event = BK.DiscreteEvent(1, 
-		(iter, state) -&gt; getp(state)&gt;-2))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><h3 id="Example-of-PairOfEvents-event"><a class="docs-heading-anchor" href="#Example-of-PairOfEvents-event">Example of PairOfEvents event</a><a id="Example-of-PairOfEvents-event-1"></a><a class="docs-heading-anchor-permalink" href="#Example-of-PairOfEvents-event" title="Permalink"></a></h3><p>Let us be a bit more creative and combine a continuous event with a discrete one:</p><pre><code class="language-julia hljs">br = continuation(args...; kwargs...,
+nothing #hide</code></pre><p>And get:</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
+ ├─ Number of points: 115
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">p1</span></span> starts at -3.0, ends at 4.0
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">  event1</span></span> at p1 ≈ -1.98380428 ∈ (-2.00059057, -1.98380428), |δp|=2e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  12
+- #  2, <span class="sgr34"><span class="sgr1">  event1</span></span> at p1 ≈ -2.00301167 ∈ (-2.00301167, -1.99953208), |δp|=3e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  28
+- #  3, <span class="sgr34"><span class="sgr1">  event2</span></span> at p1 ≈ -2.30722875 ∈ (-2.30888689, -2.30722875), |δp|=2e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  33
+- #  4, <span class="sgr34"><span class="sgr1">  event1</span></span> at p1 ≈ -1.99895595 ∈ (-2.01435831, -1.99895595), |δp|=2e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  36
+- #  5, <span class="sgr34"><span class="sgr1">  event2</span></span> at p1 ≈ -0.83478733 ∈ (-0.83598611, -0.83478733), |δp|=1e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  48
+- #  6, <span class="sgr34"><span class="sgr1">  event2</span></span> at p1 ≈ +1.15208549 ∈ (+1.14075593, +1.15208549), |δp|=1e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  92
+- #  7, <span class="sgr1">endpoint</span> at p1 ≈ +4.00000000,                                                                     step = 114
+</code></pre><pre><code class="language-julia hljs">plot(br)</code></pre><img src="82575e07.svg" alt="Example block output"/><h3 id="Example-of-discrete-event"><a class="docs-heading-anchor" href="#Example-of-discrete-event">Example of discrete event</a><a id="Example-of-discrete-event-1"></a><a class="docs-heading-anchor-permalink" href="#Example-of-discrete-event" title="Permalink"></a></h3><p>You can also use discrete events to detect a change. For example, the following detect when the parameter value equals <code>-2</code>:</p><pre><code class="language-julia hljs">br = continuation(args...; kwargs...,
+	event = BK.DiscreteEvent(1,
+		(iter, state) -&gt; getp(state)&gt;-2))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
+ ├─ Number of points: 114
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">p1</span></span> starts at -3.0, ends at 4.0
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">   userD</span></span> at p1 ≈ -1.98380428 ∈ (-2.00059057, -1.98380428), |δp|=2e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  12
+- #  2, <span class="sgr34"><span class="sgr1">   userD</span></span> at p1 ≈ -2.00301167 ∈ (-2.00301167, -1.99953208), |δp|=3e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  28
+- #  3, <span class="sgr34"><span class="sgr1">   userD</span></span> at p1 ≈ -1.99670519 ∈ (-2.00056478, -1.99670519), |δp|=4e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  35
+- #  4, <span class="sgr1">endpoint</span> at p1 ≈ +4.00000000,                                                                     step = 113
+</code></pre><h3 id="Example-of-PairOfEvents-event"><a class="docs-heading-anchor" href="#Example-of-PairOfEvents-event">Example of PairOfEvents event</a><a id="Example-of-PairOfEvents-event-1"></a><a class="docs-heading-anchor-permalink" href="#Example-of-PairOfEvents-event" title="Permalink"></a></h3><p>Let us be a bit more creative and combine a continuous event with a discrete one:</p><pre><code class="language-julia hljs">br = continuation(args...; kwargs...,
 	event = BK.PairOfEvents(
 		BK.ContinuousEvent(1, (iter, state) -&gt; getp(state)),
-		BK.DiscreteEvent(1, (iter, state) -&gt; getp(state)&gt;-2)))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>Here <code>userD-1</code> means that the first component of the discrete event was detected. Of course, you can name the event like done above.</p><h3 id="Example-of-set-of-events"><a class="docs-heading-anchor" href="#Example-of-set-of-events">Example of set of events</a><a id="Example-of-set-of-events-1"></a><a class="docs-heading-anchor-permalink" href="#Example-of-set-of-events" title="Permalink"></a></h3><p>We can combine more events and chain them like we want using <code>SetOfEvents</code>. In this example, we show how to do bifurcation detection and event location altogether:</p><pre><code class="language-julia hljs">ev1 = BK.ContinuousEvent(1, (iter, state) -&gt; getp(state)-1)
+		BK.DiscreteEvent(1, (iter, state) -&gt; getp(state)&gt;-2)))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
+ ├─ Number of points: 114
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">p1</span></span> starts at -3.0, ends at 4.0
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">   userD</span></span> at p1 ≈ -1.98380428 ∈ (-2.00059057, -1.98380428), |δp|=2e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  12
+- #  2, <span class="sgr34"><span class="sgr1">   userD</span></span> at p1 ≈ -2.00301167 ∈ (-2.00301167, -1.99953208), |δp|=3e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  28
+- #  3, <span class="sgr34"><span class="sgr1">   userD</span></span> at p1 ≈ -1.99670519 ∈ (-2.00056478, -1.99670519), |δp|=4e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  35
+- #  4, <span class="sgr34"><span class="sgr1">   userC</span></span> at p1 ≈ +0.01029312 ∈ (-0.00414058, +0.01029312), |δp|=1e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  55
+- #  5, <span class="sgr1">endpoint</span> at p1 ≈ +4.00000000,                                                                     step = 113
+</code></pre><p>Here <code>userD-1</code> means that the first component of the discrete event was detected. Of course, you can name the event like done above.</p><h3 id="Example-of-set-of-events"><a class="docs-heading-anchor" href="#Example-of-set-of-events">Example of set of events</a><a id="Example-of-set-of-events-1"></a><a class="docs-heading-anchor-permalink" href="#Example-of-set-of-events" title="Permalink"></a></h3><p>We can combine more events and chain them like we want using <code>SetOfEvents</code>. In this example, we show how to do bifurcation detection and event location altogether:</p><pre><code class="language-julia hljs">ev1 = BK.ContinuousEvent(1, (iter, state) -&gt; getp(state)-1)
 ev2 = BK.ContinuousEvent(2, (iter, state) -&gt; (getp(state)-2, getp(state)-2.5))
 # event to detect bifurcation
 ev3 = BK.BifDetectEvent
@@ -50,9 +100,28 @@ ev3 = BK.BifDetectEvent
 eve = BK.SetOfEvents(ev1, ev2, ev3)
 
 br = continuation(args...; kwargs...,
-		event = eve)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><p>Which gives</p><pre><code class="language-julia hljs">plot(br)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&lt;&lt; @example-block not executed in draft mode &gt;&gt;</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+		event = eve)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
+ ├─ Number of points: 119
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">p1</span></span> starts at -3.0, ends at 4.0
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at p1 ≈ -1.13331997 ∈ (-1.13331997, -1.13288137), |δp|=4e-04, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =  20
+- #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at p1 ≈ -2.32501040 ∈ (-2.32501894, -2.32501040), |δp|=9e-06, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1,  0), step =  33
+- #  3, <span class="sgr34"><span class="sgr1">    hopf</span></span> at p1 ≈ -0.95023978 ∈ (-0.95537606, -0.95023978), |δp|=5e-03, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  47
+- #  4, <span class="sgr34"><span class="sgr1">    hopf</span></span> at p1 ≈ +0.95861227 ∈ (+0.94836964, +0.95861227), |δp|=1e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step =  67
+- #  5, <span class="sgr34"><span class="sgr1">  userC1</span></span> at p1 ≈ +1.00022767 ∈ (+0.99917369, +1.00022767), |δp|=1e-03, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 0,  0), step =  69
+- #  6, <span class="sgr34"><span class="sgr1">userC2-1</span></span> at p1 ≈ +2.00505846 ∈ (+1.98961239, +2.00505846), |δp|=2e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  78
+- #  7, <span class="sgr34"><span class="sgr1">      bp</span></span> at p1 ≈ +2.32505861 ∈ (+2.32488513, +2.32505861), |δp|=2e-04, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =  82
+- #  8, <span class="sgr34"><span class="sgr1">userC2-1</span></span> at p1 ≈ +1.99013402 ∈ (+1.99013402, +2.00407138), |δp|=1e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  86
+- #  9, <span class="sgr34"><span class="sgr1">      bp</span></span> at p1 ≈ +1.13286568 ∈ (+1.13286568, +1.13289065), |δp|=2e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1,  0), step =  95
+- # 10, <span class="sgr34"><span class="sgr1">userC2-1</span></span> at p1 ≈ +2.01959644 ∈ (+1.98600267, +2.01959644), |δp|=3e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step = 103
+- # 11, <span class="sgr34"><span class="sgr1">userC2-2</span></span> at p1 ≈ +2.52953918 ∈ (+2.49528893, +2.52953918), |δp|=3e-02, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step = 107
+- # 12, <span class="sgr1">endpoint</span> at p1 ≈ +4.00000000,                                                                     step = 118
+</code></pre><p>Which gives</p><pre><code class="language-julia hljs">plot(br)</code></pre><img src="877a0084.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BifurcationDiagram/">« Bifurcation diagram</a><a class="docs-footer-nextpage" href="../iterator/">Iterator Interface »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.0 on <span class="colophon-date" title="Friday 19 April 2024 18:06">Friday 19 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BifurcationDiagram/">« Bifurcation diagram</a><a class="docs-footer-nextpage" href="../iterator/">Iterator Interface »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.0 on <span class="colophon-date" title="Friday 19 April 2024 21:06">Friday 19 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
