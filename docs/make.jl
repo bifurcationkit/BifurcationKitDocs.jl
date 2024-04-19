@@ -18,7 +18,7 @@ makedocs(
 	doctest = false,
 	pagesonly = true, # this is on Documenter#master, do not compile what is not in pages =
 	draft = true,
-	warnonly = false,
+	warnonly = true,
 	sitename = "Bifurcation Analysis in Julia",
 	format = Documenter.HTML(collapselevel = 1,),# assets = ["assets/indigo.css"]),
 	authors = "Romain Veltz",
