@@ -98,9 +98,9 @@ GKS: Rectangle definition is invalid in routine CELLARRAY
 - #  2,       nd at λ ≈ +0.27255474 ∈ (+0.27255474, +0.27255937), |δp|=5e-06, [converged], δ = ( 2,  0), step =  33
 - #  3,       bp at λ ≈ +0.15215124 ∈ (+0.15215124, +0.15215818), |δp|=7e-06, [converged], δ = ( 1,  0), step =  48
 - #  4,       nd at λ ≈ +0.03551852 ∈ (+0.03551852, +0.03554981), |δp|=3e-05, [converged], δ = ( 2,  0), step =  76
-- #  5, endpoint at λ ≈ +0.02500000,                                                                     step =  83</code></pre><p>You should see the following result:</p><pre><code class="language-julia hljs">title!(&quot;&quot;)</code></pre><img src="88ed2a4e.svg" alt="Example block output"/><p>We note several simple bifurcation points for which the dimension of the kernel of the jacobian is one dimensional. In the above box, <code>δ = ( 1,  0)</code> gives the change in the stability. In this case, there is one vector in the kernel which is real. The bifurcation point 2 has a 2d kernel and is thus not amenable to automatic branch switching.</p><h2 id="Automatic-branch-switching-at-simple-branch-points"><a class="docs-heading-anchor" href="#Automatic-branch-switching-at-simple-branch-points">Automatic branch switching at simple branch points</a><a id="Automatic-branch-switching-at-simple-branch-points-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching-at-simple-branch-points" title="Permalink"></a></h2><p>We can compute the branch off the third bifurcation point:</p><pre><code class="language-julia hljs">br1 = continuation(br, 3, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
-title!(&quot;&quot;)</code></pre><img src="6337a817.svg" alt="Example block output"/><p>You can also plot the two branches together <code>plot(br, br1, plotfold=false)</code> and get</p><pre><code class="language-julia hljs">scene = plot(br,br1,plotfold=false)</code></pre><img src="cd642bee.svg" alt="Example block output"/><p>We continue our journey and compute the branch bifurcating of the first bifurcation point from the last branch we computed:</p><pre><code class="language-julia hljs">br2 = continuation(br1, 1, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
-scene = plot(br,br1,br2)</code></pre><img src="f689674d.svg" alt="Example block output"/><h2 id="Automatic-branch-switching-at-the-2d-branch-points"><a class="docs-heading-anchor" href="#Automatic-branch-switching-at-the-2d-branch-points">Automatic branch switching at the 2d-branch points</a><a id="Automatic-branch-switching-at-the-2d-branch-points-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching-at-the-2d-branch-points" title="Permalink"></a></h2><p>We now show how to perform automatic branch switching at the nonsimple branch points. However, we think it is important that the user is able to use the previous tools in case automatic branch switching fails. This is explained in the next sections.</p><p>The call for automatic branch switching is the same as in the case of simple branch points (see above) except that many branches are returned.</p><pre><code class="language-julia hljs">branches = continuation(br, 2,
+- #  5, endpoint at λ ≈ +0.02500000,                                                                     step =  83</code></pre><p>You should see the following result:</p><pre><code class="language-julia hljs">title!(&quot;&quot;)</code></pre><img src="8b3c0d45.svg" alt="Example block output"/><p>We note several simple bifurcation points for which the dimension of the kernel of the jacobian is one dimensional. In the above box, <code>δ = ( 1,  0)</code> gives the change in the stability. In this case, there is one vector in the kernel which is real. The bifurcation point 2 has a 2d kernel and is thus not amenable to automatic branch switching.</p><h2 id="Automatic-branch-switching-at-simple-branch-points"><a class="docs-heading-anchor" href="#Automatic-branch-switching-at-simple-branch-points">Automatic branch switching at simple branch points</a><a id="Automatic-branch-switching-at-simple-branch-points-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching-at-simple-branch-points" title="Permalink"></a></h2><p>We can compute the branch off the third bifurcation point:</p><pre><code class="language-julia hljs">br1 = continuation(br, 3, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
+title!(&quot;&quot;)</code></pre><img src="939d0d7b.svg" alt="Example block output"/><p>You can also plot the two branches together <code>plot(br, br1, plotfold=false)</code> and get</p><pre><code class="language-julia hljs">scene = plot(br,br1,plotfold=false)</code></pre><img src="2dd6dc21.svg" alt="Example block output"/><p>We continue our journey and compute the branch bifurcating of the first bifurcation point from the last branch we computed:</p><pre><code class="language-julia hljs">br2 = continuation(br1, 1, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
+scene = plot(br,br1,br2)</code></pre><img src="ed9097c0.svg" alt="Example block output"/><h2 id="Automatic-branch-switching-at-the-2d-branch-points"><a class="docs-heading-anchor" href="#Automatic-branch-switching-at-the-2d-branch-points">Automatic branch switching at the 2d-branch points</a><a id="Automatic-branch-switching-at-the-2d-branch-points-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching-at-the-2d-branch-points" title="Permalink"></a></h2><p>We now show how to perform automatic branch switching at the nonsimple branch points. However, we think it is important that the user is able to use the previous tools in case automatic branch switching fails. This is explained in the next sections.</p><p>The call for automatic branch switching is the same as in the case of simple branch points (see above) except that many branches are returned.</p><pre><code class="language-julia hljs">branches = continuation(br, 2,
 	setproperties(opts_br; detect_bifurcation = 3, ds = 0.001, p_min = 0.01, max_steps = 30 ) ;
   alg = PALC(tangent = Bordered()),
 	kwargsC...,
@@ -109,7 +109,7 @@ scene = plot(br,br1,br2)</code></pre><img src="f689674d.svg" alt="Example block 
   ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
  ├─ Number of points: 31
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036567357
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036057175
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
@@ -120,7 +120,7 @@ scene = plot(br,br1,br2)</code></pre><img src="f689674d.svg" alt="Example block 
   ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
  ├─ Number of points: 31
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046035940236
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036570664
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
@@ -131,7 +131,7 @@ scene = plot(br,br1,br2)</code></pre><img src="f689674d.svg" alt="Example block 
   ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
  ├─ Number of points: 31
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046035744242
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036458333
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
@@ -142,7 +142,7 @@ scene = plot(br,br1,br2)</code></pre><img src="f689674d.svg" alt="Example block 
   ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
  ├─ Number of points: 31
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036548444
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036464316
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
@@ -153,7 +153,7 @@ scene = plot(br,br1,br2)</code></pre><img src="f689674d.svg" alt="Example block 
   ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
  ├─ Number of points: 31
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.13845537889421997
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.1384553787095535
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
@@ -164,7 +164,7 @@ scene = plot(br,br1,br2)</code></pre><img src="f689674d.svg" alt="Example block 
   ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
  ├─ Number of points: 31
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.13845537889968798
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.1384553786170409
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
@@ -175,7 +175,7 @@ scene = plot(br,br1,br2)</code></pre><img src="f689674d.svg" alt="Example block 
   ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
  ├─ Number of points: 31
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.13845537891053367
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.13845537892473436
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
@@ -186,18 +186,18 @@ scene = plot(br,br1,br2)</code></pre><img src="f689674d.svg" alt="Example block 
   ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
  ├─ Number of points: 31
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.1384553789090234
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.1384553788522435
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
 - #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27255724 ∈ (+0.27255724, +0.27255724), |δp|=9e-10, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =   1
 - #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27868664 ∈ (+0.27868664, +0.27868709), |δp|=4e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1,  0), step =  15
 - #  3, <span class="sgr1">endpoint</span> at λ ≈ +0.11843005,                                                                     step =  31
-</code></pre><p>You can plot the branches using</p><pre><code class="language-julia hljs">scene = plot(br, branches...)</code></pre><img src="cca55c4e.svg" alt="Example block output"/><h2 id="Analysis-at-the-2d-branch-points-(manual)"><a class="docs-heading-anchor" href="#Analysis-at-the-2d-branch-points-(manual)">Analysis at the 2d-branch points (manual)</a><a id="Analysis-at-the-2d-branch-points-(manual)-1"></a><a class="docs-heading-anchor-permalink" href="#Analysis-at-the-2d-branch-points-(manual)" title="Permalink"></a></h2><p>The second bifurcation point on the branch <code>br</code> of homogeneous solutions has a 2d kernel. we provide two methods to deal with such case</p><ul><li>automatic local bifurcation diagram (see below)</li><li>branch switching with deflation (see next section)</li></ul><p>We provide a generic way to study branch points of arbitrary dimensions by computing a reduced equation. The general method is based on a Lyapunov-Schmidt reduction. We can compute the information about the branch point using the generic function (valid for simple branch points, Hopf bifurcation points,...)</p><pre><code class="language-julia hljs">bp2d = get_normal_form(br, 2;  verbose = true, nev = 50)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Non simple bifurcation point at λ ≈ 0.2725547358342202. 
+</code></pre><p>You can plot the branches using</p><pre><code class="language-julia hljs">scene = plot(br, branches...)</code></pre><img src="73e2bccf.svg" alt="Example block output"/><h2 id="Analysis-at-the-2d-branch-points-(manual)"><a class="docs-heading-anchor" href="#Analysis-at-the-2d-branch-points-(manual)">Analysis at the 2d-branch points (manual)</a><a id="Analysis-at-the-2d-branch-points-(manual)-1"></a><a class="docs-heading-anchor-permalink" href="#Analysis-at-the-2d-branch-points-(manual)" title="Permalink"></a></h2><p>The second bifurcation point on the branch <code>br</code> of homogeneous solutions has a 2d kernel. we provide two methods to deal with such case</p><ul><li>automatic local bifurcation diagram (see below)</li><li>branch switching with deflation (see next section)</li></ul><p>We provide a generic way to study branch points of arbitrary dimensions by computing a reduced equation. The general method is based on a Lyapunov-Schmidt reduction. We can compute the information about the branch point using the generic function (valid for simple branch points, Hopf bifurcation points,...)</p><pre><code class="language-julia hljs">bp2d = get_normal_form(br, 2;  verbose = true, nev = 50)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Non simple bifurcation point at λ ≈ 0.2725547358342202. 
 Kernel dimension = 2
 Normal form:
- + -73.8978 * x1 ⋅ p + -0.0123 ⋅ x1³ + 0.0507 ⋅ x1² ⋅ x2 + -0.0375 ⋅ x1 ⋅ x2² + 0.0007 ⋅ x2³
- + -73.8978 * x2 ⋅ p + 0.001 ⋅ x1³ + 0.0312 ⋅ x1² ⋅ x2 + -0.0468 ⋅ x1 ⋅ x2² + 0.0106 ⋅ x2³
+ + -73.8978 * x1 ⋅ p + 0.0097 ⋅ x1³ + 0.0072 ⋅ x1² ⋅ x2 + -0.036 ⋅ x1 ⋅ x2² + -0.0002 ⋅ x2³
+ + -73.8978 * x2 ⋅ p + 0.0044 ⋅ x1³ + -0.0348 ⋅ x1² ⋅ x2 + -0.0069 ⋅ x1 ⋅ x2² + 0.0101 ⋅ x2³
 
 </code></pre><p>Note that this is a multivariate polynomials. For more information, see <a href="../../nonsimplebp/#Non-simple-branch-point">Non-simple branch point</a>.</p><p>You can evaluate this polynomial as follows <code>bp2d(Val(:reducedForm),[0.1,0.2], 0.01)</code> which returns a 2d vector or <code>bp2d([0.1,0.2], 0.01)</code>. This last expression actually returns a vector corresponding to the PDE problem.</p><p>You need to solve these equations to compute the bifurcation diagram in the neighborhood of the bifurcation point. In the present case, we do it using brute force. We suggest to use <code>IntervalConstraintProgramming.jl</code> for a more precise way.</p><pre><code class="language-julia hljs">using ProgressMeter
 Nd = 200; L = 0.9
@@ -258,4 +258,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Farrell"><a class="tag is-link" href="#citeref-Farrell">Farrell</a><blockquote><p>Farrell, Patrick E., Casper H. L. Beentjes, and Ásgeir Birkisson. <strong>The Computation of Disconnected Bifurcation Diagrams.</strong> ArXiv:1603.00809 [Math], March 2, 2016.</p></blockquote></li><li class="footnote" id="footnote-Wouters"><a class="tag is-link" href="#citeref-Wouters">Wouters</a><blockquote><p>Wouters. <strong>Automatic Exploration Techniques for the Numerical Continuation of Large–Scale Nonlinear Systems</strong>, 2019.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.0 on <span class="colophon-date" title="Friday 19 April 2024 21:06">Friday 19 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Farrell"><a class="tag is-link" href="#citeref-Farrell">Farrell</a><blockquote><p>Farrell, Patrick E., Casper H. L. Beentjes, and Ásgeir Birkisson. <strong>The Computation of Disconnected Bifurcation Diagrams.</strong> ArXiv:1603.00809 [Math], March 2, 2016.</p></blockquote></li><li class="footnote" id="footnote-Wouters"><a class="tag is-link" href="#citeref-Wouters">Wouters</a><blockquote><p>Wouters. <strong>Automatic Exploration Techniques for the Numerical Continuation of Large–Scale Nonlinear Systems</strong>, 2019.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.0 on <span class="colophon-date" title="Saturday 20 April 2024 09:27">Saturday 20 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
