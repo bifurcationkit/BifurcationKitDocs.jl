@@ -167,4 +167,9 @@ brbp = BifurcationKit.multicontinuation(br, bp, pts.before, pts.after, opts_br)
 
 plot(br, brbp...)
 ```
-## predictors ```@docsBifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, δp::T; k...) where T``````@docsBifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, algo::Val{:exhaustive}, δp::T;k...) where T```
+
+## predictors 
+
+```@docs
+BifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, δp::T; k...) where T``````@docsBifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, algo::Val{:exhaustive}, δp::T;k...) where T
+```

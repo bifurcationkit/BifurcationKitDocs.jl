@@ -63,7 +63,7 @@ recordFromSolution(x, p) = (x[2]-x[1]) * sum(x->x^2, x)
 
 prob = BifurcationProblem(F_carr, zeros(N), par_car, (@lens _.ϵ); J = Jac_carr, record_from_solution = recordFromSolution)
 
-optnew = NewtonPar(tol = 1e-8, verbose = true)
+optnew = NewtonPar(tol = 1e-8)
 sol = newton(prob, optnew, normN = norminf) # hide
 sol = @time newton(prob, optnew, normN = norminf)
 nothing #hide
@@ -75,15 +75,14 @@ We can start by using our Automatic bifurcation method.
 
 ```@example TUTCARRIER
 
-optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, p_min = 0.05, plot_every_step = 10, newton_options = NewtonPar(tol = 1e-8, max_iterations = 20, verbose = true), max_steps = 300, nev = 40)
+optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, p_min = 0.05, plot_every_step = 10, newton_options = NewtonPar(tol = 1e-8), max_steps = 300, nev = 40, n_inversion = 4)
 
 diagram = bifurcationdiagram(prob,
     # particular bordered linear solver to use
 	# BandedMatrices.
     PALC(bls = BorderingBLS(solver = DefaultLS(), check_precision = false)),
     2,
-	(arg...) -> @set optcont.newton_options.verbose = false;
-	plot = false)
+	optcont.newton_options)
 
 scene = plot(diagram)
 ```
