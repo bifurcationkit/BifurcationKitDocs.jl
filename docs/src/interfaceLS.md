@@ -36,6 +36,9 @@ n
 
 where $\xi_u,\xi_p\in\mathbb C$ and $dR,\xi_u\in\mathbb C^N$.
 
+!!! warning "PALC"
+    To work with PALC, the struct `bls` must have the field `solver` available even if this one is `nothing`
+
 | Required methods               |                        | Brief description                                                                     |
 |:------------------------------ |:---------------------- |:------------------------------------------------------------------------------------- |
 | `bls(J, dR, dzu, dzp, R, n, ξu::Number, ξp::Number; shift = nothing, kwargs...)`                |                        | Compute the solution `dX, dl` of the linear problem (BLS) where `J` is the jacobian and `dR, dzu` are vectors (not necessarily subtypes of `AbstractVector`). `shift = nothing` is used in place of saying `shift=0`. Returns `(dX, dl, success::Bool, itnumber)` where `itnumber` is the number of iterations for solving the problem.|
