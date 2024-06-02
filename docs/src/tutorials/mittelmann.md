@@ -14,8 +14,7 @@ with Neumann boundary condition on $\Omega = (0,1)^2$ and where $NL(\lambda,u)\e
 We start with some imports:
 
 ```@example MITT
-using Revise
-using DiffEqOperators, ForwardDiff
+using Revise, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 
@@ -30,19 +29,22 @@ nothing #hide
 and with the discretization of the problem
 
 ```@example MITT
-function Laplacian2D(Nx, Ny, lx, ly, bc = :Neumann)
-	hx = 2lx/Nx
-	hy = 2ly/Ny
-	D2x = CenteredDifference(2, 2, hx, Nx)
-	D2y = CenteredDifference(2, 2, hy, Ny)
+function Laplacian2D(Nx, Ny, lx, ly)
+    hx = 2lx/Nx
+    hy = 2ly/Ny
+    D2x = spdiagm(0 => -2ones(Nx), 1 => ones(Nx-1), -1 => ones(Nx-1) ) / hx^2
+    D2y = spdiagm(0 => -2ones(Ny), 1 => ones(Ny-1), -1 => ones(Ny-1) ) / hy^2
 
-	Qx = Neumann0BC(hx)
-	Qy = Neumann0BC(hy)
+    D2x[1,1] = -1/hx^2
+    D2x[end,end] = -1/hx^2
 
-	D2xsp = sparse(D2x * Qx)[1]
-	D2ysp = sparse(D2y * Qy)[1]
-	A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
-	return A
+    D2y[1,1] = -1/hy^2
+    D2y[end,end] = -1/hy^2
+
+    D2xsp = sparse(D2x)
+    D2ysp = sparse(D2y)
+    A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
+    return A, D2x
 end
 
 ϕ(u, λ)  = -10(u-λ*exp(u))
@@ -85,7 +87,7 @@ lx = 0.5; ly = 0.5
 # weight for the weighted norm
 const w = (lx .+ LinRange(-lx,lx,Nx)) * (LinRange(-ly,ly,Ny))' |> vec
 
-Δ = Laplacian2D(Nx, Ny, lx, ly)
+Δ, = Laplacian2D(Nx, Ny, lx, ly)
 par_mit = (λ = .05, Δ = Δ)
 
 # initial guess f for newton
@@ -169,7 +171,7 @@ We continue our journey and compute the branch bifurcating of the first bifurcat
 
 ```@example MITT
 br2 = continuation(br1, 1, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
-scene = plot(br,br1,br2)
+scene = plot(br, br1, br2)
 ```
 
 ## Automatic branch switching at the 2d-branch points

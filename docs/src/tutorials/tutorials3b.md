@@ -95,9 +95,6 @@ end
 nothing #hide
 ```
 
-!!! tip "Tip"
-    We could have used `DiffEqOperators.jl` like for the Swift-Hohenberg tutorial.
-
 We shall now compute the equilibria and their stability.
 
 ```@example TUTBRUmanual
@@ -197,7 +194,7 @@ orbitguess_f = vcat(vec(orbitguess_f2), Th) |> vec
 nothing #hide
 ```
 
-The second remark concerns the phase `0.25` written above. To account for the additional unknown (*i.e.* the period), periodic orbit localisation using Finite Differences requires an additional constraint (see [Periodic orbits based on Trapezoidal rule](@ref) for more details). In the present case, this constraint is
+The second remark concerns the phase `0.25` written above. To account for the additional unknown (*i.e.* the period), periodic orbit localization using Finite Differences requires an additional constraint (see [Periodic orbits based on Trapezoidal rule](@ref) for more details). In the present case, this constraint is
 
 $$< u(0) - u_{hopf}, \phi> = 0$$
 
@@ -343,7 +340,7 @@ initpo = vcat(vec(orbitsection), 3.0)
 Finally, we need to build a problem which encodes the Shooting functional. This done as follows where we first create the time stepper. For performance reasons, we rely on `SparseDiffTools `
 
 ```julia
-using DifferentialEquations, DiffEqOperators, SparseDiffTools, SparseArrays
+using DifferentialEquations, SparseDiffTools, SparseArrays
 
 FOde(f, x, p, t) = Fbru!(f, x, p)
 
@@ -400,28 +397,24 @@ which gives (note that we did not have a really nice guess...)
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton step         residual     linear iterations  │
+│ Newton step         residual      linear iterations │
 ├─────────────┬──────────────────────┬────────────────┤
-│       0     │       1.9613e-01     │        0       │
-│       1     │       5.6101e-02     │       45       │
-│       2     │       1.0307e-01     │       49       │
-│       3     │       4.1119e-03     │       48       │
-│       4     │       8.0511e-03     │       49       │
-│       5     │       3.8250e-02     │       48       │
-│       6     │       9.8080e-03     │       49       │
-│       7     │       2.1179e+01     │       53       │
-│       8     │       2.0105e+00     │       36       │
-│       9     │       2.0545e+00     │       49       │
-│      10     │       4.8793e-01     │       49       │
-│      11     │       4.8457e-02     │       46       │
-│      12     │       2.3299e-02     │       49       │
-│      13     │       1.6365e-02     │       48       │
-│      14     │       1.3534e-04     │       49       │
-│      15     │       1.4582e-05     │       48       │
-│      16     │       1.5886e-08     │       49       │
-│      17     │       1.7228e-11     │       49       │
+│       0     │       2.6239e-01     │        0       │
+│       1     │       8.8979e-03     │       27       │
+│       2     │       9.6221e-04     │       28       │
+│       3     │       5.0540e-02     │       31       │
+│       4     │       3.4149e-03     │       28       │
+│       5     │       1.1336e+00     │       31       │
+│       6     │       9.5418e-02     │       25       │
+│       7     │       1.1996e-02     │       28       │
+│       8     │       1.2655e-02     │       28       │
+│       9     │       3.8820e-03     │       30       │
+│      10     │       4.1901e-04     │       31       │
+│      11     │       5.4309e-06     │       31       │
+│      12     │       1.1430e-09     │       33       │
+│      13     │       5.2525e-14     │       34       │
 └─────────────┴──────────────────────┴────────────────┘
-  9.706977 seconds (7.61 M allocations: 13.964 GiB, 3.62% gc time)
+  3.396345 seconds (5.38 M allocations: 17.675 GiB, 1.66% gc time)
 ```
 
 and
@@ -467,7 +460,8 @@ br_po = @time continuation(probSh, outpo.u, PALC(),
 	linear_algo = MatrixFreeBLS(@set ls.N = ls.N+1),
 	plot = true,
 	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_shooting!(x[1:end-1], length(1:dM:M); kwargs...),
-	record_from_solution = (u, p) -> u[end], normC = norminf)
+	record_from_solution = (u, p) -> u[end], 
+	normC = norminf)
 ```
 
 We can observe that simple shooting is faster but the Floquet multipliers are less accurate than for multiple shooting. Also, when the solution is very unstable, simple shooting can have spurious branch switching. Finally, note the $0=\log 1$ eigenvalue of the monodromy matrix in the graph below.

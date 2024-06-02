@@ -20,8 +20,8 @@ $$\left\{
 We start by discretizing the above PDE based on finite differences.
 
 ```@example DETENGINE
-using Revise
-using DiffEqOperators, ForwardDiff, DifferentialEquations, SparseArrays
+using Revise, ForwardDiff
+using DifferentialEquations, SparseArrays
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
@@ -37,20 +37,6 @@ function plotsol!(x; k...)
 	plot!(v; label="λ", k...)
 end
 plotsol(x; k...) = (plot();plotsol!(x; k...))
-
-# function to build derivative operators
-function DiffOp(N, lx; order = 2)
-	h = lx/N
-
-	D2 = CenteredDifference(2, order, h, N)
-	D = CenteredDifference(1, order, h, N)
-
-	Q = PeriodicBC(Float64)
-
-	Δ = sparse(D2 * Q)[1]
-	D = sparse(D * Q)[1]
-	return D, Δ
-end
 
 # nonlinearity of the model
 function NL!(dest, U, p, t = 0.)
@@ -84,7 +70,10 @@ N = 300
 lx = 2pi
 X = LinRange(0, lx, N)
 
-D, Δ = DiffOp(N, lx)
+h = lx/N
+Δ = spdiagm(0 => -2ones(N), 1 => ones(N-1), -1 => ones(N-1) ) / h^2; Δ[1,end] = 1/h^2; Δ[end,1]=1/h^2
+D = spdiagm(1 => ones(N-1), -1 => -ones(N-1)) / (2h); D[1,end] = -1/(2h);D[end, 1] = 1/(2h)
+
 _ν1 = 0.0075
 # model parameters
 par_det = (N = N, q = 0.5, α = 0.3, up = 0.0, uc = 1.1, s = 3.5, k = 1., ϵ = 0.15, r = 5.0, ν1 = _ν1, ν2 = _ν1, Δ = blockdiag(Δ, Δ), D = D, Db = blockdiag(D, D))
@@ -118,7 +107,8 @@ We are now ready to compute the bifurcation of the trivial (constant in space) s
 
 ```@example DETENGINE
 # bifurcation problem
-prob = BifurcationProblem(Fdet, U0, setproperties(par_det; q = 0.5), (@lens _.up); J = JdetAD,
+prob = BifurcationProblem(Fdet, U0, setproperties(par_det; q = 0.5), (@lens _.up); 
+	J = JdetAD,
 	plot_solution = (x, p; k...) -> plotsol!(x; k...),
 	record_from_solution = (x, p) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))
 
@@ -126,7 +116,7 @@ prob = re_make(prob, params = (@set par_det.up = 0.56))
 
 # iterative eigen solver
 eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
-eig = EigArnoldiMethod(sigma=0.2, which = BifurcationKit.LM(),x₀ = rand(2N ))
+# eig = EigArnoldiMethod(sigma=0.2, which = BifurcationKit.LM(), x₀ = rand(2N ))
 
 # newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)

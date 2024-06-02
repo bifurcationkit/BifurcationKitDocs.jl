@@ -23,24 +23,26 @@ $$\partial_{t} u=\Delta u+(r+\mathrm{i} v) u-\left(c_{3}+\mathrm{i} \mu\right)|u
 with Dirichlet boundary conditions. We discretize the square $\Omega = (0,L_x)\times(0,L_y)$ with $2N_xN_y$ points. We start by writing the Laplacian:
 
 ```@example CGL2d
-using Revise
-using DiffEqOperators, ForwardDiff
+using Revise, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 
 function Laplacian2D(Nx, Ny, lx, ly)
-	hx = 2lx/Nx; hy = 2ly/Ny
-	D2x = CenteredDifference(2, 2, hx, Nx)
-	D2y = CenteredDifference(2, 2, hy, Ny)
+    hx = 2lx/Nx
+    hy = 2ly/Ny
+    D2x = spdiagm(0 => -2ones(Nx), 1 => ones(Nx-1), -1 => ones(Nx-1) ) / hx^2
+    D2y = spdiagm(0 => -2ones(Ny), 1 => ones(Ny-1), -1 => ones(Ny-1) ) / hy^2
 
-	Qx = Dirichlet0BC(typeof(hx))
-	Qy = Dirichlet0BC(typeof(hy))
+    D2x[1,1] = -2/hx^2
+    D2x[end,end] = -2/hx^2
 
-	D2xsp = sparse(D2x * Qx)[1]
-	D2ysp = sparse(D2y * Qy)[1]
+    D2y[1,1] = -2/hy^2
+    D2y[end,end] = -2/hy^2
 
-	A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
-	return A
+    D2xsp = sparse(D2x)
+    D2ysp = sparse(D2y)
+    A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
+    return A
 end
 nothing #hide
 ```
@@ -275,25 +277,25 @@ We set the parameters for the `newton` solve.
 opt_po = @set opt_newton.verbose = true
 outpo_f = @time newton(poTrap, orbitguess_f,  (@set opt_po.linsolver = ls); normN = norminf)
 BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], ", amplitude = ", BK.amplitude(outpo_f.u, Nx*Ny, M; ratio = 2),"\n")
-BK.plotPeriodicPOTrap(outpo_f.u, M, Nx, Ny; ratio = 2);
+BK.plot_periodic_potrap(outpo_f.u, M, Nx, Ny; ratio = 2);
 ```
 
 which gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton step         residual     linear iterations  │
+│ Newton step         residual      linear iterations │
 ├─────────────┬──────────────────────┬────────────────┤
-│       0     │       6.5432e-03     │        0       │
-│       1     │       1.4372e-03     │        8       │
-│       2     │       3.6731e-04     │        8       │
-│       3     │       6.5658e-05     │        9       │
-│       4     │       4.3028e-06     │       10       │
-│       5     │       6.4509e-08     │       11       │
-│       6     │       2.9713e-10     │       12       │
-│       7     │       2.2181e-13     │       14       │
+│       0     │       6.5442e-03     │        0       │
+│       1     │       1.4382e-03     │        7       │
+│       2     │       3.7238e-04     │        8       │
+│       3     │       6.4118e-05     │       10       │
+│       4     │       4.2419e-06     │       10       │
+│       5     │       5.6974e-08     │       11       │
+│       6     │       3.1774e-10     │       12       │
+│       7     │       3.1674e-13     │       14       │
 └─────────────┴──────────────────────┴────────────────┘
-  1.780986 seconds (132.31 k allocations: 1.237 GiB, 12.13% gc time)
+  0.793448 seconds (143.31 k allocations: 1.242 GiB, 4.77% gc time)
 --> T = 6.532023020978835, amplitude = 0.2684635643839235
 ```
 
@@ -336,18 +338,18 @@ which gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton step         residual     linear iterations  │
+│ Newton step         residual      linear iterations │
 ├─────────────┬──────────────────────┬────────────────┤
-│       0     │       6.5432e-03     │        0       │
-│       1     │       1.4372e-03     │        8       │
-│       2     │       3.6731e-04     │        8       │
-│       3     │       6.5658e-05     │        9       │
-│       4     │       4.3028e-06     │       10       │
-│       5     │       6.4509e-08     │       11       │
-│       6     │       2.9713e-10     │       12       │
-│       7     │       2.2188e-13     │       14       │
+│       0     │       6.5442e-03     │        0       │
+│       1     │       1.4382e-03     │        7       │
+│       2     │       3.7238e-04     │        8       │
+│       3     │       6.4118e-05     │       10       │
+│       4     │       4.2419e-06     │       10       │
+│       5     │       5.6974e-08     │       11       │
+│       6     │       3.1774e-10     │       12       │
+│       7     │       3.1681e-13     │       14       │
 └─────────────┴──────────────────────┴────────────────┘
-  1.322440 seconds (35.03 k allocations: 459.996 MiB, 7.63% gc time)
+  0.607167 seconds (46.11 k allocations: 461.511 MiB, 2.03% gc time)
 ```
 
 The speedup will increase a lot for larger $N_x, N_y$. Also, for Floquet multipliers computation, the speedup will be substantial.
@@ -359,7 +361,7 @@ We show here how to remove most allocations and speed up the computations. This 
 ```julia
 # compute just the nonlinearity
 function NL!(f, u, p, t = 0.)
-	@unpack r, μ, ν, c3, c5 = p
+	(;r, μ, ν, c3, c5) = p
 	n = div(length(u), 2)
 	u1v = @view u[1:n]
 	u2v = @view u[n+1:2n]
@@ -379,7 +381,7 @@ end
 
 # derivative of the nonlinearity
 function dNL!(f, u, p, du)
-	@unpack r, μ, ν, c3, c5 = p
+	(;r, μ, ν, c3, c5) = p
 	n = div(length(u), 2)
 	u1v = @view u[1:n]
 	u2v = @view u[n+1:2n]
@@ -449,18 +451,18 @@ It gives
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton step         residual     linear iterations  │
+│ Newton step         residual      linear iterations │
 ├─────────────┬──────────────────────┬────────────────┤
-│       0     │       6.5432e-03     │        0       │
-│       1     │       1.4372e-03     │        8       │
-│       2     │       3.6731e-04     │        8       │
-│       3     │       6.5658e-05     │        9       │
-│       4     │       4.3028e-06     │       10       │
-│       5     │       6.4509e-08     │       11       │
-│       6     │       2.9713e-10     │       12       │
-│       7     │       2.2143e-13     │       14       │
+│       0     │       6.5442e-03     │        0       │
+│       1     │       1.4382e-03     │        7       │
+│       2     │       3.7238e-04     │        8       │
+│       3     │       6.4118e-05     │       10       │
+│       4     │       4.2419e-06     │       10       │
+│       5     │       5.6974e-08     │       11       │
+│       6     │       3.1774e-10     │       12       │
+│       7     │       3.1674e-13     │       14       │
 └─────────────┴──────────────────────┴────────────────┘
-  1.179854 seconds (902 allocations: 151.500 MiB)
+  0.583849 seconds (5.55 k allocations: 151.581 MiB)
 ```
 
 Notice the small speed boost but the reduced allocations. At this stage, further improvements could target the use of `BlockBandedMatrices.jl` for the Laplacian operator, etc.
@@ -484,17 +486,17 @@ but it gives:
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton step         residual     linear iterations  │
+│ Newton step         residual      linear iterations │
 ├─────────────┬──────────────────────┬────────────────┤
-│       0     │       3.3298e-03     │        0       │
-│       1     │       9.5088e-03     │       34       │
-│       2     │       1.2807e-03     │       26       │
-│       3     │       7.1393e-05     │       29       │
-│       4     │       4.1625e-07     │       36       │
-│       5     │       1.7924e-09     │       44       │
-│       6     │       6.2725e-13     │       60       │
+│       0     │       6.5442e-03     │        0       │
+│       1     │       1.4262e-03     │       26       │
+│       2     │       3.6549e-04     │       28       │
+│       3     │       6.3752e-05     │       32       │
+│       4     │       4.2248e-06     │       37       │
+│       5     │       2.8050e-08     │       41       │
+│       6     │       5.5126e-11     │       48       │
 └─────────────┴──────────────────────┴────────────────┘
-  3.479920 seconds (62.64 k allocations: 1009.778 MiB, 5.19% gc time)
+  1.581654 seconds (84.17 k allocations: 947.476 MiB, 2.92% gc time)
 ```
 
 **Hence, it seems better to use the previous preconditioner.**

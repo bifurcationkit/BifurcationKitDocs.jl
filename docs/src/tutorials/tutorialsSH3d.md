@@ -20,20 +20,34 @@ We start by defining the associated functional to encode (E).
 using Revise, KrylovKit
 using GLMakie # must be imported before BifurcationKit to trigger some imports
 using BifurcationKit
-using LinearAlgebra, SparseArrays, LinearMaps, DiffEqOperators
+using LinearAlgebra, SparseArrays, LinearMaps
 const BK = BifurcationKit
 
-function Laplacian3D(Nx, Ny, Nz, lx, ly, lz, bc = :Neumann)
-	speye(n) = sparse(I, n, n)
-	hx = 2lx/Nx; hy = 2ly/Ny; hz = 2lz/Nz
-	D2x = CenteredDifference{1}(2, 2, hx, Nx)
-	D2y = CenteredDifference{1}(2, 2, hy, Ny)
-	D2z = CenteredDifference{1}(2, 2, hz, Nz)
-	Qx = Neumann0BC(hx); Qy = Neumann0BC(hy); Qz = Neumann0BC(hz)
+function Laplacian3D(Nx, Ny, Nz, lx, ly, lz)
+    speye(n) = sparse(I, n, n)
+    hx = 2lx/Nx
+    hy = 2ly/Ny
+    hz = 2lz/Nz
+    D2x = spdiagm(0 => -2ones(Nx), 1 => ones(Nx-1), -1 => ones(Nx-1) ) / hx^2
+    D2y = spdiagm(0 => -2ones(Ny), 1 => ones(Ny-1), -1 => ones(Ny-1) ) / hy^2
+    D2z = spdiagm(0 => -2ones(Nz), 1 => ones(Nz-1), -1 => ones(Nz-1) ) / hz^2
 
-	_A = kron(speye(Ny), sparse(D2x * Qx)[1]) + kron(sparse(D2y * Qy)[1], speye(Nx))
-	A = kron(speye(Nz), _A) + kron(kron(sparse(D2z * Qz)[1], speye(Ny)), speye(Nx))
-	return sparse(A), D2x
+    D2x[1,1] = -1/hx^2
+    D2x[end,end] = -1/hx^2
+
+    D2y[1,1] = -1/hy^2
+    D2y[end,end] = -1/hy^2
+
+    D2z[1,1] = -1/hz^2
+    D2z[end,end] = -1/hz^2
+
+    D2xsp = sparse(D2x)
+    D2ysp = sparse(D2y)
+    D2zsp = sparse(D2z)
+
+    _A = kron(speye(Ny), D2xsp) + kron(D2ysp, speye(Nx))
+    A = kron(speye(Nz), _A) + kron(kron(D2zsp, speye(Ny)), speye(Nx))
+    return A, D2x
 end
 
 # main functional
@@ -85,12 +99,12 @@ Z = -lz .+ 2lz/(Nz) * collect(0:Nz-1)
 
 # initial guess for newton
 sol0 = [(cos(x) .* cos(y )) for x in X, y in Y, z in Z]
-	sol0 .= sol0 .- minimum(vec(sol0))
-	sol0 ./= maximum(vec(sol0))
-	sol0 .*= 1.7
+sol0 .= sol0 .- minimum(vec(sol0))
+sol0 ./= maximum(vec(sol0))
+sol0 .*= 1.7
 
 # parameters for PDE
-Δ, D2x = Laplacian3D(Nx, Ny, Nz, lx, ly, lz, :Neumann);
+Δ, D2x = Laplacian3D(Nx, Ny, Nz, lx, ly, lz);
 L1 = (I + Δ)^2;
 par = (l = 0.1, ν = 1.2, L1 = L1);
 ```
@@ -115,7 +129,7 @@ Hence, `cholesky` is the big winner but it requires a positive matrix so let's s
 As said in the introduction, the LU linear solver does not scale well with dimension $N$. Hence, we do something else. We note that the matrix $L_1$ is hermitian positive and use it as a preconditioner. Thus, we pre-factorize it using a Cholesky decomposition:
 
 ```julia
-Pr = cholesky(L1);
+Pr = lu(L1);
 using SuiteSparse
 # we need this "hack" to be able to use Pr as a preconditioner.
 LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= -(P \ v)

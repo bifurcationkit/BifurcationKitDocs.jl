@@ -18,8 +18,7 @@ with Neumann boundary condition on $\Omega = (0,1)^2$ and where $NL(\lambda,u)\e
 We start with some imports:
 
 ```julia
-using Revise
-using DiffEqOperators, ForwardDiff
+using Revise, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 
@@ -34,19 +33,22 @@ plotsol(x, nx = Nx, ny = Ny; kwargs...) = (plot();plotsol!(x, nx, ny; kwargs...)
 and with the discretization of the problem
 
 ```julia
-function Laplacian2D(Nx, Ny, lx, ly, bc = :Neumann)
-	hx = 2lx/Nx
-	hy = 2ly/Ny
-	D2x = CenteredDifference(2, 2, hx, Nx)
-	D2y = CenteredDifference(2, 2, hy, Ny)
+function Laplacian2D(Nx, Ny, lx, ly)
+    hx = 2lx/Nx
+    hy = 2ly/Ny
+    D2x = spdiagm(0 => -2ones(Nx), 1 => ones(Nx-1), -1 => ones(Nx-1) ) / hx^2
+    D2y = spdiagm(0 => -2ones(Ny), 1 => ones(Ny-1), -1 => ones(Ny-1) ) / hy^2
 
-	Qx = Neumann0BC(hx)
-	Qy = Neumann0BC(hy)
+    D2x[1,1] = -1/hx^2
+    D2x[end,end] = -1/hx^2
 
-	D2xsp = sparse(D2x * Qx)[1]
-	D2ysp = sparse(D2y * Qy)[1]
-	A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
-	return A
+    D2y[1,1] = -1/hy^2
+    D2y[end,end] = -1/hy^2
+
+    D2xsp = sparse(D2x)
+    D2ysp = sparse(D2y)
+    A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
+    return A
 end
 
 ϕ(u, λ)  = -10(u-λ*exp(u))

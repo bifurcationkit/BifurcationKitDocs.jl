@@ -14,8 +14,7 @@ $$\partial_{t} u=\Delta u+(r+\mathrm{i} v) u-\left(c_{3}+\mathrm{i} \mu\right)|u
 with periodic boundary conditions. We discretize the circle $\Omega = (-\pi,\pi)$ with $n$ points. We start by writing the Laplacian:
 
 ```@example CGL1DWAVE
-using Revise
-using DiffEqOperators, ForwardDiff
+using Revise, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 const FD = ForwardDiff
@@ -25,21 +24,9 @@ plotsol!(x, m, n; np = n, k...) = heatmap!(reshape(x[1:end-1],m,n)[1:np,:]; colo
 contoursol!(x, m, n; np = n, k...) = contour!(reshape(x[1:end-1],m,n)[1:np,:]; color =  :viridis, k...)
 plotsol(x,m,n;k...) = (plot();plotsol!(x,m,n;k...))
 
-function Laplacian1D(Nx, lx)
-	hx = 2lx/Nx
-	T = typeof(hx)
-	D2x = CenteredDifference(2, 2, hx, Nx)
-	D1x = CenteredDifference(1, 2, hx, Nx)
-	Qx = PeriodicBC(T)
-
-	Δ = sparse(D2x * Qx)[1] |> sparse
-	D = sparse(D1x * Qx)[1] |> sparse
-	return Δ, D
-end
-
 # add the nonlinearity to f
 @views function NL!(f, u, p)
-	@unpack r, μ, ν, c3, c5 = p
+	(;r, μ, ν, c3, c5) = p
 	n = div(length(u), 2)
 	u1 = u[1:n]
 	u2 = u[n+1:2n]
@@ -97,7 +84,11 @@ We then define a problem for computing the bifurcations of the trivial state $u=
 n = 50
 
 l = pi
-Δ, D = Laplacian1D(n, l)
+h = 2l/n
+
+Δ = spdiagm(0 => -2ones(n), 1 => ones(n-1), -1 => ones(n-1) ) / h^2; Δ[1,end] = 1/h^2; Δ[end,1]=1/h^2
+
+D = spdiagm(1 => ones(n-1), -1 => -ones(n-1)) / (2h); D[1,end] = -1/(2h);D[end, 1] = 1/(2h)
 
 # model parameters
 par_cgl = (r = 0.0, μ = 0.5, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, Δ), Db = blockdiag(D, D), δ = 1.0, N = 2n)

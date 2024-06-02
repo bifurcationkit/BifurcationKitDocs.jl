@@ -19,24 +19,12 @@ $$\tag{E}\begin{aligned}
 with Neumann boundary conditions. We start by encoding the model
 
 ```@example PDPDE
-using Revise
-using DiffEqOperators, ForwardDiff, DifferentialEquations, SparseArrays
+using Revise, ForwardDiff, DifferentialEquations, SparseArrays
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
 f(u, v, p) = p.η * (      u + p.a * v - p.C * u * v - u * v^2)
 g(u, v, p) = p.η * (p.H * u + p.b * v + p.C * u * v + u * v^2)
-
-function Laplacian(N, lx, bc = :Dirichlet)
-	hx = 2lx/N
-	D2x = CenteredDifference(2, 2, hx, N)
-	if bc == :Neumann
-		Qx = Neumann0BC(hx)
-	elseif bc == :Dirichlet
-		Qx = Dirichlet0BC(typeof(hx))
-	end
-	D2xsp = sparse(D2x * Qx)[1]
-end
 
 function NL!(dest, u, p, t = 0.)
 	N = div(length(u), 2)
@@ -66,9 +54,10 @@ We can now perform bifurcation of the following Turing solution:
 N = 100
 n = 2N
 lx = 3pi/2
+h = 2lx/N
 X = LinRange(-lx,lx, N)
 
-Δ = Laplacian(N, lx, :Neumann)
+Δ = spdiagm(0 => -2ones(N), 1 => ones(N-1), -1 => ones(N-1) ) / h^2; Δ[1,1]=Δ[end,end]=-1/h^2
 D = 0.08
 par_br = (η = 1.0, a = -1., b = -3/2., H = 3.0, D = D, C = -0.6, Δ = blockdiag(D*Δ, Δ))
 

@@ -13,7 +13,7 @@ with Dirichlet boundary conditions. We use a Sparse Matrix to express the operat
 
 ```julia
 using Revise
-using SparseArrays, DiffEqOperators
+using SparseArrays
 import LinearAlgebra: I, norm
 using BifurcationKit
 using Plots
@@ -34,8 +34,7 @@ const _weight = rand(N)
 normweighted(x) = norm(_weight .* x)
 
 # boundary condition
-Q = Dirichlet0BC(h |> typeof)
-Δ = sparse(CenteredDifference(2, 2, h, N) * Q)[1]
+Δ = spdiagm(0 => -2ones(N), 1 => ones(N-1), -1 => ones(N-1) ) / h^2
 L1 = -(I + Δ)^2
 
 # functional of the problem

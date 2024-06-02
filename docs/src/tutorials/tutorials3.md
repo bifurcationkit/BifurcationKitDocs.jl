@@ -90,9 +90,6 @@ end
 nothing #hide
 ```
 
-!!! tip "Tip"
-    We could have used `DiffEqOperators.jl` like for the Swift-Hohenberg tutorial instead of writing our laplacian ourselves.
-
 Finally, it will prove useful to have access to the hessian and third derivative
 
 We shall now compute the equilibria and their stability.

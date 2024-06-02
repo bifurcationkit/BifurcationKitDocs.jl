@@ -12,25 +12,26 @@ $$\dot x = Ax+g(x)$$
 where $A$ is the infinitesimal generator of a $C_0$-semigroup. We use the same beginning as in [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl):
 
 ```julia
-using Revise
-using DiffEqOperators, DifferentialEquations
+using Revise, DifferentialEquations
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 
 function Laplacian2D(Nx, Ny, lx, ly)
-	hx = 2lx/Nx
-	hy = 2ly/Ny
-	D2x = CenteredDifference(2, 2, hx, Nx)
-	D2y = CenteredDifference(2, 2, hy, Ny)
+    hx = 2lx/Nx
+    hy = 2ly/Ny
+    D2x = spdiagm(0 => -2ones(Nx), 1 => ones(Nx-1), -1 => ones(Nx-1) ) / hx^2
+    D2y = spdiagm(0 => -2ones(Ny), 1 => ones(Ny-1), -1 => ones(Ny-1) ) / hy^2
 
-	Qx = Dirichlet0BC(typeof(hx))
-	Qy = Dirichlet0BC(typeof(hy))
+    D2x[1,1] = -2/hx^2
+    D2x[end,end] = -2/hx^2
 
-	D2xsp = sparse(D2x * Qx)[1]
-	D2ysp = sparse(D2y * Qy)[1]
+    D2y[1,1] = -2/hy^2
+    D2y[end,end] = -2/hy^2
 
-	A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
-	return A, D2x
+    D2xsp = sparse(D2x)
+    D2ysp = sparse(D2y)
+    A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
+    return A, D2x
 end
 ```
 

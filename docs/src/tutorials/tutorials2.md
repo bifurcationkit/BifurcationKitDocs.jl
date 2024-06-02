@@ -12,7 +12,6 @@ $$-(I+\Delta)^2 u+l\cdot u +\nu u^2-u^3 = 0$$
 with Neumann boundary conditions. The full example is in the file `example/SH2d-fronts.jl`. This example is also treated in the MATLAB package [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/). We use a Sparse Matrix to express the operator $L_1=(I+\Delta)^2$.
 
 ```@example sh2dFD
-using DiffEqOperators
 using BifurcationKit, Plots, SparseArrays
 import LinearAlgebra: I, norm
 const BK = BifurcationKit
@@ -26,17 +25,22 @@ Ny = 100
 lx = 4*2pi
 ly = 2*2pi/sqrt(3)
 
-# we use DiffEqOperators to compute the Laplacian operator
 function Laplacian2D(Nx, Ny, lx, ly)
-	hx = 2lx/Nx
-	hy = 2ly/Ny
-	D2x = CenteredDifference(2, 2, hx, Nx)
-	D2y = CenteredDifference(2, 2, hy, Ny)
-	Qx = Neumann0BC(hx)
-	Qy = Neumann0BC(hy)
+    hx = 2lx/Nx
+    hy = 2ly/Ny
+    D2x = spdiagm(0 => -2ones(Nx), 1 => ones(Nx-1), -1 => ones(Nx-1) ) / hx^2
+    D2y = spdiagm(0 => -2ones(Ny), 1 => ones(Ny-1), -1 => ones(Ny-1) ) / hy^2
 
-	A = kron(sparse(I, Ny, Ny), sparse(D2x * Qx)[1]) + kron(sparse(D2y * Qy)[1], sparse(I, Nx, Nx))
-	return A, D2x
+    D2x[1,1] = -1/hx^2
+    D2x[end,end] = -1/hx^2
+
+    D2y[1,1] = -1/hy^2
+    D2y[end,end] = -1/hy^2
+
+    D2xsp = sparse(D2x)
+    D2ysp = sparse(D2y)
+    A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
+    return A, D2x
 end
 ```
 
