@@ -77,7 +77,7 @@ opts_br = ContinuationPar(dsmax = 0.04, ds = -0.01, p_min = -1.8,
 br = continuation(re_make(probBif, params = (@set par_br.C = -0.2)), PALC(), opts_br;
 	plot = true, verbosity = 3)
 
-scene = title!("")
+plot(br)
 ```
 
 ## Periodic orbits from the Hopf point (Standard Shooting)

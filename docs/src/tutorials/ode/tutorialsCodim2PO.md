@@ -162,16 +162,16 @@ brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 
 scene = plot(brpo_pd)
 ```
 
-## Continuation of Fold / PD of periodic orbits with Shooting
+## Continuation of Fold / PD of periodic orbits with Collocation
 
 We continue the previously detected fold/period-doubling bifurcations as function of two parameters and detect codim 2 bifurcations. We first start with the computation of the curve of Folds.
 
 ```@example TUTPPREY
-opts_posh_fold = ContinuationPar(br_fold_sh.contparams, detect_bifurcation = 3, max_steps = 100, p_min = 0.01, p_max = 1.2)
-@set! opts_posh_fold.newton_options.tol = 1e-12
+opts_pocoll_fold = ContinuationPar(brpo_fold.contparams, detect_bifurcation = 3, max_steps = 100, p_min = 0.01, p_max = 1.2)
+@set! opts_pocoll_fold.newton_options.tol = 1e-12
 
-fold_po_sh2 = continuation(br_fold_sh, 1, (@lens _.ϵ), opts_posh_fold;
-		# verbosity = 2, plot = true,
+fold_po_coll2 = continuation(brpo_fold, 1, (@lens _.ϵ), opts_pocoll_fold;
+		verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = :minaug,
 		start_with_eigen = false,
@@ -179,7 +179,7 @@ fold_po_sh2 = continuation(br_fold_sh, 1, (@lens _.ϵ), opts_posh_fold;
 		callback_newton = BK.cbMaxNorm(1),
 		)
 
-fold_po_sh1 = continuation(br_fold_sh, 2, (@lens _.ϵ), opts_posh_fold;
+fold_po_coll1 = continuation(brpo_fold, 2, (@lens _.ϵ), opts_pocoll_fold;
 		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = :minaug,
@@ -197,9 +197,9 @@ sol2 = solve(remake(prob_de, p = par_pop2, u0 = [0.1,0.1,1,0], tspan=(0,1000)), 
 sol2 = solve(remake(sol2.prob, tspan = (0,10), u0 = sol2[end]), Rodas5())
 plot(sol2, xlims= (8,10))
 
-probshpd, ci = generate_ci_problem(ShootingProblem(M=3), re_make(prob, params = sol2.prob.p), remake(prob_de, p = par_pop2), sol2, 1.; alg = Rodas5())
+probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 3), re_make(prob, params = sol2.prob.p), sol2, 1.)
 
-prob2 = @set probshpd.lens = @lens _.ϵ
+prob2 = @set probcoll.prob_vf.lens = @lens _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);
 	# verbosity = 3, plot = true,
 	argspo...,
@@ -208,7 +208,7 @@ brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 
 
 opts_pocoll_pd = ContinuationPar(brpo_pd.contparams, max_steps = 40, p_min = 1.e-2, dsmax = 1e-2, ds = -1e-3)
 @set! opts_pocoll_pd.newton_options.tol = 1e-12
-pd_po_sh2 = continuation(brpo_pd, 2, (@lens _.b0), opts_pocoll_pd;
+pd_po_coll2 = continuation(brpo_pd, 2, (@lens _.b0), opts_pocoll_pd;
 		# verbosity = 3,
 		detect_codim2_bifurcation = 2,
 		start_with_eigen = false,
@@ -218,8 +218,8 @@ pd_po_sh2 = continuation(brpo_pd, 2, (@lens _.b0), opts_pocoll_pd;
 		bothside = true,
 		)
 
-plot(fold_po_sh1, fold_po_sh2, branchlabel = ["FOLD", "FOLD"])
-plot!(pd_po_sh2, vars = (:ϵ, :b0), branchlabel = "PD")
+plot(fold_po_coll1, fold_po_coll2, branchlabel = ["FOLD", "FOLD"])
+plot!(pd_po_coll2, vars = (:ϵ, :b0), branchlabel = "PD")
 ```
 
 ## References

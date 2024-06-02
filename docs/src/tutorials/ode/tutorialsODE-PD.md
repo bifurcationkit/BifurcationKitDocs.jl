@@ -143,12 +143,12 @@ prob_ode = ODEProblem(lur!, copy(z0), (0., 1.), par_lur; abstol = 1e-11, reltol 
 
 # continuation parameters
 # we decrease a bit the newton tolerance to help automatic branch switching from PD point
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= -0.001, newton_options = NewtonPar(tol = 1e-8), tol_stability = 1e-5, n_inversion = 8, nev = 3)
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds= -0.001, newton_options = NewtonPar(tol = 1e-9), tol_stability = 1e-5, n_inversion = 8, nev = 3)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 5 sections
-	ShootingProblem(5, prob_ode, Rodas5(); parallel = true);
+	ShootingProblem(15, prob_ode, Rodas5(); parallel = true);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -156,7 +156,7 @@ br_po = continuation(
 	callback_newton = BK.cbMaxNorm(10),
 	normC = norminf)
 
-scene = title!("")
+plot(br_po)
 ```
 
 We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
@@ -164,9 +164,9 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, 
-	setproperties(br_po.contparams, max_steps = 20, ds = 0.008);
+	setproperties(br_po.contparams, max_steps = 20, ds = -0.008);
 	plot = true, verbosity = 2,
-	δp = -0.005, override = true,
+	δp = -0.005, ampfactor = 0.1,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## add previous branch
