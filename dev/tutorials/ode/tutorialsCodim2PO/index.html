@@ -4,12 +4,12 @@
 \dot{y} &amp; =e \frac{a x y}{b_0(1+\varepsilon u)+x}-d y \\
 \dot{u} &amp; =u-2 \pi v-\left(u^2+v^2\right) u \\
 \dot{v} &amp; =2 \pi u+v-\left(u^2+v^2\right) v
-\end{aligned}\right.\]</p><p>This tutorial is useful in that we show how to start periodic orbits continuation from solutions obtained from solving ODEs. We are interested in cases where <span>$(u,v)\neq (0,0)$</span> for which we have only periodic solutions. Thus, we cannot rely on branching from equilibria to find these periodic orbits.</p><pre><code class="language-julia hljs">using Revise, Parameters, Plots
+\end{aligned}\right.\]</p><p>This tutorial is useful in that we show how to start periodic orbits continuation from solutions obtained from solving ODEs. We are interested in cases where <span>$(u,v)\neq (0,0)$</span> for which we have only periodic solutions. Thus, we cannot rely on branching from equilibria to find these periodic orbits.</p><pre><code class="language-julia hljs">using Revise, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
 function Pop!(du, X, p, t = 0)
-	@unpack r,K,a,ϵ,b0,e,d, = p
+	(;r,K,a,ϵ,b0,e,d) = p
 	x, y, u, v = X
 	p = a * x / (b0 * (1 + ϵ * u) + x)
 	du[1] = r * (1 - x/K) * x - p * y
@@ -32,7 +32,7 @@ prob_de = ODEProblem(Pop!, z0, (0,200.), par_pop)
 sol = solve(prob_de, Rodas5())
 prob_de = ODEProblem(Pop!, sol.u[end], (0,3.), par_pop, reltol = 1e-8, abstol = 1e-10)
 sol = solve(prob_de, Rodas5())
-plot(sol)</code></pre><img src="3e91d675.svg" alt="Example block output"/><h2 id="Utility-functions"><a class="docs-heading-anchor" href="#Utility-functions">Utility functions</a><a id="Utility-functions-1"></a><a class="docs-heading-anchor-permalink" href="#Utility-functions" title="Permalink"></a></h2><p>We start with two helper functions that record and plot the periodic orbits. The following works for shooting, collocation and trapezoid methods for computing periodic orbits.</p><pre><code class="language-julia hljs">argspo = (record_from_solution = (x, p) -&gt; begin
+plot(sol)</code></pre><img src="877981d3.svg" alt="Example block output"/><h2 id="Utility-functions"><a class="docs-heading-anchor" href="#Utility-functions">Utility functions</a><a id="Utility-functions-1"></a><a class="docs-heading-anchor-permalink" href="#Utility-functions" title="Permalink"></a></h2><p>We start with two helper functions that record and plot the periodic orbits. The following works for shooting, collocation and trapezoid methods for computing periodic orbits.</p><pre><code class="language-julia hljs">argspo = (record_from_solution = (x, p) -&gt; begin
 		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
@@ -53,11 +53,11 @@ brpo_fold = continuation(probtrap, ci, PALC(), opts_po_cont;
 	argspo...
 	)
 
-scene = plot(brpo_fold)</code></pre><img src="4fb07453.svg" alt="Example block output"/><p>We continue w.r.t. to <span>$\epsilon$</span> and find a period-doubling bifurcation.</p><pre><code class="language-julia hljs">prob2 = @set probtrap.prob_vf.lens = @lens _.ϵ
+scene = plot(brpo_fold)</code></pre><img src="902b0b23.svg" alt="Example block output"/><p>We continue w.r.t. to <span>$\epsilon$</span> and find a period-doubling bifurcation.</p><pre><code class="language-julia hljs">prob2 = @set probtrap.prob_vf.lens = @lens _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), opts_po_cont;
 	argspo...
 	)
-scene = plot(brpo_pd)</code></pre><img src="95cbdcc5.svg" alt="Example block output"/><h2 id="Periodic-orbits-with-parallel-standard-shooting"><a class="docs-heading-anchor" href="#Periodic-orbits-with-parallel-standard-shooting">Periodic orbits with parallel standard shooting</a><a id="Periodic-orbits-with-parallel-standard-shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-with-parallel-standard-shooting" title="Permalink"></a></h2><p>We are now ready to build a periodic orbit problem from a solution <code>sol::ODEProblem</code>.</p><pre><code class="language-julia hljs">probsh, cish = generate_ci_problem( ShootingProblem(M=3),
+scene = plot(brpo_pd)</code></pre><img src="37827239.svg" alt="Example block output"/><h2 id="Periodic-orbits-with-parallel-standard-shooting"><a class="docs-heading-anchor" href="#Periodic-orbits-with-parallel-standard-shooting">Periodic orbits with parallel standard shooting</a><a id="Periodic-orbits-with-parallel-standard-shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-with-parallel-standard-shooting" title="Permalink"></a></h2><p>We are now ready to build a periodic orbit problem from a solution <code>sol::ODEProblem</code>.</p><pre><code class="language-julia hljs">probsh, cish = generate_ci_problem( ShootingProblem(M=3),
 	prob, prob_de, sol, 2.; alg = Rodas5(), abstol = 1e-12, reltol = 1e-10)
 
 opts_po_cont = setproperties(opts_br, max_steps = 50, tol_stability = 1e-3)
@@ -65,11 +65,11 @@ br_fold_sh = continuation(probsh, cish, PALC(tangent = Bordered()), opts_po_cont
 	argspo...
 )
 
-scene = plot(br_fold_sh)</code></pre><img src="d3955c14.svg" alt="Example block output"/><p>We continue w.r.t. to <span>$\epsilon$</span> and find a period-doubling bifurcation.</p><pre><code class="language-julia hljs">probsh2 = @set probsh.lens = @lens _.ϵ
+scene = plot(br_fold_sh)</code></pre><img src="69377b94.svg" alt="Example block output"/><p>We continue w.r.t. to <span>$\epsilon$</span> and find a period-doubling bifurcation.</p><pre><code class="language-julia hljs">probsh2 = @set probsh.lens = @lens _.ϵ
 brpo_pd_sh = continuation(probsh2, cish, PALC(), opts_po_cont;
 	argspo...
 	)
-scene = plot(brpo_pd_sh)</code></pre><img src="3ddae67e.svg" alt="Example block output"/><h2 id="Periodic-orbits-with-orthogonal-collocation"><a class="docs-heading-anchor" href="#Periodic-orbits-with-orthogonal-collocation">Periodic orbits with orthogonal collocation</a><a id="Periodic-orbits-with-orthogonal-collocation-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-with-orthogonal-collocation" title="Permalink"></a></h2><p>We do the same as in the previous section but using orthogonal collocation. This is the most reliable and precise method for ODE. When the dimension of the ODE is large, it becomes prohibitive.</p><pre><code class="language-julia hljs"># this is the function which builds probcoll from sol
+scene = plot(brpo_pd_sh)</code></pre><img src="81ae2a60.svg" alt="Example block output"/><h2 id="Periodic-orbits-with-orthogonal-collocation"><a class="docs-heading-anchor" href="#Periodic-orbits-with-orthogonal-collocation">Periodic orbits with orthogonal collocation</a><a id="Periodic-orbits-with-orthogonal-collocation-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-with-orthogonal-collocation" title="Permalink"></a></h2><p>We do the same as in the previous section but using orthogonal collocation. This is the most reliable and precise method for ODE. When the dimension of the ODE is large, it becomes prohibitive.</p><pre><code class="language-julia hljs"># this is the function which builds probcoll from sol
 probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 4),
 	prob, sol, 2.)
 
@@ -77,12 +77,12 @@ opts_po_cont = setproperties(opts_br, max_steps = 50, tol_stability = 1e-8)
 brpo_fold = continuation(probcoll, ci, PALC(), opts_po_cont;
 	argspo...
 	)
-scene = plot(brpo_fold)</code></pre><img src="7192660a.svg" alt="Example block output"/><p>We continue w.r.t. to <span>$\epsilon$</span> and find a period-doubling bifurcation.</p><pre><code class="language-julia hljs">prob2 = @set probcoll.prob_vf.lens = @lens _.ϵ
+scene = plot(brpo_fold)</code></pre><img src="bb4e5a3a.svg" alt="Example block output"/><p>We continue w.r.t. to <span>$\epsilon$</span> and find a period-doubling bifurcation.</p><pre><code class="language-julia hljs">prob2 = @set probcoll.prob_vf.lens = @lens _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);
 	argspo...
 	)
 
-scene = plot(brpo_pd)</code></pre><img src="6dbb3cb5.svg" alt="Example block output"/><h2 id="Continuation-of-Fold-/-PD-of-periodic-orbits-with-Shooting"><a class="docs-heading-anchor" href="#Continuation-of-Fold-/-PD-of-periodic-orbits-with-Shooting">Continuation of Fold / PD of periodic orbits with Shooting</a><a id="Continuation-of-Fold-/-PD-of-periodic-orbits-with-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-of-Fold-/-PD-of-periodic-orbits-with-Shooting" title="Permalink"></a></h2><p>We continue the previously detected fold/period-doubling bifurcations as function of two parameters and detect codim 2 bifurcations. We first start with the computation of the curve of Folds.</p><pre><code class="language-julia hljs">opts_posh_fold = ContinuationPar(br_fold_sh.contparams, detect_bifurcation = 3, max_steps = 100, p_min = 0.01, p_max = 1.2)
+scene = plot(brpo_pd)</code></pre><img src="70aaa90f.svg" alt="Example block output"/><h2 id="Continuation-of-Fold-/-PD-of-periodic-orbits-with-Shooting"><a class="docs-heading-anchor" href="#Continuation-of-Fold-/-PD-of-periodic-orbits-with-Shooting">Continuation of Fold / PD of periodic orbits with Shooting</a><a id="Continuation-of-Fold-/-PD-of-periodic-orbits-with-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-of-Fold-/-PD-of-periodic-orbits-with-Shooting" title="Permalink"></a></h2><p>We continue the previously detected fold/period-doubling bifurcations as function of two parameters and detect codim 2 bifurcations. We first start with the computation of the curve of Folds.</p><pre><code class="language- hljs">opts_posh_fold = ContinuationPar(br_fold_sh.contparams, detect_bifurcation = 3, max_steps = 100, p_min = 0.01, p_max = 1.2)
 @set! opts_posh_fold.newton_options.tol = 1e-12
 
 fold_po_sh2 = continuation(br_fold_sh, 1, (@lens _.ϵ), opts_posh_fold;
@@ -101,26 +101,7 @@ fold_po_sh1 = continuation(br_fold_sh, 2, (@lens _.ϵ), opts_posh_fold;
 		start_with_eigen = false,
 		bothside = true,
 		callback_newton = BK.cbMaxNorm(1),
-		)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">FoldPeriodicOrbitCont</span></span>
- ├─ Number of points: 118
- ├─ Type of vectors: <span class="sgr36"><span class="sgr1">BorderedArray{Vector{Float64}, Float64}</span></span>
- ├─ Parameters (:b0, :ϵ)
- ├─ Parameter <span class="sgr36"><span class="sgr1">ϵ</span></span> starts at 0.01, ends at 0.8311923601788723
- ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
- └─ Special points:
-
-- #  1, <span class="sgr1">endpoint</span> at ϵ ≈ +0.01000000,                                                                     step =   0
-- #  2, <span class="sgr34"><span class="sgr1">    cusp</span></span> at ϵ ≈ +1.09293812 ∈ (+1.09293812, +1.09294521), |δp|=7e-06, [<span class="sgr31"><span class="sgr1">   guessL</span></span>], δ = ( 0,  0), step =  81
-- #  3, <span class="sgr34"><span class="sgr1">      R1</span></span> at ϵ ≈ +1.09250693 ∈ (+1.09250693, +1.09250765), |δp|=7e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  82
-- #  4, <span class="sgr34"><span class="sgr1">    cusp</span></span> at ϵ ≈ +1.06732969 ∈ (+1.06732969, +1.06868095), |δp|=1e-03, [<span class="sgr31"><span class="sgr1">   guessL</span></span>], δ = ( 0,  0), step =  86
-- #  5, <span class="sgr34"><span class="sgr1">    cusp</span></span> at ϵ ≈ +1.06190322 ∈ (+1.06190322, +1.06732969), |δp|=5e-03, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 0,  0), step =  87
-- #  6, <span class="sgr34"><span class="sgr1">    cusp</span></span> at ϵ ≈ +1.06143586 ∈ (+1.06143586, +1.06143623), |δp|=4e-07, [<span class="sgr31"><span class="sgr1">   guessL</span></span>], δ = ( 0,  0), step =  88
-- #  7, <span class="sgr34"><span class="sgr1">    cusp</span></span> at ϵ ≈ +1.05961676 ∈ (+1.05961676, +1.06143586), |δp|=2e-03, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 0,  0), step =  89
-- #  8, <span class="sgr34"><span class="sgr1">    cusp</span></span> at ϵ ≈ +1.05207595 ∈ (+1.05207595, +1.05207603), |δp|=8e-08, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 0,  0), step =  91
-- #  9, <span class="sgr34"><span class="sgr1">    cusp</span></span> at ϵ ≈ +1.09264320 ∈ (+1.09264306, +1.09264320), |δp|=1e-07, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 0,  0), step =  97
-- # 10, <span class="sgr34"><span class="sgr1">    cusp</span></span> at ϵ ≈ +1.09287511 ∈ (+1.09287511, +1.09287665), |δp|=2e-06, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  98
-- # 11, <span class="sgr1">endpoint</span> at ϵ ≈ +0.81731527,                                                                     step = 118
-</code></pre><p>We turn to the computation of the curve of PD points.</p><pre><code class="language-julia hljs">par_pop2 = @set par_pop.b0 = 0.45
+		)</code></pre><p>We turn to the computation of the curve of PD points.</p><pre><code class="language- hljs">par_pop2 = @set par_pop.b0 = 0.45
 sol2 = solve(remake(prob_de, p = par_pop2, u0 = [0.1,0.1,1,0], tspan=(0,1000)), Rodas5())
 sol2 = solve(remake(sol2.prob, tspan = (0,10), u0 = sol2[end]), Rodas5())
 plot(sol2, xlims= (8,10))
@@ -147,9 +128,9 @@ pd_po_sh2 = continuation(brpo_pd, 2, (@lens _.b0), opts_pocoll_pd;
 		)
 
 plot(fold_po_sh1, fold_po_sh2, branchlabel = [&quot;FOLD&quot;, &quot;FOLD&quot;])
-plot!(pd_po_sh2, vars = (:ϵ, :b0), branchlabel = &quot;PD&quot;)</code></pre><img src="3e4b0b29.svg" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+plot!(pd_po_sh2, vars = (:ϵ, :b0), branchlabel = &quot;PD&quot;)</code></pre><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Kuznetsov"><a class="tag is-link" href="#citeref-Kuznetsov">Kuznetsov</a><blockquote><p>Yu.A. Kuznetsov, S. Muratori, and S. Rinaldi. Bifurcations and chaos in a periodic predator-prey model, Internat. J. Bifur. Chaos Appl. Sci. Engr., 2 (1992), 117-128.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.0 on <span class="colophon-date" title="Saturday 20 April 2024 09:27">Saturday 20 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Kuznetsov"><a class="tag is-link" href="#citeref-Kuznetsov">Kuznetsov</a><blockquote><p>Yu.A. Kuznetsov, S. Muratori, and S. Rinaldi. Bifurcations and chaos in a periodic predator-prey model, Internat. J. Bifur. Chaos Appl. Sci. Engr., 2 (1992), 117-128.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Sunday 2 June 2024 21:33">Sunday 2 June 2024</span>. Using Julia version 1.10.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
