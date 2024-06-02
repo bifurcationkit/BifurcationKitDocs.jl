@@ -14,7 +14,7 @@ where $A$ is the infinitesimal generator of a $C_0$-semigroup. We use the same b
 ```julia
 using Revise
 using DiffEqOperators, DifferentialEquations
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 
 function Laplacian2D(Nx, Ny, lx, ly)
@@ -38,7 +38,7 @@ We then encode the PDE:
 
 ```julia
 function NL!(f, u, p, t = 0.)
-	@unpack r, μ, ν, c3, c5 = p
+	(;r, μ, ν, c3, c5) = p
 	n = div(length(u), 2)
 	u1 = @view u[1:n]
 	u2 = @view u[n+1:2n]
@@ -63,7 +63,7 @@ NL(u, p) = NL!(similar(u), u, p)
 Fcgl(u, p, t = 0.) = Fcgl!(similar(u), u, p, t)
 
 function Jcgl(u, p, t = 0.)
-	@unpack r, μ, ν, c3, c5, Δ = p
+	(;r, μ, ν, c3, c5, Δ) = p
 
 	n = div(length(u), 2)
 	u1 = @view u[1:n]

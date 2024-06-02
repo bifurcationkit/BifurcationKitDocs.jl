@@ -19,12 +19,12 @@ $$\tag{E}\left\{\begin{aligned}
 This tutorial is useful in that we show how to start periodic orbits continuation from solutions obtained from solving ODEs. We are interested in cases where $(u,v)\neq (0,0)$ for which we have only periodic solutions. Thus, we cannot rely on branching from equilibria to find these periodic orbits.
 
 ```@example TUTPPREY
-using Revise, Parameters, Plots
+using Revise, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
 function Pop!(du, X, p, t = 0)
-	@unpack r,K,a,ϵ,b0,e,d, = p
+	(;r,K,a,ϵ,b0,e,d) = p
 	x, y, u, v = X
 	p = a * x / (b0 * (1 + ϵ * u) + x)
 	du[1] = r * (1 - x/K) * x - p * y

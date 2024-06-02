@@ -23,7 +23,7 @@ This is a good example for the use of automatic bifurcation diagram as we shall 
 
 ```julia
 using Revise, LinearAlgebra, Plots
-using Parameters, Setfield, ForwardDiff
+using ForwardDiff
 using BifurcationKit
 const  BK = BifurcationKit
 
@@ -36,7 +36,7 @@ function generateLinear(n)
 end
 
 function Fks1d(a, p)
-	@unpack Δ, Δ2, λ, N = p
+	(;Δ, Δ2, λ, N) = p
 	out = (2λ) .* (Δ2 .* a)
 	out .+= (Δ .* a)
 	for l=1:N
@@ -69,7 +69,8 @@ par_ks = (Δ = Δ, Δ2 = Δ2, λ = 0.75, N = N)
 # we define a Bifurcation Problem
 prob = BifurcationProblem(Fks1d, zeros(N), par_ks, (@lens _.λ),
   record_from_solution = (x, p) -> (s = sum(x), u2 = x[3], nrm = norm(x)),
-  plot_solution = (x, p; kwargs...) -> plot!(Fun(SinSpace(), x) ; kwargs...),)
+  plot_solution = (x, p; kwargs...) -> plot!(Fun(SinSpace(), x) ; kwargs...),
+  )
 ```
 
 and continuation options

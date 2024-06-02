@@ -19,13 +19,13 @@ We start by writing the PDE
 
 ```@example TUTBRUaut
 using Revise
-using BifurcationKit, Plots, SparseArrays, Parameters
+using BifurcationKit, Plots, SparseArrays
 const BK = BifurcationKit
 
 f1(u, v) = u * u * v
 
 function Fbru!(f, x, p, t = 0)
-	@unpack α, β, D1, D2, l = p
+	(;α, β, D1, D2, l) = p
 	n = div(length(x), 2)
 	h2 = 1.0 / n^2
 	c1 = D1 / l^2 / h2
@@ -56,7 +56,7 @@ For computing periodic orbits, we will need a Sparse representation of the Jacob
 
 ```@example TUTBRUaut
 function Jbru_sp(x, p)
-	@unpack α, β, D1, D2, l = p
+	(;α, β, D1, D2, l) = p
 	# compute the Jacobian using a sparse representation
 	n = div(length(x), 2)
 	h = 1.0 / n; h2 = h*h

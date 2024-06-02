@@ -33,7 +33,7 @@ x_{3}+I C\left(x_{1}, x_{2}\right) \\
 It is easy to encode the DAE as follows. The mass matrix is defined next.
 
 ```@example TUTDAE1
-using Revise, Parameters, Plots
+using Revise, Plots
 using BifurcationKit
 using LinearAlgebra # for eigen
 const BK = BifurcationKit
@@ -47,7 +47,7 @@ IE(x1, x2, p) = -f(x2, p) + f(x1, p) / p.αF
 IC(x1, x2, p) = f(x2, p)/ p.αR - f(x1, p)
 
 function Colpitts!(dz, z, p, t = 0)
-	@unpack C1, C2, L, R, Is, q, αF, αR, V, μ = p
+	(;C1, C2, L, R, Is, q, αF, αR, V, μ) = p
 	x1, x2, x3, x4 = z
 	dz[1] = (x1 - V) / R + IE(x1, x2, p)
 	dz[2] =	x3 + IC(x1, x2, p)
@@ -89,8 +89,8 @@ end
 # continuation options
 optn = NewtonPar(tol = 1e-13, max_iterations = 10, eigsolver = EigenDAE(Be))
 opts_br = ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plot_every_step = 3, max_steps = 1000, newton_options = optn)
-	opts_br = @set opts_br.newton_options.verbose = false
-	br = continuation(prob, PALC(), opts_br; normC = norminf)
+opts_br = @set opts_br.newton_options.verbose = false
+br = continuation(prob, PALC(), opts_br; normC = norminf)
 
 scene = plot(br, vars = (:param, :x1))
 ```

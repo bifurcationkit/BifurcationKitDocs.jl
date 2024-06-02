@@ -25,7 +25,7 @@ $$\left\{\begin{array}{l}
 We start with some imports:
 
 ```@example LORENZ84
-using Revise, Parameters, Plots
+using Revise, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -38,7 +38,7 @@ We can now encode the vector field (E) in a function.
 ```@example LORENZ84
 # vector field
 function Lor(u, p)
-	@unpack α,β,γ,δ,G,F,T = p
+	(;α,β,γ,δ,G,F,T) = p
 	X,Y,Z,U = u
 	[
 		-Y^2 - Z^2 - α*X + α*F - γ*U^2,

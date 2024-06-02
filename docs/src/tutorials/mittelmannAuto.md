@@ -20,7 +20,7 @@ We start with some imports:
 ```julia
 using Revise
 using DiffEqOperators, ForwardDiff
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 
 # define the sup norm
@@ -53,7 +53,7 @@ end
 dϕ(u, λ) = -10(1-λ*exp(u))
 
 function NL!(dest, u, p)
-	@unpack λ = p
+	(;λ) = p
 	dest .= ϕ.(u, λ)
 	return dest
 end

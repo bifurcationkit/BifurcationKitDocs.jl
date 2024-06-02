@@ -24,13 +24,13 @@ The model is interesting on its own because the branch of periodic solutions con
 It is easy to encode the ODE as follows
 
 ```@example TUTODE
-using Revise, Parameters, Plots
+using Revise, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
 # vector field
 function TMvf!(dz, z, p, t = 0)
-	@unpack J, α, E0, τ, τD, τF, U0 = p
+	(;J, α, E0, τ, τD, τF, U0) = p
 	E, x, u = z
 	SS0 = J * u * x * E + E0
 	SS1 = α * log(1 + exp(SS0 / α))

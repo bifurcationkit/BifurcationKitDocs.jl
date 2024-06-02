@@ -5,6 +5,23 @@ Pages = ["migration.md"]
 Depth = 2
 ```
 
+We only highlight changes that are potentially breaking for the user.
+
+## Version 0.3.4
+- correct selection of default linear solver for MoorePenrose
+- pass iterator for plotting
+- `update_section_every_step` becomes a UInt
+- add fields in `PeriodDoublingProblemMinimallyAugmented` and `NeimarkSackerProblemMinimallyAugmented` for holding Resonance test values
+- add more abstract types `<: AbstractWrapperPOProblem`
+- introduce function `get_lenses`
+- introduce new struct `FinalisePO` to wrap finalizers for periodic orbits
+- `AbstractProblemMinimallyAugmented` becomes parametric
+- rewrite `get_bif_point_codim2`
+- add callback `cbMaxNormAndΔp`
+- `FloquetWrapper` becomes mutable
+
+## Version 0.3.3
+
 ## Migration from v0.2.x to v0.3.x
 
 A new version v0.3 has been tagged in which the function names, keyword arguments,... follow the Julia convention. There are a lot of breaking changes. For example, `callbackN` has been changed to `callback_newton`.

@@ -13,7 +13,7 @@ with Dirichlet boundary conditions. We use a Sparse Matrix to express the operat
 
 ```julia
 using Revise
-using SparseArrays, DiffEqOperators, Parameters
+using SparseArrays, DiffEqOperators
 import LinearAlgebra: I, norm
 using BifurcationKit
 using Plots
@@ -40,7 +40,7 @@ L1 = -(I + Δ)^2
 
 # functional of the problem
 function R_SH(u, par)
-	@unpack λ, ν, L1 = par
+	(;λ, ν, L1) = par
 	out = similar(u)
 	out .= L1 * u .+ λ .* u .+ ν .* u.^3 - u.^5
 end

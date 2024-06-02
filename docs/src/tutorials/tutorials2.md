@@ -9,10 +9,10 @@ We study the following PDE
 
 $$-(I+\Delta)^2 u+l\cdot u +\nu u^2-u^3 = 0$$
 
-with Neumann boundary conditions. This full example is in the file `example/SH2d-fronts.jl`. This example is also treated in the MATLAB package [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/). We use a Sparse Matrix to express the operator $L_1=(I+\Delta)^2$.
+with Neumann boundary conditions. The full example is in the file `example/SH2d-fronts.jl`. This example is also treated in the MATLAB package [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/). We use a Sparse Matrix to express the operator $L_1=(I+\Delta)^2$.
 
 ```@example sh2dFD
-using DiffEqOperators, Parameters
+using DiffEqOperators
 using BifurcationKit, Plots, SparseArrays
 import LinearAlgebra: I, norm
 const BK = BifurcationKit
@@ -44,12 +44,12 @@ We also write the functional and its Jacobian which is a Sparse Matrix
 
 ```@example sh2dFD
 function F_sh(u, p)
-	@unpack l, ν, L1 = p
+	(;l, ν, L1) = p
 	return -L1 * u .+ (l .* u .+ ν .* u.^2 .- u.^3)
 end
 
 function dF_sh(u, p)
-	@unpack l, ν, L1 = p
+	(;l, ν, L1) = p
 	return -L1 .+ spdiagm(0 => l .+ 2 .* ν .* u .- 3 .* u.^2)
 end
 

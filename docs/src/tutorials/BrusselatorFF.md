@@ -17,7 +17,7 @@ We focus on computing a snaking branch of periodic orbits using spectral methods
 
 ```julia
 using Revise, BifurcationKit
-using Brusselator, Plots, Parameters, ForwardDiff, LinearAlgebra, Setfield, DiffEqBase
+using Brusselator, Plots, ForwardDiff, LinearAlgebra, Setfield, DiffEqBase
 using FFTW: irfft
 const BK = BifurcationKit
 
@@ -115,7 +115,7 @@ end
 
 # compute the flow from x up to time t
 function ϕ(x, p, t)
-	@unpack pb, D, N = p
+	(;pb, D, N) = p
 	_setD!(D, pb)
 
 	# set initial condition
@@ -150,7 +150,7 @@ We also need the vector field
 
 ```julia
 function vf(x, p)
-	@unpack pb, D, N = p
+	(;pb, D, N) = p
 	# set parameter in prob
 	pb.eqn.L[:, 1] .*= D / pb.params.D
 	pb.params.D = D

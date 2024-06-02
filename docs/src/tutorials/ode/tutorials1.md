@@ -5,7 +5,7 @@
 This is a simple example in which we aim at solving $\Delta T+\alpha N(T,\beta)=0$ with boundary conditions $T(0) = T(1)=\beta$. This example is coded in `examples/chan.jl`. We start with some imports:
 
 ```@example TUT1ODE
-using BifurcationKit, LinearAlgebra, Plots, Parameters
+using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
 N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
@@ -16,7 +16,7 @@ We then write our functional:
 
 ```@example TUT1ODE
 function F_chan(x, p)
-	@unpack α, β = p
+	(;α, β) = p
 	f = similar(x)
 	n = length(x)
 	f[1] = x[1] - β

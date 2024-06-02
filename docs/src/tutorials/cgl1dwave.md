@@ -16,7 +16,7 @@ with periodic boundary conditions. We discretize the circle $\Omega = (-\pi,\pi)
 ```@example CGL1DWAVE
 using Revise
 using DiffEqOperators, ForwardDiff
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters, Setfield
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 const FD = ForwardDiff
 
@@ -64,7 +64,7 @@ Fcgl(u, p, t = 0) = Fcgl!(similar(u), u, p)
 
 # analytical expression off the jacobian
 @views function Jcgl(u, p)
-	@unpack r, μ, ν, c3, c5, Δ = p
+	(;r, μ, ν, c3, c5, Δ) = p
 
 	n = div(length(u), 2)
 	u1 = u[1:n]

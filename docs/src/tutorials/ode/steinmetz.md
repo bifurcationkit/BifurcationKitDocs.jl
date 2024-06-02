@@ -22,12 +22,12 @@ We start by coding the bifurcation problem.
 
 ```@example STEINMETZ
 using Revise
-using ForwardDiff, Parameters, Plots
+using ForwardDiff, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
 function SL!(du, u, p, t = 0)
-	@unpack k1, k2, k3, k4, k5, k6, k7, k₋₇, k8 = p
+	(;k1, k2, k3, k4, k5, k6, k7, k₋₇, k8) = p
 	A,B,X,Y = u
 
 	du[1] = -k1*A*B*X - k3*A*B*Y + k7 - k₋₇*A

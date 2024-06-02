@@ -25,7 +25,7 @@ with Dirichlet boundary conditions. We discretize the square $\Omega = (0,L_x)\t
 ```@example CGL2d
 using Revise
 using DiffEqOperators, ForwardDiff
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 
 function Laplacian2D(Nx, Ny, lx, ly)
@@ -50,7 +50,7 @@ It is then straightforward to write the vector field
 ```@example CGL2d
 # this encodes the nonlinearity
 function NL(u, p)
-	@unpack r, μ, ν, c3, c5, γ = p
+	(;r, μ, ν, c3, c5, γ) = p
 	n = div(length(u), 2)
 	u1 = @view u[1:n]
 	u2 = @view u[n+1:2n]
@@ -79,7 +79,7 @@ and its jacobian:
 
 ```@example CGL2d
 function Jcgl(u, p)
-	@unpack r, μ, ν, c3, c5, Δ = p
+	(;r, μ, ν, c3, c5, Δ) = p
 
 	n = div(length(u), 2)
 	u1 = @view u[1:n]

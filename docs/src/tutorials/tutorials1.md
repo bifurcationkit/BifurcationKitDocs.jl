@@ -10,7 +10,7 @@ Depth = 3
 This is a simple example in which we aim at solving $\Delta T+\alpha N(T,\beta)=0$ with boundary conditions $T(0) = T(1)=\beta$. This example is coded in `examples/chan.jl`. We start with some imports:
 
 ```@example TUT1
-using Revise, BifurcationKit, LinearAlgebra, Plots, Parameters
+using Revise, BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
 N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
@@ -21,7 +21,7 @@ We then write our functional:
 
 ```@example TUT1
 function F_chan(x, p)
-	@unpack α, β = p
+	(;α, β) = p
 	f = similar(x)
 	n = length(x)
 	f[1] = x[1] - β
@@ -145,7 +145,7 @@ dN(x; a = 0.5, b = 0.01) = (1-b*x^2+2*a*x)/(1+b*x^2)^2
 # Very easy to write since we have F_chan.
 # We could use Automatic Differentiation as well
 function dF_chan(x, dx, p)
-	@unpack α, β = p
+	(;α, β) = p
 	out = similar(x)
 	n = length(x)
 	out[1] = dx[1]
@@ -170,7 +170,8 @@ prob = re_make(prob;
 	)
 
 # we can then call the newton solver
-out_mf = @time newton(prob,	optnewton_mf)
+out_mf = newton(prob, @set optnewton_mf.verbose = false) # hide
+out_mf = @time newton(prob, optnewton_mf)
 nothing #hide
 ```
 
@@ -185,7 +186,8 @@ P[1,1:2] .= [1, 0.];P[end,end-1:end] .= [0, 1.]
 
 # define gmres solver with left preconditioner
 ls = GMRESIterativeSolvers(reltol = 1e-4, N = length(sol.u), restart = 10, maxiter = 10, Pl = lu(P))
-	optnewton_mf = NewtonPar(verbose = true, linsolver = ls, tol = 1e-10)
-	out_mf = @time newton(prob, optnewton_mf)
+optnewton_mf = NewtonPar(verbose = true, linsolver = ls, tol = 1e-10)
+out_mf = newton(prob, @set optnewton_mf.verbose = false) # hide
+out_mf = @time newton(prob, optnewton_mf)
 nothing #hide
 ```

@@ -17,13 +17,13 @@ We use this model as a mean to introduce the basics of `BifurcationKit.jl`, name
 It is easy to encode the ODE as follows
 
 ```@example TUTODE0
-using Revise, Parameters, Plots
+using Revise, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
 # vector field
 function TMvf(z, p)
-	@unpack J, α, E0, τ, τD, τF, U0 = p
+	(;J, α, E0, τ, τD, τF, U0) = p
 	E, x, u = z
 	SS0 = J * u * x * E + E0
 	SS1 = α * log(1 + exp(SS0 / α))

@@ -20,9 +20,9 @@ $$\left\{
 We start by discretizing the above PDE based on finite differences.
 
 ```@example DETENGINE
-using Revise, Parameters
+using Revise
 using DiffEqOperators, ForwardDiff, DifferentialEquations, SparseArrays
-using BifurcationKit, LinearAlgebra, Plots, Setfield
+using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
 ω(u, p) = p.k * exp((u - p.uc) / p.α)

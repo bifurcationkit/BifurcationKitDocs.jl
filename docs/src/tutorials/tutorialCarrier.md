@@ -13,7 +13,7 @@ We start with some import
 
 ```@example TUTCARRIER
 using Revise
-using LinearAlgebra, Parameters, SparseArrays, BandedMatrices
+using LinearAlgebra, SparseArrays, BandedMatrices
 
 using BifurcationKit, Plots
 const BK = BifurcationKit
@@ -23,7 +23,7 @@ and a discretization of the problem
 
 ```@example TUTCARRIER
 function F_carr(x, p)
-	@unpack ϵ, X, dx = p
+	(;ϵ, X, dx) = p
 	f = similar(x)
 	n = length(x)
 	f[1] = x[1]
@@ -36,7 +36,7 @@ function F_carr(x, p)
 end
 
 function Jac_carr(x, p)
-	@unpack ϵ, X, dx = p
+	(;ϵ, X, dx) = p
 	n = length(x)
 	J = BandedMatrix{Float64}(undef, (n,n), (1,1))
 	J[band(-1)] .= ϵ^2/dx^2    									# set the diagonal band
@@ -82,7 +82,7 @@ diagram = bifurcationdiagram(prob,
 	# BandedMatrices.
     PALC(bls = BorderingBLS(solver = DefaultLS(), check_precision = false)),
     2,
-	optcont.newton_options)
+	optcont)
 
 scene = plot(diagram)
 ```
@@ -118,7 +118,7 @@ br = @time continuation(
 	setproperties(optcont; ds = -0.00021, dsmin=1e-5, max_steps = 20000,
 		p_max = 0.7, p_min = 0.05, detect_bifurcation = 0, plot_every_step = 40,
 		newton_options = setproperties(optnew; tol = 1e-9, max_iterations = 100, verbose = false));
-	normN = norminf,
+	normC = norminf,
   verbosity = 0,
 	)
 

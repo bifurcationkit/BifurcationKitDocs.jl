@@ -42,10 +42,10 @@ Several examples are provided in [example ODE](@ref nmepo). In the case of PDE, 
 We compute a branch with a Hopf bifurcation:
 
 ```@example hopf_abs
-using BifurcationKit, Parameters, Plots
+using BifurcationKit, Plots
 
 function Fsl(X, p)
-    @unpack r, μ, ν, c3 = p
+    (;r, μ, ν, c3) = p
     u, v = X
     ua = u^2 + v^2
     [

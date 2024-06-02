@@ -182,10 +182,10 @@ $$\begin{aligned}
 The ODE is easily written with a function:
 
 ```@example GETSTARTED3
-using BifurcationKit, Parameters, Plots
+using BifurcationKit, Plots
 
 function Fsl(X, p)
-    @unpack r, μ, ν, c3 = p
+    (;r, μ, ν, c3) = p
     u, v = X
     ua = u^2 + v^2
     [

@@ -16,7 +16,7 @@ As can be seen in the reference above, the bifurcation diagram is significantly 
 
 ```@example TUTLangmuir
 using Revise
-using Parameters, Setfield, SparseArrays
+using SparseArrays
 using BifurcationKit, LinearAlgebra, Plots, ForwardDiff
 const BK = BifurcationKit
 
@@ -65,7 +65,7 @@ end
 
 # implementation of the right hand side of the PDE
 function Flgvf!(out, x, p, t = 0.)
-	@unpack c0, N, Δx, σ, μ, Δg, ν = p
+	(;c0, N, Δx, σ, μ, Δg, ν) = p
 	dx4 = Δx^4
 	dx2 = Δx^2
 	# we declare the residual
@@ -90,7 +90,7 @@ Flgvf(x, p, t = 0) = Flgvf!(similar(x), x, p, t)
 @views function JanaSP(x, p)
 	# 63.446 μs (61 allocations: 137.97 KiB) pour N = 400
 	# 62.807 μs (44 allocations: 168.58 KiB) pour sparse(Jana(x, p))
-	@unpack N, Δx, σ, ν = p
+	(;N, Δx, σ, ν) = p
 	d0  = @. (-6σ/ Δx^4 + 2/ Δx^2*(1-3x^2))
 	d0[1] += σ/ Δx^4
 	d0[end] = -(3σ/ Δx^4 - 1/ Δx^2*(1-3x[N]^2)     + ν/ (2Δx))

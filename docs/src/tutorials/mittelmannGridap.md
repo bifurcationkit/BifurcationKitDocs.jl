@@ -17,7 +17,7 @@ We start by installing the package [GridapBifurcationKit.jl](https://github.com/
 
 ```julia
 using Revise
-using Plots, Gridap, Setfield
+using Plots, Gridap
 using Gridap.FESpaces
 using GridapBifurcationKit, BifurcationKit
 

@@ -17,10 +17,10 @@ with Neumann boundary conditions. We use a Sparse Matrix to express the operator
 We start by defining the associated functional to encode (E).
 
 ```julia
-using Revise, Parameters, KrylovKit
+using Revise, KrylovKit
 using GLMakie # must be imported before BifurcationKit to trigger some imports
 using BifurcationKit
-using LinearAlgebra, SparseArrays, LinearMaps, DiffEqOperators, Setfield
+using LinearAlgebra, SparseArrays, LinearMaps, DiffEqOperators
 const BK = BifurcationKit
 
 function Laplacian3D(Nx, Ny, Nz, lx, ly, lz, bc = :Neumann)
@@ -38,13 +38,13 @@ end
 
 # main functional
 function F_sh(u, p)
-	@unpack l, ν, L1 = p
+	(;l, ν, L1) = p
 	return -(L1 * u) .+ (l .* u .+ ν .* u.^2 .- u.^3)
 end
 
 # differential of the functional
 function dF_sh(u, p, du)
-	@unpack l, ν, L1 = p
+	(;l, ν, L1) = p
 	return -(L1 * du) .+ (l .+ 2 .* ν .* u .- 3 .* u.^2) .* du
 end
 

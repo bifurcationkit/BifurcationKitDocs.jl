@@ -15,7 +15,7 @@ We reconsider the example [Temperature model](@ref temperature) by relying on th
 We start with some imports:
 
 ```julia
-using ApproxFun, LinearAlgebra, Parameters, Setfield
+using ApproxFun, LinearAlgebra
 
 using BifurcationKit, Plots
 const BK = BifurcationKit
@@ -53,14 +53,14 @@ N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
 dN(x; a = 0.5, b = 0.01) = (1-b*x^2+2*a*x)/(1+b*x^2)^2
 
 function F_chan(u, p)
-	@unpack α, β, Δ = p
+	(;α, β, Δ) = p
 	return [Fun(u(0.), domain(u)) - β,
 		Fun(u(1.), domain(u)) - β,
 		Δ * u + α * N(u, b = β)]
 end
 
 function Jac_chan(u, p)
-	@unpack α, β, Δ = p
+	(;α, β, Δ) = p
 	return [Evaluation(u.space, 0.),
 		Evaluation(u.space, 1.),
 		Δ + α * dN(u, b = β)]

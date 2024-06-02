@@ -19,14 +19,14 @@ The model is interesting because there is a period doubling bifurcation and we w
 It is easy to encode the ODE as follows
 
 ```@example TUTLURE
-using Revise, Parameters, Plots
+using Revise, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
 recordFromSolution(x, p) = (u1 = x[1], u2 = x[2])
 
 function lur!(dz, u, p, t = 0)
-	@unpack α, β = p
+	(;α, β) = p
 	x, y, z = u
 	dz[1] = y
 	dz[2] =	z

@@ -16,7 +16,7 @@ where $z=1-x-y-s$.
 We start with some imports:
 
 ```@example TUTCO
-using Revise, Parameters, Plots
+using Revise, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -30,7 +30,7 @@ We encode the vector field (E) in a function.
 ```@example TUTCO
 # vector field of the problem
 function COm(u, p)
-	@unpack q1,q2,q3,q4,q5,q6,k = p
+	(;q1,q2,q3,q4,q5,q6,k) = p
 	x, y, s = u
 	z = 1-x-y-s
 	out = similar(u)

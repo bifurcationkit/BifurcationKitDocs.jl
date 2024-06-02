@@ -25,13 +25,13 @@ $$\left\{\begin{array}{l}
 We recall the problem setting:
 
 ```@example LORENZ84V2
-using Revise, ForwardDiff, Parameters, Plots, LinearAlgebra
+using Revise, ForwardDiff, Plots, LinearAlgebra
 using BifurcationKit
 const BK = BifurcationKit
 
 # vector field
 function Lor(u, p, t = 0)
-	@unpack α,β,γ,δ,G,F,T = p
+	(;α,β,γ,δ,G,F,T) = p
 	X,Y,Z,U = u
 	[
 		-Y^2 - Z^2 - α*X + α*F - γ*U^2,

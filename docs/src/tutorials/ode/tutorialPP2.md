@@ -17,14 +17,14 @@ u_{2}^{\prime}=-u_{2}+3 u_{1} u_{2}
 It is easy to encode the ODE as follows
 
 ```@example TUTPP2
-using Revise, Parameters, Plots
+using Revise, Plots
 using BifurcationKit
 
 # function to record information from a solution
 recordFromSolution(x, p) = (u1 = x[1], u2 = x[2])
 
 function pp2!(dz, z, p, t = 0)
-	@unpack p1, p2, p3, p4 = p
+	(;p1, p2, p3, p4) = p
 	u1, u2 = z
 	dz[1] = p2 * u1 * (1 - u1) - u1 * u2 - p1 * (1 - exp(-p3 * u1))
 	dz[2] =	-u2 + p4 * u1 * u2

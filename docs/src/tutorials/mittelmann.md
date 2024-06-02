@@ -16,7 +16,7 @@ We start with some imports:
 ```@example MITT
 using Revise
 using DiffEqOperators, ForwardDiff
-using BifurcationKit, LinearAlgebra, Plots, SparseArrays, Parameters
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 
 # define the sup norm and a L2 norm
@@ -49,7 +49,7 @@ end
 dϕ(u, λ) = -10(1-λ*exp(u))
 
 function NL!(dest, u, p)
-	@unpack λ = p
+	(;λ) = p
 	dest .= ϕ.(u, λ)
 	return dest
 end
