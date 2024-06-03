@@ -32,7 +32,7 @@ opts_br = ContinuationPar(p_min = -1.4, p_max = 1.8, dsmax = 0.01, max_steps = 1
 # computation of the branch
 br = continuation(prob, PALC(), opts_br)
 
-scene = plot(br)</code></pre><img src="5890e935.svg" alt="Example block output"/><p>With detailed information:</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
+scene = plot(br)</code></pre><img src="c4276d1d.svg" alt="Example block output"/><p>With detailed information:</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
  ├─ Number of points: 200
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameter <span class="sgr36"><span class="sgr1">α</span></span> starts at -1.0, ends at 1.8
@@ -69,7 +69,7 @@ br_po = continuation(
 		end,
 	normC = norminf)
 
-scene = plot(br, br_po)</code></pre><img src="21b1647d.svg" alt="Example block output"/><p>We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:</p><pre><code class="language-julia hljs"># aBS from PD
+scene = plot(br, br_po)</code></pre><img src="f0f7a246.svg" alt="Example block output"/><p>We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:</p><pre><code class="language-julia hljs"># aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
 	# plot = true, verbosity = 2,
 	prm = true, detailed = true,
@@ -83,19 +83,19 @@ br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_
 	callback_newton = BK.cbMaxNorm(10),
 	)
 
-scene = plot(br_po, br_po_pd, title = &quot;Collocation based&quot;)</code></pre><img src="7bcd5ca2.svg" alt="Example block output"/><h2 id="Periodic-orbits-with-Parallel-Standard-Shooting"><a class="docs-heading-anchor" href="#Periodic-orbits-with-Parallel-Standard-Shooting">Periodic orbits with Parallel Standard Shooting</a><a id="Periodic-orbits-with-Parallel-Standard-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-with-Parallel-Standard-Shooting" title="Permalink"></a></h2><p>We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use <code>DifferentialEquations.jl</code>. This way of computing periodic orbits should be more precise than the previous one. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the previous method. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf <strong>aBS</strong>.</p><pre><code class="language-julia hljs">using DifferentialEquations
+scene = plot(br_po, br_po_pd, title = &quot;Collocation based&quot;)</code></pre><img src="4e0c6afb.svg" alt="Example block output"/><h2 id="Periodic-orbits-with-Parallel-Standard-Shooting"><a class="docs-heading-anchor" href="#Periodic-orbits-with-Parallel-Standard-Shooting">Periodic orbits with Parallel Standard Shooting</a><a id="Periodic-orbits-with-Parallel-Standard-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-with-Parallel-Standard-Shooting" title="Permalink"></a></h2><p>We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use <code>DifferentialEquations.jl</code>. This way of computing periodic orbits should be more precise than the previous one. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the previous method. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf <strong>aBS</strong>.</p><pre><code class="language-julia hljs">using DifferentialEquations
 
 # ODE problem for using DifferentialEquations
 prob_ode = ODEProblem(lur!, copy(z0), (0., 1.), par_lur; abstol = 1e-11, reltol = 1e-9)
 
 # continuation parameters
 # we decrease a bit the newton tolerance to help automatic branch switching from PD point
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= -0.001, newton_options = NewtonPar(tol = 1e-8), tol_stability = 1e-5, n_inversion = 8, nev = 3)
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds= -0.001, newton_options = NewtonPar(tol = 1e-9), tol_stability = 1e-5, n_inversion = 8, nev = 3)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 5 sections
-	ShootingProblem(5, prob_ode, Rodas5(); parallel = true);
+	ShootingProblem(15, prob_ode, Rodas5(); parallel = true);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -103,11 +103,11 @@ br_po = continuation(
 	callback_newton = BK.cbMaxNorm(10),
 	normC = norminf)
 
-scene = title!(&quot;&quot;)</code></pre><img src="26edd275.svg" alt="Example block output"/><p>We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:</p><pre><code class="language-julia hljs"># aBS from PD
+plot(br_po)</code></pre><img src="32f9b041.svg" alt="Example block output"/><p>We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:</p><pre><code class="language-julia hljs"># aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1,
-	setproperties(br_po.contparams, max_steps = 20, ds = 0.008);
+	setproperties(br_po.contparams, max_steps = 20, ds = -0.008);
 	plot = true, verbosity = 2,
-	δp = -0.005, override = true,
+	δp = -0.005, ampfactor = 0.1,
 	plot_solution = (x, p; k...) -&gt; begin
 		plotPO(x, p; k...)
 		## add previous branch
@@ -118,7 +118,7 @@ br_po_pd = continuation(deepcopy(br_po), 1,
 	callback_newton = BK.cbMaxNorm(10),
 	)
 
-scene = plot(br, br_po, br_po_pd, title = &quot;Shooting based&quot;)</code></pre><img src="f9a270d7.svg" alt="Example block output"/><h2 id="Branch-of-periodic-orbits-with-finite-differences"><a class="docs-heading-anchor" href="#Branch-of-periodic-orbits-with-finite-differences">Branch of periodic orbits with finite differences</a><a id="Branch-of-periodic-orbits-with-finite-differences-1"></a><a class="docs-heading-anchor-permalink" href="#Branch-of-periodic-orbits-with-finite-differences" title="Permalink"></a></h2><p>We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching from the Hopf point as follows</p><pre><code class="language-julia hljs"># continuation parameters
+scene = plot(br, br_po, br_po_pd, title = &quot;Shooting based&quot;)</code></pre><img src="5905f727.svg" alt="Example block output"/><h2 id="Branch-of-periodic-orbits-with-finite-differences"><a class="docs-heading-anchor" href="#Branch-of-periodic-orbits-with-finite-differences">Branch of periodic orbits with finite differences</a><a id="Branch-of-periodic-orbits-with-finite-differences-1"></a><a class="docs-heading-anchor-permalink" href="#Branch-of-periodic-orbits-with-finite-differences" title="Permalink"></a></h2><p>We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching from the Hopf point as follows</p><pre><code class="language-julia hljs"># continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.02, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
 
 Mt = 120 # number of time sections
@@ -133,7 +133,7 @@ br_po = continuation(
 		end,
 	normC = norminf)
 
-scene = plot(br, br_po)</code></pre><img src="08c42f18.svg" alt="Example block output"/><p>Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching as we do not have the PD normal form computed for <code>PeriodicOrbitTrapProblem</code>. Hence, it takes some trial and error to find the <code>ampfactor</code> of the PD branch.</p><pre><code class="language-julia hljs"># aBS from PD
+scene = plot(br, br_po)</code></pre><img src="4694e839.svg" alt="Example block output"/><p>Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching as we do not have the PD normal form computed for <code>PeriodicOrbitTrapProblem</code>. Hence, it takes some trial and error to find the <code>ampfactor</code> of the PD branch.</p><pre><code class="language-julia hljs"># aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_steps = 70);
 	# plot = true,
 	ampfactor = .2, δp = -0.005,
@@ -145,9 +145,9 @@ br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_
 	record_from_solution = recordPO,
 	normC = norminf
 	)
-Scene = title!(&quot;&quot;)</code></pre><img src="4bef0bbd.svg" alt="Example block output"/><pre><code class="language-julia hljs">plot(br, br_po, br_po_pd, title = &quot;Trapezoid based&quot;)</code></pre><img src="b98658f4.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+Scene = title!(&quot;&quot;)</code></pre><img src="ed83aa71.svg" alt="Example block output"/><pre><code class="language-julia hljs">plot(br, br_po, br_po_pd, title = &quot;Trapezoid based&quot;)</code></pre><img src="37aef18f.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Sunday 2 June 2024 21:33">Sunday 2 June 2024</span>. Using Julia version 1.10.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Monday 3 June 2024 17:38">Monday 3 June 2024</span>. Using Julia version 1.10.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
