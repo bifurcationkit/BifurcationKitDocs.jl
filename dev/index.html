@@ -13,8 +13,8 @@
 }</code></pre><h2 id="Other-softwares"><a class="docs-heading-anchor" href="#Other-softwares">Other softwares</a><a id="Other-softwares-1"></a><a class="docs-heading-anchor-permalink" href="#Other-softwares" title="Permalink"></a></h2><p>There are many good softwares already available.</p><ul><li><p>For continuation in small dimension, most softwares are listed on <a href="https://dsweb.siam.org/Software">DSWeb</a>. One can mention the widely used <a href="https://github.com/auto-07p/auto-07p">AUTO-07p</a>, or also, <a href="http://www.math.pitt.edu/~bard/xpp/xpp.html">XPPAUT</a>, <a href="https://sourceforge.net/projects/matcont/">MATCONT</a>, <a href="https://github.com/robclewley/pydstool">PyDSTool</a> and <a href="https://sourceforge.net/projects/cocotools/">COCO</a>. All these are very reliable and some address high codimensional bifurcations.</p></li><li><p>For large scale problems, there is the versatile and feature full <a href="http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/">pde2path</a> but also <a href="https://trilinos.github.io/nox_and_loca.html">Trilinos-LOCA</a>, <a href="https://github.com/careljonkhout/cl_matcontL">CL_MATCONTL</a>, <a href="https://sourceforge.net/projects/cocotools/">COCO</a>, <a href="https://getfem.org/userdoc/model_continuation.html">GetFEM</a> and the python libraries <a href="https://pypi.org/project/PyNCT/">pyNCT</a> and <a href="https://github.com/nschloe/pacopy">pacopy</a>. There are also some nice <a href="https://zenodo.org/record/3821169#.Y-zsAy8w08Q">lectures</a> by D. Avitabile <em>et al.</em> on matrix free secant continuation based on a concise Matlab implementation which are used in the influential paper <sup class="footnote-reference"><a id="citeref-Rankin" href="#footnote-Rankin">[Rankin]</a></sup>. At the time of initial release of <code>BifurcationKit.jl</code>, these <a href="https://zenodo.org/record/3821169#.Y-zsAy8w08Q">lectures</a> provided one of the only libraries for matrix-free continuation, much easier to use than <a href="https://trilinos.github.io/nox_and_loca.html">Trilinos-LOCA</a>.</p></li><li><p>For <em>deflated continuation</em>, there is <a href="https://bitbucket.org/pefarrell/defcon/src/master/">defcont</a> (by the inventor of the algo. P. E. Farrell) and this <a href="https://github.com/evstigneevnm/deflated_continuation">code</a> by N. M. Evstigneev.</p></li></ul><p>In Julia, we have the following tools:</p><ul><li><a href="https://github.com/tkf/Bifurcations.jl">Bifurcations.jl</a> which is unmaintained.</li><li><a href="https://github.com/dawbarton/NumericalContinuation.jl">NumericalContinuation.jl</a> by David Barton.</li></ul><h2 id="A-word-on-performance"><a class="docs-heading-anchor" href="#A-word-on-performance">A word on performance</a><a id="A-word-on-performance-1"></a><a class="docs-heading-anchor-permalink" href="#A-word-on-performance" title="Permalink"></a></h2><p>The tutorials have not <strong>all</strong> been written with the goal of performance but rather simplicity (except maybe <a href="tutorials/tutorialsCGL/#cgl">2d Ginzburg-Landau equation</a> and <a href="tutorials/Langmuir/#langmuir">Langmuir–Blodgett model</a>). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.</p><h2 id="Requested-methods-for-custom-arrays"><a class="docs-heading-anchor" href="#Requested-methods-for-custom-arrays">Requested methods for custom arrays</a><a id="Requested-methods-for-custom-arrays-1"></a><a class="docs-heading-anchor-permalink" href="#Requested-methods-for-custom-arrays" title="Permalink"></a></h2><p>Needless to say, if you use &quot;regular&quot; arrays, you don&#39;t need to worry about what follows.</p><p>We make the same requirements as <code>KrylovKit.jl</code>. Hence, we refer to its <a href="https://jutho.github.io/KrylovKit.jl/stable/#Package-features-and-alternatives-1">docs</a> and the <a href="https://github.com/Jutho/VectorInterface.jl?tab=readme-ov-file">vector-like interface</a> for more information. We additionally require the following methods to be available:</p><ul><li><code>Base.length(x)</code>: it is used in the constraint equation of the pseudo arclength continuation method (see <a href="library/#BifurcationKit.continuation"><code>continuation</code></a> for more details). If <code>length</code> is not available for your &quot;vector&quot;, define <code>length(x) = 1</code> and adjust the parameter <code>θ</code> in <code>PALC</code>.</li><li><code>Base.copyto!(dest, in)</code> this is required to reduce the allocations</li><li><code>Base.eltype</code> must be extended to your vector type.</li></ul><h2 id="Citations"><a class="docs-heading-anchor" href="#Citations">Citations</a><a id="Citations-1"></a><a class="docs-heading-anchor-permalink" href="#Citations" title="Permalink"></a></h2><p>The papers citing this work are collected on <a href="https://scholar.google.fr/scholar?hl=fr&amp;as_sdt=2005&amp;cites=159498619004863176%2C8662907770106865595&amp;scipsc=&amp;as_ylo=&amp;as_yhi=">google scholar</a>.</p><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of BifurcationKit was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl/docs/Project.toml`
   [1520ce14] AbstractTrees v0.4.5 `~/.julia/dev/AbstractTrees`
   [49cd1f3c] AsymptoticNumericalMethod v0.0.1 `~/.julia/dev/AsymptoticNumericalMethod`
-  [aae01518] BandedMatrices v1.7.1 `~/.julia/dev/BandedMatrices`
-  [0f109fa4] BifurcationKit v0.3.4 `~/.julia/dev/BifurcationKit`
+  [aae01518] BandedMatrices v1.7.2 `~/.julia/dev/BandedMatrices`
+  [0f109fa4] BifurcationKit v0.3.5 `~/.julia/dev/BifurcationKit`
   [52551710] BifurcationKitDocs v0.2.6 `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl`
   [0c46a032] DifferentialEquations v7.13.0
   [e30172f5] Documenter v1.4.1
@@ -25,13 +25,13 @@
   [d96e819e] Parameters v0.12.3
   [91a5bcdd] Plots v1.40.4
   [295af30f] Revise v3.5.14
-  [0bca4576] SciMLBase v2.39.0
+  [0bca4576] SciMLBase v2.41.3
   [efcf1570] Setfield v1.1.1
   [47a9eef4] SparseDiffTools v2.19.0
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays v1.10.0
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.10.3
-Commit 0b4590a5507 (2024-04-30 10:59 UTC)
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.10.4
+Commit 48d4fd48430 (2024-06-04 10:41 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -43,7 +43,7 @@ Platform Info:
 Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)
 Environment:
   JULIA_DEBUG = Documenter</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl/docs/Manifest.toml`
-  [47edcb42] ADTypes v1.2.1
+  [47edcb42] ADTypes v1.3.0
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [1520ce14] AbstractTrees v0.4.5 `~/.julia/dev/AbstractTrees`
   [7d9f7c33] Accessors v0.1.36
@@ -51,11 +51,11 @@ Environment:
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
 ⌅ [7d9fca2a] Arpack v0.5.3
-  [4fba245c] ArrayInterface v7.10.0
-  [4c555306] ArrayLayouts v1.9.3
+  [4fba245c] ArrayInterface v7.11.0
+  [4c555306] ArrayLayouts v1.9.4
   [49cd1f3c] AsymptoticNumericalMethod v0.0.1 `~/.julia/dev/AsymptoticNumericalMethod`
-  [aae01518] BandedMatrices v1.7.1 `~/.julia/dev/BandedMatrices`
-  [0f109fa4] BifurcationKit v0.3.4 `~/.julia/dev/BifurcationKit`
+  [aae01518] BandedMatrices v1.7.2 `~/.julia/dev/BandedMatrices`
+  [0f109fa4] BifurcationKit v0.3.5 `~/.julia/dev/BifurcationKit`
   [52551710] BifurcationKitDocs v0.2.6 `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl`
   [e2ed5e7c] Bijections v0.1.6
   [d1d4a3ce] BitFlags v0.1.8
@@ -92,13 +92,13 @@ Environment:
   [e2d170a0] DataValueInterfaces v1.0.0
   [bcd4f6db] DelayDiffEq v5.47.3
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.151.2
+  [2b5f629d] DiffEqBase v6.151.4
 ⌅ [459566f4] DiffEqCallbacks v2.37.0
   [77a26b50] DiffEqNoiseProcess v5.21.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [0c46a032] DifferentialEquations v7.13.0
-⌅ [a0c0ee7d] DifferentiationInterface v0.4.2
+  [a0c0ee7d] DifferentiationInterface v0.5.5
   [b4f34e82] Distances v0.10.11
   [31c24e10] Distributions v0.25.109
   [ffbed154] DocStringExtensions v0.9.3
@@ -109,14 +109,14 @@ Environment:
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.5.7
   [4e289a0a] EnumX v1.0.4
-  [f151be2c] EnzymeCore v0.7.3
+  [f151be2c] EnzymeCore v0.7.5
   [6912e4f1] Espresso v0.6.1
   [460bff9d] ExceptionUnwrapping v0.1.10
   [d4d017d3] ExponentialUtilities v1.26.1
   [e2ba6199] ExprTools v0.1.10
   [c87230d0] FFMPEG v0.4.1
   [9d29842c] FastAlmostBandedMatrices v0.1.2
-  [7034ab61] FastBroadcast v0.3.2
+  [7034ab61] FastBroadcast v0.3.3
   [9aa1b823] FastClosures v0.3.2
   [442a2c76] FastGaussQuadrature v1.0.2
   [29a986be] FastLapackInterface v2.0.4
@@ -127,18 +127,18 @@ Environment:
   [f6369f11] ForwardDiff v0.10.36
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
-  [d9f16b24] Functors v0.4.10
+  [d9f16b24] Functors v0.4.11
   [46192b85] GPUArraysCore v0.1.6
   [28b8d3ca] GR v0.73.5
   [c145ed77] GenericSchur v0.5.4
   [d7ba0133] Git v1.3.1
   [c27321d9] Glob v1.3.1
-  [86223c79] Graphs v1.11.0
+  [86223c79] Graphs v1.11.1
   [42e2da0e] Grisu v1.0.2
   [cd3eb016] HTTP v1.10.8
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
-  [b5f81e59] IOCapture v0.2.4
+  [b5f81e59] IOCapture v0.2.5
   [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.5
   [8197267c] IntervalSets v0.7.10
@@ -150,12 +150,12 @@ Environment:
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
   [98e50ef6] JuliaFormatter v1.0.56
-  [aa1ae85d] JuliaInterpreter v0.9.31
+  [aa1ae85d] JuliaInterpreter v0.9.32
   [ccbc3e58] JumpProcesses v9.11.1
   [ef3ab10e] KLU v0.6.0
 ⌅ [b3565e16] Kroki v0.2.0
   [ba0b0d4f] Krylov v0.9.6
-  [0b1a1467] KrylovKit v0.7.1
+⌅ [0b1a1467] KrylovKit v0.7.1
   [b964fa9f] LaTeXStrings v1.3.1
   [2ee39098] LabelledArrays v1.16.0
   [984bce1d] LambertW v0.4.6
@@ -182,17 +182,17 @@ Environment:
   [e1d29d7a] Missings v1.2.0
 ⌅ [961ee093] ModelingToolkit v8.76.0
   [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.5.5
-  [d8a4904e] MutableArithmetics v1.4.4
+  [102ac46a] MultivariatePolynomials v0.5.6
+  [d8a4904e] MutableArithmetics v1.4.5
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
-  [8913a72c] NonlinearSolve v3.12.4
+  [8913a72c] NonlinearSolve v3.13.0
   [6fe1bfb0] OffsetArrays v1.14.0
   [4d8831e6] OpenSSL v1.4.3
   [429524aa] Optim v1.9.4
   [bac558e1] OrderedCollections v1.6.3
-  [1dea7af3] OrdinaryDiffEq v6.80.1
+  [1dea7af3] OrdinaryDiffEq v6.83.2
   [90014a1f] PDMats v0.11.31
   [65ce6f38] PackageExtensionCompat v1.0.2
   [d96e819e] Parameters v0.12.3
@@ -214,7 +214,7 @@ Environment:
   [e6cf234a] RandomNumbers v1.5.3
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v3.21.0
+  [731186ca] RecursiveArrayTools v3.24.0
   [f2c3362d] RecursiveFactorization v0.2.23
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
@@ -226,25 +226,25 @@ Environment:
   [7e49a35a] RuntimeGeneratedFunctions v0.5.13
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
-  [0bca4576] SciMLBase v2.39.0
+  [0bca4576] SciMLBase v2.41.3
   [c0aeaf25] SciMLOperators v0.3.8
-  [53ae85a6] SciMLStructures v1.2.0
+  [53ae85a6] SciMLStructures v1.3.0
   [6c6a2e73] Scratch v1.2.1
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
-  [727e6d20] SimpleNonlinearSolve v1.9.0
+  [727e6d20] SimpleNonlinearSolve v1.10.0
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
   [a2af1166] SortingAlgorithms v1.2.1
   [47a9eef4] SparseDiffTools v2.19.0
-  [0a514795] SparseMatrixColorings v0.3.2
+  [0a514795] SparseMatrixColorings v0.3.3
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.4.0
   [aedffcd0] Static v0.8.10
   [0d7ed370] StaticArrayInterface v1.5.0
-  [90137ffa] StaticArrays v1.9.4
-  [1e83bf80] StaticArraysCore v1.4.2
+  [90137ffa] StaticArrays v1.9.5
+  [1e83bf80] StaticArraysCore v1.4.3
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.3
   [4c63d2b9] StatsFuns v1.3.1
@@ -253,7 +253,7 @@ Environment:
   [7792a7ef] StrideArraysCore v0.5.6
   [09ab397b] StructArrays v0.6.18
   [c3572dad] Sundials v4.24.0
-  [2efcf032] SymbolicIndexingInterface v0.3.22
+  [2efcf032] SymbolicIndexingInterface v0.3.23
   [19f23fe9] SymbolicLimits v0.2.1
 ⌅ [d1185830] SymbolicUtils v1.5.1
 ⌃ [0c5d862f] Symbolics v5.28.0
@@ -276,7 +276,7 @@ Environment:
   [45397f5d] UnitfulLatexify v1.6.3
   [a7c27f48] Unityper v0.1.6
   [41fe7b60] Unzip v0.2.0
-  [409d34a3] VectorInterface v0.4.5
+  [409d34a3] VectorInterface v0.4.6
   [3d5dd08c] VectorizationBase v0.21.68
   [19fa3120] VertexSafeGraphs v0.2.0
 ⌅ [68821587] Arpack_jll v3.5.1+1
@@ -311,7 +311,7 @@ Environment:
   [38a345b3] Libuuid_jll v2.40.1+0
   [856f044c] MKL_jll v2024.1.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
-  [458c3c95] OpenSSL_jll v3.0.13+1
+  [458c3c95] OpenSSL_jll v3.0.14+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
   [30392449] Pixman_jll v0.43.4+0
@@ -419,4 +419,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Rankin"><a class="tag is-link" href="#citeref-Rankin">Rankin</a><blockquote><p>J. Rankin et al., &quot;Continuation of localized coherent structures in nonlocal neural field equations&quot;, SIAM J. Scientific Computing 36, pp. B70–B93 (2014): https://epubs.siam.org/doi/10.1137/130918721</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="capabilities/">Overview of capabilities »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Monday 3 June 2024 17:38">Monday 3 June 2024</span>. Using Julia version 1.10.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Rankin"><a class="tag is-link" href="#citeref-Rankin">Rankin</a><blockquote><p>J. Rankin et al., &quot;Continuation of localized coherent structures in nonlocal neural field equations&quot;, SIAM J. Scientific Computing 36, pp. B70–B93 (2014): https://epubs.siam.org/doi/10.1137/130918721</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="capabilities/">Overview of capabilities »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Saturday 15 June 2024 19:59">Saturday 15 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
