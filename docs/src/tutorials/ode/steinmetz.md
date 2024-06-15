@@ -141,6 +141,7 @@ opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0,
 	nev = 4,
 	max_steps = 50, 
 	tol_stability = 1e-5)
+
 br_coll = continuation(probcoll, cicoll, PALC(tangent = Bordered()), opts_po_cont;
     # verbosity = 3, plot = true,
     callback_newton = BK.cbMaxNorm(10),
@@ -153,7 +154,7 @@ br_coll = continuation(probcoll, cicoll, PALC(tangent = Bordered()), opts_po_con
 opts_pocl_fold = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2)
 fold_po_cl = @time continuation(br_coll, 2, (@lens _.k7), opts_pocl_fold;
         # verbosity = 3, plot = true,
-        detect_codim2_bifurcation = 2,
+        detect_codim2_bifurcation = 1,
         update_minaug_every_step = 1,
         start_with_eigen = false,
         usehessian = true,
