@@ -57,7 +57,8 @@ end
 
 # group parameters
 argspo = (record_from_solution = recordFromSolution,
-	plot_solution = plotSolution)
+	plot_solution = plotSolution,
+	normC = norminf)
 
 nothing #hide
 ```
@@ -68,17 +69,17 @@ We obtain some trajectories as seeds for computing periodic orbits.
 using DifferentialEquations
 alg_ode = Rodas5()
 prob_de = ODEProblem(SL!, z0, (0,136.), par_sl)
-sol = solve(prob_de, alg_ode)
-prob_de = ODEProblem(SL!, sol.u[end], (0,30.), sol.prob.p, reltol = 1e-11, abstol = 1e-13)
-sol = solve(prob_de, alg_ode)
-plot(sol)
+sol_ode = solve(prob_de, alg_ode)
+prob_de = ODEProblem(SL!, sol_ode.u[end], (0,30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
+sol_ode = solve(prob_de, alg_ode)
+plot(sol_ode)
 ```
 
 ## Computation with Shooting
 We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of $k_8$
 
 ```@example STEINMETZ
-probsh, cish = generate_ci_problem( ShootingProblem(M=4), prob, prob_de, sol, 16.; reltol = 1e-10, abstol = 1e-12, parallel = true)
+probsh, cish = generate_ci_problem( ShootingProblem(M=4), prob, prob_de, sol_ode, 16.; reltol = 1e-10, abstol = 1e-12, parallel = true)
 
 opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.05, n_inversion = 8, detect_bifurcation = 3, max_bisection_steps = 25, nev = 4, max_steps = 60, save_eigenvectors = true, tol_stability = 1e-3)
 @set! opts_po_cont.newton_options.verbose = false

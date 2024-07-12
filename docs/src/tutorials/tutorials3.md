@@ -168,7 +168,7 @@ br_hopf = continuation(br, ind_hopf, (@lens _.β),
 	optcdim2, verbosity = 2,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
-	# we update the Fold problem at every continuation step
+	# we update the Hopf problem at every continuation step
 	update_minaug_every_step = 1,
 	jacobian_ma = :minaug, # specific to large dimensions
 	normC = norminf)

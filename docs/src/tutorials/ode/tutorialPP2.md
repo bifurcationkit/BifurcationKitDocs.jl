@@ -68,7 +68,7 @@ diagram = bifurcationdiagram(prob, PALC(),
 	# when computing the bifurcation diagram. It means we allow computing branches of branches of branches
 	# at most in the present case.
 	3,
-	(args...) -> setproperties(opts_br; ds = -0.001, dsmax = 0.01, n_inversion = 8, detect_bifurcation = 3)
+	ContinuationPar(opts_br; ds = -0.001, dsmax = 0.01, n_inversion = 8, detect_bifurcation = 3)
 	)
 
 scene = plot(diagram; code = (), title="$(size(diagram)) branches", legend = false)

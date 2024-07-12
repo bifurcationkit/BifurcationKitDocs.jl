@@ -16,10 +16,11 @@ with Neumann boundary condition on $\Omega = (0,1)^2$ and where $NL(\lambda,u)\e
 We start by installing the package [GridapBifurcationKit.jl](https://github.com/rveltz/GridapBifurcationKit). Then, we can import the different packages:
 
 ```julia
-using Revise
-using Plots, Gridap
+using Revise, Plots
+using Gridap
 using Gridap.FESpaces
-using GridapBifurcationKit, BifurcationKit
+using GridapBifurcationKit
+using BifurcationKit
 
 # custom plot function to deal with Gridap
 plotgridap!(x; k...) = (n=isqrt(length(x));heatmap!(reshape(x,n,n); color=:viridis, k...))
@@ -64,7 +65,11 @@ uh = zero(U)
 par_bratu = (λ = 0.01,)
 
 # problem definition
-prob = GridapBifProblem(res, uh, par_bratu, V, U, (@lens _.λ); jac = jac, d2res = d2res, d3res = d3res, plot_solution = (x,p; k...) -> plotgridap!(x;  k...))
+prob = GridapBifProblem(res, uh, par_bratu, V, U, (@lens _.λ); 
+		jac = jac,
+		d2res = d2res,
+		d3res = d3res,
+		plot_solution = (x,p; k...) -> plotgridap!(x;  k...))
 ```
 
 We can call then the newton solver:
@@ -101,22 +106,19 @@ We obtain:
 
 ```julia
 julia> br
- ┌─ Number of points: 56
- ├─ Curve of EquilibriumCont
+ ┌─ Curve type: EquilibriumCont
+ ├─ Number of points: 56
  ├─ Type of vectors: Vector{Float64}
  ├─ Parameter λ starts at 0.01, ends at 0.01
  ├─ Algo: PALC
  └─ Special points:
 
-If `br` is the name of the branch,
-ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`
-
-- #  1,       bp at λ ≈ +0.36787944 ∈ (+0.36787944, +0.36787944), |δp|=1e-12, [converged], δ = ( 1,  0), step =  13, eigenelements in eig[ 14], ind_ev =   1
-- #  2,       nd at λ ≈ +0.27234314 ∈ (+0.27234314, +0.27234328), |δp|=1e-07, [converged], δ = ( 2,  0), step =  21, eigenelements in eig[ 22], ind_ev =   3
-- #  3,       bp at λ ≈ +0.15185452 ∈ (+0.15185452, +0.15185495), |δp|=4e-07, [converged], δ = ( 1,  0), step =  29, eigenelements in eig[ 30], ind_ev =   4
-- #  4,       nd at λ ≈ +0.03489122 ∈ (+0.03489122, +0.03489170), |δp|=5e-07, [converged], δ = ( 2,  0), step =  44, eigenelements in eig[ 45], ind_ev =   6
-- #  5,       nd at λ ≈ +0.01558733 ∈ (+0.01558733, +0.01558744), |δp|=1e-07, [converged], δ = ( 2,  0), step =  51, eigenelements in eig[ 52], ind_ev =   8
-- #  6, endpoint at λ ≈ +0.01000000,                                                                     step =  55
+- #  1,       bp at λ ≈ +0.36787944 ∈ (+0.36787944, +0.36787944), |δp|=1e-12, [converged], δ = ( 1,  0), step =  13
+- #  2,       nd at λ ≈ +0.27234314 ∈ (+0.27234314, +0.27234328), |δp|=1e-07, [converged], δ = ( 2,  0), step =  21
+- #  3,       bp at λ ≈ +0.15185452 ∈ (+0.15185452, +0.15185495), |δp|=4e-07, [converged], δ = ( 1,  0), step =  29
+- #  4,       nd at λ ≈ +0.03489122 ∈ (+0.03489122, +0.03489170), |δp|=5e-07, [converged], δ = ( 2,  0), step =  44
+- #  5,       nd at λ ≈ +0.01558733 ∈ (+0.01558733, +0.01558744), |δp|=1e-07, [converged], δ = ( 2,  0), step =  51
+- #  6, endpoint at λ ≈ +0.01000000,  
 ```
 
 ![](fig1gridap.png)

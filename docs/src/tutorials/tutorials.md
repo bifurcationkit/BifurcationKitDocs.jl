@@ -93,6 +93,10 @@ See the [tutorials](https://bifurcationkit.github.io/DDEBifurcationKit.jl/dev/tu
 
 ## Examples based on ModelingToolkit
 
+`ModelingToolkit` provides a tailored interface to `BifurcationKit` and the user is encouraged to have a look at its specific [documentation](https://docs.sciml.ai/ModelingToolkit/stable/tutorials/bifurcation_diagram_computation/).
+
+We also provide some alternative example(s): 
+
 ```@contents
 Pages = ["ode/NME-MTK.md"]
 Depth = 1
