@@ -115,8 +115,7 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
-	# plot = true, verbosity = 2,
+br_po_pd = continuation(deepcopy(br_po), 1, ContinuationPar(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
 	prm = true, detailed = true,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -125,7 +124,6 @@ br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_
 	end,
 	record_from_solution = recordPO,
 	normC = norminf,
-	callback_newton = BK.cbMaxNorm(10),
 	)
 
 scene = plot(br_po, br_po_pd, title = "Collocation based")
@@ -164,7 +162,7 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, 
-	setproperties(br_po.contparams, max_steps = 20, ds = -0.008);
+	ContinuationPar(br_po.contparams, max_steps = 20, ds = -0.008);
 	plot = true, verbosity = 2,
 	δp = -0.005, ampfactor = 0.1,
 	plot_solution = (x, p; k...) -> begin
@@ -207,7 +205,7 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(deepcopy(br_po), 1, setproperties(br_po.contparams, max_steps = 70);
+br_po_pd = continuation(deepcopy(br_po), 1, ContinuationPar(br_po.contparams, max_steps = 70);
 	# plot = true,
 	ampfactor = .2, δp = -0.005,
 	plot_solution = (x, p; k...) -> begin

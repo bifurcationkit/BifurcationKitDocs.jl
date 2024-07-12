@@ -51,7 +51,7 @@ prob = BK.BifurcationProblem(Lor, z0, parlor, (@lens _.F);
 
 opts_br = ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.05, n_inversion = 6, nev = 4, max_steps = 200)
 @set! opts_br.newton_options.tol = 1e-12
-br = @time continuation(re_make(prob, params = setproperties(parlor;T=0.04,F=3.)),
+br = @time continuation(re_make(prob, params = (parlor..., T=0.04,F=3.)),
 	 	PALC(), opts_br;
 		normC = norminf, bothside = true)
 

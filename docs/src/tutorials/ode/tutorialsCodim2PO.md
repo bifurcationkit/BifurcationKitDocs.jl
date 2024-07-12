@@ -90,7 +90,7 @@ We are now equipped to build a periodic orbit problem from a solution `sol::ODEP
 probtrap, ci = BK.generate_ci_problem(PeriodicOrbitTrapProblem(M = 150),
 	prob, sol, 2.)
 
-opts_po_cont = setproperties(opts_br, max_steps = 50, tol_stability = 1e-8)
+opts_po_cont = ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
 brpo_fold = continuation(probtrap, ci, PALC(), opts_po_cont;
 	verbosity = 3, plot = true,
 	argspo...
@@ -117,7 +117,7 @@ We are now ready to build a periodic orbit problem from a solution `sol::ODEProb
 probsh, cish = generate_ci_problem( ShootingProblem(M=3),
 	prob, prob_de, sol, 2.; alg = Rodas5(), abstol = 1e-12, reltol = 1e-10)
 
-opts_po_cont = setproperties(opts_br, max_steps = 50, tol_stability = 1e-3)
+opts_po_cont = ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-3)
 br_fold_sh = continuation(probsh, cish, PALC(tangent = Bordered()), opts_po_cont;
 	argspo...
 )
@@ -144,7 +144,7 @@ We do the same as in the previous section but using orthogonal collocation. This
 probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 4),
 	prob, sol, 2.)
 
-opts_po_cont = setproperties(opts_br, max_steps = 50, tol_stability = 1e-8)
+opts_po_cont = ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
 brpo_fold = continuation(probcoll, ci, PALC(), opts_po_cont;
 	argspo...
 	)
@@ -212,7 +212,6 @@ pd_po_coll2 = continuation(brpo_pd, 2, (@optic _.b0), opts_pocoll_pd;
 		start_with_eigen = false,
 		jacobian_ma = :minaug,
 		normC = norminf,
-		callback_newton = BK.cbMaxNorm(10),
 		bothside = true,
 		)
 

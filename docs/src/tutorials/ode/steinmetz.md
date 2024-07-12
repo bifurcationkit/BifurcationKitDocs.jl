@@ -147,6 +147,8 @@ br_coll = continuation(probcoll, cicoll, PALC(tangent = Bordered()), opts_po_con
     # verbosity = 3, plot = true,
     callback_newton = BK.cbMaxNorm(10),
     argspo...)
+
+scene = plot(br_coll)
 ```
 
 ### Curve of Fold points of periodic orbits
