@@ -34,7 +34,7 @@ diagram = bifurcationdiagram(prob, PALC(),
 )
 
 # You can plot the diagram like
-plot(diagram; putspecialptlegend=false, markersize=2, plotfold=false, title = &quot;#branches = $(size(diagram))&quot;)</code></pre><img src="51f90bb6.svg" alt="Example block output"/><p>This gives</p><pre><code class="language-julia hljs">diagram</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">[Bifurcation diagram]
+plot(diagram; putspecialptlegend=false, markersize=2, plotfold=false, title = &quot;#branches = $(size(diagram))&quot;)</code></pre><img src="528193bc.svg" alt="Example block output"/><p>This gives</p><pre><code class="language-julia hljs">diagram</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">[Bifurcation diagram]
  ┌─ From 0-th bifurcation point.
  ├─ Children number: 4
  └─ Root (recursion level 1)
@@ -96,7 +96,7 @@ diagram = bifurcationdiagram(prob, PALC(), 3,
 
 - #  1, <span class="sgr34"><span class="sgr1">      nd</span></span> at μ ≈ +0.00019961 ∈ (-0.00024233, +0.00019961), |δp|=4e-04, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 3,  0), step =  31
 - #  2, <span class="sgr1">endpoint</span> at μ ≈ +0.40000000,                                                                     step =  88
-</code></pre><p>We can now plot the result:</p><pre><code class="language-julia hljs">plot(diagram; putspecialptlegend =false, markersize=2, plotfold=false, title=&quot;#branch = $(size(diagram))&quot;)</code></pre><img src="f37faefc.svg" alt="Example block output"/><p>We can access the different branches with <code>BK.getBranch(diagram, (1,))</code>. Alternatively, you can plot a specific branch:</p><p><img src="../diagramD6b.png" alt/></p><p>Finally, you can resume the computation of the bifurcation diagram if not complete by using the syntax</p><pre><code class="language-julia hljs">BK.bifurcationdiagram!(prob,
+</code></pre><p>We can now plot the result:</p><pre><code class="language-julia hljs">plot(diagram; putspecialptlegend =false, markersize=2, plotfold=false, title=&quot;#branch = $(size(diagram))&quot;)</code></pre><img src="43c32b84.svg" alt="Example block output"/><p>We can access the different branches with <code>BK.getBranch(diagram, (1,))</code>. Alternatively, you can plot a specific branch:</p><p><img src="../diagramD6b.png" alt/></p><p>Finally, you can resume the computation of the bifurcation diagram if not complete by using the syntax</p><pre><code class="language-julia hljs">BK.bifurcationdiagram!(prob,
 	# this resume the computation of the diagram from the 2nd node
 	# diagram is written inplace
 	get_branch(diagram, (2,)), 6,
@@ -123,14 +123,12 @@ AbstractTrees.printnode(io::IO, node::BifDiagNode) = print(io, &quot;$(node.code
 
 print_tree(diagram)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0 [ 1]
 ├─ 1 [ 2]
-│  ├─ 2 [ 3]
-│  ├─ 2 [ 3]
-│  ├─ 4 [ 3]
-│  ├─ 4 [ 3]
-│  ├─ 4 [ 3]
-│  ├─ 4 [ 3]
-│  ├─ 4 [ 3]
-│  └─ 4 [ 3]
+│  ├─ 3 [ 3]
+│  ├─ 3 [ 3]
+│  ├─ 3 [ 3]
+│  ├─ 3 [ 3]
+│  ├─ 3 [ 3]
+│  └─ 3 [ 3]
 └─ 1 [ 2]
    ├─ 2 [ 3]
    ├─ 2 [ 3]
@@ -172,4 +170,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../abs-from-codim2-po/">« From codim 2 to periodic orbits</a><a class="docs-footer-nextpage" href="../EventCallback/">Event handling and Callback »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Saturday 13 July 2024 10:04">Saturday 13 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../abs-from-codim2-po/">« From codim 2 to periodic orbits</a><a class="docs-footer-nextpage" href="../EventCallback/">Event handling and Callback »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Saturday 13 July 2024 21:45">Saturday 13 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
