@@ -209,7 +209,7 @@ end
 
 optn = NewtonPar(tol = 1e-8, eigsolver = EigenWave())
 opt_cont_br = ContinuationPar(p_min = 0.05, p_max = 1., newton_options = optn, ds= -0.001, plot_every_step = 2, detect_bifurcation = 3, nev = 10, n_inversion = 6)
-br  = continuation(probtw, PALC(), opt_cont_br)
+br = continuation(probtw, PALC(), opt_cont_br)
 plot(br)
 ```
 

@@ -154,7 +154,7 @@ r_hopf, Th, orbitguess2, hopfpt, eigvec = guessFromHopfO2(br, 2, opt_newton.eigs
 uold = copy(orbitguess2[1][1:2n])
 
 # we create a TW problem
-probTW = TWProblem(re_make(prob, params = setproperties(par_cgl; r = r_hopf - 0.01)), par_cgl.Db, uold; jacobian = :FullLU)
+probTW = TWProblem(re_make(prob, params = (par_cgl..., r = r_hopf - 0.01)), par_cgl.Db, uold; jacobian = :FullLU)
 
 # refine the guesss
 wave = newton(probTW, vcat(uold, 0),

@@ -62,7 +62,7 @@ opts_br = ContinuationPar(p_min = -2.0, p_max = -1.)
 # continuation of equilibria
 br = continuation(prob, PALC(tangent=Bordered()), opts_br; normC = norminf)
 
-scene = plot(br, plotfold=false, markersize=3, legend=:topleft)
+scene = plot(br, plotfold=false, markersize=4, legend=:topleft)
 ```
 
 With detailed information:
@@ -118,7 +118,7 @@ Let us plot the periodic orbit close to the end of the branch
 
 ```@example TUTODE
 sol = get_periodic_orbit(br_pocoll, 100)
-plot(sol, title = "Periodic orbit")
+plot(sol, title = "Periodic orbit", marker = :d, markersize=1)
 ```
 
 ## Periodic orbits with Parallel Standard Shooting

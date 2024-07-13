@@ -140,7 +140,7 @@ opts_cont = ContinuationPar(
 	p_min = -0.01, p_max = 10.1,
 	dsmin = 1e-5, dsmax = 0.04, ds= -0.001,
 	a = 0.75, max_steps = 600,
-	newton_options = setproperties(opt_new; verbose = false),
+	newton_options = NewtonPar(opt_new; verbose = false),
 	nev = 10, save_eigenvectors = true, tol_stability = 1e-5, detect_bifurcation = 3,
 	dsmin_bisection = 1e-8, max_bisection_steps = 15, n_inversion = 6, tol_bisection_eigenvalue = 1e-9, save_sol_every_step = 50)
 
@@ -215,7 +215,7 @@ opt_po = NewtonPar(tol =  1e-10, verbose = true, max_iterations = 50)
 # parameters for continuation
 opts_po_cont = ContinuationPar(dsmin = 1e-5, dsmax = 0.35, ds= -0.001,
 	p_max = 1.0, max_steps = 3, detect_bifurcation = 0,
-	newton_options = setproperties(opt_po; max_iterations = 15, tol = 1e-6), plot_every_step = 1)
+	newton_options = NewtonPar(opt_po; max_iterations = 15, tol = 1e-6), plot_every_step = 1)
 
 # spatio-temporal norm
 normL2T(x; r = sqrt(par.Δx / L), M = 1) = norm(x, 2) * r * sqrt(1/M)
@@ -235,7 +235,7 @@ br_potrap = continuation(
 	alg = PALC(tangent = Bordered(), bls = BorderingBLS(solver = DefaultLS(), check_precision = false)),
 	verbosity = 3, plot = true,
 	record_from_solution = (x, p) -> normL2T(x[1:end-1], M = M),
-	plotSolution  = (x, p; kwargs...) -> begin
+	plot_solution  = (x, p; kwargs...) -> begin
 			heatmap!(reshape(x[1:end-1], N, M)'; ylabel="T=$(round(x[end]))", color=:viridis, kwargs...)
 			plot!(br, subplot=1, label="")
 		end,

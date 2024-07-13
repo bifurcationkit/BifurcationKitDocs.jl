@@ -107,7 +107,7 @@ We are now ready to compute the bifurcation of the trivial (constant in space) s
 
 ```@example DETENGINE
 # bifurcation problem
-prob = BifurcationProblem(Fdet, U0, setproperties(par_det; q = 0.5), (@lens _.up); 
+prob = BifurcationProblem(Fdet, U0, (par_det..., q = 0.5), (@lens _.up); 
 	J = JdetAD,
 	plot_solution = (x, p; k...) -> plotsol!(x; k...),
 	record_from_solution = (x, p) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))
@@ -121,7 +121,7 @@ eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
 # newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)
 solhomo = newton(prob, optnew; normN = norminf)
-optcont = ContinuationPar(newton_options = setproperties(optnew, verbose = false),
+optcont = ContinuationPar(newton_options = NewtonPar(optnew, verbose = false),
 	detect_bifurcation = 3, nev = 50, n_inversion = 8, max_bisection_steps = 25,
 	dsmax = 0.01, ds = 0.01, p_max = 1.4, max_steps = 1000, plot_every_step = 50)
 
@@ -159,7 +159,7 @@ function computeBranch(br, nb; δp = 0.005, max_steps = 190)
 	_p, sol = getGuess(br, nb)
 	# travelling wave problem
 	probTW = TWProblem(
-		re_make(br.prob, params = setproperties(getparams(br); up = _p)),
+		re_make(br.prob, params = (getparams(br)..., up = _p)),
 		getparams(br).Db,
 		copy(sol),
 		jacobian = :AutoDiff)

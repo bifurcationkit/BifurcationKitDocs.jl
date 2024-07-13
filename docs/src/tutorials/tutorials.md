@@ -101,6 +101,9 @@ We also provide some alternative example(s):
 Pages = ["ode/NME-MTK.md"]
 Depth = 1
 ```
+## Examples based on Catalyst
+
+`Catalyst` provides a tailored interface to `BifurcationKit` and the user is encouraged to have a look at its specific [documentation](https://docs.sciml.ai/Catalyst/stable/steady_state_functionality/bifurcation_diagrams/)
 
 ## PDEs: bifurcations of equilibria
 ```@contents

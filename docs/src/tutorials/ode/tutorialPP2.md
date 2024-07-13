@@ -99,6 +99,10 @@ br_po = continuation(
 			min = minimum(xtt[1,:]),
 			period = x[end])
 	end,
+	plot_solution = (x,p;k...) -> begin
+		xtt = get_periodic_orbit(p.prob, x, p.p)
+		plot!(xtt.t, xtt[1,:]; k..., marker=:d, markersize=1, label = "")
+	end,
 	finalise_solution = (z, tau, step, contResult; prob = nothing, kwargs...) -> begin
 		# limit the period
 		getperiod(prob, z.u, nothing) < 50

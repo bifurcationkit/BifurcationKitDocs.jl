@@ -128,13 +128,15 @@ ns_po_sh = continuation(deepcopy(br_sh), 1, (@lens _.k7), opts_posh_ns;
 ```
 
 ```@example STEINMETZ
-plot(ns_po_sh, fold_po_sh, branchlabel = ["NS","Fold"])
+scene = plot(ns_po_sh)
+plot!(scene, fold_po_sh)
+scene
 ```
 
 ## Computation with collocation
 
 ```@example STEINMETZ
-probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4), prob, sol, 16.)
+probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4), prob, sol_ode, 16.)
 
 opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0, 
 	ds = 0.002, dsmax = 0.05, 
@@ -154,8 +156,9 @@ scene = plot(br_coll)
 ### Curve of Fold points of periodic orbits
 
 ```@example STEINMETZ
-opts_pocl_fold = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2)
-fold_po_cl = @time continuation(br_coll, 2, (@lens _.k7), opts_pocl_fold;
+opts_pocl_fold = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2, max_steps = 100)
+@set! opts_pocl_fold.newton_options.verbose = true
+fold_po_cl = @time continuation(deepcopy(br_coll), 2, (@lens _.k7), opts_pocl_fold;
         # verbosity = 3, plot = true,
         detect_codim2_bifurcation = 1,
         update_minaug_every_step = 1,
@@ -165,14 +168,16 @@ fold_po_cl = @time continuation(br_coll, 2, (@lens _.k7), opts_pocl_fold;
         normC = norminf,
         callback_newton = BK.cbMaxNorm(1e1),
         )
+
+plot(fold_po_cl)
 ```
 
 ### Curve of NS points of periodic orbits
 
 ```@example STEINMETZ
 opts_pocl_ns = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2)
-ns_po_cl = continuation(br_coll, 1, (@lens _.k7), opts_pocl_ns;
-        # verbosity = 3, plot = true,
+ns_po_cl = continuation(deepcopy(br_coll), 1, (@lens _.k7), opts_pocl_ns;
+        verbosity = 1, plot = false,
         detect_codim2_bifurcation = 2,
         update_minaug_every_step = 1,
         start_with_eigen = false,
@@ -183,5 +188,7 @@ ns_po_cl = continuation(br_coll, 1, (@lens _.k7), opts_pocl_ns;
 ```
 
 ```@example STEINMETZ
-plot(ns_po_cl, fold_po_cl, branchlabel = ["NS","Fold"])
+scene = plot(ns_po_cl)
+plot!(scene, fold_po_cl)
+scene
 ```
