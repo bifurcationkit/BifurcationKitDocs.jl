@@ -3,6 +3,11 @@ uuid = "52551710-5366-4f3f-95cc-710bcb964a3f"
 authors = ["romain.veltz@inria.fr <rveltz> and contributors"]
 version = "0.2.6"
 
+[deps]
+AsymptoticNumericalMethod = "49cd1f3c-f820-4280-87fa-ee13bfe9a539"
+BandedMatrices = "aae01518-5342-5314-be14-df237901396f"
+BifurcationKit = "0f109fa4-8a5d-4b75-95aa-f515264e7666"
+
 [compat]
 julia = "1.9"
 AsymptoticNumericalMethod = "^0.2.0"
