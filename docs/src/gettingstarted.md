@@ -13,7 +13,7 @@ as function of $\mu$ by looking at the solutions in the connected component of $
 ```@example GETSTARTED1
 using BifurcationKit, Plots
 F(x, p) = @. p[1] + x - x^3/3
-prob = BifurcationProblem(F, [-2.], [-1.], (@optic _[1]);
+prob = BifurcationProblem(F, [-2.], [-1.], 1;
     record_from_solution = (x,p) -> x[1])
 br = continuation(prob, PALC(), ContinuationPar(p_min = -1., p_max = 1.))
 plot(br)
@@ -26,7 +26,10 @@ where the pieces are described below.
 To solve this numerically, we define a problem type by giving it the equation, the initial condition, the parameters and the parameter axis to solve over:
 
 ```@example GETSTARTED1
-prob = BifurcationProblem(F, [-2.], [-1.], (@optic _[1]);
+prob = BifurcationProblem(F, 
+        [-2.], # initial condition x0
+        [-1.], # set of parameters
+        1;     # parameter index for continuation
         record_from_solution = (x,p) -> x[1])
 ```
 
@@ -131,12 +134,12 @@ We define a problem type by giving it the equation, the initial condition, the p
 using Plots
 using BifurcationKit
 
-Fbp(u, p) = @. u * (p.μ - u)
+Fbp(u, p) = @. u * (p[1] - u)
 
 # bifurcation problem
-prob = BifurcationProblem(Fbp, [0.0], (μ = -0.2,),
-	# specify the continuation parameter
-	(@optic _.μ), 
+prob = BifurcationProblem(Fbp, [0.0], [-0.2],
+	# specify the continuation parameter or its index
+	1, 
 	record_from_solution = (x, p) -> x[1])
 ```
 
@@ -157,7 +160,7 @@ diagram = bifurcationdiagram(prob, PALC(),
 	# when computing the bifurcation diagram. It means we allow computing branches of branches
 	# at most in the present case.
 	2,
-	(args...) -> opts_br,
+	opts_br,
 	)
 ```
 
@@ -237,7 +240,7 @@ Finally, if you are interested in the periodic orbits saved in `br_po`, for exam
 
 ```@example GETSTARTED3
 sol = get_periodic_orbit(br_po, 10)
-plot(sol.t, sol[1,:], label = "u", xlabel = "time")
+plot( sol.t, sol[1,:], label = "u", xlabel = "time")
 plot!(sol.t, sol[2,:], label = "v", xlabel = "time")
 ```
 
