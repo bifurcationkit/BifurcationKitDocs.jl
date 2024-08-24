@@ -40,7 +40,7 @@ z0 = zeros(2)
 # bifurcation problem
 prob = BifurcationProblem(pp2!, z0, par_pp2,
 	# specify the continuation parameter
-	(@lens _.p1), record_from_solution = recordFromSolution)
+	(@optic _.p1), record_from_solution = recordFromSolution)
 
 nothing #hide
 ```
@@ -86,26 +86,22 @@ We first find the branch
 brH = get_branch(diagram, (2,1)).γ
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.1, ds= 0.0001, dsmin = 1e-4,
-	tol_stability = 1e-4)
+opts_po_cont = ContinuationPar(dsmax = 0.01, ds= 0.0001, dsmin = 1e-4,
+	tol_stability = 1e-4, max_steps = 1000, detect_bifurcation = 2)
 
 br_po = continuation(
 	brH, 1, opts_po_cont,
-	PeriodicOrbitOCollProblem(20, 4);
-	# plot = true, verbosity = 2,
+	PeriodicOrbitOCollProblem(20, 5);
+	plot = true,
 	record_from_solution = (x, p) -> begin
 		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),
 			period = x[end])
 	end,
-	plot_solution = (x,p;k...) -> begin
-		xtt = get_periodic_orbit(p.prob, x, p.p)
-		plot!(xtt.t, xtt[1,:]; k..., marker=:d, markersize=1, label = "")
-	end,
 	finalise_solution = (z, tau, step, contResult; prob = nothing, kwargs...) -> begin
 		# limit the period
-		getperiod(prob, z.u, nothing) < 50
+		getperiod(prob, z.u, nothing) < 150
 		end,
 	normC = norminf)
 

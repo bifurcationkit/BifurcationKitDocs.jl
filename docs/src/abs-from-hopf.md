@@ -56,7 +56,7 @@ end
 
 par_sl = (r = 0.1, μ = 0., ν = 1.0, c3 = 1.0)
 u0 = zeros(2)
-prob = BifurcationProblem(Fsl, u0, par_sl, (@lens _.r))
+prob = BifurcationProblem(Fsl, u0, par_sl, (@optic _.r))
 opts = ContinuationPar()
 br = continuation(prob, PALC(), opts, bothside = true)
 ```

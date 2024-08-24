@@ -49,7 +49,7 @@ recordCO(x, p) = (x = x[1], y = x[2], s = x[3])
 z0 = [0.07, 0.2, 05]
 
 # Bifurcation Problem
-prob = BifurcationProblem(COm, z0, par_com, (@lens _.q2); record_from_solution = recordCO)
+prob = BifurcationProblem(COm, z0, par_com, (@optic _.q2); record_from_solution = recordCO)
 nothing # hide
 ```
 
@@ -75,7 +75,7 @@ scene = plot(br, xlims = (0.8,1.8))
 We follow the Fold points in the parameter plane $(q_2, k)$. We tell the solver to consider `br.specialpoint[2]` and continue it.
 
 ```@example TUTCO
-sn_codim2 = continuation(br, 2, (@lens _.k),
+sn_codim2 = continuation(br, 2, (@optic _.k),
 	ContinuationPar(opts_br, p_max = 2.2, ds = -0.001, dsmax = 0.05);
 	normC = norminf,
 	# compute both sides of the initial condition
@@ -93,7 +93,7 @@ plot!(scene, br, xlims=(0.8, 1.8))
 We tell the solver to consider `br.specialpoint[1]` and continue it.
 
 ```@example TUTCO
-hp_codim2 = continuation(br, 1, (@lens _.k),
+hp_codim2 = continuation(br, 1, (@optic _.k),
 	ContinuationPar(opts_br, p_max = 2.8, ds = -0.001, dsmax = 0.025) ;
 	normC = norminf,
 	# detection of codim 2 bifurcations

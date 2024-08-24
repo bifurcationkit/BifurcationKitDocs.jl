@@ -56,7 +56,7 @@ z0 = [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.021052
 
 # bifurcation problem
 recordFromSolutionLor(x, p) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
-prob = BifurcationProblem(Lor, z0, (parlor..., T=0.04, F=3.), (@lens _.F);
+prob = BifurcationProblem(Lor, z0, (parlor..., T=0.04, F=3.), (@optic _.F);
     record_from_solution = recordFromSolutionLor)
 nothing #hide
 ```
@@ -93,7 +93,7 @@ We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to 
 
 ```@example LORENZ84
 # function to record the current state
-sn_codim2 = continuation(br, 5, (@lens _.T), 
+sn_codim2 = continuation(br, 5, (@optic _.T), 
 	ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, 
 		dsmin=1e-5, ds = -0.001, dsmax = 0.005) ; 
 	normC = norminf,
@@ -124,7 +124,7 @@ get_normal_form(sn_codim2, 1; nev = 4)
 We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[3]` and continue it.
 
 ```@example LORENZ84
-hp_codim2_1 = continuation(br, 3, (@lens _.T), 
+hp_codim2_1 = continuation(br, 3, (@optic _.T), 
 	ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ;
 	normC = norminf,
 	# detection of codim 2 bifurcations with bisection

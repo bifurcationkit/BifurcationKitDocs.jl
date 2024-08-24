@@ -107,7 +107,7 @@ Flgvf(x, p, t = 0) = Flgvf!(similar(x), x, p, t)
 end
 
 # we thus define a bifurcation problem
-prob  = BifurcationProblem(Flgvf, 0X .-0.9, par, (@lens _.ν );
+prob  = BifurcationProblem(Flgvf, 0X .-0.9, par, (@optic _.ν );
 		J = JanaSP,
 		record_from_solution = (x, p) -> normL2(x),
 		plot_solution = (x, p; kwargs...) -> plot!(X, x, subplot = 3, xlabel = "Nx = $(length(x))", label = ""))
@@ -145,7 +145,7 @@ opts_cont = ContinuationPar(
 	dsmin_bisection = 1e-8, max_bisection_steps = 15, n_inversion = 6, tol_bisection_eigenvalue = 1e-9, save_sol_every_step = 50)
 
 # we opt for a fast Shift-Invert eigen solver
-@set! opts_cont.newton_options.eigsolver = EigArpack(0.1, :LM)
+@reset opts_cont.newton_options.eigsolver = EigArpack(0.1, :LM)
 
 br = @time continuation(
 	re_make(prob, params = (@set par.ν = 0.06), u0 = out.u),
@@ -155,7 +155,7 @@ br = @time continuation(
 	plot = true, verbosity = 2,
 	normC = normL2)
 
-scene = plot(br, title="N=$N")		
+scene = plot(br, title="N=$N")
 ```
 
 ```@example TUTLangmuir
@@ -172,7 +172,7 @@ Let us study the continuation of Hopf and Fold points and show that they merge a
 
 ```@example TUTLangmuir
 # compute branch of Fold points from 7th bifurcation point on br
-sn_codim2 = continuation(br, 7, (@lens _.Δx),
+sn_codim2 = continuation(br, 7, (@optic _.Δx),
 	ContinuationPar(opts_cont, p_min = -2, p_max = 0.12, ds = -0.01, dsmax = 0.01, tol_stability = 1e-8, max_steps = 325, nev=23) ;
 	# start the problem with information from eigen elements
 	start_with_eigen = true,
@@ -187,7 +187,7 @@ sn_codim2 = continuation(br, 7, (@lens _.Δx),
 	)
 
 # compute branch of Hopf points from 5th bifurcation point on br
-hp_codim2 = continuation(br, 5, (@lens _.Δx), ContinuationPar(opts_cont, p_max = 0.1, ds = -0.01, dsmax = 0.01, max_steps = 230, tol_stability = 1e-8) ;
+hp_codim2 = continuation(br, 5, (@optic _.Δx), ContinuationPar(opts_cont, p_max = 0.1, ds = -0.01, dsmax = 0.01, max_steps = 230, tol_stability = 1e-8) ;
 	# start the problem with information from eigen elements
 	start_with_eigen = true,
 	# we update the Hopf problem at every continuation step

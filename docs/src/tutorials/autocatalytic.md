@@ -111,7 +111,7 @@ u0 = @. (tanh(2X)+1)/2
 U0 = vcat(u0, 1 .- u0)
 
 # we define a problem to hold the vector field
-prob = BifurcationProblem(Fcat, u0, par_cat, (@lens _.a); J = Jcat)
+prob = BifurcationProblem(Fcat, u0, par_cat, (@optic _.a); J = Jcat)
 nothing #hide
 ```
 
@@ -160,7 +160,7 @@ Let us find the front using `newton`
 
 ```@example TUTAUTOCAT
 # we define a problem for solving for the wave
-probtw = BifurcationProblem(FcatWave, vcat(U0, -1.), par_cat_wave, (@lens _.a);
+probtw = BifurcationProblem(FcatWave, vcat(U0, -1.), par_cat_wave, (@optic _.a);
 	J = JcatWave,
 	record_from_solution = (x,p) -> (s = x[end], nrm = norm(x[1:end-1])),
 	plot_solution = (x, p; k...) -> plotsol!(x[1:end-1];k...))

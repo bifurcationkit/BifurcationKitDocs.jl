@@ -184,7 +184,7 @@ _center = vcat(E*ones(nx), B/E*ones(nx))
 
 # section for the flow
 sectionBru = BK.SectionSS(vf(initpo[1:end-1], par_bru), _center)
-probSh = ShootingProblem(M = 1, flow = flow, ds = diff(LinRange(0, 1, 1 + 1)), section = sectionBru, par = par_bru, lens = (@lens _.D), jacobian = :FiniteDifferences)
+probSh = ShootingProblem(M = 1, flow = flow, ds = diff(LinRange(0, 1, 1 + 1)), section = sectionBru, par = par_bru, lens = (@optic _.D), jacobian = :FiniteDifferences)
 ```
 
 ## Finding a periodic orbit

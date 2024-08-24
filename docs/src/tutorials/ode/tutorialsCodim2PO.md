@@ -39,7 +39,7 @@ par_pop = ( K = 1., r = 6.28, a = 12.56, b0 = 0.25, e = 1., d = 6.28, ϵ = 0.2, 
 
 z0 = [0.1,0.1,1,0]
 
-prob = BifurcationProblem(Pop!, z0, par_pop, (@lens _.b0);
+prob = BifurcationProblem(Pop!, z0, par_pop, (@optic _.b0);
 	record_from_solution = (x, p) -> (x = x[1], y = x[2], u = x[3]))
 
 opts_br = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.01, n_inversion = 6, nev = 4)
@@ -102,7 +102,7 @@ scene = plot(brpo_fold)
 We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 
 ```@example TUTPPREY
-prob2 = @set probtrap.prob_vf.lens = @lens _.ϵ
+prob2 = @set probtrap.prob_vf.lens = @optic _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), opts_po_cont;
 	argspo...
 	)
@@ -128,7 +128,7 @@ scene = plot(br_fold_sh)
 We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 
 ```@example TUTPPREY
-probsh2 = @set probsh.lens = @lens _.ϵ
+probsh2 = @set probsh.lens = @optic _.ϵ
 brpo_pd_sh = continuation(probsh2, cish, PALC(), opts_po_cont;
 	argspo...
 	)
@@ -154,7 +154,7 @@ scene = plot(brpo_fold)
 We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 
 ```@example TUTPPREY
-prob2 = @set probcoll.prob_vf.lens = @lens _.ϵ
+prob2 = @set probcoll.prob_vf.lens = @optic _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);
 	argspo...
 	)
@@ -168,9 +168,9 @@ We continue the previously detected fold/period-doubling bifurcations as functio
 
 ```@example TUTPPREY
 opts_pocoll_fold = ContinuationPar(brpo_fold.contparams, detect_bifurcation = 3, max_steps = 100, p_min = 0.01, p_max = 1.2)
-@set! opts_pocoll_fold.newton_options.tol = 1e-12
+@reset opts_pocoll_fold.newton_options.tol = 1e-12
 
-fold_po_coll2 = continuation(brpo_fold, 1, (@lens _.ϵ), opts_pocoll_fold;
+fold_po_coll2 = continuation(brpo_fold, 1, (@optic _.ϵ), opts_pocoll_fold;
 		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = :minaug,
@@ -179,7 +179,7 @@ fold_po_coll2 = continuation(brpo_fold, 1, (@lens _.ϵ), opts_pocoll_fold;
 		callback_newton = BK.cbMaxNorm(1),
 		)
 
-fold_po_coll1 = continuation(brpo_fold, 2, (@lens _.ϵ), opts_pocoll_fold;
+fold_po_coll1 = continuation(brpo_fold, 2, (@optic _.ϵ), opts_pocoll_fold;
 		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = :minaug,
@@ -199,15 +199,15 @@ plot(sol2, xlims= (8,10))
 
 probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 3), re_make(prob, params = sol2.prob.p), sol2, 1.)
 
-prob2 = @set probcoll.prob_vf.lens = @lens _.ϵ
+prob2 = @set probcoll.prob_vf.lens = @optic _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);
 	argspo...,
 	bothside = true,
 	)
 
 opts_pocoll_pd = ContinuationPar(brpo_pd.contparams, max_steps = 40, p_min = 1.e-2, dsmax = 1e-2, ds = -1e-3)
-@set! opts_pocoll_pd.newton_options.tol = 1e-12
-pd_po_coll2 = continuation(brpo_pd, 2, (@lens _.b0), opts_pocoll_pd;
+@reset opts_pocoll_pd.newton_options.tol = 1e-12
+pd_po_coll2 = continuation(brpo_pd, 2, (@optic _.b0), opts_pocoll_pd;
 		detect_codim2_bifurcation = 1,
 		start_with_eigen = false,
 		jacobian_ma = :minaug,

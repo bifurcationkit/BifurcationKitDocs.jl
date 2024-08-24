@@ -6,7 +6,7 @@ The bifurcations are detected during a call to `br = continuation(prob, alg, con
 
 The bifurcation points are located by looking at the spectrum **e.g.** by monitoring the unstable eigenvalues. The Floquet exponent λ is declared unstable if `real(λ) > contParams.tol_stability`. The located bifurcation points are then returned in `br.specialpoint`. 
     
-## Precise detection of bifurcation points using Bisection    
+## Precise detection of bifurcation points using bisection    
 
 Note that the bifurcation points detected when `detect_bifurcation = 2` can be rather *crude*  localization of the true bifurcation points. Indeed, we only signal that, in between two continuation steps *which can be large*, a (several) bifurcation has been detected. Hence, we only have a rough idea of where the bifurcation is located, unless your `dsmax` is very small... This can be improved as follows.
 

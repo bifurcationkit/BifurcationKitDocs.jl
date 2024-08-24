@@ -142,7 +142,7 @@ ls = GMRESKrylovKit(verbose = 0, rtol = 1e-9, maxiter = 150, ishermitian = true,
 Let's try this on a Krylov-Newton computation to refine the guess `sol0`:
 
 ```julia
-prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@lens _.l),
+prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@optic _.l),
 	J = (x, p) -> (dx -> dF_sh(x, p, dx)),
 	plot_solution = (ax, x, p) -> contour3dMakie(ax, x),
 	record_from_solution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)))
@@ -214,7 +214,7 @@ We can then declare our eigensolver and pass it to the newton parameters
 
 ```julia
 eigSH3d = SH3dEig((@set ls.rtol = 1e-9), 0.1)
-@set! optnew.eigsolver = eigSH3d
+@reset optnew.eigsolver = eigSH3d
 ```
 
 We are now ready to perform continuation and detection of bifurcation points:

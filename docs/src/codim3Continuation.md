@@ -49,13 +49,13 @@ In order to apply the newton algorithm to $F_{bt}$, one needs to invert the jaco
 using Revise, BifurcationKit
 Fbt(x, p) = [x[2], p.β1 + p.β2 * x[2] + p.a * x[1]^2 + p.b * x[1] * x[2]]
 par = (β1 = 0.01, β2 = -0.3, a = -1., b = 1.)
-prob  = BifurcationProblem(Fbt, [0.01, 0.01], par, (@lens _.β1))
+prob  = BifurcationProblem(Fbt, [0.01, 0.01], par, (@optic _.β1))
 opts_br = ContinuationPar(p_max = 0.5, p_min = -0.5, detect_bifurcation = 3, nev = 2)
 
 br = continuation(prob, PALC(), opts_br; bothside = true)
 
 # compute branch of Hopf points
-hopf_codim2 = continuation(br, 3, (@lens _.β2), ContinuationPar(opts_br, detect_bifurcation = 1, max_steps = 40, max_bisection_steps = 25) ;
+hopf_codim2 = continuation(br, 3, (@optic _.β2), ContinuationPar(opts_br, max_steps = 40) ;
 	detect_codim2_bifurcation = 2,
 	update_minaug_every_step = 1,
 	bothside = true,

@@ -1,12 +1,12 @@
 using Pkg
 cd(@__DIR__)
 pkg" activate ."
-pkg" dev AbstractTrees"
-pkg" dev BifurcationKit DocumenterMermaid AsymptoticNumericalMethod BandedMatrices"
+pkg" dev AbstractTrees BandedMatrices"
+pkg" dev BifurcationKit AsymptoticNumericalMethod"
+
 
 
 using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
-using DocumenterMermaid
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 
@@ -118,4 +118,7 @@ makedocs(
 
 deploydocs(;
 	repo = "github.com/bifurcationkit/BifurcationKitDocs.jl.git",
-	push_preview=true, target="build", devbranch="main")
+	push_preview = true, 
+	target = "build", 
+	devbranch="main"
+	)

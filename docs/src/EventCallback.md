@@ -8,7 +8,7 @@ The events are detected during a call to `br = continuation(prob, alg, contParam
 
 The event points are located by looking at the function defining the event (see below). The located event points are then returned in `br.specialpoint`.
 
-## Precise detection of event points using Bisection
+## Precise detection of event points using bisection
 
 Note that the event points detected when `detect_event = 1` are only approximate event points. Indeed, we only signal that, in between two continuation steps which can be large, a (several) event point has been detected. Hence, we only have a rough idea of where the event is located, unless your `ContinuationPar().dsmax` is very small... This can be improved as follows.
 
@@ -60,7 +60,7 @@ end
 par = (p1 = -3., p2 = -3., k = 3)
 
 # bifurcation problem
-prob = BifurcationProblem(Feve, -2ones(2), par, (@lens _.p1);
+prob = BifurcationProblem(Feve, -2ones(2), par, (@optic _.p1);
 	record_from_solution = (x, p) -> x[1])
 
 # parameters for the continuation

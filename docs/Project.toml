@@ -16,6 +16,7 @@ SparseDiffTools = "47a9eef4-7e08-11e9-0b38-333d64bd3804"
 
 [compat]
 BifurcationKit = "0.3.2"
+AsymptoticNumericalMethod = "^0.2.0"
 DifferentialEquations = "6.19.0, ^7.1.0"
 Documenter = "0.27, ^1.0"
 ModelingToolkit = "7.0, ^8.1"

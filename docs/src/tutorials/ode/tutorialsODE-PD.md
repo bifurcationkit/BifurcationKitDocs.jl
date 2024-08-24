@@ -41,7 +41,7 @@ par_lur = (α = -1.0, β = 1.)
 z0 = zeros(3)
 
 # bifurcation problem
-prob = BifurcationProblem(lur!, z0, par_lur, (@lens _.α);
+prob = BifurcationProblem(lur!, z0, par_lur, (@optic _.α);
     record_from_solution = recordFromSolution)
 nothing #hide
 ```

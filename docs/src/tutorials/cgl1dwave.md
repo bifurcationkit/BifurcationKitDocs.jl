@@ -97,7 +97,7 @@ par_cgl = (r = 0.0, μ = 0.5, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, 
 sol0 = zeros(par_cgl.N)
 
 # bifurcation problem
-prob = BifurcationProblem(Fcgl, sol0, par_cgl,  (@lens _.r); J = Jcgl)
+prob = BifurcationProblem(Fcgl, sol0, par_cgl,  (@optic _.r); J = Jcgl)
 
 opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)
 opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.15, ds = 0.001, p_max = 2.5,

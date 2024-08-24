@@ -61,7 +61,7 @@ sol0 = -(1 .- par_car.X.^2)
 
 recordFromSolution(x, p) = (x[2]-x[1]) * sum(x->x^2, x)
 
-prob = BifurcationProblem(F_carr, zeros(N), par_car, (@lens _.ϵ); J = Jac_carr, record_from_solution = recordFromSolution)
+prob = BifurcationProblem(F_carr, zeros(N), par_car, (@optic _.ϵ); J = Jac_carr, record_from_solution = recordFromSolution)
 
 optnew = NewtonPar(tol = 1e-8)
 sol = newton(prob, optnew, normN = norminf) # hide

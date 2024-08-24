@@ -53,7 +53,7 @@ k = 2
 F(x, p) = (@. p + x - x^(k+1)/(k+1))
 
 # bifurcation problem
-prob = BifurcationProblem(F, [0.8], 1., (@lens _))
+prob = BifurcationProblem(F, [0.8], 1., (@optic _))
 
 # parameters for the continuation
 opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, max_steps = 130, p_min = -3., p_max = 3., newton_options = NewtonPar(tol = 1e-8))

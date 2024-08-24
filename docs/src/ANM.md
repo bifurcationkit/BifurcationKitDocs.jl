@@ -62,7 +62,7 @@ end
 
 sol0 = zeros(2)
 par = (α = 0.0, )
-prob = BifurcationProblem(F, sol0, par, (@lens _.α); record_from_solution = (x,p) -> norminf(x))
+prob = BifurcationProblem(F, sol0, par, (@optic _.α); record_from_solution = (x,p) -> norminf(x))
 ```
 
 ```@example ANM

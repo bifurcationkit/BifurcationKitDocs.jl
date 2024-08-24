@@ -111,7 +111,7 @@ u0 = @. (tanh(2X)+1)/2
 U0 = vcat(u0, 1 .- u0)
 
 # we define a problem to hold the vector field
-prob = BifurcationProblem(Fcat, u0, par_cat, (@lens _.a); J = Jcat)
+prob = BifurcationProblem(Fcat, u0, par_cat, (@optic _.a); J = Jcat)
 nothing #hide
 ```
 

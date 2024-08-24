@@ -49,7 +49,7 @@ nothing #hide
 We call the Newton solver:
 
 ```@example TUT1ODE
-prob = BifurcationProblem(F_chan, sol0, par, (@lens _.α),
+prob = BifurcationProblem(F_chan, sol0, par, (@optic _.α),
 	# function to plot the solution
 	plot_solution = (x, p; k...) -> plot!(x; ylabel="solution", label="", k...))
 sol = newton(prob, optnewton) # hide
@@ -76,7 +76,7 @@ br = continuation(prob, PALC(), optcont; plot = true)
 nothing #hide		
 ```
 
-The parameter axis `lens = @lens _.α` is used to extract the component of `par` corresponding to `α`. Internally, it is used as `get(par, lens)` which returns `3.3`.
+The parameter axis `lens = @optic _.α` is used to extract the component of `par` corresponding to `α`. Internally, it is used as `get(par, lens)` which returns `3.3`.
 
 !!! tip "Tip"
     We don't need to call `newton` first in order to use `continuation`.

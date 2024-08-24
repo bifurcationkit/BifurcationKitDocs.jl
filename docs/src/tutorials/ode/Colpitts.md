@@ -66,7 +66,7 @@ z0 = [0.9957,0.7650,19.81,-19.81]
 Be = [-(par_Colpitts.C1+par_Colpitts.C2) par_Colpitts.C2 0 0;par_Colpitts.C2 -par_Colpitts.C2 0 0;par_Colpitts.C1 0 0 0; 0 0 par_Colpitts.L 0]
 
 # we group the differentials together
-prob = BifurcationProblem(Colpitts!, z0, par_Colpitts, (@lens _.μ); record_from_solution = recordFromSolution)
+prob = BifurcationProblem(Colpitts!, z0, par_Colpitts, (@optic _.μ); record_from_solution = recordFromSolution)
 
 nothing #hide
 ```
@@ -114,7 +114,7 @@ probFreez_ode = ODEProblem(prob_dae, z0, (0., 1.), par_Colpitts)
 
 # we lower the tolerance of newton for the periodic orbits
 optnpo = @set optn.tol = 1e-9
-@set! optnpo.eigsolver = DefaultEig()
+@reset optnpo.eigsolver = DefaultEig()
 
 opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, p_min = 0.2, max_steps = 50, newton_options = optnpo, nev = 4, tol_stability = 1e-3, plot_every_step = 5)
 
@@ -131,13 +131,13 @@ br_po = continuation(br, 1, opts_po_cont, probSH;
 	# branch of periodic orbits
 	δp = 0.001,
 	record_from_solution = (u, p) -> begin
-		outt = BK.get_periodic_orbit(p.prob, u, (@set  par_Colpitts.μ=p.p))
+		outt = BK.get_periodic_orbit(p.prob, u, p.p)
 		m = maximum(outt[1,:])
 		return (s = m, period = u[end])
 	end,
 	# plotting of a solution
 	plot_solution = (x, p; k...) -> begin
-		outt = BK.get_periodic_orbit(p.prob, x, (@set  par_Colpitts.μ=p.p))
+		outt = BK.get_periodic_orbit(p.prob, x, p.p)
 		plot!(outt.t, outt[2,:], subplot = 3)
 		plot!(br, vars = (:param, :x1), subplot = 1)
 	end,

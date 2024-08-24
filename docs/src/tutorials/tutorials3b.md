@@ -105,7 +105,7 @@ par_bru = (α = 2., β = 5.45, D1 = 0.008, D2 = 0.004, l = 0.3)
 sol0 = vcat(par_bru.α * ones(n), par_bru.β / par_bru.α * ones(n))
 
 # bifurcation problem
-probBif = BK.BifurcationProblem(Fbru, sol0, par_bru, (@lens _.l);
+probBif = BK.BifurcationProblem(Fbru, sol0, par_bru, (@optic _.l);
   J = Jbru_sp,
   plot_solution = (x, p; kwargs...) -> (plotsol(x; label="", kwargs... )),
   record_from_solution = (x, p) -> x[div(n,2)])
@@ -166,7 +166,7 @@ We now perform a Hopf continuation with respect to the parameters `l, β`
 
 ```@example TUTBRUmanual
 optcdim2 = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 6.5, p_min = 0.0, newton_options = opt_newton, detect_bifurcation = 0)
-br_hopf = continuation(br, ind_hopf, (@lens _.β), optcdim2, normC = norminf, jacobian_ma = :minaug)
+br_hopf = continuation(br, ind_hopf, (@optic _.β), optcdim2, normC = norminf, jacobian_ma = :minaug)
 scene = plot(br_hopf)
 ```
 
@@ -374,7 +374,7 @@ probSh = ShootingProblem(
 	abstol = 1e-10, reltol = 1e-8,
 
   # parameter axis
-  lens = (@lens _.l),
+  lens = (@optic _.l),
 
   # parameters
   par = par_hopf,
@@ -498,7 +498,7 @@ probHPsh = PoincareShootingProblem(
 	abstol = 1e-10, reltol = 1e-8,
 
   # parameter axis
-  lens = (@lens _.l),
+  lens = (@optic _.l),
 
   # parameters
   par = par_hopf,

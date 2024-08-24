@@ -107,7 +107,7 @@ We are now ready to compute the bifurcation of the trivial (constant in space) s
 
 ```@example DETENGINE
 # bifurcation problem
-prob = BifurcationProblem(Fdet, U0, (par_det..., q = 0.5), (@lens _.up); 
+prob = BifurcationProblem(Fdet, U0, (par_det..., q = 0.5), (@optic _.up); 
 	J = JdetAD,
 	plot_solution = (x, p; k...) -> plotsol!(x; k...),
 	record_from_solution = (x, p) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))

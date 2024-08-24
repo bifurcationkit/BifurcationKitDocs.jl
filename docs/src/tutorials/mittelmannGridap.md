@@ -65,7 +65,7 @@ uh = zero(U)
 par_bratu = (λ = 0.01,)
 
 # problem definition
-prob = GridapBifProblem(res, uh, par_bratu, V, U, (@lens _.λ); 
+prob = GridapBifProblem(res, uh, par_bratu, V, U, (@optic _.λ); 
 		jac = jac,
 		d2res = d2res,
 		d3res = d3res,

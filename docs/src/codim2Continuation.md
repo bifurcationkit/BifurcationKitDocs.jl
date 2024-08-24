@@ -120,7 +120,7 @@ To compute the codim 2 curve of Fold / Hopf points, one can call [`continuation`
 
 ```@docs
  continuation(br::BifurcationKit.AbstractBranchResult, ind_bif::Int64,
-				lens2::Lens, options_cont::ContinuationPar = br.contparams ;
+				lens2, options_cont::ContinuationPar = br.contparams ;
 				kwargs...)
 ```
 

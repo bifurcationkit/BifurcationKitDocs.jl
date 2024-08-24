@@ -31,7 +31,7 @@ params = (a = 1.0, b = 2.0)
 # record a few components / indicators about x 
 myRecord(x,p) = (x1 = x[1], max = maximum(x), nrm = norm(x, Inf))
 
-prob = BifurcationProblem(f, u0, p, (@lens _.a);
+prob = BifurcationProblem(f, u0, p, (@optic _.a);
 	record_from_solution = myRecord
 	)
 ```
@@ -45,7 +45,7 @@ In case you want to modify an existing problem, you should use the following met
 re_make(prob::BifurcationKit.AbstractBifurcationProblem;
 		u0 = prob.u0,
 		params = prob.params,
-		lens::Lens = prob.lens,
+		lens = prob.lens,
 		record_from_solution = prob.record_from_solution,
 		plot_solution = prob.plot_solution,
        J = missing,
@@ -60,7 +60,7 @@ using BifurcationKit, Setfield
 F(x,p) = @. p.a + x^2
 # parameters
 par = (a = 0., b = 2)
-prob = BifurcationProblem(F, zeros(3), par, (@lens _.a))
+prob = BifurcationProblem(F, zeros(3), par, (@optic _.a))
 # change u0
 prob2 = BifurcationKit.re_make(prob, u0 = rand(3))
 ```

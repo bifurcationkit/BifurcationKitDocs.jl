@@ -1,4 +1,4 @@
-# Getting Started with BifurcationKit
+# 🚀 Get Started with BifurcationKit
 
 This tutorial will introduce you to the functionalities for computing bifurcation diagrams and follow branches of solutions.
 
@@ -12,9 +12,9 @@ as function of $\mu$ by looking at the solutions in the connected component of $
 
 ```@example GETSTARTED1
 using BifurcationKit, Plots
-F(x, p) = @. p.μ + x - x^3/3
-prob = BifurcationProblem(F, [-2.], (μ = -1.,), (@lens _.μ);
-        record_from_solution = (x,p) -> (x = x[1]))
+F(x, p) = @. p[1] + x - x^3/3
+prob = BifurcationProblem(F, [-2.], [-1.], (@optic _[1]);
+    record_from_solution = (x,p) -> x[1])
 br = continuation(prob, PALC(), ContinuationPar(p_min = -1., p_max = 1.))
 plot(br)
 scene = plot(br) #hide
@@ -26,10 +26,8 @@ where the pieces are described below.
 To solve this numerically, we define a problem type by giving it the equation, the initial condition, the parameters and the parameter axis to solve over:
 
 ```@example GETSTARTED1
-using BifurcationKit
-F(x, p) = @. p.μ + x - x^3/3
-prob = BifurcationProblem(F, [-2.], (μ = -1.,), (@lens _.μ);
-        record_from_solution = (x,p) -> (x = x[1]))
+prob = BifurcationProblem(F, [-2.], [-1.], (@optic _[1]);
+        record_from_solution = (x,p) -> x[1])
 ```
 
 Note that BifurcationKit.jl will choose the types for the problem based on the types used to define the problem type. For our example, notice that `u0` is a `Vector{Float64}`, and therefore this will solve with the dependent variables being `Vector{Float64}`. You can use this to choose to solve with `Float32` for example to run this on the GPU (see [example](@ref sh2dgpu)).
@@ -138,7 +136,7 @@ Fbp(u, p) = @. u * (p.μ - u)
 # bifurcation problem
 prob = BifurcationProblem(Fbp, [0.0], (μ = -0.2,),
 	# specify the continuation parameter
-	(@lens _.μ), 
+	(@optic _.μ), 
 	record_from_solution = (x, p) -> x[1])
 ```
 
@@ -200,7 +198,7 @@ and then we can use this to define a bifurcation problem:
 ```@example GETSTARTED3
 par_sl = (r = 0.1, μ = 0., ν = 1.0, c3 = 1.0)
 u0 = zeros(2)
-prob = BifurcationProblem(Fsl, u0, par_sl, (@lens _.r))
+prob = BifurcationProblem(Fsl, u0, par_sl, (@optic _.r))
 ```
 
 For this simple problem, we detect the existence of periodic orbits by locating a Hopf bifurcation. This is done as in the previous example by continuing the zero solution:
@@ -248,7 +246,7 @@ plot!(sol.t, sol[2,:], label = "v", xlabel = "time")
 If you plot the solution during continuation, you see that the right bottom panel is empty ; this panel is used to plot the solution at the current continuation step:
 
 ```@example GETSTARTED3
-br_po = continuation(br, 2, opts,
+br_po = continuation(br, 2, br.contparams,
         PeriodicOrbitOCollProblem(20, 5);
         plot = true,
         )
@@ -260,7 +258,7 @@ scene = title!("") #hide
 In order to plot the periodic solution during continuation, you need to supply a `periodic_solution` to `continuation`. This is not done by default because in some cases, obtaining the solution is costly (*e.g.* for Shooting methods). Based on the previous paragraph, it is straightforward to implement this plotting function:
 
 ```@example GETSTARTED3
-br_po = continuation(br, 2, opts,
+br_po = continuation(br, 2, br.contparams,
         PeriodicOrbitOCollProblem(20, 5);
         plot = true,
         plot_solution = (x, par; k...) -> begin

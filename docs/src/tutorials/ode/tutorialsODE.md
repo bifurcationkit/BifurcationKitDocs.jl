@@ -47,7 +47,7 @@ par_tm = (α = 1.4, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.20, U0 = 0.3, τF =
 z0 = [0.238616, 0.982747, 0.367876]
 
 # Bifurcation Problem
-prob = BifurcationProblem(TMvf!, z0, par_tm, (@lens _.E0);
+prob = BifurcationProblem(TMvf!, z0, par_tm, (@optic _.E0);
 	record_from_solution = (x, p) -> (E = x[1], x = x[2], u = x[3]),)
 
 nothing #hide
@@ -157,7 +157,7 @@ We use finite differences to discretize the problem of finding periodic orbits. 
 opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds = 0.004, dsmin = 1e-4,
 	max_steps = 80, tol_stability = 1e-7)
 
-@set! opts_po_cont.newton_options.tol = 1e-7
+@reset opts_po_cont.newton_options.tol = 1e-7
 
 Mt = 250 # number of time sections
 br_potrap = continuation(

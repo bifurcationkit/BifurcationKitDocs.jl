@@ -102,7 +102,7 @@ par_cgl = (r = 0.5, μ = 0.1, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, 
 sol0 = 0.1rand(2Nx, Ny)
 sol0_f = vec(sol0)
 
-prob = BK.BifurcationProblem(Fcgl, sol0_f, par_cgl, (@lens _.r); J = Jcgl)
+prob = BK.BifurcationProblem(Fcgl, sol0_f, par_cgl, (@optic _.r); J = Jcgl)
 ```
 
 and the ODE problem
@@ -185,7 +185,7 @@ probSh = ShootingProblem(
 	[sol[:, end]];
 
 	# parameter axis
-	lens = (@lens _.r),
+	lens = (@optic _.r),
 
 	# jacobian of the periodic orbit functional
 	jacobian = BK.FiniteDifferencesMF(),

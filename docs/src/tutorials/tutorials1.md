@@ -54,7 +54,7 @@ nothing #hide
 We call the Newton solver:
 
 ```@example TUT1
-prob = BifurcationProblem(F_chan, sol0, par, (@lens _.α),
+prob = BifurcationProblem(F_chan, sol0, par, (@optic _.α),
 	# function to plot the solution
 	plot_solution = (x, p; k...) -> plot!(x; ylabel="solution", label="", k...))
 sol = newton(prob, @set optnewton.verbose=false) # hide
@@ -79,7 +79,7 @@ br = continuation(prob, PALC(), optcont; plot = true)
 nothing #hide		
 ```
 
-The parameter axis `lens = @lens _.α` is used to extract the component of `par` corresponding to `α`. Internally, it is used as `get(par, lens)` which returns `3.3`.
+The parameter axis `lens = @optic _.α` is used to extract the component of `par` corresponding to `α`. Internally, it is used as `get(par, lens)` which returns `3.3`.
 
 !!! tip "Tip"
     We don't need to call `newton` first in order to use `continuation`.
@@ -124,7 +124,7 @@ We can finally continue this fold point in the plane $(α, β)$ by performing a 
 ```@example TUT1
 outfoldco = continuation(br, indfold,
 	# second parameter axis to use for codim 2 curve
-	(@lens _.β),
+	(@optic _.β),
 	# we disable the computation of eigenvalues, it makes little sense here
 	ContinuationPar(optcont, detect_bifurcation = 0))
 scene = plot(outfoldco, plotfold = true, legend = :bottomright)

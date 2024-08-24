@@ -9,7 +9,7 @@ The bifurcation points are located by looking at the spectrum **e.g.** by monito
 !!! warning "Eigenvalues"
     The rightmost eigenvalues are computed by default to detect bifurcations. Hence, the number of eigenvalues with positive real parts must be finite (*e.g.* small). This might require to consider $-F(x,p)=0$ instead of (E).
     
-## Precise detection of bifurcation points using Bisection    
+## Precise detection of bifurcation points using bisection    
 
 Note that the bifurcation points detected when `detect_bifurcation = 2` can be rather *crude*  localization of the true bifurcation points. Indeed, we only signal that, in between two continuation steps *which can be large*, a (several) bifurcation has been detected. Hence, we only have a rough idea of where the bifurcation is located, unless your `dsmax` is very small... This can be improved as follows.
 

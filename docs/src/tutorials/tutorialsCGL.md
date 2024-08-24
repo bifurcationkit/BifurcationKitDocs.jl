@@ -120,7 +120,7 @@ par_cgl = (r = 0.5, μ = 0.1, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, 
 sol0 = zeros(2Nx, Ny)
 
 # we make a problem
-prob = BK.BifurcationProblem(Fcgl, vec(sol0), par_cgl, (@lens _.r); J = Jcgl)
+prob = BK.BifurcationProblem(Fcgl, vec(sol0), par_cgl, (@optic _.r); J = Jcgl)
 nothing #hide
 ```
 
@@ -161,7 +161,7 @@ Before we start the codim 2 continuation, we tell `BifurcationKit.jl` to use the
 # we perform Hopf continuation of the first Hopf point in br
 ind_hopf = 1
 br_hopf = @time continuation(
-	br, ind_hopf, (@lens _.γ),
+	br, ind_hopf, (@optic _.γ),
 	ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, p_max = 6.5, p_min = -10., newton_options = opts_br.newton_options, detect_bifurcation = 1); plot = true,
 	update_minaug_every_step = 1,
 	normC = norminf,
@@ -420,7 +420,7 @@ function dFcgl!(f, x, p, dx)
 end
 
 # we create a problem inplace
-probInp = BifurcationProblem(Fcgl!, vec(sol0), (@set par_cgl.r = r_hopf - 0.01), (@lens _.r); J = dFcgl!, inplace = true)
+probInp = BifurcationProblem(Fcgl!, vec(sol0), (@set par_cgl.r = r_hopf - 0.01), (@optic _.r); J = dFcgl!, inplace = true)
 ```
 
 We can now define an inplace functional
@@ -618,7 +618,7 @@ Finally, one can perform continuation of the Fold bifurcation point as follows C
 optcontfold = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 40.1, p_min = -10., newton_options = (@set opt_po.linsolver = ls), max_steps = 20, detect_bifurcation = 0)
 
 outfoldco = BK.continuation_fold(probFold,
-	br_po, indfold, (@lens _.c5),
+	br_po, indfold, (@optic _.c5),
 	optcontfold;
 	jacobian_ma = :minaug,
 	bdlinsolver = BorderingBLS(solver = ls, check_precision = false),
@@ -709,7 +709,7 @@ We can now define our functional:
 probGPU = BifurcationProblem(Fcgl,
     vec(CuArrays(zeros((x, p) ->  (dx -> dFcgl(x, p, dx))))),
     (@set par_cgl_gpu.r = r_hopf - 0.01),
-    (@lens _.r);
+    (@optic _.r);
     J = (x, p) ->  (dx -> dFcgl(x, p, dx)))
 
 # matrix-free problem on the gpu

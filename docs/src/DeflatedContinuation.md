@@ -56,8 +56,8 @@ The following piece of information is valuable in order to get the algorithm wor
 
 We show a quick and simple example of use. Note in particular that the algorithm is able to find the disconnected branch. The starting points are marked with crosses
 
-```@example
-using BifurcationKit, LinearAlgebra, Setfield, SparseArrays, Plots
+```@example DEFCONT
+using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
 k = 2
@@ -66,17 +66,18 @@ F(x, p) = @. p * x + x^(k+1)/(k+1) + 0.01
 Jac_m(x, p) = diagm(0 => p .+ x.^k)
 
 # bifurcation problem
-prob = BifurcationProblem(F, [0.], 0.5, (@lens _), J = Jac_m)
+prob = BifurcationProblem(F, [0.], 0.5, (@optic _), J = Jac_m)
 
 # continuation options
-opts = BK.ContinuationPar(dsmax = 0.051, dsmin = 1e-3, ds=0.001, max_steps = 140, p_min = -3., newton_options = NewtonPar(tol = 1e-8), save_eigenvectors = false)
+opts = BK.ContinuationPar(ds=0.001, max_steps = 140, newton_options = NewtonPar(tol = 1e-8))
 
 # algorithm
-alg = BK.DefCont(deflation_operator = DeflationOperator(2, .001, [[0.]]), perturb_solution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))
+alg = DefCont(deflation_operator = DeflationOperator(2, .001, [[0.]]), perturb_solution = (x,p,id) -> (x  .+ 0.1 .* rand(length(x))))
 
 brdc = continuation(prob, alg,
 	ContinuationPar(opts, ds = -0.001, max_steps = 800, newton_options = NewtonPar(verbose = false, max_iterations = 6), plot_every_step = 40),
-	; plot=true, verbosity = 0,
+	; 
+	plot=false,
 	callback_newton = BK.cbMaxNorm(1e3) # reject newton step if residual too large
 	)
 plot(brdc)

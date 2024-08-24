@@ -7,6 +7,10 @@ Depth = 2
 
 We only highlight changes that are potentially breaking for the user.
 
+## Version 0.4.0
+
+We rely on `Accessors.jl` instead of `Setfield.jl`. This basically amounts to changing `@lens` by `@optic` in your code.
+
 ## Version 0.3.4
 - correct selection of default linear solver for MoorePenrose
 - pass iterator for plotting

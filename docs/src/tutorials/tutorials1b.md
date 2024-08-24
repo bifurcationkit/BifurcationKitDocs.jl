@@ -75,7 +75,7 @@ sol = Fun(x -> x * (1-x), Interval(0.0, 1.0))
 # set of parameters
 par_af = (α = 3., β = 0.01, Δ = Δ)
 
-prob = BifurcationProblem(F_chan, sol, par_af, (@lens _.α); J = Jac_chan, plot_solution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...))
+prob = BifurcationProblem(F_chan, sol, par_af, (@optic _.α); J = Jac_chan, plot_solution = (x, p; kwargs...) -> plot!(x; label = "l = $(length(x))", kwargs...))
 ```
 
 Finally, we need to provide some parameters for the Newton iterations. This is done by calling

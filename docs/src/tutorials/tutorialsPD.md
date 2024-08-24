@@ -64,7 +64,7 @@ par_br = (η = 1.0, a = -1., b = -3/2., H = 3.0, D = D, C = -0.6, Δ = blockdiag
 u0 = 1.0 * cos.(2X)
 solc0 = vcat(u0, u0)
 
-probBif = BK.BifurcationProblem(Fbr, solc0, par_br, (@lens _.C) ;J = Jbr,
+probBif = BK.BifurcationProblem(Fbr, solc0, par_br, (@optic _.C) ;J = Jbr,
 		record_from_solution = (x, p) -> norminf(x),
 		plot_solution = (x, p; kwargs...) -> plot!(x[1:end÷2]; label="",ylabel ="u", kwargs...))
 
@@ -110,7 +110,7 @@ initpo = vcat(vec(orbitsection), 3.)
 # ODE solver ETDRK2. SectionShooting implements an appropriate phase condition
 probSh = ShootingProblem(prob_sp, ETDRK2(krylov=true),
 	[sol(280.0)]; abstol=1e-14, reltol=1e-12, dt = 0.1,
-  lens = (@lens _.C),
+  optic = (@optic _.C),
   jacobian = BK.FiniteDifferencesMF())
 
 # parameters for the Newton-Krylov solver
