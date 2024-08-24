@@ -2,8 +2,7 @@ using Pkg
 cd(@__DIR__)
 pkg" activate ."
 pkg" dev AbstractTrees BandedMatrices"
-pkg" dev BifurcationKit AsymptoticNumericalMethod"
-
+pkg" add BifurcationKit AsymptoticNumericalMethod"
 
 
 using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
