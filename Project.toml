@@ -4,7 +4,9 @@ authors = ["romain.veltz@inria.fr <rveltz> and contributors"]
 version = "0.2.6"
 
 [compat]
-julia = "1"
+julia = "1.9"
+AsymptoticNumericalMethod = "^0.2.0"
+BifurcationKit = "^0.4.0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
