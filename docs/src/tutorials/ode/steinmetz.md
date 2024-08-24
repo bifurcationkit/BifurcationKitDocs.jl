@@ -52,7 +52,7 @@ end
 # plotting function
 function plotSolution(x, p; k...)
 	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-	plot!(xtt.t, xtt[:,:]'; label = "", k...)
+	plot!(xtt.t, xtt.u[1:4,:]'; label = "", k...)
 end
 
 # group parameters
@@ -67,7 +67,7 @@ We obtain some trajectories as seeds for computing periodic orbits.
 
 ```@example STEINMETZ
 using DifferentialEquations
-alg_ode = Rodas5()
+alg_ode = Rodas4()
 prob_de = ODEProblem(SL!, z0, (0,136.), par_sl)
 sol_ode = solve(prob_de, alg_ode)
 prob_de = ODEProblem(SL!, sol_ode.u[end], (0,30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
@@ -136,7 +136,7 @@ scene
 ## Computation with collocation
 
 ```@example STEINMETZ
-probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4), prob, sol_ode, 16.)
+probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4; update_section_every_step = 0), prob, sol_ode, 16.)
 
 opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0, 
 	ds = 0.002, dsmax = 0.05, 
@@ -162,7 +162,7 @@ opts_pocl_fold = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plo
 fold_po_cl = @time continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold;
         verbosity = 3, 
         # plot = true,
-        detect_codim2_bifurcation = 0,
+        detect_codim2_bifurcation = 2,
         update_minaug_every_step = 1,
         start_with_eigen = false,
         usehessian = false,

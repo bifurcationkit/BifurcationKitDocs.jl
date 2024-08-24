@@ -171,12 +171,11 @@ opts_pocoll_fold = ContinuationPar(brpo_fold.contparams, detect_bifurcation = 3,
 @reset opts_pocoll_fold.newton_options.tol = 1e-12
 
 fold_po_coll2 = continuation(brpo_fold, 1, (@optic _.ϵ), opts_pocoll_fold;
-		# verbosity = 2, plot = true,
+		verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = :minaug,
 		start_with_eigen = false,
 		bothside = true,
-		callback_newton = BK.cbMaxNorm(1),
 		)
 
 fold_po_coll1 = continuation(brpo_fold, 2, (@optic _.ϵ), opts_pocoll_fold;
@@ -185,7 +184,6 @@ fold_po_coll1 = continuation(brpo_fold, 2, (@optic _.ϵ), opts_pocoll_fold;
 		jacobian_ma = :minaug,
 		start_with_eigen = false,
 		bothside = true,
-		callback_newton = BK.cbMaxNorm(1),
 		)
 ```
 
