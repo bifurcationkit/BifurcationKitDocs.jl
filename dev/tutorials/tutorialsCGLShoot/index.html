@@ -77,7 +77,7 @@ par_cgl = (r = 0.5, μ = 0.1, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, 
 sol0 = 0.1rand(2Nx, Ny)
 sol0_f = vec(sol0)
 
-prob = BK.BifurcationProblem(Fcgl, sol0_f, par_cgl, (@lens _.r); J = Jcgl)</code></pre><p>and the ODE problem</p><pre><code class="language-julia hljs">f1 = DiffEqArrayOperator(par_cgl.Δ)
+prob = BK.BifurcationProblem(Fcgl, sol0_f, par_cgl, (@optic _.r); J = Jcgl)</code></pre><p>and the ODE problem</p><pre><code class="language-julia hljs">f1 = DiffEqArrayOperator(par_cgl.Δ)
 f2 = NL!
 prob_sp = SplitODEProblem(f1, f2, sol0_f, (0.0, 120.0), (@set par_cgl.r = 1.2), dt = 0.1)
 # we solve the PDE!!!
@@ -118,7 +118,7 @@ br_po = continuation(
 	[sol[:, end]];
 
 	# parameter axis
-	lens = (@lens _.r),
+	lens = (@optic _.r),
 
 	# jacobian of the periodic orbit functional
 	jacobian = BK.FiniteDifferencesMF(),
@@ -150,9 +150,4 @@ br_po = @time continuation(probSh,
 	verbosity = 3, plot = true,
 	linear_algo = MatrixFreeBLS(@set ls.N = probSh.M*2n+2),
 	plot_solution = (x, p; kwargs...) -&gt; heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, kwargs...),
-	record_from_solution = (u, p) -&gt; BK.getamplitude(probSh, u, (@set par_cgl.r = p.p); ratio = 2), normC = norminf)</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-mermaid.initialize({
-    startOnLoad: true,
-    theme: "neutral"
-});
-</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Tuesday 13 August 2024 09:04">Tuesday 13 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	record_from_solution = (u, p) -&gt; BK.getamplitude(probSh, u, (@set par_cgl.r = p.p); ratio = 2), normC = norminf)</code></pre></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.6.0 on <span class="colophon-date" title="Tuesday 27 August 2024 19:50">Tuesday 27 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
