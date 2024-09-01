@@ -39,7 +39,7 @@ br = continuation(prob, PALC(), opts_br;
 	normC = norminf,
 	bothside = true)
 
-scene = plot(br, plotfold = false, markersize = 4, legend = :topleft)</code></pre><img src="251c5f33.svg" alt="Example block output"/><p>With detailed information:</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
+scene = plot(br, plotfold = false, markersize = 4, legend = :topleft)</code></pre><img src="e435c1ee.svg" alt="Example block output"/><p>With detailed information:</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
  ├─ Number of points: 33
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameter <span class="sgr36"><span class="sgr1">F</span></span> starts at 3.0, ends at 3.0
@@ -64,7 +64,7 @@ sn_codim2 = continuation(br, 5, (@optic _.T),
 	record_from_solution = recordFromSolutionLor,
 	)
 
-scene = plot(sn_codim2, vars=(:X, :U), branchlabel = &quot;Folds&quot;, ylims=(-0.5, 0.5))</code></pre><img src="c46e8574.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">sn_codim2</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">FoldCont</span></span>
+scene = plot(sn_codim2, vars=(:X, :U), branchlabel = &quot;Folds&quot;, ylims=(-0.5, 0.5))</code></pre><img src="e60463a9.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">sn_codim2</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">FoldCont</span></span>
  ├─ Number of points: 82
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameters (:F, :T)
@@ -100,7 +100,7 @@ You can call various predictors:
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = &quot;Folds&quot;)
 plot!(hp_codim2_1, vars=(:X, :U), branchlabel = &quot;Hopfs&quot;)
-ylims!(-0.7,0.7);xlims!(1,1.3)</code></pre><img src="3be30224.svg" alt="Example block output"/><pre><code class="language-julia hljs">hp_codim2_1</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont</span></span>
+ylims!(-0.7,0.7);xlims!(1,1.3)</code></pre><img src="20a7aad3.svg" alt="Example block output"/><pre><code class="language-julia hljs">hp_codim2_1</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont</span></span>
  ├─ Number of points: 429
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameters (:F, :T)
@@ -129,7 +129,7 @@ Normal form: i⋅ω⋅z + l₂⋅z⋅|z|⁴
 plot(sn_codim2, vars=(:X, :U), branchlabel = &quot;SN&quot;)
 plot!(hp_codim2_1, vars=(:X, :U), branchlabel = &quot;Hopf1&quot;)
 plot!(hp_from_bt, vars=(:X, :U), branchlabel = &quot;Hopf2&quot;)
-ylims!(-0.7,0.75); xlims!(0.95,1.3)</code></pre><img src="fedaa5ba.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">hp_from_bt</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont from BogdanovTakens bifurcation point.</span></span>
+ylims!(-0.7,0.75); xlims!(0.95,1.3)</code></pre><img src="da8917bb.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">hp_from_bt</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont from BogdanovTakens bifurcation point.</span></span>
  ├─ Number of points: 401
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameters (:F, :T)
@@ -151,7 +151,7 @@ plot(hp_codim2_1, vars=(:X, :U), branchlabel = &quot;Hopf&quot;)
 plot!(hp_from_bt, vars=(:X, :U),  branchlabel = &quot;Hopf2&quot;)
 plot!( hp_from_zh, vars=(:X, :U), branchlabel = &quot;Hopf&quot;, legend = :topleft)
 plot!(sn_codim2,vars=(:X, :U),)
-ylims!(-0.7,0.75); xlims!(0.95,1.3)</code></pre><img src="27679e63.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">hp_from_zh</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont from BifurcationKit.ZeroHopf bifurcation point.</span></span>
+ylims!(-0.7,0.75); xlims!(0.95,1.3)</code></pre><img src="49de6f80.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">hp_from_zh</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont from BifurcationKit.ZeroHopf bifurcation point.</span></span>
  ├─ Number of points: 401
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameters (:F, :T)
@@ -162,4 +162,4 @@ ylims!(-0.7,0.75); xlims!(0.95,1.3)</code></pre><img src="27679e63.svg" alt="Exa
 - #  1, <span class="sgr34"><span class="sgr1">      gh</span></span> at T ≈ +0.00012660 ∈ (+0.00012654, +0.00012660), |δp|=6e-08, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =   1
 - #  2, <span class="sgr34"><span class="sgr1">      hh</span></span> at T ≈ +0.02627444 ∈ (+0.02627324, +0.02627444), |δp|=1e-06, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  27
 - #  3, <span class="sgr1">endpoint</span> at T ≈ +0.66778051,                                                                     step = 401
-</code></pre><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Kuznetsov"><a class="tag is-link" href="#citeref-Kuznetsov">Kuznetsov</a><blockquote><p>Kuznetsov, Yu A., H. G. E. Meijer, W. Govaerts, and B. Sautois. “Switching to Nonhyperbolic Cycles from Codim 2 Bifurcations of Equilibria in ODEs.” Physica D: Nonlinear Phenomena 237, no. 23 (December 2008): 3061–68.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.6.0 on <span class="colophon-date" title="Thursday 29 August 2024 10:24">Thursday 29 August 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</code></pre><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Kuznetsov"><a class="tag is-link" href="#citeref-Kuznetsov">Kuznetsov</a><blockquote><p>Kuznetsov, Yu A., H. G. E. Meijer, W. Govaerts, and B. Sautois. “Switching to Nonhyperbolic Cycles from Codim 2 Bifurcations of Equilibria in ODEs.” Physica D: Nonlinear Phenomena 237, no. 23 (December 2008): 3061–68.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.6.0 on <span class="colophon-date" title="Sunday 1 September 2024 16:16">Sunday 1 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
