@@ -144,7 +144,7 @@ BifurcationKit.PairOfEvents
 ## Branch switching (branch point)
 
 ```@docs
-continuation(br::ContResult, ind_bif::Int, optionsCont::ContinuationPar ; kwargs...)
+continuation(br::BifurcationKit.AbstractResult{BifurcationKit.EquilibriumCont}, ind_bif::Int, optionsCont::ContinuationPar ; kwargs...)
 ```
 
 ## Branch switching (Hopf point)
