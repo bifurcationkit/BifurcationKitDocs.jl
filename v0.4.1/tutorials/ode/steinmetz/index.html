@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>🟠 Steinmetz-Larter model · Bifurcation Analysis in Julia</title><meta name="title" content="🟠 Steinmetz-Larter model · Bifurcation Analysis in Julia"/><meta property="og:title" content="🟠 Steinmetz-Larter model · Bifurcation Analysis in Julia"/><meta property="twitter:title" content="🟠 Steinmetz-Larter model · Bifurcation Analysis in Julia"/><meta name="description" content="Documentation for Bifurcation Analysis in Julia."/><meta property="og:description" content="Documentation for Bifurcation Analysis in Julia."/><meta property="twitter:description" content="Documentation for Bifurcation Analysis in Julia."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img src="../../../assets/logo.svg" alt="Bifurcation Analysis in Julia logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">Bifurcation Analysis in Julia</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../capabilities/">Overview of capabilities</a></li><li><a class="tocitem" href="../../../gettingstarted/">Getting Started with BifurcationKit</a></li><li><a class="tocitem" href="../../tutorials/">Tutorials</a></li><li><input class="collapse-toggle" id="menuitem-5" type="checkbox"/><label class="tocitem" for="menuitem-5"><span class="docs-label">Basics</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../guidelines/">Guidelines</a></li><li><a class="tocitem" href="../../../educational/">Educational introduction</a></li><li><a class="tocitem" href="../../../overview/">Overview</a></li><li><a class="tocitem" href="../../../plotting/">Plot functions</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-6" type="checkbox"/><label class="tocitem" for="menuitem-6"><span class="docs-label">Problems</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../BifProblem/">Bifurcation Problem</a></li><li><a class="tocitem" href="../../../diffeq/">DiffEq wrapper</a></li><li><input class="collapse-toggle" id="menuitem-6-3" type="checkbox"/><label class="tocitem" for="menuitem-6-3"><span class="docs-label">Periodic Orbits</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../periodicOrbit/">Introduction</a></li><li><a class="tocitem" href="../../../periodicOrbitTrapeze/">Trapezoid</a></li><li><a class="tocitem" href="../../../periodicOrbitCollocation/">Collocation</a></li><li><a class="tocitem" href="../../../periodicOrbitShooting/">Shooting</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-6-4" type="checkbox"/><label class="tocitem" for="menuitem-6-4"><span class="docs-label">Symmetries / Waves</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../intro_wave/">Introduction</a></li><li><a class="tocitem" href="../../../waveEigen/">Eigen Solvers</a></li><li><a class="tocitem" href="../../../ModulatedTW/">Modulated Travelling waves</a></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-7" type="checkbox"/><label class="tocitem" for="menuitem-7"><span class="docs-label">Continuation methods</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../IntroContinuation/">Introduction</a></li><li><a class="tocitem" href="../../../Predictors/">Predictors / correctors</a></li><li><a class="tocitem" href="../../../PALC/">PALC</a></li><li><a class="tocitem" href="../../../MooreSpence/">Moore-Penrose continuation</a></li><li><a class="tocitem" href="../../../ANM/">ANM</a></li><li><a class="tocitem" href="../../../DeflatedContinuation/">Deflated continuation</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8" type="checkbox"/><label class="tocitem" for="menuitem-8"><span class="docs-label">Functionalities</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><input class="collapse-toggle" id="menuitem-8-1" type="checkbox"/><label class="tocitem" for="menuitem-8-1"><span class="docs-label">Nonlinear equations (Newton)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../newton/">Krylov-Newton algorithm</a></li><li><a class="tocitem" href="../../../deflatedproblem/">Deflated problems</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-2" type="checkbox"/><label class="tocitem" for="menuitem-8-2"><span class="docs-label">Bifurcations (equilibria)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../detectionBifurcation/">Bifurcation detection (1 param)</a></li><li><a class="tocitem" href="../../../codim2Continuation/">Fold / Hopf Continuation (2 params)</a></li><li><a class="tocitem" href="../../../codim3Continuation/">Bogdanov-Takens refinement (3 params)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-3" type="checkbox"/><label class="tocitem" for="menuitem-8-3"><span class="docs-label">Bifurcations (periodic orbits)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../detectionBifurcationPO/">Bifurcation detection (1 param)</a></li><li><a class="tocitem" href="../../../FoldContinuationPO/">Fold continuation (2 params)</a></li><li><a class="tocitem" href="../../../PDContinuationPO/">Period-Doubling continuation (2 params)</a></li><li><a class="tocitem" href="../../../NSContinuationPO/">Neimark-Sacker continuation (2 params)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-4" type="checkbox"/><label class="tocitem" for="menuitem-8-4"><span class="docs-label">Normal form (equilibria)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../simplebp/">Simple branch point</a></li><li><a class="tocitem" href="../../../nonsimplebp/">Non-simple branch point</a></li><li><a class="tocitem" href="../../../simplehopf/">Simple Hopf</a></li><li><a class="tocitem" href="../../../cusp/">Cusp</a></li><li><a class="tocitem" href="../../../bt/">Bogdanov-Takens</a></li><li><a class="tocitem" href="../../../bautin/">Bautin</a></li><li><a class="tocitem" href="../../../zh/">Zero-Hopf</a></li><li><a class="tocitem" href="../../../hh/">Hopf-Hopf</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-5" type="checkbox"/><label class="tocitem" for="menuitem-8-5"><span class="docs-label">Normal form (periodic orbits)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../bppo/">Simple branch point</a></li><li><a class="tocitem" href="../../../pd/">Period-doubling</a></li><li><a class="tocitem" href="../../../ns/">Neimark-Sacker</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-6" type="checkbox"/><label class="tocitem" for="menuitem-8-6"><span class="docs-label">Branch switching</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../intro-abs/">Introduction</a></li><li><a class="tocitem" href="../../../abs-from-eq/">From equilibria to equilibria</a></li><li><a class="tocitem" href="../../../abs-from-hopf/">From Hopf/PD/Branch to periodic orbits</a></li><li><a class="tocitem" href="../../../abs-from-codim2-eq/">From codim 2 to equilibria</a></li><li><a class="tocitem" href="../../../abs-from-codim2-po/">From codim 2 to periodic orbits</a></li></ul></li><li><a class="tocitem" href="../../../BifurcationDiagram/">Bifurcation diagram</a></li><li><a class="tocitem" href="../../../EventCallback/">Event handling and Callback</a></li><li><a class="tocitem" href="../../../iterator/">Iterator Interface</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-9" type="checkbox"/><label class="tocitem" for="menuitem-9"><span class="docs-label">Options</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../linearsolver/">Linear solvers</a></li><li><a class="tocitem" href="../../../borderedlinearsolver/">Bordered linear solvers</a></li><li><a class="tocitem" href="../../../eigensolver/">Eigen solvers</a></li><li><a class="tocitem" href="../../../Borderedarrays/">Bordered arrays</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-10" type="checkbox"/><label class="tocitem" for="menuitem-10"><span class="docs-label">Contributing</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><input class="collapse-toggle" id="menuitem-10-1" type="checkbox"/><label class="tocitem" for="menuitem-10-1"><span class="docs-label">Interfaces</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../interfaceLS/">Vector</a></li><li><a class="tocitem" href="../../../interfaceLS/">Linear / eigen Solvers</a></li><li><a class="tocitem" href="../../../interfacePred/">Predictor / corrector</a></li><li><a class="tocitem" href="../../../interfaceFlow/">Flow</a></li></ul></li></ul></li><li><a class="tocitem" href="../../../faq/">Frequently asked questions</a></li><li><a class="tocitem" href="../../../migration/">Migration from old versions</a></li><li><a class="tocitem" href="../../../library/">Library</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>🟠 Steinmetz-Larter model</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>🟠 Steinmetz-Larter model</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/bifurcationkit/BifurcationKitDocs.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/bifurcationkit/BifurcationKitDocs.jl/blob/main/docs/src/tutorials/ode/steinmetz.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="steinmetz"><a class="docs-heading-anchor" href="#steinmetz">🟠 Steinmetz-Larter model</a><a id="steinmetz-1"></a><a class="docs-heading-anchor-permalink" href="#steinmetz" title="Permalink"></a></h1><ul><li><a href="#steinmetz">🟠 Steinmetz-Larter model</a></li><li class="no-marker"><ul><li><a href="#Computation-with-Shooting">Computation with Shooting</a></li><li class="no-marker"><ul><li><a href="#Curve-of-Fold-points-of-periodic-orbits">Curve of Fold points of periodic orbits</a></li><li><a href="#Curve-of-NS-points-of-periodic-orbits">Curve of NS points of periodic orbits</a></li></ul></li><li><a href="#Computation-with-collocation">Computation with collocation</a></li><li class="no-marker"><ul><li><a href="#Curve-of-Fold-points-of-periodic-orbits-2">Curve of Fold points of periodic orbits</a></li><li><a href="#Curve-of-NS-points-of-periodic-orbits-2">Curve of NS points of periodic orbits</a></li></ul></li></ul></li></ul><blockquote><p>This example is found in the MatCont ecosystem.</p></blockquote><p>The Steinmetz-Larter model is studied in the MatCont ecosystem because it is a simple example where a Chenciner bifurcation occurs.</p><p class="math-container">\[\tag{E}\left\{\begin{array}{l}
+\dot{A}=-k_1 A B X-k_3 A B Y+k_7-k_{-7} A, \\
+\dot{B}=-k_1 A B X-k_3 A B Y+k_8, \\
+\dot{X}=k_1 A B X-2 k_2 X^2+2 k_3 A B Y-k_4 X+k_6, \\
+\dot{Y}=-k_3 A B Y+2 k_2 X^2-k_5 Y,
+\end{array}\right.\]</p><p>This tutorial is also useful in that we show how to start periodic orbits continuation from solutions obtained from solving ODEs. Being a relatively advanced tutorial, we do not give too many details.</p><p>We start by coding the bifurcation problem.</p><pre><code class="language-julia hljs">using Revise
+using Plots
+using BifurcationKit
+const BK = BifurcationKit
+
+function SL!(du, u, p, t = 0)
+	(;k1, k2, k3, k4, k5, k6, k7, k₋₇, k8) = p
+	A,B,X,Y = u
+
+	du[1] = -k1*A*B*X - k3*A*B*Y + k7 - k₋₇*A
+	du[2] = -k1*A*B*X - k3*A*B*Y + k8
+	du[3] =  k1*A*B*X - 2*k2*X^2 + 2*k3*A*B*Y - k4*X+k6
+	du[4] = -k3*A*B*Y + 2*k2*X^2 - k5*Y
+	du
+end
+
+z0 = rand(4)
+par_sl = (k1=0.1631021, k2=1250., k3=0.046875, k4=20., k5=1.104, k6=0.001, k₋₇=0.1175, k7=1.5, k8=0.75)
+prob = BifurcationProblem(SL!, z0, par_sl, (@optic _.k8);)
+
+# record variables for plotting
+function recordFromSolution(x, p)
+	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+	return (max = maximum(xtt[1,:]),
+			min = minimum(xtt[1,:]),
+			period = getperiod(p.prob, x, p.p))
+end
+
+# plotting function
+function plotSolution(x, p; k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+	plot!(xtt.t, xtt.u[1:4,:]&#39;; label = &quot;&quot;, k...)
+end
+
+# group parameters
+argspo = (record_from_solution = recordFromSolution,
+	plot_solution = plotSolution,
+	normC = norminf)</code></pre><p>We obtain some trajectories as seeds for computing periodic orbits.</p><pre><code class="language-julia hljs">using DifferentialEquations
+alg_ode = Rodas4()
+prob_de = ODEProblem(SL!, z0, (0,136.), par_sl)
+sol_ode = solve(prob_de, alg_ode)
+prob_de = ODEProblem(SL!, sol_ode.u[end], (0,30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
+sol_ode = solve(prob_de, alg_ode)
+plot(sol_ode)</code></pre><img src="8a95d404.svg" alt="Example block output"/><h2 id="Computation-with-Shooting"><a class="docs-heading-anchor" href="#Computation-with-Shooting">Computation with Shooting</a><a id="Computation-with-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Computation-with-Shooting" title="Permalink"></a></h2><p>We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of <span>$k_8$</span></p><pre><code class="language-julia hljs">probsh, cish = generate_ci_problem( ShootingProblem(M=4), prob, prob_de, sol_ode, 16.; reltol = 1e-10, abstol = 1e-12, parallel = true)
+
+opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.05, n_inversion = 8, detect_bifurcation = 3, max_bisection_steps = 25, nev = 4, max_steps = 60, tol_stability = 1e-3)
+@reset opts_po_cont.newton_options.max_iterations = 10
+br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po_cont;
+	# verbosity = 3, plot = true,
+	callback_newton = BK.cbMaxNorm(10),
+	argspo...)
+scene = plot(br_sh)</code></pre><img src="e617e359.svg" alt="Example block output"/><h3 id="Curve-of-Fold-points-of-periodic-orbits"><a class="docs-heading-anchor" href="#Curve-of-Fold-points-of-periodic-orbits">Curve of Fold points of periodic orbits</a><a id="Curve-of-Fold-points-of-periodic-orbits-1"></a><a class="docs-heading-anchor-permalink" href="#Curve-of-Fold-points-of-periodic-orbits" title="Permalink"></a></h3><pre><code class="language-julia hljs">opts_posh_fold = ContinuationPar(br_sh.contparams, detect_bifurcation = 2, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
+@reset opts_posh_fold.newton_options.tol = 1e-12
+# @reset opts_posh_fold.newton_options.verbose = true
+fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fold;
+		# verbosity = 2, plot = true,
+		detect_codim2_bifurcation = 0,
+		update_minaug_every_step = 1,
+		start_with_eigen = true,
+		usehessian = false,
+		jacobian_ma = :minaug,
+		normC = norminf,
+		callback_newton = BK.cbMaxNorm(1e1),
+		# bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false),
+		)
+plot(fold_po_sh)</code></pre><img src="95c3ccdb.svg" alt="Example block output"/><h3 id="Curve-of-NS-points-of-periodic-orbits"><a class="docs-heading-anchor" href="#Curve-of-NS-points-of-periodic-orbits">Curve of NS points of periodic orbits</a><a id="Curve-of-NS-points-of-periodic-orbits-1"></a><a class="docs-heading-anchor-permalink" href="#Curve-of-NS-points-of-periodic-orbits" title="Permalink"></a></h3><pre><code class="language-julia hljs">opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
+@reset opts_posh_ns.newton_options.tol = 1e-12
+# @reset opts_posh_ns.newton_options.verbose = true
+ns_po_sh = continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
+		verbosity = 2,
+		# plot = true,
+		detect_codim2_bifurcation = 2,
+		update_minaug_every_step = 1,
+		start_with_eigen = false,
+		jacobian_ma = :minaug,
+		normC = norminf,
+		callback_newton = BK.cbMaxNorm(1e1),
+		)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">NSPeriodicOrbitCont</span></span>
+ ├─ Number of points: 36
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">BorderedArray{Vector{Float64}, Vector{Float64}}</span></span>
+ ├─ Parameters (:k8, :k7)
+ ├─ Parameter <span class="sgr36"><span class="sgr1">k7</span></span> starts at 1.5, ends at 1.848254819563215
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      ch</span></span> at k7 ≈ +1.74657319 ∈ (+1.74657318, +1.74657319), |δp|=6e-09, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  26
+- #  2, <span class="sgr1">endpoint</span> at k7 ≈ +1.85723075,                                                                     step =  36
+</code></pre><pre><code class="language-julia hljs">scene = plot(ns_po_sh)
+plot!(scene, fold_po_sh)
+scene</code></pre><img src="d4bde4f0.svg" alt="Example block output"/><h2 id="Computation-with-collocation"><a class="docs-heading-anchor" href="#Computation-with-collocation">Computation with collocation</a><a id="Computation-with-collocation-1"></a><a class="docs-heading-anchor-permalink" href="#Computation-with-collocation" title="Permalink"></a></h2><pre><code class="language-julia hljs">probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4; update_section_every_step = 0), prob, sol_ode, 16.)
+
+opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0,
+	ds = 0.002, dsmax = 0.05,
+	n_inversion = 6,
+	nev = 4,
+	max_steps = 50,
+	tol_stability = 1e-5)
+
+br_coll = @time continuation(deepcopy(probcoll), cicoll, PALC(), opts_po_cont;
+    # verbosity = 3, plot = true,
+    callback_newton = BK.cbMaxNorm(10),
+    argspo...)
+
+scene = plot(br_coll)</code></pre><img src="fb12f51e.svg" alt="Example block output"/><h3 id="Curve-of-Fold-points-of-periodic-orbits-2"><a class="docs-heading-anchor" href="#Curve-of-Fold-points-of-periodic-orbits-2">Curve of Fold points of periodic orbits</a><a class="docs-heading-anchor-permalink" href="#Curve-of-Fold-points-of-periodic-orbits-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">opts_pocl_fold = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2, max_steps = 100, ds = 0.01)
+@reset opts_pocl_fold.newton_options.verbose = true
+@reset opts_pocl_fold.newton_options.tol = 1e-11
+fold_po_cl = @time continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold;
+        verbosity = 3,
+        # plot = true,
+        detect_codim2_bifurcation = 2,
+        update_minaug_every_step = 1,
+        start_with_eigen = false,
+        usehessian = false,
+        jacobian_ma = :minaug,
+        normC = norminf,
+        callback_newton = BK.cbMaxNorm(1e1),
+        )
+
+plot(fold_po_cl)</code></pre><img src="b6596a75.svg" alt="Example block output"/><h3 id="Curve-of-NS-points-of-periodic-orbits-2"><a class="docs-heading-anchor" href="#Curve-of-NS-points-of-periodic-orbits-2">Curve of NS points of periodic orbits</a><a class="docs-heading-anchor-permalink" href="#Curve-of-NS-points-of-periodic-orbits-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">opts_pocl_ns = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2)
+ns_po_cl = continuation(deepcopy(br_coll), 1, (@optic _.k7), opts_pocl_ns;
+        verbosity = 1, plot = false,
+        detect_codim2_bifurcation = 2,
+        update_minaug_every_step = 1,
+        start_with_eigen = false,
+        jacobian_ma = :minaug,
+        normC = norminf,
+        callback_newton = BK.cbMaxNorm(1e1),
+        )</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">NSPeriodicOrbitCont</span></span>
+ ├─ Number of points: 51
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">BorderedArray{Vector{Float64}, Vector{Float64}}</span></span>
+ ├─ Parameters (:k8, :k7)
+ ├─ Parameter <span class="sgr36"><span class="sgr1">k7</span></span> starts at 1.5, ends at 1.8568028962044447
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      ch</span></span> at k7 ≈ +1.85525436 ∈ (+1.85525404, +1.85525436), |δp|=3e-07, [<span class="sgr31"><span class="sgr1">   guessL</span></span>], δ = ( 0,  0), step =  40
+- #  2, <span class="sgr34"><span class="sgr1">      ch</span></span> at k7 ≈ +1.85756352 ∈ (+1.85756351, +1.85756352), |δp|=3e-09, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  45
+- #  3, <span class="sgr34"><span class="sgr1">      ch</span></span> at k7 ≈ +1.85693483 ∈ (+1.85693483, +1.85754227), |δp|=6e-04, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 0,  0), step =  47
+- #  4, <span class="sgr1">endpoint</span> at k7 ≈ +1.85671302,                                                                     step =  51
+</code></pre><pre><code class="language-julia hljs">scene = plot(ns_po_cl)</code></pre><img src="14db4b0f.svg" alt="Example block output"/><pre><code class="language-julia hljs">scene = plot(ns_po_cl, fold_po_cl)</code></pre><img src="0d993463.svg" alt="Example block output"/></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Thursday 5 September 2024 22:47">Thursday 5 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
