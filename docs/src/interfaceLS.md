@@ -37,8 +37,8 @@ n
 where $\xi_u,\xi_p\in\mathbb C$ and $dR,\xi_u\in\mathbb C^N$.
 
 !!! warning "PALC"
-    To work with PALC, the struct `bls` must have the field `solver` available even if this one is `nothing`
+    To work with PALC, the struct `bls` must implement `update_bls` to update the internal linear solver. It must return a `AbstractBorderedLinearSolver`. If nothing has to be done, just return `bls`.
 
 | Required methods               |                        | Brief description                                                                     |
 |:------------------------------ |:---------------------- |:------------------------------------------------------------------------------------- |
-| `bls(J, dR, dzu, dzp, R, n, ξu::Number, ξp::Number; shift = nothing, kwargs...)`                |                        | Compute the solution `dX, dl` of the linear problem (BLS) where `J` is the jacobian and `dR, dzu` are vectors (not necessarily subtypes of `AbstractVector`). `shift = nothing` is used in place of saying `shift=0`. Returns `(dX, dl, success::Bool, itnumber)` where `itnumber` is the number of iterations for solving the problem.|
+| `bls(J, dR, dzu, dzp, R, n, ξu::Number, ξp::Number; shift = nothing, dotp = nothing, applyξu! = nothing)`                |                        | Compute the solution `dX, dl` of the linear problem (BLS) where `J` is the jacobian and `dR, dzu` are vectors (not necessarily subtypes of `AbstractVector`). `shift = nothing` is used in place of saying `shift=0`. `dotp` is the dot product used for the vector space. If `dotp(x,y) = dot(x,S,y)` for some matrix S, the function `applyξu!*y,x = mul!(y,S,x)`. Returns `(dX, dl, success::Bool, itnumber)` where `itnumber` is the number of iterations for solving the problem.|

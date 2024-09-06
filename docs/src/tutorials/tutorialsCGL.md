@@ -129,7 +129,7 @@ and we continue it to find the Hopf bifurcation points. We use a Shift-Invert ei
 ```@example CGL2d
 # Shift-Invert eigensolver
 eigls = EigArpack(1.0, :LM) # shift = 1.0
-opt_newton = NewtonPar(tol = 1e-10, verbose = true, eigsolver = eigls)
+opt_newton = NewtonPar(tol = 1e-10, eigsolver = eigls)
 opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.005, ds = 0.001, p_max = 2., detect_bifurcation = 3, nev = 5, plot_every_step = 50, newton_options = opt_newton, max_steps = 1060)
 
 br = continuation(prob, PALC(), opts_br)
@@ -190,7 +190,7 @@ brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detect_b
 	detect_codim2_bifurcation = 2,
 	callback_newton = BK.cbMaxNorm(1e5),
 	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false),
-	jacobian_ma = :minaug, # specific to high dimensions
+	jacobian_ma = :minaug, # !! specific to high dimensions
 	bothside = true, normC = norminf)
 
 plot(br_hopf, branchlabel = "Hopf"); plot!(brfold, legend = :topleft, branchlabel = "Fold")
@@ -478,8 +478,10 @@ Precilu = @time ilu(Jpo2, τ = 0.005)
 ls2 = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, N = size(Jpo2, 1), restart = 30, maxiter = 50, Pl = Precilu, log=true)
 
 opt_po = @set opt_newton.verbose = true
-outpo_f = @time newton((@set poTrapMF.jacobian = :BorderedMatrixFree),	orbitguess_f,
-	(@set opt_po.linsolver = ls2), normN = norminf)
+outpo_f = @time newton((@set poTrapMF.jacobian = :BorderedMatrixFree),
+	orbitguess_f,
+	(@set opt_po.linsolver = ls2), 
+	normN = norminf)
 ```
 
 but it gives:
@@ -535,7 +537,7 @@ We did not change the preconditioner in the previous example as it does not seem
 function callbackPO(state; linsolver = ls, prob = poTrap, p = par_cgl, kwargs...)
 	@show ls.N keys(kwargs)
 	# we update the preconditioner every 10 continuation steps
-	if mod(kwargs[:iterationC], 10) == 9 && state.it == 1
+	if mod(kwargs[:iterationC], 10) == 9 && state.step == 1
 		@info "update Preconditioner"
 		Jpo = poTrap(Val(:JacCyclicSparse), state.x, (@set p.r = state.p))
 		Precilu = @time ilu(Jpo, τ = 0.003)
@@ -544,7 +546,7 @@ function callbackPO(state; linsolver = ls, prob = poTrap, p = par_cgl, kwargs...
 	true
 end
 
-br_po = @time continuation(poTrapMF, outpo_f.u, PALC(),	opts_po_cont;
+br_po2 = @time continuation(poTrapMF, outpo_f.u, PALC(), opts_po_cont;
 	verbosity = 2,	plot = true,
 	callback_newton = callbackPO,
 	linear_algo = BorderingBLS(solver = ls, check_precision = false),

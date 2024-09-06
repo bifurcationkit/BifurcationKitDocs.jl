@@ -112,6 +112,10 @@ PALC
 ```
 
 ```@docs
+AutoSwitch
+```
+
+```@docs
 MoorePenrose
 ```
 

@@ -5,7 +5,7 @@ Pages = ["autocatalytic.md"]
 Depth = 3
 ```
 
-We consider the following model [^Balmforth][^Malham] which is also treated in [^Beyn]
+We consider the model [^Balmforth][^Malham] which is also treated in [^Beyn]
 
 $$\begin{array}{l}
 u_{t}=a u_{x x}-u f(v), \quad a>0, u, v: \mathbb{R} \rightarrow \mathbb{R} \\
@@ -117,7 +117,7 @@ nothing #hide
 
 ## Freezing method
 
-The problem may feature fronts, that is solutions of the form $u(x,t) = \tilde u(x-st)$ (same for $v$) for a fixed value of the profile $\tilde u$ and the speed $s$. The equation for the front profile is, up to an abuse of notations (we removed the tildes)
+The problem may feature fronts, solutions of the form $u(x,t) = \tilde u(x-st)$ (same for $v$) for a fixed value of the profile $\tilde u$ and the speed $s$. The equation for the front profile is, up to an abuse of notations (we removed the tildes)
 
 $$\begin{array}{l}
 0=a u_{\xi\xi}+s\cdot u_{\xi}-u f(v)\\

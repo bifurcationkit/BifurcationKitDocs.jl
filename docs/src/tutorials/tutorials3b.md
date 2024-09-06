@@ -8,13 +8,13 @@ Depth = 3
 !!! info "Goal"
     The goal of this tutorial is to show similar computations as in the previous tutorial but without using the automatic branch switching tools. This is for the experienced used who wants to dive more in the internals of the package.    
 
-We look at the Brusselator in 1d (see [^Lust]). The equations are as follows
+We look at the Brusselator in 1d (see [^Lust]). The equations are:
 
 $$\begin{aligned} \frac { \partial X } { \partial t } & = \frac { D _ { 1 } } { l ^ { 2 } } \frac { \partial ^ { 2 } X } { \partial z ^ { 2 } } + X ^ { 2 } Y - ( β + 1 ) X + α \\ \frac { \partial Y } { \partial t } & = \frac { D _ { 2 } } { l ^ { 2 } } \frac { \partial ^ { 2 } Y } { \partial z ^ { 2 } } + β X - X ^ { 2 } Y \end{aligned}$$
 
 with Dirichlet boundary conditions
 
-$$\begin{array} { l } { X ( t , z = 0 ) = X ( t , z = 1 ) = α } \\ { Y ( t , z = 0 ) = Y ( t , z = 1 ) = β / α } \end{array}$$
+$$\begin{array} { l } { X ( t , z = 0 ) = X ( t , z = 1 ) = α } \\ { Y ( t , z = 0 ) = Y ( t , z = 1 ) = β / α. } \end{array}$$
 
 These equations have been introduced to reproduce an oscillating chemical reaction. There is an obvious equilibrium $(α, β / α)$. Here, we consider bifurcations with respect to the parameter $l$.
 
@@ -55,7 +55,7 @@ Fbru(x, p, t = 0) = Fbru!(similar(x), x, p, t)
 nothing #hide
 ```
 
-For computing periodic orbits, we will need a Sparse representation of the Jacobian:
+We use a sparse representation of the Jacobian:
 
 ```@example TUTBRUmanual
 function Jbru_sp(x, p)

@@ -52,6 +52,7 @@ makedocs(
 			"Predictors / correctors" => "Predictors.md",
 			"PALC" => "PALC.md",
 			"Moore-Penrose continuation" => "MooreSpence.md",
+			"AutoSwitch" => "hybrid.md",
 			"ANM" => "ANM.md",
 			"Deflated continuation" => "DeflatedContinuation.md",
 				],

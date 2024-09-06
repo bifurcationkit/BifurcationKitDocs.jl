@@ -5,7 +5,7 @@ Pages = ["MooreSpence.md"]
 Depth = 3
 ```
 
-This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `alg = MoorePenrose()` in [`continuation`](@ref). See also [`MoorePenrose`](@ref) for more information.
+This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `alg = AutoSwitch()` in [`continuation`](@ref). See also [`AutoSwitch`](@ref) for more information.
 
 For solving
 

@@ -5,13 +5,13 @@ Pages = ["tutorials3.md"]
 Depth = 3
 ```
 
-We look at the Brusselator in 1d (see [^Lust]). The equations are as follows
+We look at the Brusselator in 1d (see [^Lust]). The equations are
 
 $$\begin{aligned} \frac { \partial X } { \partial t } & = \frac { D _ { 1 } } { l ^ { 2 } } \frac { \partial ^ { 2 } X } { \partial z ^ { 2 } } + X ^ { 2 } Y - ( β + 1 ) X + α \\ \frac { \partial Y } { \partial t } & = \frac { D _ { 2 } } { l ^ { 2 } } \frac { \partial ^ { 2 } Y } { \partial z ^ { 2 } } + β X - X ^ { 2 } Y \end{aligned}$$
 
 with Dirichlet boundary conditions
 
-$$\begin{array} { l } { X ( t , z = 0 ) = X ( t , z = 1 ) = α } \\ { Y ( t , z = 0 ) = Y ( t , z = 1 ) = β / α } \end{array}$$
+$$\begin{array} { l } { X ( t , z = 0 ) = X ( t , z = 1 ) = α } \\ { Y ( t , z = 0 ) = Y ( t , z = 1 ) = β / α. } \end{array}$$
 
 These equations have been introduced to reproduce an oscillating chemical reaction. There is an obvious equilibrium $(α, β / α)$. Here, we consider bifurcations with respect to the parameter $l$.
 
@@ -52,7 +52,7 @@ Fbru(x, p, t = 0) = Fbru!(similar(x), x, p, t)
 nothing #hide
 ```
 
-For computing periodic orbits, we will need a Sparse representation of the Jacobian:
+We use a sparse representation of the jacobian:
 
 ```@example TUTBRUaut
 function Jbru_sp(x, p)
@@ -90,8 +90,6 @@ end
 nothing #hide
 ```
 
-Finally, it will prove useful to have access to the hessian and third derivative
-
 We shall now compute the equilibria and their stability.
 
 ```@example TUTBRUaut
@@ -109,7 +107,7 @@ probBif = BK.BifurcationProblem(Fbru, sol0, par_bru, (@optic _.l);
 nothing #hide
 ```
 
-For the eigensolver, we use a Shift-Invert algorithm (see [Eigen solvers (Eig)](@ref))
+For the eigensolver, we use a Shift-Invert algorithm (see [Eigen solvers (Eig)](@ref)) even though for this discretization size, the default eigensolver `DefaultEig` would suffice.
 
 ```@example TUTBRUaut
 eigls = EigArpack(1.1, :LM)
@@ -129,7 +127,7 @@ opts_br_eq = ContinuationPar(dsmin = 0.001, dsmax = 0.01, ds = 0.001,
 br = continuation(probBif, PALC(), opts_br_eq, normC = norminf)
 ```
 
-We obtain the following bifurcation diagram with 3 Hopf bifurcation points
+We obtain the following branch with 3 Hopf bifurcation points
 
 ```@example TUTBRUaut
 scene = plot(br)
@@ -145,7 +143,7 @@ hopfpt = get_normal_form(br, 1)
 
 ## Continuation of Hopf points
 
-We use the bifurcation points guesses located in `br.specialpoint` to turn them into precise bifurcation points. For the second one, we have
+We use the guesses of the bifurcation points located in `br.specialpoint` to turn them into precise bifurcation points. For the second one, we have
 
 ```@example TUTBRUaut
 # index of the Hopf point in br.specialpoint
@@ -202,10 +200,11 @@ nothing #hide
 # number of time slices for the periodic orbit
 M = 51
 probFD = PeriodicOrbitTrapProblem(M = M;
-  # specific method for solving linear system
-  # of Periodic orbits with trapeze method
-  # You could use the default one :FullLU (slower here)
+  # specific method for solving the linear system for newton
+  # of periodic orbits with trapeze method.
+  # We could use the default one :FullLU (slower here)
   jacobian = :BorderedSparseInplace)
+
 br_po = continuation(
 	# arguments for branch switching from the first
 	# Hopf bifurcation point
@@ -224,9 +223,9 @@ Using the above call, it is very easy to find the first branches:
 
 ![](bru-po-cont-3br0.png)
 
-We note that there are several branch points (blue points) on the above diagram. This means that there are additional branches in the neighborhood of these points. We now turn to automatic branch switching on these branches. This functionality, as we shall see, is only provided for [`PeriodicOrbitTrapProblem`](@ref).
+We note that there are several branch points (blue points) on the above diagram. This means that there are additional branches in the neighborhood of these points. We now turn to automatic branch switching on these branches.
 
-Let's say we want to branch from the first branch point of the first curve pink branch. The syntax is very similar to the previous one:
+Let's say that we want to branch from the first branch point of the first curve pink branch. The syntax is very similar to the previous one:
 
 ```julia
 br_po2 = continuation(
@@ -248,7 +247,7 @@ It is now straightforward to get the following diagram
 
 > Note that what follows is not really optimized on the `DifferentialEquations.jl` side. Indeed, we do not use automatic differentiation, we do not pass the sparsity pattern, ...
 
-We now turn to a different method based on the flow of the Brusselator. To compute this flow (time stepper), we need to be able to solve the differential equation (actually a PDE) associated to the vector field `Fbru`. We will show how to do this with an implicit method `Rodas4P` from `DifferentialEquations.jl`. Note that the user can pass its own time stepper but for convenience, we use the ones in `DifferentialEquations.jl`. More information regarding the shooting method is contained in [Periodic orbits based on the shooting method](@ref).
+We now turn to a different method based on the flow of the Brusselator. To compute this flow (time stepper), we need to be able to solve the differential equation (actually a PDE) associated to the vector field `Fbru`. We show how to do this with an implicit method `Rodas4P` from `DifferentialEquations.jl`. Note that the user can pass its own time stepper but for convenience, we use the ones in `DifferentialEquations.jl`. More information regarding the shooting method is contained in [Periodic orbits based on the shooting method](@ref).
 
 We then recompute the locus of the Hopf bifurcation points using the same method as above.
 
@@ -300,7 +299,7 @@ prob_ode = ODEProblem(vf, u0, (0., 1000.), par_bru; abstol = 1e-10, reltol = 1e-
     prob_ode = ODEProblem(vf,  u0, (0.0, 520.), par_bru) # gives 0.22s
     ```
 
-We are now ready to call the automatic branch switching. Note how similar it is to the previous section based on finite differences. This case is more deeply studied in the tutorial [1d Brusselator (advanced user)](@ref). We use a parallel Shooting.
+We are now ready to call the automatic branch switching. Note how similar it is to the previous section based on finite differences. This case is more deeply studied in the tutorial [1d Brusselator (advanced user)](@ref).
 
 ```julia
 # linear solvers
