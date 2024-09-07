@@ -55,7 +55,7 @@ parlor = (α = 1//4, β = 1, G = .25, δ = 1.04, γ = 0.987, F = 1.7620532879639
 z0 = [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.02105288273117459]
 
 # bifurcation problem
-recordFromSolutionLor(x, p) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
+recordFromSolutionLor(x, p; k...) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
 prob = BifurcationProblem(Lor, z0, (parlor..., T=0.04, F=3.), (@optic _.F);
     record_from_solution = recordFromSolutionLor)
 nothing #hide

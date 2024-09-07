@@ -29,7 +29,7 @@ u0 = zeros(100_000_000)
 params = (a = 1.0, b = 2.0)
 
 # record a few components / indicators about x 
-myRecord(x,p) = (x1 = x[1], max = maximum(x), nrm = norm(x, Inf))
+myRecord(x,p;k...) = (x1 = x[1], max = maximum(x), nrm = norm(x, Inf))
 
 prob = BifurcationProblem(f, u0, p, (@optic _.a);
 	record_from_solution = myRecord

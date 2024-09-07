@@ -39,7 +39,7 @@ using LinearAlgebra # for eigen
 const BK = BifurcationKit
 
 # function to record information from the soluton
-recordFromSolution(x, p) = (u1 = norminf(x), x1 = x[1], x2 = x[2], x3 = x[3], x4 = x[4])
+recordFromSolution(x, p; k...) = (u1 = norminf(x), x1 = x[1], x2 = x[2], x3 = x[3], x4 = x[4])
 
 # vector field
 f(x, p) = p.Is * (exp(p.q * x) - 1)
@@ -130,7 +130,7 @@ br_po = continuation(br, 1, opts_po_cont, probSH;
 	# δp is use to parametrise the first parameter point on the
 	# branch of periodic orbits
 	δp = 0.001,
-	record_from_solution = (u, p) -> begin
+	record_from_solution = (u, p; k...) -> begin
 		outt = BK.get_periodic_orbit(p.prob, u, p.p)
 		m = maximum(outt[1,:])
 		return (s = m, period = u[end])

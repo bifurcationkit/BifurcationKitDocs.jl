@@ -43,7 +43,7 @@ end
 # parameters used in the model
 par_com = (q1 = 2.5, q2 = 0.6, q3 = 10., q4 = 0.0675, q5 = 1., q6 = 0.1, k = 0.4)
 
-recordCO(x, p) = (x = x[1], y = x[2], s = x[3])
+recordCO(x, p; k...) = (x = x[1], y = x[2], s = x[3])
 
 # initial condition
 z0 = [0.07, 0.2, 05]

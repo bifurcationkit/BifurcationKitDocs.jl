@@ -42,7 +42,7 @@ par_sl = (k1=0.1631021, k2=1250., k3=0.046875, k4=20., k5=1.104, k6=0.001, kâ‚‹â
 prob = BifurcationProblem(SL!, z0, par_sl, (@optic _.k8);)
 
 # record variables for plotting
-function recordFromSolution(x, p) 
+function recordFromSolution(x, p; k...) 
 	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
 	return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),

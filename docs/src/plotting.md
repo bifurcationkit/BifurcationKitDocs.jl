@@ -143,7 +143,7 @@ Makie.inline!(true)
 q = 1/0
 k = 2
 F(x, p) = (@. p + x - x^(k+1)/(k+1))
-prob = BifurcationProblem(F, [0.8], 1., (@lens _); record_from_solution = (x,p) -> x[1])
+prob = BifurcationProblem(F, [0.8], 1., (@lens _); record_from_solution = (x,p; k...) -> x[1])
 opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, p_min = -1., p_max = 1.)
 br = continuation(prob, PALC(), opts)
 BifurcationKit.plot(br)

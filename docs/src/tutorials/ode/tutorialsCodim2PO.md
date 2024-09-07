@@ -40,7 +40,7 @@ par_pop = ( K = 1., r = 6.28, a = 12.56, b0 = 0.25, e = 1., d = 6.28, ϵ = 0.2, 
 z0 = [0.1,0.1,1,0]
 
 prob = BifurcationProblem(Pop!, z0, par_pop, (@optic _.b0);
-	record_from_solution = (x, p) -> (x = x[1], y = x[2], u = x[3]))
+	record_from_solution = (x, p; k...) -> (x = x[1], y = x[2], u = x[3]))
 
 opts_br = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.01, n_inversion = 6, nev = 4)
 
@@ -65,7 +65,7 @@ plot(sol)
 We start with two helper functions that record and plot the periodic orbits. The following works for shooting, collocation and trapezoid methods for computing periodic orbits.
 
 ```@example TUTPPREY
-argspo = (record_from_solution = (x, p) -> begin
+argspo = (record_from_solution = (x, p; k...) -> begin
 		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),

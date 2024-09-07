@@ -109,7 +109,7 @@ end
 # we thus define a bifurcation problem
 prob  = BifurcationProblem(Flgvf, 0X .-0.9, par, (@optic _.ν );
 		J = JanaSP,
-		record_from_solution = (x, p) -> normL2(x),
+		record_from_solution = (x, p; k...) -> normL2(x),
 		plot_solution = (x, p; kwargs...) -> plot!(X, x, subplot = 3, xlabel = "Nx = $(length(x))", label = ""))
 
 nothing #hide
@@ -234,7 +234,7 @@ br_potrap = continuation(
 	# tangent algorithm along the branch, linear algo specific to PALC
 	alg = PALC(tangent = Bordered(), bls = BorderingBLS(solver = DefaultLS(), check_precision = false)),
 	verbosity = 3, plot = true,
-	record_from_solution = (x, p) -> normL2T(x[1:end-1], M = M),
+	record_from_solution = (x, p; k...) -> normL2T(x[1:end-1], M = M),
 	plot_solution  = (x, p; kwargs...) -> begin
 			heatmap!(reshape(x[1:end-1], N, M)'; ylabel="T=$(round(x[end]))", color=:viridis, kwargs...)
 			plot!(br, subplot=1, label="")

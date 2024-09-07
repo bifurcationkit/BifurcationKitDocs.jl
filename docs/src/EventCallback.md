@@ -61,7 +61,7 @@ par = (p1 = -3., p2 = -3., k = 3)
 
 # bifurcation problem
 prob = BifurcationProblem(Feve, -2ones(2), par, (@optic _.p1);
-	record_from_solution = (x, p) -> x[1])
+	record_from_solution = (x, p; k...) -> x[1])
 
 # parameters for the continuation
 opts = ContinuationPar(max_steps = 150, p_min = -3., p_max = 4.0,

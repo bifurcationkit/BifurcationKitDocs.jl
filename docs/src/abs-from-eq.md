@@ -32,7 +32,7 @@ F(x, p) = [x[1] * (p.μ - x[1])]
 par = (μ = -0.2, )
 
 # problem (automatic differentiation)
-prob = BifurcationProblem(F, [0.], par, (@optic _.μ); record_from_solution = (x, p) -> x[1])
+prob = BifurcationProblem(F, [0.], par, (@optic _.μ); record_from_solution = (x, p; k...) -> x[1])
 
 # compute branch of trivial equilibria and detect a bifurcation point
 br = continuation(prob, PALC(), ContinuationPar())
@@ -55,7 +55,7 @@ F(x, p) = [x[1] * (p.μ - x[1]^2)]
 par = (μ = -0.2, )
 
 # problem (automatic differentiation)
-prob = BifurcationProblem(F, [0.], par, (@optic _.μ); record_from_solution = (x, p) -> x[1])
+prob = BifurcationProblem(F, [0.], par, (@optic _.μ); record_from_solution = (x, p; k...) -> x[1])
 
 # compute branch of trivial equilibria and 
 # detect a bifurcation point with improved precision
@@ -100,7 +100,7 @@ pard6 = (μ = -0.2, a = 0.3, b = 1.5, c = 2.9)
 
 # problem
 prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@optic _.μ);
-	record_from_solution = (x, p) -> (n = norminf(x)))
+	record_from_solution = (x, p; k...) -> (n = norminf(x)))
 
 # continuation options
 opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds = 0.01, 

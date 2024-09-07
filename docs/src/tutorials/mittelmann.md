@@ -95,7 +95,7 @@ sol0 = zeros(Nx, Ny) |> vec
 
 # Bifurcation Problem
 prob = BifurcationProblem(Fmit, sol0, par_mit, (@optic _.λ),; J = JFmit,
-  record_from_solution = (x, p) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
+  record_from_solution = (x, p; k...) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
   plot_solution = (x, p; k...) -> plotsol!(x ; k...))
 nothing #hide
 ```

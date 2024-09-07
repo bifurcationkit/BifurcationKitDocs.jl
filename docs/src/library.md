@@ -108,11 +108,11 @@ Multiple
 ```
 
 ```@docs
-PALC
+BifurcationKit.PALC
 ```
 
 ```@docs
-AutoSwitch
+BifurcationKit.AutoSwitch
 ```
 
 ```@docs

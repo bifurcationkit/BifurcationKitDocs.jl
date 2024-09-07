@@ -164,7 +164,7 @@ par = (l = -0.15, ν = 1.3, L = L)
 prob = BK.BifurcationProblem(F_shfft, AF(sol0), par, (@lens _.l) ;
 	J =  J_shfft,
 	plot_solution = (x, p;kwargs...) -> plotsol!(x; color=:viridis, kwargs...),
-	record_from_solution = (x, p) -> norm(x))
+	record_from_solution = (x, p; k...) -> norm(x))
 ```
 
 ## Newton iterations and deflation

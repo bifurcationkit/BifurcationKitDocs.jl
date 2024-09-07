@@ -84,7 +84,7 @@ par = (l = -0.1, ν = 1.3, L1);
 prob = BifurcationProblem(F_sh, vec(sol0), par, (@optic _.l);
 		J = dF_sh,
 		plot_solution = (x, p; kwargs...) -> (heatmapsol!(x; label="", kwargs...)),
-		record_from_solution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)),
+		record_from_solution = (x, p; k...) -> (n2 = norm(x), n8 = norm(x, 8)),
 		d2F = d2F_sh,
 		d3F = d3F_sh)
 

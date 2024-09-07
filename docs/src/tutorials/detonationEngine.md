@@ -110,7 +110,7 @@ We are now ready to compute the bifurcation of the trivial (constant in space) s
 prob = BifurcationProblem(Fdet, U0, (par_det..., q = 0.5), (@optic _.up); 
 	J = JdetAD,
 	plot_solution = (x, p; k...) -> plotsol!(x; k...),
-	record_from_solution = (x, p) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))
+	record_from_solution = (x, p; k...) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))
 
 prob = re_make(prob, params = (@set par_det.up = 0.56))
 
@@ -173,7 +173,7 @@ function computeBranch(br, nb; δp = 0.005, max_steps = 190)
 	twguess = vcat(sol, -0.9)
 	br_wave = continuation(probTW, twguess, PALC(), opt_cont_br;
 		verbosity = 3, plot = true, bothside = true,
-		record_from_solution = (x, p) -> (u∞ = maximum(x[1:N]), s = x[end], amp = amplitude(x[1:N])),
+		record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:N]), s = x[end], amp = amplitude(x[1:N])),
 		plot_solution = (x, p; k...) -> (plotsol!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
 		callback_newton = BK.cbMaxNorm(1e2),
 		finalise_solution = (z, tau, step, contResult; k...) -> begin

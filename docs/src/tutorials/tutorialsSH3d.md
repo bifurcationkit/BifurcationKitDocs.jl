@@ -145,7 +145,7 @@ Let's try this on a Krylov-Newton computation to refine the guess `sol0`:
 prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@optic _.l),
 	J = (x, p) -> (dx -> dF_sh(x, p, dx)),
 	plot_solution = (ax, x, p) -> contour3dMakie(ax, x),
-	record_from_solution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)))
+	record_from_solution = (x, p; k...) -> (n2 = norm(x), n8 = norm(x, 8)))
 
 optnew = NewtonPar(verbose = true, tol = 1e-8, max_iterations = 20, linsolver = ls)
 sol_hexa = @time newton(prob, optnew)
@@ -275,7 +275,7 @@ br1 = @time continuation(br, 3, setproperties(optcont; save_sol_every_step = 10,
 	# compute the left eigenvectors
 	issymmetric = true,
 	plot_solution = (ax, x, p) -> contour3dMakie(ax, x),
-	record_from_solution = (x, p) -> (n2 = norm(x), n8 = norm(x, 8)),
+	record_from_solution = (x, p; k...) -> (n2 = norm(x), n8 = norm(x, 8)),
 	normC = x -> norm(x, Inf))
 ```
 

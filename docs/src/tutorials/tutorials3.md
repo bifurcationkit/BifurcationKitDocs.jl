@@ -103,7 +103,7 @@ sol0 = vcat(par_bru.α * ones(n), par_bru.β/par_bru.α * ones(n))
 probBif = BK.BifurcationProblem(Fbru, sol0, par_bru, (@optic _.l);
   J = Jbru_sp,
   plot_solution = (x, p; kwargs...) -> (plotsol(x; label="", kwargs... )),
-  record_from_solution = (x, p) -> x[div(n,2)])
+  record_from_solution = (x, p; k...) -> x[div(n,2)])
 nothing #hide
 ```
 

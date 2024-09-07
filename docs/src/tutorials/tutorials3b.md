@@ -108,7 +108,7 @@ sol0 = vcat(par_bru.α * ones(n), par_bru.β / par_bru.α * ones(n))
 probBif = BK.BifurcationProblem(Fbru, sol0, par_bru, (@optic _.l);
   J = Jbru_sp,
   plot_solution = (x, p; kwargs...) -> (plotsol(x; label="", kwargs... )),
-  record_from_solution = (x, p) -> x[div(n,2)])
+  record_from_solution = (x, p; k...) -> x[div(n,2)])
 nothing #hide
 ```
 
@@ -460,7 +460,7 @@ br_po = @time continuation(probSh, outpo.u, PALC(),
 	linear_algo = MatrixFreeBLS(@set ls.N = ls.N+1),
 	plot = true,
 	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_shooting!(x[1:end-1], length(1:dM:M); kwargs...),
-	record_from_solution = (u, p) -> u[end], 
+	record_from_solution = (u, p; k...) -> u[end], 
 	normC = norminf)
 ```
 

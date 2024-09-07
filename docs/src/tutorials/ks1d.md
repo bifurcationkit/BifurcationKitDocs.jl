@@ -68,7 +68,7 @@ par_ks = (Δ = Δ, Δ2 = Δ2, λ = 0.75, N = N)
 
 # we define a Bifurcation Problem
 prob = BifurcationProblem(Fks1d, zeros(N), par_ks, (@optic _.λ),
-  record_from_solution = (x, p) -> (s = sum(x), u2 = x[3], nrm = norm(x)),
+  record_from_solution = (x, p; k...) -> (s = sum(x), u2 = x[3], nrm = norm(x)),
   plot_solution = (x, p; kwargs...) -> plot!(Fun(SinSpace(), x) ; kwargs...),
   )
 ```

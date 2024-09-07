@@ -65,7 +65,7 @@ u0 = 1.0 * cos.(2X)
 solc0 = vcat(u0, u0)
 
 probBif = BK.BifurcationProblem(Fbr, solc0, par_br, (@optic _.C) ;J = Jbr,
-		record_from_solution = (x, p) -> norminf(x),
+		record_from_solution = (x, p; k...) -> norminf(x),
 		plot_solution = (x, p; kwargs...) -> plot!(x[1:end÷2]; label="",ylabel ="u", kwargs...))
 
 # parameters for continuation
@@ -137,7 +137,7 @@ br_po_sh = @time continuation(probSh, out_po_sh.u, PALC(), opts_po_cont; verbosi
 	plot = true,
 	linear_algo = MatrixFreeBLS(@set ls.N = probSh.M*n+2),
   plot_solution = (x, p; kwargs...) -> BK.plot_periodic_shooting!(x[1:end-1], 1; kwargs...),
-  record_from_solution = (u, p) -> BK.getmaximum(probSh, u, (@set par_br_hopf.C = p.p); ratio = 2), normC = norminf)
+  record_from_solution = (u, p; k...) -> BK.getmaximum(probSh, u, (@set par_br_hopf.C = p.p); ratio = 2), normC = norminf)
 ```
 
 We plot the result using `plot(br_po_sh, br, label = "")`:

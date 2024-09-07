@@ -173,7 +173,7 @@ optn = NewtonPar(tol = 1e-8, verbose = true, max_iterations = 10)
 opt_cont_br = ContinuationPar(p_min = 0.015, p_max = 2.5, newton_options = optn, ds= 0.001, dsmax = 0.1, detect_bifurcation = 3, nev = 10, max_steps = 190, n_inversion = 6)
 
 br_TW = @time continuation(probTW, wave.u, PALC(), opt_cont_br;
-	record_from_solution = (x, p) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
+	record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
 	plot_solution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
 	finalise_solution = (z, tau, step, contResult; k...) -> begin
 		amplitude(z.u[n+1:2n]) > 0.01

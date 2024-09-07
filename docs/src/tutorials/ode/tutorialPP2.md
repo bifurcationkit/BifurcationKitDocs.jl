@@ -21,7 +21,7 @@ using Revise, Plots
 using BifurcationKit
 
 # function to record information from a solution
-recordFromSolution(x, p) = (u1 = x[1], u2 = x[2])
+recordFromSolution(x, p; k...) = (u1 = x[1], u2 = x[2])
 
 function pp2!(dz, z, p, t = 0)
 	(;p1, p2, p3, p4) = p
@@ -93,7 +93,7 @@ br_po = continuation(
 	brH, 1, opts_po_cont,
 	PeriodicOrbitOCollProblem(20, 5);
 	plot = true,
-	record_from_solution = (x, p) -> begin
+	record_from_solution = (x, p; k...) -> begin
 		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),

@@ -162,7 +162,7 @@ Let us find the front using `newton`
 # we define a problem for solving for the wave
 probtw = BifurcationProblem(FcatWave, vcat(U0, -1.), par_cat_wave, (@optic _.a);
 	J = JcatWave,
-	record_from_solution = (x,p) -> (s = x[end], nrm = norm(x[1:end-1])),
+	record_from_solution = (x,p;k...) -> (s = x[end], nrm = norm(x[1:end-1])),
 	plot_solution = (x, p; k...) -> plotsol!(x[1:end-1];k...))
 
 front = newton(probtw, NewtonPar())
@@ -252,7 +252,7 @@ br_po = continuation(
 			bls = BorderingBLS(solver = DefaultLS(), check_precision = false)),
 	# regular parameters for the continuation
 	# a few parameters saved during run
-	record_from_solution = (u, p) -> begin
+	record_from_solution = (u, p; k...) -> begin
 		outt = BK.get_periodic_orbit(p.prob, u, (@set  par_cat_wave.a=p))
 		m = maximum(outt.u[end,:])
 		return (s = m, period = u[end])

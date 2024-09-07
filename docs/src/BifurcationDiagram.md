@@ -28,7 +28,7 @@ Fbp(u, p) = @. -u * (p + u * (2-5u)) * (p -.15 - u * (2+20u))
 prob = BifurcationProblem(Fbp, [0.0], -0.2, 
 	# specify the continuation parameter
 	(@optic _);
-	record_from_solution = (x, p) -> x[1])
+	record_from_solution = (x, p; k...) -> x[1])
 
 # options for newton
 # we reduce a bit the tolerances to ease automatic branching
@@ -83,7 +83,7 @@ pard6 = (μ = -0.2, a = 0.3, b = 1.5, c = 2.9)
 
 # problem
 prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@optic _.μ);
-		record_from_solution = (x, p) -> (n = norminf(x)))
+		record_from_solution = (x, p; k...) -> (n = norminf(x)))
 
 # newton options
 opt_newton = NewtonPar(tol = 1e-9, max_iterations = 20)

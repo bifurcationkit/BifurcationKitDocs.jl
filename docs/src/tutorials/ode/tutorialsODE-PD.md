@@ -23,7 +23,7 @@ using Revise, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
-recordFromSolution(x, p) = (u1 = x[1], u2 = x[2])
+recordFromSolution(x, p; k...) = (u1 = x[1], u2 = x[2])
 
 function lur!(dz, u, p, t = 0)
 	(;α, β) = p
@@ -83,7 +83,7 @@ function plotPO(x, p; k...)
 end
 
 # record function
-function recordPO(x, p)
+function recordPO(x, p; k...)
 	xtt = get_periodic_orbit(p.prob, x, p.p)
 	period = getperiod(p.prob, x, p.p)
 	return (max = maximum(xtt[1,:]), min = minimum(xtt[1,:]), period = period)

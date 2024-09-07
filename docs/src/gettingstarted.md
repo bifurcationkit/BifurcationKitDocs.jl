@@ -14,7 +14,7 @@ as function of $\mu$ by looking at the solutions in the connected component of $
 using BifurcationKit, Plots
 F(x, p) = @. p[1] + x - x^3/3
 prob = BifurcationProblem(F, [-2.], [-1.], 1;
-    record_from_solution = (x,p) -> x[1])
+    record_from_solution = (x,p; k...) -> x[1])
 br = continuation(prob, PALC(), ContinuationPar(p_min = -1., p_max = 1.))
 plot(br)
 scene = plot(br) #hide
@@ -30,7 +30,7 @@ prob = BifurcationProblem(F,
         [-2.], # initial condition x0
         [-1.], # set of parameters
         1;     # parameter index for continuation
-        record_from_solution = (x,p) -> x[1])
+        record_from_solution = (x,p; k..) -> x[1])
 ```
 
 Note that BifurcationKit.jl will choose the types for the problem based on the types used to define the problem type. For our example, notice that `u0` is a `Vector{Float64}`, and therefore this will solve with the dependent variables being `Vector{Float64}`. You can use this to choose to solve with `Float32` for example to run this on the GPU (see [example](@ref sh2dgpu)).
@@ -140,7 +140,7 @@ Fbp(u, p) = @. u * (p[1] - u)
 prob = BifurcationProblem(Fbp, [0.0], [-0.2],
 	# specify the continuation parameter or its index
 	1, 
-	record_from_solution = (x, p) -> x[1])
+	record_from_solution = (x, p; k...) -> x[1])
 ```
 
 We then aim at calling `bifurcationdiagram` which will do the jobs of computing recursively the branches which are connected together. Compared to `continuation`, `bifurcationdiagram` requires the maximal level of recursion (in this case 2 because there are 2 branches) and a function providing the continuation parameters for each branch (which may differ from branch to branch if the user decides). This explains the following code: 

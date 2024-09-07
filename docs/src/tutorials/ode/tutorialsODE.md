@@ -48,7 +48,7 @@ z0 = [0.238616, 0.982747, 0.367876]
 
 # Bifurcation Problem
 prob = BifurcationProblem(TMvf!, z0, par_tm, (@optic _.E0);
-	record_from_solution = (x, p) -> (E = x[1], x = x[2], u = x[3]),)
+	record_from_solution = (x, p; k...) -> (E = x[1], x = x[2], u = x[3]),)
 
 nothing #hide
 ```
@@ -80,7 +80,7 @@ We compute the branch of periodic orbits from the last Hopf bifurcation point (o
 # arguments for periodic orbits
 # one function to record information and one
 # function for plotting
-args_po = (	record_from_solution = (x, p) -> begin
+args_po = (	record_from_solution = (x, p; k...) -> begin
 		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
