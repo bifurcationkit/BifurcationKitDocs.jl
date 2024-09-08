@@ -26,11 +26,11 @@ where the pieces are described below.
 To solve this numerically, we define a problem type by giving it the equation, the initial condition, the parameters and the parameter axis to solve over:
 
 ```@example GETSTARTED1
-prob = BifurcationProblem(F, 
+prob = BifurcationProblem(F,
         [-2.], # initial condition x0
         [-1.], # set of parameters
         1;     # parameter index for continuation
-        record_from_solution = (x,p; k..) -> x[1])
+        record_from_solution = (x,p; k...) -> x[1])
 ```
 
 Note that BifurcationKit.jl will choose the types for the problem based on the types used to define the problem type. For our example, notice that `u0` is a `Vector{Float64}`, and therefore this will solve with the dependent variables being `Vector{Float64}`. You can use this to choose to solve with `Float32` for example to run this on the GPU (see [example](@ref sh2dgpu)).

@@ -208,4 +208,3 @@ and plot it using `plot(br_po_sh, br, br_po_sh_pd, label = "")`:
 # References
 
 [^Aragon]:> Aragón, J. L., R. A. Barrio, T. E. Woolley, R. E. Baker, and P. K. Maini. “Nonlinear Effects on Turing Patterns: Time Oscillations and Chaos.” Physical Review E 86, no. 2 (2012)
-
