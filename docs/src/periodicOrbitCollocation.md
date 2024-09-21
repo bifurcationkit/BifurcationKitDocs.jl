@@ -114,7 +114,7 @@ The goal of this method[^Russell] is to adapt the mesh $\tau_i$ in order to mini
 
 The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@ref). See the link for more information, in particular on how to access the underlying functional, its jacobian...
 
-## Jacobian and linear solvers
+## Jacobians
 
 We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal linear solvers and jacobians are set up automatically so you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
@@ -130,12 +130,19 @@ The jacobian is computed with an analytical formula, works for sparse matrices.
 ### 3. `FullSparseInplace()`
 The sparse jacobian is computed in place, limiting memory allocations, with an analytical formula when the sparsity of the jacobian of the vector field is constant. This is much faster than `FullSparse()`.
 
+## Linear solvers
+
+You can use the `DefaultLS()` for most jacobians. However, when the jacobian is dense, you should use 
+
+- `COPLS()` or `COPBLS()` which the method of **condensation of parameters** (COP) implemented in Auto-07p. For this to be most efficient, the vector field must be written in non-allocating form.
+- you can use bordered linear solvers in large dimensions  to take advantage of the specific shape of the jacobian. See also Trapezoid method for additional information.
+
 
 ## Floquet multipliers computation
 
 We provide two methods to compute the Floquet coefficients.
 
-- The algorithm (Default) `FloquetColl` is based on the condensation of parameters described in [^Doedel]. It is the fastest method.
+- The algorithm (Default) `FloquetColl` is based on the method of condensation of parameters (COP) described in [^Doedel]. It is the fastest method.
 - The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here but this can be used to check the results of the previous method.
 
 These methods allow to detect bifurcations of periodic orbits. It seems to work reasonably well for the tutorials considered here. However they may be imprecise[^Lust].
