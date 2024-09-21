@@ -54,9 +54,9 @@ This is very straightforward thanks to `SciML`.
 ```@example TUTPPREY
 using DifferentialEquations
 prob_de = ODEProblem(Pop!, z0, (0,200.), par_pop)
-sol = solve(prob_de, Rodas5())
+sol = DifferentialEquations.solve(prob_de, Rodas5())
 prob_de = ODEProblem(Pop!, sol.u[end], (0,3.), par_pop, reltol = 1e-8, abstol = 1e-10)
-sol = solve(prob_de, Rodas5())
+sol = DifferentialEquations.solve(prob_de, Rodas5())
 plot(sol)
 ```
 
@@ -191,8 +191,8 @@ We turn to the computation of the curve of PD points.
 
 ```@example TUTPPREY
 par_pop2 = @set par_pop.b0 = 0.45
-sol2 = solve(remake(prob_de, p = par_pop2, u0 = [0.1,0.1,1,0], tspan=(0,1000)), Rodas5())
-sol2 = solve(remake(sol2.prob, tspan = (0,10), u0 = sol2[end]), Rodas5())
+sol2 = DifferentialEquations.solve(remake(prob_de, p = par_pop2, u0 = [0.1,0.1,1,0], tspan=(0,1000)), Rodas5())
+sol2 = DifferentialEquations.solve(remake(sol2.prob, tspan = (0,10), u0 = sol2[end]), Rodas5())
 plot(sol2, xlims= (8,10))
 
 probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 3), re_make(prob, params = sol2.prob.p), sol2, 1.)

@@ -49,7 +49,7 @@ function Fcgl!(f, u, p, t = 0)
 end
 Fcgl(u, p, t = 0) = Fcgl!(similar(u), u, p)
 
-# analytical expression off the jacobian
+# analytical expression of the jacobian
 @views function Jcgl(u, p)
 	(;r, μ, ν, c3, c5, Δ) = p
 

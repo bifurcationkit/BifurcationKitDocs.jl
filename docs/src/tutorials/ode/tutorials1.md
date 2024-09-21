@@ -52,9 +52,9 @@ We call the Newton solver:
 prob = BifurcationProblem(F_chan, sol0, par, (@optic _.α),
 	# function to plot the solution
 	plot_solution = (x, p; k...) -> plot!(x; ylabel="solution", label="", k...))
-sol = newton(prob, optnewton) # hide
+sol = solve(prob, Newton(), optnewton) # hide
 # we set verbose to true to see the newton iterations
-sol = @time newton( prob, @set optnewton.verbose = true)
+sol = @time solve(prob, Newton(), @set optnewton.verbose = true)
 nothing #hide
 ```
 

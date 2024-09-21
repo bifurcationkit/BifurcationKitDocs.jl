@@ -61,7 +61,7 @@ deflationOp = DeflationOperator(2, dot, 0.1, [ones(1)])
 # define a problem, this compute jacobian automatically
 prob = BifurcationProblem(F, zeros(1), nothing)
 # call deflated newton
-sol = newton(prob, deflationOp, NewtonPar())
+sol = BifurcationKit.solve(prob, deflationOp, NewtonPar())
 if BifurcationKit.converged(sol)
     println("We found the additional root: ", sol.u)
 else

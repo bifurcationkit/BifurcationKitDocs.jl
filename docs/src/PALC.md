@@ -55,7 +55,7 @@ In the constraint $N$ above, the scalar product is in fact saved in `Bifurcation
 dotPALC = BK.DotTheta(mydot),
 ```
 
-to [`continuation`](@ref). Additionally, you may want to provide the linear operator `P` such that `mydot(x,y) = dot(x, A*y)`, especially if you intend too use the linear solver `MatrixBLS`. We refer to [`BifurcationKit.DotTheta `](@ref) for more details.
+to [`continuation`](@ref). Additionally, you may want to provide the linear operator `P` such that `mydot(x, y) = dot(x, A * y)`, especially if you intend too use the linear solver `MatrixBLS`. We refer to [`BifurcationKit.DotTheta`](@ref) for more details.
 
 ### Linear problem
 

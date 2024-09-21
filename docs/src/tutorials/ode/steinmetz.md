@@ -69,9 +69,9 @@ We obtain some trajectories as seeds for computing periodic orbits.
 using DifferentialEquations
 alg_ode = Rodas4()
 prob_de = ODEProblem(SL!, z0, (0,136.), par_sl)
-sol_ode = solve(prob_de, alg_ode)
+sol_ode = DifferentialEquations.solve(prob_de, alg_ode)
 prob_de = ODEProblem(SL!, sol_ode.u[end], (0,30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
-sol_ode = solve(prob_de, alg_ode)
+sol_ode = DifferentialEquations.solve(prob_de, alg_ode)
 plot(sol_ode)
 ```
 

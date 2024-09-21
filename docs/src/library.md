@@ -71,7 +71,7 @@ BifurcationKit.TWProblem
 ## Newton
 
 ```@docs
-newton
+solve
 ```
 
 ## [Continuation](@id Library-Continuation)
