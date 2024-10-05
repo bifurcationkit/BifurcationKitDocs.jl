@@ -91,7 +91,7 @@ opts_po_cont = ContinuationPar(dsmax = 0.15, ds= -0.0001, dsmin = 1e-4, p_max = 
 
 # arguments for periodic orbits
 # this is mainly for printing purposes
-args_po = (	record_from_solution = (x, p) -> begin
+args_po = (	record_from_solution = (x, p; k...) -> begin
 		xtt = get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
