@@ -40,8 +40,8 @@ and where $w,v$ are chosen in order to have a non-singular matrix $(M_{bt})$. Mo
 
 In order to apply the newton algorithm to $F_{bt}$, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can select the following jacobians for your computations (see below):
 
-- [Default] for `jacobian_ma = :autodiff`, automatic differentiation is applied to $F_{bt}$ and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
-- for `jacobian_ma = :minaug`, a specific procedure for evaluating the jacobian $F_{bt}$ and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions.
+- `jacobian_ma = :autodiff`: [Default] automatic differentiation is applied to $F_{bt}$ and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
+- `jacobian_ma = :minaug`: a specific procedure for evaluating the jacobian $F_{bt}$ and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions.
 
 ## Example
 

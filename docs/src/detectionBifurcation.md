@@ -7,7 +7,7 @@ The bifurcations are detected during a call to `br = continuation(prob, alg, con
 The bifurcation points are located by looking at the spectrum **e.g.** by monitoring the unstable eigenvalues. The eigenvalue λ is declared unstable if `real(λ) > contParams.tol_stability`. The located bifurcation points are then returned in `br.specialpoint`.
 
 !!! warning "Eigenvalues"
-    The rightmost eigenvalues are computed by default to detect bifurcations. Hence, the number of eigenvalues with positive real parts must be finite (*e.g.* small). This might require to consider $-F(x,p)=0$ instead of (E).
+    The rightmost eigenvalues are computed by default to detect bifurcations. Hence, the number of eigenvalues with positive real parts must be finite (*e.g.* small). This might require to consider $-F(x,p)=0$ instead of $F(x,p)$.
     
 ## Precise detection of bifurcation points using bisection    
 

@@ -27,9 +27,10 @@ You can detect the following codim 2 bifurcation points by using the keyword arg
 
 In order to apply the newton algorithm to the Fold functional, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can select the following jacobians for your computations (see below):
 
-- [Default] for `jacobian_ma = :autodiff`, automatic differentiation is applied to the Fold functional and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
-- for `jacobian_ma = :finiteDifferences`, same as `jacobian_ma = :autodiff` but the jacobian is computed using finite differences.
-- for `jacobian_ma = :minaug`, a specific procedure for evaluating the jacobian and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions.
+- `jacobian_ma = :autodiff` [Default]: automatic differentiation is applied to the Fold functional and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
+- `jacobian_ma = :finiteDifferences`: same as `jacobian_ma = :autodiff` but the jacobian is computed using finite differences.
+- `jacobian_ma = :minaug`: a specific procedure for evaluating the jacobian and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions and for matrix-free version.
+- `jacobian_ma = :MinAugMatrixBased` the jacobian matrix is evaluated using analytical formula. This is faster than `:autodiff`.
 
 ## Codim 2 continuation
 
