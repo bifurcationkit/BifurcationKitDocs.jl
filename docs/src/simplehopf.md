@@ -18,7 +18,7 @@ More precisely, if $\mathbf{J} \equiv d\mathbf{F}(x_0,p_0)$, then we have $\math
 
 ### Expression of the coefficients
 
-The coefficients $a,b$ above are computed as follows[^Haragus]:
+The coefficients $a,l_1$ above are computed as follows[^Haragus]:
 
 $$a=\left\langle\mathbf{F}_{11}(\zeta)+2 \mathbf{F}_{20}\left(\zeta, \Psi_{001}\right), \zeta^{*}\right\rangle,$$
 
