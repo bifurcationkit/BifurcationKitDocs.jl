@@ -1,5 +1,10 @@
 # Bogdanov-Takens refinement
 
+```@contents
+Pages = ["codim3Continuation.md"]
+Depth = 2
+```
+
 In this page, we explain how to perform precise localisation of Bogdanov-Takens (BT) points. This is an unusual feature of numerical continuation libraries. We chose to implement it because the localisation of the BT points on the Hopf bifurcation curves is rather imprecise.
 
 

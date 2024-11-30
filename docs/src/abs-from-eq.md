@@ -73,7 +73,7 @@ scene = plot(br, br1; branchlabel = ["br", "br1"], legend = :topleft)
 
 ## [From non simple branch point to equilibria](@id abs-nonsimple-eq)
 
-We provide an automatic branch switching method in this case. The underlying method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and its zeros. These zeros are then seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
+We provide an automatic branch switching method. The method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and its zeros. These zeros are then seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
 continuation(br::ContResult, 

@@ -3,6 +3,11 @@
 !!! warning "Warning"
     This is work in progress.  
 
-The current package will provide basic methods to wrap some of the functionality of `DifferentialEquations.jl`. 
+Several packages in the [SciML](https://sciml.ai) organization provide wrappers to `BifurcationKit`. On can mention
 
-Basically, the ultimate idea is that you provide a `prob::ODEProblem` to our `newton, continuation...` and they will use the expression of the jacobians, the linear solvers... that you already provided for the construction of `prob`.
+1. [ModelingToolkit](https://docs.sciml.ai/ModelingToolkit/stable/) and the [tutorials](https://docs.sciml.ai/ModelingToolkit/stable/tutorials/bifurcation_diagram_computation/)
+2. [Catalyst](https://docs.sciml.ai/Catalyst/stable/) and the [tutorials](https://docs.sciml.ai/Catalyst/stable/steady_state_functionality/bifurcation_diagrams/)
+
+# Work in progress
+
+Use the [LinearSolve.jl](https://github.com/SciML/LinearSolve.jl) for handling the linear problems and also [NonlinearSolve.jl](https://github.com/SciML/NonlinearSolve.jl) whenever possible. The use of [LinearSolve.jl](https://github.com/SciML/LinearSolve.jl) allows to re-use Krylov spaces in between continuation steps.

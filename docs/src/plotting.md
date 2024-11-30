@@ -36,7 +36,7 @@ Then to save the plot, use `savefig`, for example:
 savefig("myplot.png")
 ```
 
-## Specific plotting keyword arguments
+### Specific plotting keyword arguments
 
 The available arguments specific to our plotting methods are
 
@@ -70,7 +70,7 @@ plot!(br2)
 
 Note that the plot recipes use the parameter axis as `xlabel`, and the passed variable as `ylabel`.
 
-## Choosing Variables
+### Choosing Variables
 
 You can select which variables to plot using the keyword argument `vars`, for example:
 
@@ -85,7 +85,7 @@ The available symbols are `:x, :param, :itnewton, :itlinear, :ds, :θ, :n_unstab
 
 The available symbols are provided by calling `propertynames(br.branch)`.
 
-## Plotting bifurcation diagrams
+### Plotting bifurcation diagrams
 
 To do this, you just need to call
 
@@ -123,7 +123,7 @@ eigvals = br.eig[step].eigenvals
 scatter(real.(eigvals), imag.(eigvals))
 ```
 
-## Standard plots using the Makie.jl [Experimental]
+## Standard plots using Makie.jl
 
 Plotting is also provided by calling recipes to `Makie.jl`. It means that to plot a branch `br`, you just need to call
 
@@ -138,13 +138,20 @@ The keyword arguments to `BifurcationKit.plot` are the same as decribed above in
 ### Example
 
 ```julia
-using Revise, GLMakie, BifurcationKit
-Makie.inline!(true)
+using GLMakie, BifurcationKit
 q = 1/0
 k = 2
 F(x, p) = (@. p + x - x^(k+1)/(k+1))
-prob = BifurcationProblem(F, [0.8], 1., (@lens _); record_from_solution = (x,p; k...) -> x[1])
+prob = BifurcationProblem(F, [0.8], 1., (@optic _); record_from_solution = (x,p; k...) -> x[1])
 opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, p_min = -1., p_max = 1.)
 br = continuation(prob, PALC(), opts)
 BifurcationKit.plot(br)
+```
+
+## Plotting eigenvalues
+
+After the computation of a branch `br`, it can be insightful to plot the real part of the eigenvalues along the branch. This can be done using
+
+```julia
+BifurcationKit.plot_eigenvals(br)
 ```

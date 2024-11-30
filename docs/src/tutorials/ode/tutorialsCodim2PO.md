@@ -102,7 +102,7 @@ scene = plot(brpo_fold)
 We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 
 ```@example TUTPPREY
-prob2 = @set probtrap.prob_vf.lens = @optic _.ϵ
+prob2 = @set probtrap.prob_vf.lens = (@optic _.ϵ)
 brpo_pd = continuation(prob2, ci, PALC(), opts_po_cont;
 	argspo...
 	)

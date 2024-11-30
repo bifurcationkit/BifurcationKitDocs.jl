@@ -108,7 +108,7 @@ BifurcationKit.POSolution
 
 ## Mesh adaptation
     
-The goal of this method[^Russell] is to adapt the mesh $\tau_i$ in order to minimize the error. It is particularly helpful near homoclinic solutions where the period diverge. It can also be useful in order to use a smaller $N_{tst}$.
+The goal of this method[^Russell] is to adapt the mesh $\tau_i$ in order to minimize the error. It is particularly helpful near homoclinic solutions where the period diverges. It can also be useful in order to use a smaller $N_{tst}$.
 
 ## Encoding of the functional
 
@@ -121,26 +121,29 @@ We provide many different linear solvers to take advantage of the formulations o
 ### 1. `DenseAnalytical()`
 The jacobian is computed with an analytical formula, works for dense matrices. This is the default algorithm.
 
-### 2. `AutoDiffDense()`
+### 2. `DenseAnalyticalInplace()`
+Same as 1. but cache more information to limit allocations.
+
+### 3. `AutoDiffDense()`
 The jacobian is computed with automatic differentiation, works for dense matrices. Can be used for debugging.
 
-### 3. `FullSparse()`
+### 4. `FullSparse()`
 The jacobian is computed with an analytical formula, works for sparse matrices.
 
-### 3. `FullSparseInplace()`
+### 5. `FullSparseInplace()`
 The sparse jacobian is computed in place, limiting memory allocations, with an analytical formula when the sparsity of the jacobian of the vector field is constant. This is much faster than `FullSparse()`.
 
 ## Linear solvers
 
 You can use the `DefaultLS()` for most jacobians. However, when the jacobian is dense, you should use 
 
-- `COPLS()` or `COPBLS()` which the method of **condensation of parameters** (COP) implemented in Auto-07p. For this to be most efficient, the vector field must be written in non-allocating form.
+- `COPLS()` or `COPBLS()` which is the method of **condensation of parameters** (COP) implemented in Auto-07p. For this to be most efficient, the vector field must be written in non-allocating form.
 - you can use bordered linear solvers in large dimensions  to take advantage of the specific shape of the jacobian. See also Trapezoid method for additional information.
 
 
 ## Floquet multipliers computation
 
-We provide two methods to compute the Floquet coefficients.
+We provide three methods to compute the Floquet coefficients.
 
 - The algorithm (Default) `FloquetColl` is based on the method of condensation of parameters (COP) described in [^Doedel]. It is the fastest method.
 - The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here but this can be used to check the results of the previous method.

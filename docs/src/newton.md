@@ -44,7 +44,7 @@ using BifurcationKit
 F(x, p) = x.^3 .- 1
 x0 = rand(10)
 prob = BifurcationProblem(F, x0, nothing)
-sol = solve(prob, Newton(), NewtonPar(verbose = true))
+sol = BifurcationKit.solve(prob, Newton(), NewtonPar(verbose = true))
 ```
 
 ## Example

@@ -52,6 +52,7 @@ There are many good softwares already available.
 - For *deflated continuation*, there is [defcont](https://bitbucket.org/pefarrell/defcon/src/master/) (by the inventor of the algo. P. E. Farrell) and this [code](https://github.com/evstigneevnm/deflated_continuation) by N. M. Evstigneev.
 
 In Julia, we have the following tools:
+
 - [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl) which is unmaintained.
 - [NumericalContinuation.jl](https://github.com/dawbarton/NumericalContinuation.jl) by David Barton.
 
@@ -70,6 +71,14 @@ We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](h
 
 ## Citations
 The papers citing this work are collected on [google scholar](https://scholar.google.fr/scholar?hl=fr&as_sdt=2005&cites=159498619004863176%2C8662907770106865595&scipsc=&as_ylo=&as_yhi=).
+
+### Some unreferenced papers by google
+1. Eydam, Sebastian, Igor Franović, and Louis Kang. “Control of Seizure-like Dynamics in Neuronal Populations with Excitability Adaptation Related to Ketogenic Diet.” Chaos: An Interdisciplinary Journal of Nonlinear Science 34, no. 5 (May 1, 2024): 053128. https://doi.org/10.1063/5.0180954.
+- Stasenko, Sergey V., Sergey M. Olenin, Eugene A. Grines, and Tatiana A. Levanova. “Firing Rate Model for Brain Rhythms Controlled by Astrocytes.” arXiv, May 6, 2024. http://arxiv.org/abs/2405.03601.
+- Olenin, Sergey, Sergey Stasenko, and Tatiana Levanova. “Spiral Attractors in a Reduced Mean-Field Model of Neuron-Glial Interaction.” arXiv, May 7, 2024. http://arxiv.org/abs/2405.04291.
+
+
+
 
 ## Reproducibility
 ```@raw html

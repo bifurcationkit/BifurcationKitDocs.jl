@@ -32,7 +32,7 @@ In order to apply the newton algorithm to the Fold functional, one needs to inve
 - `jacobian_ma = :minaug`: a specific procedure for evaluating the jacobian and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions and for matrix-free version.
 - `jacobian_ma = :MinAugMatrixBased` the jacobian matrix is evaluated using analytical formula. This is faster than `:autodiff`.
 
-## Codim 2 continuation
+## Fold points continuation
 
 To compute the codim 2 curve of Fold points of periodic orbits, one can call [`continuation`](@ref) with the following options
 

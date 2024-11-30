@@ -7,7 +7,7 @@ Depth = 2
 
 In this page, we explain how to perform continuation of Fold / Hopf points and detect the associated bifurcations.
 
-For this to work best, it is advised to have an analytical expression for the jacobian. See the tutorial [Temperature model](@ref temperature) for more details although `BifurcationProblem` implement it with AD by default.
+For this to work best, it is advised to have an analytical expression for the jacobian. See the tutorial [Temperature model](@ref temperature) for more details although `BifurcationProblem` implements it with AD by default.
 
 A quite complete example for detection of codim 2 bifurcations of equilibria is [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz).
 
@@ -22,7 +22,7 @@ A quite complete example for detection of codim 2 bifurcations of equilibria is 
 
 In a nutshell, all you have to do (see below) is to call `continuation(br, ind_bif, lens2)` to continue the bifurcation point stored in `br.specialpoint[ind_bif]` and set proper options.
 
-## Fold continuation
+## Fold continuation (theory)
 
 The continuation of Fold bifurcation points is based on a **Minimally Augmented**[^Govaerts] formulation which is an efficient way to detect singularities. The continuation of Fold points is based on the formulation
 
@@ -53,7 +53,7 @@ You can detect the following codim 2 bifurcation points by using the option `det
 - the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = \langle w(p),v(p)\rangle$
 - the detection of Zero-Hopf (ZH) is performed by monitoring the number of eigenvalues $\lambda$ such that $\Re\lambda > \min\limits_{\nu\in\Sigma(dF)}|\Re\nu|$ and $\Im\lambda > \epsilon$ where $\epsilon$ is the Newton tolerance.
 
-## Hopf continuation
+## Hopf continuation (theory)
 
 The continuation of Fold bifurcation points is based on a **Minimally Augmented** (see [^Govaerts] p. 87) formulation which is an efficient way to detect singularities. The continuation of Hopf points is based on the formulation
 
@@ -117,9 +117,9 @@ It is important to note that for improved performances, a function implementing 
 
 Reader interested in this advanced usage should look at the code `example/chan.jl` of the tutorial [Temperature model](@ref temperature).
 
-## Codim 2 continuation
+## Fold / Hopf continuation
 
-To compute the codim 2 curve of Fold / Hopf points, one can call [`continuation`](@ref) with the following options
+To compute the curve of Fold / Hopf points, one can call [`continuation`](@ref) with the following options
 
 ```@docs
  continuation(br::BifurcationKit.AbstractBranchResult, ind_bif::Int64,

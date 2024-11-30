@@ -41,7 +41,7 @@ In order to apply the newton algorithm to the PD functional, one needs to invert
 
 > For the case `jacobian_ma = :minaug`, when the shooting method is employed, the adjoint of the flow is required. This can usually be computed with `ReverseDiff.jl`.
 
-## Codim 2 continuation
+## PD points continuation
 
 To compute the codim 2 curve of PD points of periodic orbits, one can call [`continuation`](@ref) with the following options
 
