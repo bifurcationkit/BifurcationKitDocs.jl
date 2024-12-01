@@ -60,7 +60,7 @@ $$l_1 = 1+(1-k_x^2-k_y^2)^2$$
 which is pre-computed in the composite type `SHLinearOp `. Then, the effect of `L` on `u` is as simple as `real.(ifft( l1 .* fft(u) ))` and the inverse `L\u` is `real.(ifft( fft(u) ./ l1 ))`. However, in order to save memory on the GPU, we use inplace FFTs to reduce temporaries which explains the following code.
 
 ```julia
-using AbstractFFTs, FFTW, KrylovKit, Setfield, Parameters
+using AbstractFFTs, FFTW, KrylovKit
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
@@ -121,7 +121,7 @@ Now that we have our operator `L`, we can encode our functional:
 
 ```julia
 function F_shfft(u, p)
-	@unpack l, ν, L = p
+	(;l, ν, L) = p
 	return -(L * u) .+ ((l+1) .* u .+ ν .* u.^2 .- u.^3)
 end
 ```
@@ -161,8 +161,8 @@ J_shfft(u, p) = (u, p.l, p.ν)
 par = (l = -0.15, ν = 1.3, L = L)
 
 # Bifurcation Problem
-prob = BK.BifurcationProblem(F_shfft, AF(sol0), par, (@lens _.l) ;
-	J =  J_shfft,
+prob = BK.BifurcationProblem(F_shfft, AF(sol0), par, (@optic _.l) ;
+	J = J_shfft,
 	plot_solution = (x, p;kwargs...) -> plotsol!(x; color=:viridis, kwargs...),
 	record_from_solution = (x, p; k...) -> norm(x))
 ```
@@ -173,7 +173,7 @@ We are now ready to perform Newton iterations:
 
 ```julia
 opt_new = NewtonPar(verbose = true, tol = 1e-6, max_iterations = 100, linsolver = L)
-sol_hexa = @time newton(prob, opt_new, normN = norminf)
+sol_hexa = @time solve(prob, Newton(), opt_new, normN = norminf)
 println("--> norm(sol) = ", maximum(abs.(sol_hexa.u)))
 plotsol(sol_hexa.u)
 ```
@@ -211,7 +211,7 @@ We can also use the deflation technique (see [`DeflationOperator`](@ref) and [`D
 deflationOp = DeflationOperator(2, dot, 1.0, [sol_hexa.u])
 
 opt_new = @set opt_new.max_iterations = 250
-outdef = @time newton(re_make(prob, u0 = AF(0.4 .* sol_hexa.u .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]))),
+outdef = @time solve(re_make(prob, u0 = AF(0.4 .* sol_hexa.u .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]))),
 		deflationOp, opt_new, normN = x-> maximum(abs.(x)))
 println("--> norm(sol) = ", norm(outdef.u))
 plotsol(outdef.u) |> display

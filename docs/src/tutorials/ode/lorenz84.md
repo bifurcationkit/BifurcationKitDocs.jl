@@ -99,7 +99,6 @@ sn_codim2 = continuation(br, 5, (@optic _.T),
 	normC = norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
-	start_with_eigen = false,
 	# we save the different components for plotting
 	record_from_solution = recordFromSolutionLor,
 	)
