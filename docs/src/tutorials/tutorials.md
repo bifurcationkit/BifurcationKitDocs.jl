@@ -2,7 +2,7 @@
 
 ```@contents
 Pages = ["tutorials.md"]
-Depth = 2
+Depth = 3
 ```
 
 The tutorials are rated by the following scale of difficulty

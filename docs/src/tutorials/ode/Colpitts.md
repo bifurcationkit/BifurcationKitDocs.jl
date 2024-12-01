@@ -172,7 +172,7 @@ Let us show that this bifurcation diagram is valid by showing evidences for the 
 ```@example TUTDAE1
 probFreez_ode = ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.733)
 
-solFreez = @time solve(probFreez_ode, Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
+solFreez = @time DifferentialEquations.solve(probFreez_ode, Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
 
 scene = plot(solFreez, vars = [2], xlims=(195,200), title="μ = $(probFreez_ode.p.μ)")
 ```
@@ -182,7 +182,7 @@ and after the bifurcation
 ```@example TUTDAE1
 probFreez_ode = ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.72)
 
-solFreez = @time solve(probFreez_ode, Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
+solFreez = @time DifferentialEquations.solve(probFreez_ode, Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
 
 scene = plot(solFreez, vars = [2], xlims=(195,200), title="μ = $(probFreez_ode.p.μ)")
 ```

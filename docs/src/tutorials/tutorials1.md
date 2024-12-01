@@ -57,8 +57,8 @@ We call the Newton solver:
 prob = BifurcationProblem(F_chan, sol0, par, (@optic _.α),
 	# function to plot the solution
 	plot_solution = (x, p; k...) -> plot!(x; ylabel="solution", label="", k...))
-sol = newton(prob, @set optnewton.verbose=false) # hide
-sol = @time newton( prob, optnewton)
+sol = BK.solve(prob, Newton(), @set optnewton.verbose=false) # hide
+sol = @time BK.solve( prob, Newton(), optnewton)
 nothing #hide
 ```
 
@@ -170,8 +170,8 @@ prob = re_make(prob;
 	)
 
 # we can then call the newton solver
-out_mf = newton(prob, @set optnewton_mf.verbose = false) # hide
-out_mf = @time newton(prob, optnewton_mf)
+out_mf = BK.solve(prob, Newton(), @set optnewton_mf.verbose = false) # hide
+out_mf = @time BK.solve(prob, Newton(), optnewton_mf)
 nothing #hide
 ```
 
@@ -187,7 +187,7 @@ P[1,1:2] .= [1, 0.];P[end,end-1:end] .= [0, 1.]
 # define gmres solver with left preconditioner
 ls = GMRESIterativeSolvers(reltol = 1e-4, N = length(sol.u), restart = 10, maxiter = 10, Pl = lu(P))
 optnewton_mf = NewtonPar(verbose = true, linsolver = ls, tol = 1e-10)
-out_mf = newton(prob, @set optnewton_mf.verbose = false) # hide
-out_mf = @time newton(prob, optnewton_mf)
+out_mf = BK.solve(prob, Newton(), @set optnewton_mf.verbose = false) # hide
+out_mf = @time BK.solve(prob, Newton(), optnewton_mf)
 nothing #hide
 ```

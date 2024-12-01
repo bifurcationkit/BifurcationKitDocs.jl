@@ -94,8 +94,7 @@ end
 	end
 	return f
 end
-Fcat(x, p, t = 0.) = Fcat!(similar(x), x, p, t)
-Jcat(x,p) = sparse(ForwardDiff.jacobian(x -> Fcat(x, p), x))
+Jcat(x,p) = sparse(ForwardDiff.jacobian(x -> Fcat!(similar(x), x, p), x))
 nothing #hide
 ```
 
@@ -111,7 +110,7 @@ u0 = @. (tanh(2X)+1)/2
 U0 = vcat(u0, 1 .- u0)
 
 # we define a problem to hold the vector field
-prob = BifurcationProblem(Fcat, u0, par_cat, (@optic _.a); J = Jcat)
+prob = BifurcationProblem(Fcat!, u0, par_cat, (@optic _.a); J = Jcat)
 nothing #hide
 ```
 
@@ -141,7 +140,7 @@ where $U_0:=(u_0,v_0)$ is some fixed profile. This is easily coded in the follow
 	return out
 end
 FcatWave(x, p, t = 0) = FcatWave!(similar(x), x, p)
-JcatWave(u, p) = sparse(ForwardDiff.jacobian(z -> FcatWave(z,p), u))
+JcatWave(u, p) = sparse(ForwardDiff.jacobian(z -> FcatWave!(similar(z),z,p), u))
 nothing #hide
 ```
 
@@ -160,12 +159,12 @@ Let us find the front using `newton`
 
 ```@example TUTAUTOCAT
 # we define a problem for solving for the wave
-probtw = BifurcationProblem(FcatWave, vcat(U0, -1.), par_cat_wave, (@optic _.a);
+probtw = BifurcationProblem(FcatWave!, vcat(U0, -1.), par_cat_wave, (@optic _.a);
 	J = JcatWave,
 	record_from_solution = (x,p;k...) -> (s = x[end], nrm = norm(x[1:end-1])),
 	plot_solution = (x, p; k...) -> plotsol!(x[1:end-1];k...))
 
-front = newton(probtw, NewtonPar())
+front = BK.solve(probtw, Newton(), NewtonPar())
 println("front speed s = ", front.u[end], ", norm = ", front.u[1:end-1] |> norminf)
 ```
 

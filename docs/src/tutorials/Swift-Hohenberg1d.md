@@ -129,7 +129,7 @@ After ~700s, you can plot the result
 
 ```julia
 plot(diagram;  plotfold = false,  
-	markersize = 2, putspecialptlegend = false, xlims=(-1,1))
+	markersize = 2, putspecialptlegend = false, xlims=(-1,1), label = "")
 title!("#branches = $(size(diagram))")
 ```
 

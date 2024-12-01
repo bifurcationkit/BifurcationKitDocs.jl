@@ -112,7 +112,7 @@ f1 = DiffEqArrayOperator(par_cgl.Δ)
 f2 = NL!
 prob_sp = SplitODEProblem(f1, f2, sol0_f, (0.0, 120.0), (@set par_cgl.r = 1.2), dt = 0.1)
 # we solve the PDE!!!
-sol = @time solve(prob_sp, ETDRK2(krylov=true); abstol=1e-14, reltol=1e-14)
+sol = @time DifferentialEquations.solve(prob_sp, ETDRK2(krylov=true); abstol=1e-14, reltol=1e-14)
 ```
 
 ## Automatic branch switching from the Hopf points

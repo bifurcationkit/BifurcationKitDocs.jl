@@ -123,7 +123,7 @@ We call the Krylov-Newton method to find a stationary solution. Note that for th
 ```@example TUTLangmuir
 # newton iterations to refine the guess
 opt_new = NewtonPar(tol = 1e-9, verbose = true, max_iterations = 10)
-out = newton(prob, opt_new)
+out = BK.solve(prob, Newton(), opt_new)
 nothing #hide
 ```
 

@@ -64,8 +64,8 @@ recordFromSolution(x, p; k...) = (x[2]-x[1]) * sum(x->x^2, x)
 prob = BifurcationProblem(F_carr, zeros(N), par_car, (@optic _.ϵ); J = Jac_carr, record_from_solution = recordFromSolution)
 
 optnew = NewtonPar(tol = 1e-8)
-sol = newton(prob, optnew, normN = norminf) # hide
-sol = @time newton(prob, optnew, normN = norminf)
+sol = BK.solve(prob, Newton(), optnew, normN = norminf) # hide
+sol = @time BK.solve(prob, Newton(), optnew, normN = norminf)
 nothing #hide
 ```
 

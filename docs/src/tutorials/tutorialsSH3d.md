@@ -79,7 +79,7 @@ In most tutorials, we have used `Plots.jl` for the figures. However, it appears 
 contour3dMakie(x; k...) = GLMakie.contour(x;  k...)
 contour3dMakie(x::AbstractVector; k...) = contour3dMakie(reshape(x,Nx,Ny,Nz); k...)
 
-contour3dMakie(ax, x; k...) = (GLMakie.contour(ax, x;  k...))
+contour3dMakie(ax, x; k...) = (GLMakie.contour!(ax, x;  k...))
 contour3dMakie(ax, x::AbstractVector; k...) = contour3dMakie(ax, reshape(x,Nx,Ny,Nz); k...)
 
 contour3dMakie!(ax, x; k...) = (GLMakie.contour!(ax, x;  k...))
@@ -129,14 +129,14 @@ Hence, `cholesky` is the big winner but it requires a positive matrix so let's s
 As said in the introduction, the LU linear solver does not scale well with dimension $N$. Hence, we do something else. We note that the matrix $L_1$ is hermitian positive and use it as a preconditioner. Thus, we pre-factorize it using a Cholesky decomposition:
 
 ```julia
-Pr = lu(L1);
+Pr = cholesky(L1);
 using SuiteSparse
 # we need this "hack" to be able to use Pr as a preconditioner.
-LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= -(P \ v)
+LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= (P \ v)
 
 # rtol must be small enough to pass the Fold points and to get precise eigenvalues
 # we know that the jacobian is symmetric so we tell the solver
-ls = GMRESKrylovKit(verbose = 0, rtol = 1e-9, maxiter = 150, ishermitian = true, Pl = Pr)
+ls = GMRESKrylovKit(verbose = 0, rtol = 1e-9, maxiter = 150, Pl = Pr)
 ```
 
 Let's try this on a Krylov-Newton computation to refine the guess `sol0`:
@@ -144,11 +144,12 @@ Let's try this on a Krylov-Newton computation to refine the guess `sol0`:
 ```julia
 prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@optic _.l),
 	J = (x, p) -> (dx -> dF_sh(x, p, dx)),
-	plot_solution = (ax, x, p) -> contour3dMakie(ax, x),
+	plot_solution = (ax, x, p; ax1) -> contour3dMakie(ax, x),
+	issymmetric = true, # so we dont need to provide the adjoint (normal form)
 	record_from_solution = (x, p; k...) -> (n2 = norm(x), n8 = norm(x, 8)))
 
 optnew = NewtonPar(verbose = true, tol = 1e-8, max_iterations = 20, linsolver = ls)
-sol_hexa = @time newton(prob, optnew)
+sol_hexa = @time BK.solve(prob, Newton(), optnew)
 ```
 
 which gives
@@ -169,10 +170,10 @@ which gives
 │       9     │       2.4048e-06     │       17       │
 │      10     │       1.8389e-10     │       17       │
 └─────────────┴──────────────────────┴────────────────┘
-  1.405419 seconds (1.22 M allocations: 205.788 MiB, 2.16% gc time, 18.84% compilation time)
+  0.472765 seconds (13.97 k allocations: 134.073 MiB, 1.91% gc time, 0.00% compilation time)
 ```
 
-and `contour3dMakie(sol_hexa)` produces
+and `contour3dMakie(sol_hexa.u)` produces
 
 ![](sh3dhexa.png)
 
@@ -221,7 +222,7 @@ We are now ready to perform continuation and detection of bifurcation points:
 
 ```julia
 optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, p_max = 0.15,
-	p_min = -.1, newton_options = setproperties(optnew; tol = 1e-9, maxIter = 15),
+	p_min = -.1, newton_options = setproperties(optnew; tol = 1e-9, max_iterations = 15),
 	max_steps = 146, detect_bifurcation = 3, nev = 15, n_inversion = 4, plot_every_step = 1)
 
 br = continuation( re_make(prob, u0 = zeros(N)),
@@ -230,7 +231,7 @@ br = continuation( re_make(prob, u0 = zeros(N)),
   PALC(bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
   optcont;
   normC = x -> norm(x, Inf),
-	plot = true, verbosity = 3)
+  plot = true, verbosity = 3)
 ```
 
 The following result shows the detected bifurcation points (its takes ~300s)
@@ -269,17 +270,11 @@ br1 = @time continuation(br, 3, setproperties(optcont; save_sol_every_step = 10,
 	δp = 0.01,
 	# remove display of deflated newton iterations
 	verbosedeflation = false,
-	alg = PALC(tangent = Bordered()),
-	linear_algo = BorderingBLS(solver = optnew.linsolver, check_precision = false),
-	# to compute the normal form, so we don't have to
-	# compute the left eigenvectors
-	issymmetric = true,
-	plot_solution = (ax, x, p) -> contour3dMakie(ax, x),
-	record_from_solution = (x, p; k...) -> (n2 = norm(x), n8 = norm(x, 8)),
-	normC = x -> norm(x, Inf))
+	alg = PALC(tangent = Bordered(), bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
+	normC = norminf)
 ```
 
-We can then plot the branches using `BK.plotBranch(br, branches...)` where green (resp. red) means stable (resp. unstable) solution.
+We can then plot the branches using `BK.plot(br, br1...)` where green (resp. red) means stable (resp. unstable) solution.
 
 ![](sh3dbranches.png)
 

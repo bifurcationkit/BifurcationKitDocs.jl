@@ -96,7 +96,7 @@ f1 = DiffEqArrayOperator(par_br.Δ)
 f2 = NL!
 prob_sp = SplitODEProblem(f1, f2, solc0, (0.0, 280.0), @set par_br.C = -0.86)
 
-sol = @time solve(prob_sp, ETDRK2(krylov=true); abstol=1e-14, reltol=1e-14, dt = 0.1)
+sol = @time DifferentialEquations.solve(prob_sp, ETDRK2(krylov=true); abstol=1e-14, reltol=1e-14, dt = 0.1)
 ```
 
 We estimate the period of the limit cycle to be around $T\approx 3$. We then use this as a guess for the shooting method:
@@ -109,15 +109,15 @@ initpo = vcat(vec(orbitsection), 3.)
 # define the functional for the standard simple shooting based on the
 # ODE solver ETDRK2. SectionShooting implements an appropriate phase condition
 probSh = ShootingProblem(prob_sp, ETDRK2(krylov=true),
-	[sol(280.0)]; abstol=1e-14, reltol=1e-12, dt = 0.1,
-  optic = (@optic _.C),
+  [sol(280.0)]; abstol=1e-14, reltol=1e-12, dt = 0.1,
+  lens = (@optic _.C),
   jacobian = BK.FiniteDifferencesMF())
 
 # parameters for the Newton-Krylov solver
 ls = GMRESIterativeSolvers(reltol = 1e-7, N = length(initpo), maxiter = 50, verbose = false)
 optn = NewtonPar(verbose = true, tol = 1e-9,  max_iterations = 120, linsolver = ls)
 # Newton-Krylov solver
-out_po_sh = @time newton(probSh, initpo, optn; normN = norminf)
+out_po_sh = @time BK.newton(probSh, initpo, optn; normN = norminf)
 BK.converged(out_po_sh) && printstyled(color=:red, "--> T = ", out_po_sh.u[end], ", amplitude = ", BK.getamplitude(probSh, out_po_sh.u, par_br_hopf; ratio = 2),"\n")
 ```
 
@@ -136,7 +136,7 @@ opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.01, ds= 0.005, p_min = 
 br_po_sh = @time continuation(probSh, out_po_sh.u, PALC(), opts_po_cont; verbosity = 3,
 	plot = true,
 	linear_algo = MatrixFreeBLS(@set ls.N = probSh.M*n+2),
-  plot_solution = (x, p; kwargs...) -> BK.plot_periodic_shooting!(x[1:end-1], 1; kwargs...),
+  plot_solution = (x, p; k...) -> BK.plot_periodic_shooting!(x[1:end-1], 1; k...),
   record_from_solution = (u, p; k...) -> BK.getmaximum(probSh, u, (@set par_br_hopf.C = p.p); ratio = 2), normC = norminf)
 ```
 

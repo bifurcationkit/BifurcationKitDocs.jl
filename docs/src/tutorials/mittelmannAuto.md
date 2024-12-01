@@ -54,21 +54,11 @@ end
 ϕ(u, λ)  = -10(u-λ*exp(u))
 dϕ(u, λ) = -10(1-λ*exp(u))
 
-function NL!(dest, u, p)
-	(;λ) = p
-	dest .= ϕ.(u, λ)
-	return dest
-end
-
-NL(u, p) = NL!(similar(u), u, p)
-
 function Fmit!(f, u, p)
 	mul!(f, p.Δ, u)
-	f .= f .+ NL(u, p)
+	f .= f .+ ϕ.(u, p.λ)
 	return f
 end
-
-Fmit(u, p) = Fmit!(similar(u), u, p)
 ```
 
 It will also prove useful to have the jacobian of our functional and the other derivatives:
@@ -102,7 +92,7 @@ par_mit = (λ = .01, Δ = Δ)
 sol0 = 0*ones(Nx, Ny) |> vec
 
 # Bifurcation Problem
-prob = BifurcationProblem(Fmit, sol0, par_mit, (@optic _.λ),; J = JFmit,
+prob = BifurcationProblem(Fmit!, sol0, par_mit, (@optic _.λ),; J = JFmit,
   record_from_solution = (x, p; k...) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
   plot_solution = (x, p; k...) -> plotsol!(x ; k...))
 ```
@@ -111,7 +101,7 @@ To compute the eigenvalues, we opt for the solver in `KrylovKit.jl`
 
 ```julia
 # eigensolver
-eigls = EigKrylovKit(dim = 70)
+eigls = EigArpack()
 
 # options for Newton solver
 opt_newton = NewtonPar(tol = 1e-8, verbose = true, eigsolver = eigls, max_iterations = 20)
@@ -191,7 +181,7 @@ Actually, this plot is misleading because of the symmetries. If we chose a weigh
 
 ```julia
 plot(diagram; plotfold = false, putspecialptlegend=false, markersize=2,
-	title = "#branches = $(size(diagram))", vars = (:param, :nw))
+	title = "#branches = $(size(diagram))", vars = (:param, :nw), label = "")
 ```
 
 ![](mittlemannBD-1.png)
@@ -199,7 +189,7 @@ plot(diagram; plotfold = false, putspecialptlegend=false, markersize=2,
 We can make more sense of these spaghetti by only plotting the first two levels of recursion
 
 ```julia
-plot(diagram; level = (1, 2), plotfold = false, putspecialptlegend=false, markersize=2, vars = (:param, :nw))
+plot(diagram; level = (1, 2), plotfold = false, putspecialptlegend=false, markersize=2, label = "", vars = (:param, :nw))
 ```
 
 ![](mittlemannBD-2.png)

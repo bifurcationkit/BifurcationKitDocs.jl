@@ -13,7 +13,7 @@ Note that we try to be pedagogical here. Hence, we may write "bad" code that we 
 
 
 !!! info "Goal"
-    We do not use automatic branch switching here. The goal is to show our to use the internals of the package to squeeze most of the performances, use tailored options...
+    We do not use automatic branch switching here. The goal is to show how to use the internals of the package to squeeze most of the performances, use tailored options...
 
 
 The equations are as follows
@@ -513,7 +513,7 @@ opt_po = @set opt_po.eigsolver = EigKrylovKit(tol = 1e-3, x₀ = rand(2n), verbo
 
 # parameters for the continuation
 opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds = 0.001, p_max = 2.2, max_steps = 250, plot_every_step = 3, newton_options = (@set opt_po.linsolver = ls),
-	nev = 5, tol_stability = 1e-7, detect_bifurcation = 0)
+	nev = 5, tol_stability = 1e-7, detect_bifurcation = 3)
 
 br_po = @time continuation(poTrapMF, outpo_f.u, PALC(),	opts_po_cont;
 	verbosity = 2,	plot = true,
@@ -570,7 +570,7 @@ end
 We select the Fold point from the branch `br_po` and redefine our linear solver to get the ILU preconditioner tuned close to the Fold point.
 
 ```julia
-indfold = 2
+indfold = 1
 foldpt = foldpoint(br_po, indfold)
 
 Jpo = poTrap(Val(:JacFullSparse), orbitguess_f, (@set par_cgl.r = r_hopf - 0.1))
@@ -614,7 +614,7 @@ and this gives
 --> We found a Fold Point at α = 0.9470569704262517 from 0.9481896723164748
 ```
 
-Finally, one can perform continuation of the Fold bifurcation point as follows CA NE MARCHE PAS
+Finally, one can perform continuation of the Fold bifurcation point as follows
 
 ```julia
 optcontfold = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 40.1, p_min = -10., newton_options = (@set opt_po.linsolver = ls), max_steps = 20, detect_bifurcation = 0)

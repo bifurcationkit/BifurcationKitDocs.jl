@@ -39,7 +39,7 @@ function Fks1d(a, p)
 	(;Δ, Δ2, λ, N) = p
 	out = (2λ) .* (Δ2 .* a)
 	out .+= (Δ .* a)
-	for l=1:N
+	@inbounds for l=1:N
 		for m=1:N
 			if 0 < l+m <= N
 				out[l+m] += l*a[l]*a[m]

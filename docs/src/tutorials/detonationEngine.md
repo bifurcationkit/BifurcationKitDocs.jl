@@ -120,7 +120,7 @@ eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
 
 # newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)
-solhomo = newton(prob, optnew; normN = norminf)
+solhomo = BK.solve(prob, Newton(), optnew; normN = norminf)
 optcont = ContinuationPar(newton_options = NewtonPar(optnew, verbose = false),
 	detect_bifurcation = 3, nev = 50, n_inversion = 8, max_bisection_steps = 25,
 	dsmax = 0.01, ds = 0.01, p_max = 1.4, max_steps = 1000, plot_every_step = 50)

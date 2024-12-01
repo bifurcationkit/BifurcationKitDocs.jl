@@ -149,10 +149,10 @@ X = -lx .+ 2lx/(Nx) * collect(0:Nx-1)
 Y = -ly .+ 2ly/(Ny) * collect(0:Ny-1)
 
 sol0 = [(cos(x) .+ cos(x/2) * cos(sqrt(3) * y/2) ) for x in X, y in Y]
-		sol0 .= sol0 .- minimum(vec(sol0))
-		sol0 ./= maximum(vec(sol0))
-		sol0 = sol0 .- 0.25
-		sol0 .*= 1.7
+sol0 .= sol0 .- minimum(vec(sol0))
+sol0 ./= maximum(vec(sol0))
+sol0 = sol0 .- 0.25
+sol0 .*= 1.7
 
 L = SHLinearOp(Nx, lx, Ny, ly, AF = AF)
 J_shfft(u, p) = (u, p.l, p.ν)
@@ -173,7 +173,7 @@ We are now ready to perform Newton iterations:
 
 ```julia
 opt_new = NewtonPar(verbose = true, tol = 1e-6, max_iterations = 100, linsolver = L)
-sol_hexa = @time solve(prob, Newton(), opt_new, normN = norminf)
+sol_hexa = @time BK.solve(prob, Newton(), opt_new, normN = norminf)
 println("--> norm(sol) = ", maximum(abs.(sol_hexa.u)))
 plotsol(sol_hexa.u)
 ```
@@ -211,7 +211,7 @@ We can also use the deflation technique (see [`DeflationOperator`](@ref) and [`D
 deflationOp = DeflationOperator(2, dot, 1.0, [sol_hexa.u])
 
 opt_new = @set opt_new.max_iterations = 250
-outdef = @time solve(re_make(prob, u0 = AF(0.4 .* sol_hexa.u .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]))),
+outdef = @time BK.solve(re_make(prob, u0 = AF(0.4 .* sol_hexa.u .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]))),
 		deflationOp, opt_new, normN = x-> maximum(abs.(x)))
 println("--> norm(sol) = ", norm(outdef.u))
 plotsol(outdef.u) |> display

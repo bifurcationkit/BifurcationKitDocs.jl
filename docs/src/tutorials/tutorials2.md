@@ -90,8 +90,8 @@ prob = BifurcationProblem(F_sh, vec(sol0), par, (@optic _.l);
 
 # newton corrections of the initial guess
 optnewton = NewtonPar(verbose = true, tol = 1e-8, max_iterations = 20)
-sol_hexa = newton(prob, @set optnewton.verbose=false) # hide
-sol_hexa = @time newton(prob, optnewton)
+sol_hexa = BK.solve(prob, Newton(), @set optnewton.verbose=false) # hide
+sol_hexa = @time BK.solve(prob, Newton(), optnewton)
 ```
 
 with `sol_hexa` being
@@ -188,7 +188,7 @@ which penalizes `sol_hexa`.
 # and the set of sol_{hexa} is of length ns=1
 deflationOp = DeflationOperator(2, 1.0, [sol_hexa.u])
 optnewton = @set optnewton.max_iterations = 250
-outdef = newton(
+outdef = BK.solve(
 				re_make(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x+lx)^2/25) for x in X, y in Y])),
 				deflationOp,
 				optnewton, normN = norminf)
@@ -202,7 +202,7 @@ which gives:
 Note that `push!(deflationOp, outdef)` deflates the newly found solution so that by repeating the process we find another one:
 
 ```julia
-outdef = newton(
+outdef = BK.solve(
 				re_make(prob, u0 = 0.2vec(sol_hexa.u) .* vec([exp.(-(x)^2/25) for x in X, y in Y])),
 				deflationOp, optnewton, normN = norminf)
 heatmapsol(outdef.u) |> display

@@ -70,6 +70,36 @@ br = continuation(prob, PALC(), opts_br; normC = norminf)
 scene = plot(br, xlims = (0.8,1.8))
 ```
 
+## Locus of Fold points as function $k$
+
+!!! error ""
+    Do not do this in practice. It is only meant to explain codim2 continuation
+
+If we vary the parameter $k$, the previous bifurcation points changes. Let us compute branches for different values of $k$.
+
+```@example LORENZ84
+_branches = [continuation(re_make(prob, params = @set par_com.k = k),
+				 PALC(), ContinuationPar(opts_br, p_min = 0.6, p_max = 1.5);
+				normC = norminf,
+				bothside = true)
+			for k in LinRange(0.4, 0.45, 60)	
+				];
+plot()
+for b in _branches
+	plot!(fill(getparams(b).k,length(b)), b.param, b.x, label = "", color = :blue)
+	for pb in b.specialpoint
+		if pb.type in (:hopf, :bp)
+			col = pb.type == :hopf ? :red : :blue
+			scatter!([getparams(b).k], [pb.param], [pb.printsol.x], label = "", color = col)
+		end
+	end
+end
+xlabel!("k"); ylabel!("q2");zlabel!("x")
+title!("")
+```
+
+This is cumbersome and inefficient. We can in fact directly follow the Hopf / Fold points as function of two parameters.
+
 ## Continuation of Fold points
 
 We follow the Fold points in the parameter plane $(q_2, k)$. We tell the solver to consider `br.specialpoint[2]` and continue it.

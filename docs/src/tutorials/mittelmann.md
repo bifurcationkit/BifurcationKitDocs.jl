@@ -50,21 +50,11 @@ end
 ϕ(u, λ)  = -10(u-λ*exp(u))
 dϕ(u, λ) = -10(1-λ*exp(u))
 
-function NL!(dest, u, p)
-	(;λ) = p
-	dest .= ϕ.(u, λ)
-	return dest
-end
-
-NL(u, p) = NL!(similar(u), u, p)
-
 function Fmit!(f, u, p)
 	mul!(f, p.Δ, u)
-	f .= f .+ NL(u, p)
+	f .= f .+ ϕ.(u, p.λ)
 	return f
 end
-
-Fmit(u, p) = Fmit!(similar(u), u, p)
 nothing #hide
 ```
 
@@ -94,7 +84,7 @@ par_mit = (λ = .05, Δ = Δ)
 sol0 = zeros(Nx, Ny) |> vec
 
 # Bifurcation Problem
-prob = BifurcationProblem(Fmit, sol0, par_mit, (@optic _.λ),; J = JFmit,
+prob = BifurcationProblem(Fmit!, sol0, par_mit, (@optic _.λ),; J = JFmit,
   record_from_solution = (x, p; k...) -> (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
   plot_solution = (x, p; k...) -> plotsol!(x ; k...))
 nothing #hide
@@ -104,7 +94,7 @@ To compute the eigenvalues, we opt for the shift-invert strategy with shift `=0.
 
 ```@example MITT
 # eigensolver
-eigls = EigKrylovKit(dim = 70)
+eigls = EigArpack()
 
 # options for Newton solver, we pass the eigen solver
 opt_newton = BK.NewtonPar(tol = 1e-8, eigsolver = eigls, max_iterations = 20)
@@ -278,7 +268,7 @@ optdef = setproperties(opt_newton; tol = 1e-8, max_iterations = 100)
 vp, ve, _, _= eigls(JFmit(out, @set par_mit.λ = br.specialpoint[2].param), 5)
 
 for ii=1:length(ve)
-	outdef1 = newton(
+	outdef1 = BK.solve(
 		re_make(prob,
 		    # initial guess for newton
 		    u0 = br.specialpoint[2].x .+ 0.01 .*  real.(ve[ii]) .* (1 .+ 0.01 .* rand(Nx*Ny)),
