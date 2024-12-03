@@ -30,21 +30,11 @@ end
 ϕ(u, λ)  = -10(u-λ*exp(u))
 dϕ(u, λ) = -10(1-λ*exp(u))
 
-function NL!(dest, u, p)
-	(;λ) = p
-	dest .= ϕ.(u, λ)
-	return dest
-end
-
-NL(u, p) = NL!(similar(u), u, p)
-
 function Fmit!(f, u, p)
 	mul!(f, p.Δ, u)
-	f .= f .+ NL(u, p)
+	f .= f .+ ϕ.(u, p.λ)
 	return f
-end
-
-Fmit(u, p) = Fmit!(similar(u), u, p)</code></pre><p>It will also prove useful to have the jacobian of our functional and the other derivatives:</p><pre><code class="language-julia hljs">function JFmit(x,p)
+end</code></pre><p>It will also prove useful to have the jacobian of our functional and the other derivatives:</p><pre><code class="language-julia hljs">function JFmit(x,p)
 	J = p.Δ
 	dg = dϕ.(x, p.λ)
 	return J + spdiagm(0 =&gt; dg)
@@ -66,10 +56,10 @@ par_mit = (λ = .01, Δ = Δ)
 sol0 = 0*ones(Nx, Ny) |&gt; vec
 
 # Bifurcation Problem
-prob = BifurcationProblem(Fmit, sol0, par_mit, (@optic _.λ),; J = JFmit,
+prob = BifurcationProblem(Fmit!, sol0, par_mit, (@optic _.λ),; J = JFmit,
   record_from_solution = (x, p; k...) -&gt; (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
   plot_solution = (x, p; k...) -&gt; plotsol!(x ; k...))</code></pre><p>To compute the eigenvalues, we opt for the solver in <code>KrylovKit.jl</code></p><pre><code class="language-julia hljs"># eigensolver
-eigls = EigKrylovKit(dim = 70)
+eigls = EigArpack()
 
 # options for Newton solver
 opt_newton = NewtonPar(tol = 1e-8, verbose = true, eigsolver = eigls, max_iterations = 20)
@@ -108,7 +98,7 @@ end</code></pre><p>We are then ready to compute the bifurcation diagram. If we c
 	usedeflation = true,
 	finalise_solution = finSol,
 	normC = norminf)</code></pre><p>this gives using <code>plot(diagram; plotfold = false, putspecialptlegend=false, markersize=2, title = &quot;#branches = $(size(diagram))&quot;)</code>:</p><p><img src="../mittlemanBD.png" alt/></p><p>We can zoom in on the left part to get</p><p><img src="../mittlemanBD1.png" alt/></p><p>Actually, this plot is misleading because of the symmetries. If we chose a weighted norm which breaks those symmetries and use it to print the solution, we get</p><pre><code class="language-julia hljs">plot(diagram; plotfold = false, putspecialptlegend=false, markersize=2,
-	title = &quot;#branches = $(size(diagram))&quot;, vars = (:param, :nw))</code></pre><p><img src="../mittlemannBD-1.png" alt/></p><p>We can make more sense of these spaghetti by only plotting the first two levels of recursion</p><pre><code class="language-julia hljs">plot(diagram; level = (1, 2), plotfold = false, putspecialptlegend=false, markersize=2, vars = (:param, :nw))</code></pre><p><img src="../mittlemannBD-2.png" alt/></p><h2 id="Interactive-exploration"><a class="docs-heading-anchor" href="#Interactive-exploration">Interactive exploration</a><a id="Interactive-exploration-1"></a><a class="docs-heading-anchor-permalink" href="#Interactive-exploration" title="Permalink"></a></h2><p>We can see that the non-simple 2d branch points (magenta points) have produced non trivial branches. For example, we can look at the second bifurcation point (the first is the fold) which is composed of 8 branches</p><p><code>plot(getBranchesFromBP(diagram, 2); plotfold = false, legend = false, vars = (:param, :nw))</code></p><p><img src="../mittlemannBD-2-1.png" alt/></p><h2 id="Interactive-computation"><a class="docs-heading-anchor" href="#Interactive-computation">Interactive computation</a><a id="Interactive-computation-1"></a><a class="docs-heading-anchor-permalink" href="#Interactive-computation" title="Permalink"></a></h2><p>Let&#39;s say you have been cautious and did not launch a deep bifurcation diagram computation by using a small recursion level 2:</p><pre><code class="language-julia hljs">diagram = bifurcationdiagram(prob, PALC(),
+	title = &quot;#branches = $(size(diagram))&quot;, vars = (:param, :nw), label = &quot;&quot;)</code></pre><p><img src="../mittlemannBD-1.png" alt/></p><p>We can make more sense of these spaghetti by only plotting the first two levels of recursion</p><pre><code class="language-julia hljs">plot(diagram; level = (1, 2), plotfold = false, putspecialptlegend=false, markersize=2, label = &quot;&quot;, vars = (:param, :nw))</code></pre><p><img src="../mittlemannBD-2.png" alt/></p><h2 id="Interactive-exploration"><a class="docs-heading-anchor" href="#Interactive-exploration">Interactive exploration</a><a id="Interactive-exploration-1"></a><a class="docs-heading-anchor-permalink" href="#Interactive-exploration" title="Permalink"></a></h2><p>We can see that the non-simple 2d branch points (magenta points) have produced non trivial branches. For example, we can look at the second bifurcation point (the first is the fold) which is composed of 8 branches</p><p><code>plot(getBranchesFromBP(diagram, 2); plotfold = false, legend = false, vars = (:param, :nw))</code></p><p><img src="../mittlemannBD-2-1.png" alt/></p><h2 id="Interactive-computation"><a class="docs-heading-anchor" href="#Interactive-computation">Interactive computation</a><a id="Interactive-computation-1"></a><a class="docs-heading-anchor-permalink" href="#Interactive-computation" title="Permalink"></a></h2><p>Let&#39;s say you have been cautious and did not launch a deep bifurcation diagram computation by using a small recursion level 2:</p><pre><code class="language-julia hljs">diagram = bifurcationdiagram(prob, PALC(),
 	# here the recursion level is
 	2,
 	optionsCont;
@@ -125,4 +115,4 @@ end</code></pre><p>We are then ready to compute the bifurcation diagram. If we c
 	callback_newton = cb,
 	finalise_solution = finSol,
 	usedeflation = true,
-	normC = norminf)</code></pre><p>This gives the following diagram. Using this call, you can pinpoint the particular location where to refine the diagram.</p><p><img src="../mittlemanBD3.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Sunday 1 December 2024 10:28">Sunday 1 December 2024</span>. Using Julia version 1.10.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	normC = norminf)</code></pre><p>This gives the following diagram. Using this call, you can pinpoint the particular location where to refine the diagram.</p><p><img src="../mittlemanBD3.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Tuesday 3 December 2024 19:28">Tuesday 3 December 2024</span>. Using Julia version 1.10.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

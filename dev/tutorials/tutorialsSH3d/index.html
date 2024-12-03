@@ -53,7 +53,7 @@ TY = Float64
 AF = Array{TY}</code></pre><h2 id="Plotting-with-Makie"><a class="docs-heading-anchor" href="#Plotting-with-Makie">Plotting with Makie</a><a id="Plotting-with-Makie-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-with-Makie" title="Permalink"></a></h2><p>In most tutorials, we have used <code>Plots.jl</code> for the figures. However, it appears that <code>Makie.jl</code> is more convenient for 3d plots. We thus define the following convenience functions to display the solutions of (E).</p><pre><code class="language-julia hljs">contour3dMakie(x; k...) = GLMakie.contour(x;  k...)
 contour3dMakie(x::AbstractVector; k...) = contour3dMakie(reshape(x,Nx,Ny,Nz); k...)
 
-contour3dMakie(ax, x; k...) = (GLMakie.contour(ax, x;  k...))
+contour3dMakie(ax, x; k...) = (GLMakie.contour!(ax, x;  k...))
 contour3dMakie(ax, x::AbstractVector; k...) = contour3dMakie(ax, reshape(x,Nx,Ny,Nz); k...)
 
 contour3dMakie!(ax, x; k...) = (GLMakie.contour!(ax, x;  k...))
@@ -80,20 +80,21 @@ julia&gt; @time lu(L1) \ sol_hexa;
   0.556157 seconds (87 allocations: 226.210 MiB, 0.49% compilation time)
 
 julia&gt; @time qr(L1) \ sol_hexa;
-  1.609175 seconds (8.96 k allocations: 989.285 MiB, 2.67% gc time, 0.67% compilation time)</code></pre><p>Hence, <code>cholesky</code> is the big winner but it requires a positive matrix so let&#39;s see how to do that.</p><p>As said in the introduction, the LU linear solver does not scale well with dimension <span>$N$</span>. Hence, we do something else. We note that the matrix <span>$L_1$</span> is hermitian positive and use it as a preconditioner. Thus, we pre-factorize it using a Cholesky decomposition:</p><pre><code class="language-julia hljs">Pr = lu(L1);
+  1.609175 seconds (8.96 k allocations: 989.285 MiB, 2.67% gc time, 0.67% compilation time)</code></pre><p>Hence, <code>cholesky</code> is the big winner but it requires a positive matrix so let&#39;s see how to do that.</p><p>As said in the introduction, the LU linear solver does not scale well with dimension <span>$N$</span>. Hence, we do something else. We note that the matrix <span>$L_1$</span> is hermitian positive and use it as a preconditioner. Thus, we pre-factorize it using a Cholesky decomposition:</p><pre><code class="language-julia hljs">Pr = cholesky(L1);
 using SuiteSparse
 # we need this &quot;hack&quot; to be able to use Pr as a preconditioner.
-LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= -(P \ v)
+LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= (P \ v)
 
 # rtol must be small enough to pass the Fold points and to get precise eigenvalues
 # we know that the jacobian is symmetric so we tell the solver
-ls = GMRESKrylovKit(verbose = 0, rtol = 1e-9, maxiter = 150, ishermitian = true, Pl = Pr)</code></pre><p>Let&#39;s try this on a Krylov-Newton computation to refine the guess <code>sol0</code>:</p><pre><code class="language-julia hljs">prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@optic _.l),
+ls = GMRESKrylovKit(verbose = 0, rtol = 1e-9, maxiter = 150, Pl = Pr)</code></pre><p>Let&#39;s try this on a Krylov-Newton computation to refine the guess <code>sol0</code>:</p><pre><code class="language-julia hljs">prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@optic _.l),
 	J = (x, p) -&gt; (dx -&gt; dF_sh(x, p, dx)),
-	plot_solution = (ax, x, p) -&gt; contour3dMakie(ax, x),
+	plot_solution = (ax, x, p; ax1) -&gt; contour3dMakie(ax, x),
+	issymmetric = true, # so we dont need to provide the adjoint (normal form)
 	record_from_solution = (x, p; k...) -&gt; (n2 = norm(x), n8 = norm(x, 8)))
 
 optnew = NewtonPar(verbose = true, tol = 1e-8, max_iterations = 20, linsolver = ls)
-sol_hexa = @time newton(prob, optnew)</code></pre><p>which gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
+sol_hexa = @time BK.solve(prob, Newton(), optnew)</code></pre><p>which gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton step         residual     linear iterations  │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       2.6003e+02     │        0       │
@@ -108,7 +109,7 @@ sol_hexa = @time newton(prob, optnew)</code></pre><p>which gives</p><pre><code c
 │       9     │       2.4048e-06     │       17       │
 │      10     │       1.8389e-10     │       17       │
 └─────────────┴──────────────────────┴────────────────┘
-  1.405419 seconds (1.22 M allocations: 205.788 MiB, 2.16% gc time, 18.84% compilation time)</code></pre><p>and <code>contour3dMakie(sol_hexa)</code> produces</p><p><img src="../sh3dhexa.png" alt/></p><h2 id="Continuation-and-bifurcation-points"><a class="docs-heading-anchor" href="#Continuation-and-bifurcation-points">Continuation and bifurcation points</a><a id="Continuation-and-bifurcation-points-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-and-bifurcation-points" title="Permalink"></a></h2><p>We now switch gears and compute the stability of the trivial solution <span>$u=0$</span>. We will then branch from the detected bifurcation points. However, we wish to show an example of computation of eigenvalues based on a custom preconditioned Shift-Invert strategy.</p><p>We thus define our eigensolver based on the previously defined pre-conditioned linear solver <code>ls</code>:</p><pre><code class="language-julia hljs"># structure to hold eigensolver
+  0.472765 seconds (13.97 k allocations: 134.073 MiB, 1.91% gc time, 0.00% compilation time)</code></pre><p>and <code>contour3dMakie(sol_hexa.u)</code> produces</p><p><img src="../sh3dhexa.png" alt/></p><h2 id="Continuation-and-bifurcation-points"><a class="docs-heading-anchor" href="#Continuation-and-bifurcation-points">Continuation and bifurcation points</a><a id="Continuation-and-bifurcation-points-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-and-bifurcation-points" title="Permalink"></a></h2><p>We now switch gears and compute the stability of the trivial solution <span>$u=0$</span>. We will then branch from the detected bifurcation points. However, we wish to show an example of computation of eigenvalues based on a custom preconditioned Shift-Invert strategy.</p><p>We thus define our eigensolver based on the previously defined pre-conditioned linear solver <code>ls</code>:</p><pre><code class="language-julia hljs"># structure to hold eigensolver
 struct SH3dEig{Ts, Tσ} &lt;: BK.AbstractEigenSolver
 	# linear solver used for Shift-Invert strategy
 	ls::Ts
@@ -134,7 +135,7 @@ function (sheig::SH3dEig)(J, nev::Int; verbosity = 0, kwargs...)
 	return vals2[Ind], vec[Ind], true, info.numops
 end</code></pre><p>We can then declare our eigensolver and pass it to the newton parameters</p><pre><code class="language-julia hljs">eigSH3d = SH3dEig((@set ls.rtol = 1e-9), 0.1)
 @reset optnew.eigsolver = eigSH3d</code></pre><p>We are now ready to perform continuation and detection of bifurcation points:</p><pre><code class="language-julia hljs">optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, p_max = 0.15,
-	p_min = -.1, newton_options = setproperties(optnew; tol = 1e-9, maxIter = 15),
+	p_min = -.1, newton_options = setproperties(optnew; tol = 1e-9, max_iterations = 15),
 	max_steps = 146, detect_bifurcation = 3, nev = 15, n_inversion = 4, plot_every_step = 1)
 
 br = continuation( re_make(prob, u0 = zeros(N)),
@@ -143,7 +144,7 @@ br = continuation( re_make(prob, u0 = zeros(N)),
   PALC(bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
   optcont;
   normC = x -&gt; norm(x, Inf),
-	plot = true, verbosity = 3)</code></pre><p>The following result shows the detected bifurcation points (its takes ~300s)</p><pre><code class="language-julia hljs">julia&gt; br
+  plot = true, verbosity = 3)</code></pre><p>The following result shows the detected bifurcation points (its takes ~300s)</p><pre><code class="language-julia hljs">julia&gt; br
 Branch number of points: 34
 Branch of Equilibrium
 Parameters l from 0.1 to -0.1
@@ -158,14 +159,8 @@ Bifurcation points:
 	δp = 0.01,
 	# remove display of deflated newton iterations
 	verbosedeflation = false,
-	alg = PALC(tangent = Bordered()),
-	linear_algo = BorderingBLS(solver = optnew.linsolver, check_precision = false),
-	# to compute the normal form, so we don&#39;t have to
-	# compute the left eigenvectors
-	issymmetric = true,
-	plot_solution = (ax, x, p) -&gt; contour3dMakie(ax, x),
-	record_from_solution = (x, p; k...) -&gt; (n2 = norm(x), n8 = norm(x, 8)),
-	normC = x -&gt; norm(x, Inf))</code></pre><p>We can then plot the branches using <code>BK.plotBranch(br, branches...)</code> where green (resp. red) means stable (resp. unstable) solution.</p><p><img src="../sh3dbranches.png" alt/></p><p>There are 19 banches that were discovered. You can plot the solutions on the branches using</p><pre><code class="language-julia hljs">fig = Figure(resolution = (1200, 900))
+	alg = PALC(tangent = Bordered(), bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
+	normC = norminf)</code></pre><p>We can then plot the branches using <code>BK.plot(br, br1...)</code> where green (resp. red) means stable (resp. unstable) solution.</p><p><img src="../sh3dbranches.png" alt/></p><p>There are 19 banches that were discovered. You can plot the solutions on the branches using</p><pre><code class="language-julia hljs">fig = Figure(resolution = (1200, 900))
 	for i=1:length(br1)
 		ix = div(i,5)+1; iy = i%5+1
 		@show i, ix, iy
@@ -174,4 +169,4 @@ Bifurcation points:
 		contour3dMakie!(ax, br1[i].sol[2].x)
 		ax.protrusions = (0, 0, 0, 10)
 	end
-	display(fig)</code></pre><p><img src="../sh3dallSols.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Sunday 1 December 2024 10:28">Sunday 1 December 2024</span>. Using Julia version 1.10.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+	display(fig)</code></pre><p><img src="../sh3dallSols.png" alt/></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Tuesday 3 December 2024 19:28">Tuesday 3 December 2024</span>. Using Julia version 1.10.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

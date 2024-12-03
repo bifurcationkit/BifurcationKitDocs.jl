@@ -78,10 +78,10 @@ X = -lx .+ 2lx/(Nx) * collect(0:Nx-1)
 Y = -ly .+ 2ly/(Ny) * collect(0:Ny-1)
 
 sol0 = [(cos(x) .+ cos(x/2) * cos(sqrt(3) * y/2) ) for x in X, y in Y]
-		sol0 .= sol0 .- minimum(vec(sol0))
-		sol0 ./= maximum(vec(sol0))
-		sol0 = sol0 .- 0.25
-		sol0 .*= 1.7
+sol0 .= sol0 .- minimum(vec(sol0))
+sol0 ./= maximum(vec(sol0))
+sol0 = sol0 .- 0.25
+sol0 .*= 1.7
 
 L = SHLinearOp(Nx, lx, Ny, ly, AF = AF)
 J_shfft(u, p) = (u, p.l, p.ν)
@@ -94,7 +94,7 @@ prob = BK.BifurcationProblem(F_shfft, AF(sol0), par, (@optic _.l) ;
 	J = J_shfft,
 	plot_solution = (x, p;kwargs...) -&gt; plotsol!(x; color=:viridis, kwargs...),
 	record_from_solution = (x, p; k...) -&gt; norm(x))</code></pre><h2 id="Newton-iterations-and-deflation"><a class="docs-heading-anchor" href="#Newton-iterations-and-deflation">Newton iterations and deflation</a><a id="Newton-iterations-and-deflation-1"></a><a class="docs-heading-anchor-permalink" href="#Newton-iterations-and-deflation" title="Permalink"></a></h2><p>We are now ready to perform Newton iterations:</p><pre><code class="language-julia hljs">opt_new = NewtonPar(verbose = true, tol = 1e-6, max_iterations = 100, linsolver = L)
-sol_hexa = @time solve(prob, Newton(), opt_new, normN = norminf)
+sol_hexa = @time BK.solve(prob, Newton(), opt_new, normN = norminf)
 println(&quot;--&gt; norm(sol) = &quot;, maximum(abs.(sol_hexa.u)))
 plotsol(sol_hexa.u)</code></pre><p>You should see this:</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton step         residual     linear iterations  │
@@ -114,7 +114,7 @@ plotsol(sol_hexa.u)</code></pre><p>You should see this:</p><pre><code class="lan
 --&gt; norm(sol) = 1.26017611779702</code></pre><p><strong>Note that this is about the 10x faster than Example 2 but for a problem almost 100x larger! (On a V100 GPU)</strong></p><p>The solution is:</p><p><img src="../SH-GPU.png" alt/></p><p>We can also use the deflation technique (see <a href="../../library/#BifurcationKit.DeflationOperator"><code>DeflationOperator</code></a> and <a href="../../library/#BifurcationKit.DeflatedProblem"><code>DeflatedProblem</code></a> for more information) on the GPU as follows</p><pre><code class="language-julia hljs">deflationOp = DeflationOperator(2, dot, 1.0, [sol_hexa.u])
 
 opt_new = @set opt_new.max_iterations = 250
-outdef = @time solve(re_make(prob, u0 = AF(0.4 .* sol_hexa.u .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]))),
+outdef = @time BK.solve(re_make(prob, u0 = AF(0.4 .* sol_hexa.u .* AF([exp(-1(x+0lx)^2/25) for x in X, y in Y]))),
 		deflationOp, opt_new, normN = x-&gt; maximum(abs.(x)))
 println(&quot;--&gt; norm(sol) = &quot;, norm(outdef.u))
 plotsol(outdef.u) |&gt; display
@@ -152,4 +152,4 @@ Bifurcation points:
 - # 18,    nd at p ≈ +0.00057801 ∈ (-0.00122418, +0.00057801), |δp|=2e-03, [converged], δ = ( 5,  0), step =  64, eigenelements in eig[ 65], ind_ev =   6
 - # 19,    nd at p ≈ +0.00320921 ∈ (+0.00141327, +0.00320921), |δp|=2e-03, [converged], δ = (10,  0), step =  65, eigenelements in eig[ 66], ind_ev =  16
 Fold points:
-- #  1, fold at p ≈ -0.21528694 ∈ (-0.21528694, -0.21528694), |δp|=-1e+00, [    guess], δ = ( 0,  0), step =  24, eigenelements in eig[ 24], ind_ev =   0</code></pre></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Sunday 1 December 2024 10:28">Sunday 1 December 2024</span>. Using Julia version 1.10.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+- #  1, fold at p ≈ -0.21528694 ∈ (-0.21528694, -0.21528694), |δp|=-1e+00, [    guess], δ = ( 0,  0), step =  24, eigenelements in eig[ 24], ind_ev =   0</code></pre></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Tuesday 3 December 2024 19:28">Tuesday 3 December 2024</span>. Using Julia version 1.10.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
