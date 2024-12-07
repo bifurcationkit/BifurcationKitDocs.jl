@@ -85,6 +85,7 @@ prob = BifurcationProblem(F_sh, vec(sol0), par, (@optic _.l);
 		J = dF_sh,
 		plot_solution = (x, p; kwargs...) -> (heatmapsol!(x; label="", kwargs...)),
 		record_from_solution = (x, p; k...) -> (n2 = norm(x), n8 = norm(x, 8)),
+		issymmetric = true,
 		d2F = d2F_sh,
 		d3F = d3F_sh)
 
@@ -106,7 +107,7 @@ We can now continue this solution as follows. We want to detect bifurcations alo
 
 ```julia
 # compute the jacobian
-J0 = dF_sh(sol_hexa.u, par)
+J0 = dF_sh(sol_hexa.u, par);
 ```
 
 The reason is that the jacobian operator is not very well conditioned unlike its inverse. We thus opt for the *shift-invert* method (see [Eigen solvers (Eig)](@ref) for more information) with shift `0.1`:
@@ -125,9 +126,9 @@ We are now ready to compute the branches:
 ```julia
 optcont = ContinuationPar(p_max = 0.0, p_min = -1.0,
 	dsmin = 0.0001, dsmax = 0.005, ds= -0.001, 
-	newton_options = setproperties(optnewton; tol = 1e-9),
+	newton_options = setproperties(optnewton; tol = 1e-9,
+	eigsolver = EigArpack(0.1, :LM)),
 	nev = 40)
-optcont = @set optcont.newton_options.eigsolver = EigArpack(0.1, :LM)
 
 br = continuation(
 	re_make(prob, u0 = sol_hexa.u), PALC(), optcont;
@@ -241,6 +242,6 @@ br2 = continuation(br, 2, setproperties(optcont; ds = -0.001, detect_bifurcation
 	normC = norminf)
 ```
 
-We can then plot the branches using `plot(br, br2, br3)` and get
+We can then plot the branches using `plot(br, br1, br2)` and get
 
 ![](SH2daBS.png)

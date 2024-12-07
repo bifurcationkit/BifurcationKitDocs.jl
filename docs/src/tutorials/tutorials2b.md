@@ -112,7 +112,7 @@ function (sh::SHLinearOp)(J, rhs; shift = 0., tol =  1e-9)
 	u, l, ν = J
 	udiag = l .+ 1 .+ 2ν .* u .- 3 .* u.^2 .- shift
 	res, info = KrylovKit.linsolve( du -> -du .+ sh \ (udiag .* du), sh \ rhs,
-	tol = tol, maxiter = 6)
+	tol, maxiter = 6)
 	return res, true, info.numops
 end
 ```
@@ -154,7 +154,7 @@ sol0 ./= maximum(vec(sol0))
 sol0 = sol0 .- 0.25
 sol0 .*= 1.7
 
-L = SHLinearOp(Nx, lx, Ny, ly, AF = AF)
+L = SHLinearOp(Nx, lx, Ny, ly; AF)
 J_shfft(u, p) = (u, p.l, p.ν)
 
 # parameters of the PDE
@@ -229,7 +229,7 @@ Finally, we can perform continuation of the branches on the GPU:
 
 ```julia
 opts_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.007, ds= -0.005,
-	p_max = 0., p_min = -1.0, plot_every_step = 5, detect_bifurcation = 0,
+	p_max = 0., p_min = -1.0, plot_every_step = 5, detect_bifurcation = 3,
 	newton_options = setproperties(opt_new; tol = 1e-6, max_iterations = 15), max_steps = 100)
 
 br = @time continuation(re_make(prob, u0 = deflationOp[1]),
