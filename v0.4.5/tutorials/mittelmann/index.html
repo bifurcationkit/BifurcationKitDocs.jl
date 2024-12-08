@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>🟤 2d generalized Bratu–Gelfand problem · Bifurcation Analysis in Julia</title><meta name="title" content="🟤 2d generalized Bratu–Gelfand problem · Bifurcation Analysis in Julia"/><meta property="og:title" content="🟤 2d generalized Bratu–Gelfand problem · Bifurcation Analysis in Julia"/><meta property="twitter:title" content="🟤 2d generalized Bratu–Gelfand problem · Bifurcation Analysis in Julia"/><meta name="description" content="Documentation for Bifurcation Analysis in Julia."/><meta property="og:description" content="Documentation for Bifurcation Analysis in Julia."/><meta property="twitter:description" content="Documentation for Bifurcation Analysis in Julia."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.svg" alt="Bifurcation Analysis in Julia logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">Bifurcation Analysis in Julia</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><a class="tocitem" href="../../capabilities/">Overview of capabilities</a></li><li><a class="tocitem" href="../../gettingstarted/">Getting Started with BifurcationKit</a></li><li><a class="tocitem" href="../tutorials/">Tutorials</a></li><li><input class="collapse-toggle" id="menuitem-5" type="checkbox"/><label class="tocitem" for="menuitem-5"><span class="docs-label">Basics</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../guidelines/">Guidelines</a></li><li><a class="tocitem" href="../../educational/">Educational introduction</a></li><li><a class="tocitem" href="../../overview/">Overview</a></li><li><a class="tocitem" href="../../plotting/">Plot functions</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-6" type="checkbox"/><label class="tocitem" for="menuitem-6"><span class="docs-label">Problems</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../BifProblem/">Bifurcation Problem</a></li><li><a class="tocitem" href="../../diffeq/">DiffEq wrapper</a></li><li><input class="collapse-toggle" id="menuitem-6-3" type="checkbox"/><label class="tocitem" for="menuitem-6-3"><span class="docs-label">Periodic Orbits</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../periodicOrbit/">Introduction</a></li><li><a class="tocitem" href="../../periodicOrbitTrapeze/">Trapezoid</a></li><li><a class="tocitem" href="../../periodicOrbitCollocation/">Collocation</a></li><li><a class="tocitem" href="../../periodicOrbitShooting/">Shooting</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-6-4" type="checkbox"/><label class="tocitem" for="menuitem-6-4"><span class="docs-label">Symmetries / Waves</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../intro_wave/">Introduction</a></li><li><a class="tocitem" href="../../waveEigen/">Eigen Solvers</a></li><li><a class="tocitem" href="../../ModulatedTW/">Modulated Travelling waves</a></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-7" type="checkbox"/><label class="tocitem" for="menuitem-7"><span class="docs-label">Continuation methods</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../IntroContinuation/">Introduction</a></li><li><a class="tocitem" href="../../Predictors/">Predictors / correctors</a></li><li><a class="tocitem" href="../../PALC/">PALC</a></li><li><a class="tocitem" href="../../MooreSpence/">Moore-Penrose continuation</a></li><li><a class="tocitem" href="../../hybrid/">AutoSwitch</a></li><li><a class="tocitem" href="../../ANM/">ANM</a></li><li><a class="tocitem" href="../../DeflatedContinuation/">Deflated continuation</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8" type="checkbox"/><label class="tocitem" for="menuitem-8"><span class="docs-label">Functionalities</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><input class="collapse-toggle" id="menuitem-8-1" type="checkbox"/><label class="tocitem" for="menuitem-8-1"><span class="docs-label">Nonlinear equations (Newton)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../newton/">Krylov-Newton algorithm</a></li><li><a class="tocitem" href="../../deflatedproblem/">Deflated problems</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-2" type="checkbox"/><label class="tocitem" for="menuitem-8-2"><span class="docs-label">Bifurcations (equilibria)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../detectionBifurcation/">Bifurcation detection (1 param)</a></li><li><a class="tocitem" href="../../codim2Continuation/">Fold / Hopf Continuation (2 params)</a></li><li><a class="tocitem" href="../../codim3Continuation/">Bogdanov-Takens refinement (3 params)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-3" type="checkbox"/><label class="tocitem" for="menuitem-8-3"><span class="docs-label">Bifurcations (periodic orbits)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../detectionBifurcationPO/">Bifurcation detection (1 param)</a></li><li><a class="tocitem" href="../../FoldContinuationPO/">Fold continuation (2 params)</a></li><li><a class="tocitem" href="../../PDContinuationPO/">Period-Doubling continuation (2 params)</a></li><li><a class="tocitem" href="../../NSContinuationPO/">Neimark-Sacker continuation (2 params)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-4" type="checkbox"/><label class="tocitem" for="menuitem-8-4"><span class="docs-label">Normal form (equilibria)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../simplebp/">Simple branch point</a></li><li><a class="tocitem" href="../../nonsimplebp/">Non-simple branch point</a></li><li><a class="tocitem" href="../../simplehopf/">Simple Hopf</a></li><li><a class="tocitem" href="../../cusp/">Cusp</a></li><li><a class="tocitem" href="../../bt/">Bogdanov-Takens</a></li><li><a class="tocitem" href="../../bautin/">Bautin</a></li><li><a class="tocitem" href="../../zh/">Zero-Hopf</a></li><li><a class="tocitem" href="../../hh/">Hopf-Hopf</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-5" type="checkbox"/><label class="tocitem" for="menuitem-8-5"><span class="docs-label">Normal form (periodic orbits)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../bppo/">Simple branch point</a></li><li><a class="tocitem" href="../../pd/">Period-doubling</a></li><li><a class="tocitem" href="../../ns/">Neimark-Sacker</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-6" type="checkbox"/><label class="tocitem" for="menuitem-8-6"><span class="docs-label">Branch switching</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../intro-abs/">Introduction</a></li><li><a class="tocitem" href="../../abs-from-eq/">From equilibria to equilibria</a></li><li><a class="tocitem" href="../../abs-from-hopf/">From Hopf/PD/Branch to periodic orbits</a></li><li><a class="tocitem" href="../../abs-from-codim2-eq/">From codim 2 to equilibria</a></li><li><a class="tocitem" href="../../abs-from-codim2-po/">From codim 2 to periodic orbits</a></li></ul></li><li><a class="tocitem" href="../../BifurcationDiagram/">Bifurcation diagram</a></li><li><a class="tocitem" href="../../EventCallback/">Event handling and Callback</a></li><li><a class="tocitem" href="../../iterator/">Iterator Interface</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-9" type="checkbox"/><label class="tocitem" for="menuitem-9"><span class="docs-label">Options</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../linearsolver/">Linear solvers</a></li><li><a class="tocitem" href="../../borderedlinearsolver/">Bordered linear solvers</a></li><li><a class="tocitem" href="../../eigensolver/">Eigen solvers</a></li><li><a class="tocitem" href="../../Borderedarrays/">Bordered arrays</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-10" type="checkbox"/><label class="tocitem" for="menuitem-10"><span class="docs-label">Contributing</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><input class="collapse-toggle" id="menuitem-10-1" type="checkbox"/><label class="tocitem" for="menuitem-10-1"><span class="docs-label">Interfaces</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../interfaceLS/">Vector</a></li><li><a class="tocitem" href="../../interfaceLS/">Linear / eigen Solvers</a></li><li><a class="tocitem" href="../../interfacePred/">Predictor / corrector</a></li><li><a class="tocitem" href="../../interfaceFlow/">Flow</a></li></ul></li></ul></li><li><a class="tocitem" href="../../faq/">Frequently asked questions</a></li><li><a class="tocitem" href="../../migration/">Migration from old versions</a></li><li><a class="tocitem" href="../../library/">Library</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>🟤 2d generalized Bratu–Gelfand problem</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>🟤 2d generalized Bratu–Gelfand problem</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/bifurcationkit/BifurcationKitDocs.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/bifurcationkit/BifurcationKitDocs.jl/blob/main/docs/src/tutorials/mittelmann.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="gelfand"><a class="docs-heading-anchor" href="#gelfand">🟤 2d generalized Bratu–Gelfand problem</a><a id="gelfand-1"></a><a class="docs-heading-anchor-permalink" href="#gelfand" title="Permalink"></a></h1><ul><li><a href="#gelfand">🟤 2d generalized Bratu–Gelfand problem</a></li><li class="no-marker"><ul><li><a href="#Branch-of-homogeneous-solutions">Branch of homogeneous solutions</a></li><li><a href="#Automatic-branch-switching-at-simple-branch-points">Automatic branch switching at simple branch points</a></li><li><a href="#Automatic-branch-switching-at-the-2d-branch-points">Automatic branch switching at the 2d-branch points</a></li><li><a href="#Analysis-at-the-2d-branch-points-(manual)">Analysis at the 2d-branch points (manual)</a></li><li><a href="#Branch-switching-with-deflated-newton-(manual)">Branch switching with deflated newton (manual)</a></li><li><a href="#References">References</a></li></ul></li></ul><p>We consider the problem of Mittelmann <sup class="footnote-reference"><a id="citeref-Farrell" href="#footnote-Farrell">[Farrell]</a></sup> <sup class="footnote-reference"><a id="citeref-Wouters" href="#footnote-Wouters">[Wouters]</a></sup>:</p><p class="math-container">\[\Delta u + NL(\lambda,u) = 0\]</p><p>with Neumann boundary condition on <span>$\Omega = (0,1)^2$</span> and where <span>$NL(\lambda,u)\equiv-10(u-\lambda e^u)$</span>. This is a good example to show how automatic branch switching works and also nonlinear deflation.</p><p>We start with some imports:</p><pre><code class="language-julia hljs">using Revise, ForwardDiff
+using BifurcationKit, LinearAlgebra, Plots, SparseArrays
+const BK = BifurcationKit
+
+# define the sup norm and a L2 norm
+normbratu(x) = norm(x .* w) / sqrt(length(x)) # the weight w is defined below
+
+# some plotting functions to simplify our life
+plotsol!(x, nx = Nx, ny = Ny; kwargs...) = heatmap!(reshape(x, nx, ny); color = :viridis, kwargs...)
+plotsol(x, nx = Nx, ny = Ny; kwargs...) = (plot();plotsol!(x, nx, ny; kwargs...))</code></pre><p>and with the discretization of the problem</p><pre><code class="language-julia hljs">function Laplacian2D(Nx, Ny, lx, ly)
+    hx = 2lx/Nx
+    hy = 2ly/Ny
+    D2x = spdiagm(0 =&gt; -2ones(Nx), 1 =&gt; ones(Nx-1), -1 =&gt; ones(Nx-1) ) / hx^2
+    D2y = spdiagm(0 =&gt; -2ones(Ny), 1 =&gt; ones(Ny-1), -1 =&gt; ones(Ny-1) ) / hy^2
+
+    D2x[1,1] = -1/hx^2
+    D2x[end,end] = -1/hx^2
+
+    D2y[1,1] = -1/hy^2
+    D2y[end,end] = -1/hy^2
+
+    D2xsp = sparse(D2x)
+    D2ysp = sparse(D2y)
+    A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
+    return A, D2x
+end
+
+ϕ(u, λ)  = -10(u-λ*exp(u))
+dϕ(u, λ) = -10(1-λ*exp(u))
+
+function Fmit!(f, u, p)
+	mul!(f, p.Δ, u)
+	f .= f .+ ϕ.(u, p.λ)
+	return f
+end</code></pre><p>It will also prove useful to have the derivatives of our functional:</p><pre><code class="language-julia hljs">function JFmit(x,p)
+	J = p.Δ
+	dg = dϕ.(x, p.λ)
+	return J + spdiagm(0 =&gt; dg)
+end</code></pre><p>We need to define the parameters associated to this problem:</p><pre><code class="language-julia hljs">Nx = 30; Ny = 30
+lx = 0.5; ly = 0.5
+# weight for the weighted norm
+const w = (lx .+ LinRange(-lx,lx,Nx)) * (LinRange(-ly,ly,Ny))&#39; |&gt; vec
+
+Δ, = Laplacian2D(Nx, Ny, lx, ly)
+par_mit = (λ = .05, Δ = Δ)
+
+# initial guess f for newton
+sol0 = zeros(Nx, Ny) |&gt; vec
+
+# Bifurcation Problem
+prob = BifurcationProblem(Fmit!, sol0, par_mit, (@optic _.λ),; J = JFmit,
+  record_from_solution = (x, p; k...) -&gt; (x = normbratu(x), n2 = norm(x), n∞ = norminf(x)),
+  plot_solution = (x, p; k...) -&gt; plotsol!(x ; k...))</code></pre><p>To compute the eigenvalues, we opt for the shift-invert strategy with shift <code>=0.5</code></p><pre><code class="language-julia hljs"># eigensolver
+eigls = EigArpack()
+
+# options for Newton solver, we pass the eigen solver
+opt_newton = BK.NewtonPar(tol = 1e-8, eigsolver = eigls, max_iterations = 20)
+
+# options for continuation
+opts_br = ContinuationPar(p_max = 3.5, p_min = 0.025,
+	# for a good looking curve
+	dsmin = 0.001, dsmax = 0.05, ds = 0.01,
+	# number of eigenvalues to compute
+	nev = 30,
+	newton_options = (@set opt_newton.verbose = false),
+	tol_stability = 1e-6,
+	# detect codim 1 bifurcations
+	detect_bifurcation = 3,
+	# Optional: bisection options for locating bifurcations
+	n_inversion = 4, dsmin_bisection = 1e-7, max_bisection_steps = 25)</code></pre><p>Note that we put the option <code>detect_bifurcation = 3</code> to detect bifurcations precisely with a bisection method. Indeed, we need to locate these branch points precisely to be able to call automatic branch switching.</p><h2 id="Branch-of-homogeneous-solutions"><a class="docs-heading-anchor" href="#Branch-of-homogeneous-solutions">Branch of homogeneous solutions</a><a id="Branch-of-homogeneous-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Branch-of-homogeneous-solutions" title="Permalink"></a></h2><p>At this stage, we note that the problem has a curve of homogeneous (constant in space) solutions <span>$u_h$</span> solving <span>$N(\lambda, u_h)=0$</span>. We shall compute this branch now.</p><p>Given that we will use these arguments for <code>continuation</code> many times, it is wise to collect them:</p><pre><code class="language-julia hljs"># optional arguments for continuation
+kwargsC = (verbosity = 0, plot = true, normC = norminf)</code></pre><p>We call <code>continuation</code> with the initial guess <code>sol0</code> which is homogeneous, thereby generating homogeneous solutions:</p><pre><code class="language-julia hljs">br = continuation(prob, PALC(), opts_br; kwargsC...)
+show(br)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GKS: Possible loss of precision in routine SET_WINDOW
+GKS: Rectangle definition is invalid in routine CELLARRAY
+GKS: Rectangle definition is invalid in routine CELLARRAY
+GKS: Rectangle definition is invalid in routine CELLARRAY
+GKS: Rectangle definition is invalid in routine CELLARRAY
+GKS: Rectangle definition is invalid in routine CELLARRAY
+GKS: Rectangle definition is invalid in routine CELLARRAY
+GKS: Rectangle definition is invalid in routine CELLARRAY
+GKS: Rectangle definition is invalid in routine CELLARRAY
+ ┌─ Curve type: EquilibriumCont
+ ├─ Number of points: 84
+ ├─ Type of vectors: Vector{Float64}
+ ├─ Parameter λ starts at 0.05, ends at 0.025
+ ├─ Algo: PALC
+ └─ Special points:
+
+- #  1,       bp at λ ≈ +0.36787944 ∈ (+0.36787944, +0.36787944), |δp|=2e-10, [converged], δ = ( 1,  0), step =  18
+- #  2,       nd at λ ≈ +0.27255474 ∈ (+0.27255474, +0.27255937), |δp|=5e-06, [converged], δ = ( 2,  0), step =  33
+- #  3,       bp at λ ≈ +0.15215124 ∈ (+0.15215124, +0.15215818), |δp|=7e-06, [converged], δ = ( 1,  0), step =  48
+- #  4,       nd at λ ≈ +0.03551852 ∈ (+0.03551852, +0.03554981), |δp|=3e-05, [converged], δ = ( 2,  0), step =  76
+- #  5, endpoint at λ ≈ +0.02500000,                                                                     step =  83</code></pre><p>You should see the following result:</p><pre><code class="language-julia hljs">title!(&quot;&quot;)</code></pre><img src="19438741.svg" alt="Example block output"/><p>We note several simple bifurcation points for which the dimension of the kernel of the jacobian is one dimensional. In the above box, <code>δ = ( 1,  0)</code> gives the change in the stability. In this case, there is one vector in the kernel which is real. The bifurcation point 2 has a 2d kernel and is thus not amenable to automatic branch switching.</p><h2 id="Automatic-branch-switching-at-simple-branch-points"><a class="docs-heading-anchor" href="#Automatic-branch-switching-at-simple-branch-points">Automatic branch switching at simple branch points</a><a id="Automatic-branch-switching-at-simple-branch-points-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching-at-simple-branch-points" title="Permalink"></a></h2><p>We can compute the branch off the third bifurcation point:</p><pre><code class="language-julia hljs">br1 = continuation(br, 3, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
+title!(&quot;&quot;)</code></pre><img src="6ced24a6.svg" alt="Example block output"/><p>You can also plot the two branches together <code>plot(br, br1, plotfold=false)</code> and get</p><pre><code class="language-julia hljs">scene = plot(br,br1,plotfold=false)</code></pre><img src="a680eef6.svg" alt="Example block output"/><p>We continue our journey and compute the branch bifurcating of the first bifurcation point from the last branch we computed:</p><pre><code class="language-julia hljs">br2 = continuation(br1, 1, setproperties(opts_br;ds = 0.001, max_steps = 40); kwargsC...)
+scene = plot(br, br1, br2)</code></pre><img src="7dad5499.svg" alt="Example block output"/><h2 id="Automatic-branch-switching-at-the-2d-branch-points"><a class="docs-heading-anchor" href="#Automatic-branch-switching-at-the-2d-branch-points">Automatic branch switching at the 2d-branch points</a><a id="Automatic-branch-switching-at-the-2d-branch-points-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-branch-switching-at-the-2d-branch-points" title="Permalink"></a></h2><p>We now show how to perform automatic branch switching at the nonsimple branch points. However, we think it is important that the user is able to use the previous tools in case automatic branch switching fails. This is explained in the next sections.</p><p>The call for automatic branch switching is the same as in the case of simple branch points (see above) except that many branches are returned.</p><pre><code class="language-julia hljs">branches = continuation(br, 2,
+	setproperties(opts_br; detect_bifurcation = 3, ds = 0.001, p_min = 0.01, max_steps = 30 ) ;
+  alg = PALC(tangent = Bordered()),
+	kwargsC...,
+	nev = 30,
+	)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element Vector{Branch}:
+  ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
+ ├─ Number of points: 31
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036612088
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27255723 ∈ (+0.27255723, +0.27255723), |δp|=7e-10, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =   1
+- #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.14417711 ∈ (+0.14417711, +0.14422343), |δp|=5e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =  24
+- #  3, <span class="sgr1">endpoint</span> at λ ≈ +0.07328668,                                                                     step =  31
+
+  ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
+ ├─ Number of points: 31
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036507512
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27255723 ∈ (+0.27255723, +0.27255723), |δp|=7e-10, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =   1
+- #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.14417711 ∈ (+0.14417711, +0.14422343), |δp|=5e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =  24
+- #  3, <span class="sgr1">endpoint</span> at λ ≈ +0.07328668,                                                                     step =  31
+
+  ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
+ ├─ Number of points: 31
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036299661
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27255723 ∈ (+0.27255723, +0.27255723), |δp|=7e-10, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =   1
+- #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.14417711 ∈ (+0.14417711, +0.14422343), |δp|=5e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =  24
+- #  3, <span class="sgr1">endpoint</span> at λ ≈ +0.07328668,                                                                     step =  31
+
+  ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
+ ├─ Number of points: 31
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.08161046036254699
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27255723 ∈ (+0.27255723, +0.27255723), |δp|=7e-10, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =   1
+- #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.14417711 ∈ (+0.14417711, +0.14422343), |δp|=5e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =  24
+- #  3, <span class="sgr1">endpoint</span> at λ ≈ +0.07328668,                                                                     step =  31
+
+  ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
+ ├─ Number of points: 31
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.13845537861979193
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27255724 ∈ (+0.27255724, +0.27255724), |δp|=9e-10, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =   1
+- #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27868664 ∈ (+0.27868664, +0.27868709), |δp|=4e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1,  0), step =  15
+- #  3, <span class="sgr1">endpoint</span> at λ ≈ +0.11843005,                                                                     step =  31
+
+  ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
+ ├─ Number of points: 31
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.13845537884196205
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27255724 ∈ (+0.27255724, +0.27255724), |δp|=9e-10, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =   1
+- #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27868664 ∈ (+0.27868664, +0.27868709), |δp|=4e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1,  0), step =  15
+- #  3, <span class="sgr1">endpoint</span> at λ ≈ +0.11843005,                                                                     step =  31
+
+  ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
+ ├─ Number of points: 31
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.13845537880092945
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27255724 ∈ (+0.27255724, +0.27255724), |δp|=9e-10, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =   1
+- #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27868664 ∈ (+0.27868664, +0.27868709), |δp|=4e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1,  0), step =  15
+- #  3, <span class="sgr1">endpoint</span> at λ ≈ +0.11843005,                                                                     step =  31
+
+  ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont from NonSimpleBranchPoint bifurcation point.</span></span>
+ ├─ Number of points: 31
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">λ</span></span> starts at 0.2725547358342202, ends at 0.13845537889673995
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27255724 ∈ (+0.27255724, +0.27255724), |δp|=9e-10, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =   1
+- #  2, <span class="sgr34"><span class="sgr1">      bp</span></span> at λ ≈ +0.27868664 ∈ (+0.27868664, +0.27868709), |δp|=4e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1,  0), step =  15
+- #  3, <span class="sgr1">endpoint</span> at λ ≈ +0.11843005,                                                                     step =  31
+</code></pre><p>You can plot the branches using</p><pre><code class="language-julia hljs">scene = plot(br, branches...)</code></pre><img src="14cb79a8.svg" alt="Example block output"/><h2 id="Analysis-at-the-2d-branch-points-(manual)"><a class="docs-heading-anchor" href="#Analysis-at-the-2d-branch-points-(manual)">Analysis at the 2d-branch points (manual)</a><a id="Analysis-at-the-2d-branch-points-(manual)-1"></a><a class="docs-heading-anchor-permalink" href="#Analysis-at-the-2d-branch-points-(manual)" title="Permalink"></a></h2><p>The second bifurcation point on the branch <code>br</code> of homogeneous solutions has a 2d kernel. we provide two methods to deal with such case</p><ul><li>automatic local bifurcation diagram (see below)</li><li>branch switching with deflation (see next section)</li></ul><p>We provide a generic way to study branch points of arbitrary dimensions by computing a reduced equation. The general method is based on a Lyapunov-Schmidt reduction. We can compute the information about the branch point using the generic function (valid for simple branch points, Hopf bifurcation points,...)</p><pre><code class="language-julia hljs">bp2d = get_normal_form(br, 2;  verbose = true, nev = 50)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Non simple bifurcation point at λ ≈ 0.2725547358342202. 
+Kernel dimension = 2
+Normal form:
+ + -73.8978 * x1 ⋅ p + 0.0094 ⋅ x1³ + 0.0117 ⋅ x1² ⋅ x2 + -0.0339 ⋅ x1 ⋅ x2² + -0.0039 ⋅ x2³
+ + -73.8978 * x2 ⋅ p + 0.0039 ⋅ x1³ + -0.0339 ⋅ x1² ⋅ x2 + -0.0117 ⋅ x1 ⋅ x2² + 0.0094 ⋅ x2³
+
+</code></pre><p>Note that this is a multivariate polynomials. For more information, see <a href="../../nonsimplebp/#Non-simple-branch-point">Non-simple branch point</a>.</p><p>You can evaluate this polynomial as follows <code>bp2d(Val(:reducedForm),[0.1,0.2], 0.01)</code> which returns a 2d vector or <code>bp2d([0.1,0.2], 0.01)</code>. This last expression actually returns a vector corresponding to the PDE problem.</p><p>You need to solve these equations to compute the bifurcation diagram in the neighborhood of the bifurcation point. In the present case, we do it using brute force. We suggest to use <code>IntervalConstraintProgramming.jl</code> for a more precise way.</p><pre><code class="language-julia hljs">using ProgressMeter
+Nd = 200; L = 0.9
+# sampling grid
+X = LinRange(-L,L, Nd); Y = LinRange(-L,L, Nd); P = LinRange(-0.0001,0.0001, Nd+1)
+
+# sample reduced equation on the grid for the first component
+V1a = @showprogress [bp2d(Val(:reducedForm),[x1,y1], p1)[1] for p1 in P, x1 in X, y1 in Y]
+Ind1 = findall( abs.(V1a) .&lt;= 9e-4 * maximum(abs.(V1a)))
+# intersect with second component
+V2a = @showprogress [bp2d(Val(:reducedForm),[X[ii[2]],Y[ii[3]]], P[ii[1]])[2] for ii in Ind1]
+Ind2 = findall( abs.(V2a) .&lt;= 3e-3 * maximum(abs.(V2a)))
+
+# get solutions
+resp = Float64[]; resx = Vector{Float64}[]; resnrm = Float64[]
+	@showprogress for k in Ind2
+		ii = Ind1[k]
+		push!(resp, P[ii[1]])
+		push!(resnrm, sqrt(X[ii[2]]^2+Y[ii[3]]^2))
+		push!(resx, [X[ii[2]], Y[ii[3]]])
+	end</code></pre><p>We can now plot the local bifurcation diagram as follows</p><pre><code class="language-julia hljs">using LaTeXStrings
+plot(
+	scatter(1e4resp, map(x-&gt;x[1], resx), map(x-&gt;x[2], resx); label = &quot;&quot;, markerstrokewidth=0, xlabel = L&quot;10^4 \cdot \lambda&quot;, ylabel = L&quot;x_1&quot;, zlabel = L&quot;x_2&quot;, zcolor = resnrm, color = :viridis,colorbar=false),
+	scatter(1e4resp, resnrm; label = &quot;&quot;, markersize =2, markerstrokewidth=0, xlabel = L&quot;10^4 \cdot \lambda&quot;, ylabel = L&quot;\|x\|&quot;))</code></pre><p><img src="../mittlemann4a.png" alt/></p><blockquote><p>This looks like a Pitchfork bifurcation with D4 symmetry</p></blockquote><p>We can see that there are two types of solutions. After the bifurcation point, the solutions are of the form <span>$(x_1,x_2) = (\pm x,\pm x)$</span> for some real <span>$x$</span>. Before the bifurcation point, the solutions are of the form <span>$(x_1,x_2) = (\pm x,0), (0, \pm x)$</span> for some real <span>$x$</span>. Here is an example <code>plotsol(bp2d(resx[10], resp[10]))</code></p><p><img src="../mittlemann4b.png" alt/></p><p>We could use the solutions saved in <code>resp, resx</code> as initial guesses for a call to <code>continuation</code> but we turn to a different method.</p><div class="admonition is-success"><header class="admonition-header">Solutions</header><div class="admonition-body"><p>The brute force method provided all solutions in a neighborhood of the bifurcation point.</p></div></div><div class="admonition is-info"><header class="admonition-header">Advanced computation</header><div class="admonition-body"><p>Instead of using brute force and computing the vector field on a grid. One can rely on <code>IntervalConstraintProgramming.jl</code> to do better using bisection. See also this <a href="https://discourse.julialang.org/t/nd-level-sets/38532/13">discourse post</a> where the same example is treated by D. P. Sanders.    </p></div></div><h2 id="Branch-switching-with-deflated-newton-(manual)"><a class="docs-heading-anchor" href="#Branch-switching-with-deflated-newton-(manual)">Branch switching with deflated newton (manual)</a><a id="Branch-switching-with-deflated-newton-(manual)-1"></a><a class="docs-heading-anchor-permalink" href="#Branch-switching-with-deflated-newton-(manual)" title="Permalink"></a></h2><p>At this stage, we know what happens at the 2d bifurcation point of the curve of homogeneous solutions. We chose another method based on <a href="../../deflatedproblem/#Deflated-problems">Deflated problems</a>. We want to find all nearby solutions of the problem close to this bifurcation point. This is readily done by trying several initial guesses in a brute force manner:</p><pre><code class="language-julia hljs">out = zeros(Nx*Ny)
+# deflation operator to
+deflationOp = DeflationOperator(2, 1.0, [zeros(Nx*Ny)])
+
+# options for the newton solver
+optdef = setproperties(opt_newton; tol = 1e-8, max_iterations = 100)
+
+# eigen-elements close to the second bifurcation point on the branch
+# of homogeneous solutions
+vp, ve, _, _= eigls(JFmit(out, @set par_mit.λ = br.specialpoint[2].param), 5)
+
+for ii=1:length(ve)
+	outdef1 = BK.solve(
+		re_make(prob,
+		    # initial guess for newton
+		    u0 = br.specialpoint[2].x .+ 0.01 .*  real.(ve[ii]) .* (1 .+ 0.01 .* rand(Nx*Ny)),
+		    params = (@set par_mit.λ = br.specialpoint[2].param + 0.005)),
+    deflationOp,
+		optdef)
+		BK.converged(outdef1) &amp;&amp; push!(deflationOp, outdef1.u)
+end</code></pre><p>This provides <code>length(deflationOp) = 5</code> solutions as there are some symmetries in the problem. For example <code>plotsol(deflationOp[5])</code> gives</p><p><img src="../mittlemann5.png" alt/></p><p>We can continue this solution as follows in one direction</p><pre><code class="language-julia hljs">brdef1 = continuation(
+	re_make(prob,
+	    u0 = deflationOp[3],
+        params = (@set par_mit.λ = br.specialpoint[2].param + 0.005)),
+    PALC(),
+	setproperties(opts_br;ds = -0.001, detect_bifurcation = 3, dsmax = 0.01, max_steps = 500);
+	kwargsC...)</code></pre><p>If we repeat the above loop but before the branch point by using <code>@set par_mit.λ = br.specialpoint[2].param + 0.005</code>, we get 3 new solutions that we can continue</p><pre><code class="language-julia hljs">brdef2 = continuation(
+  re_make(prob,
+      u0 = deflationOp[5],
+      params = (@set par_mit.λ = br.specialpoint[2].param + 0.005)),
+     PALC(),
+	setproperties(opts_br;ds = 0.001, detect_bifurcation = 3, dsmax = 0.01);
+	kwargsC...)</code></pre><p>thereby providing the following bifurcation diagram with <code>plot(br,br1,br2,brdef1, brdef2,plotfold=false, putbifptlegend = false)</code></p><p><img src="../mittlemann6.png" alt/></p><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Farrell"><a class="tag is-link" href="#citeref-Farrell">Farrell</a><blockquote><p>Farrell, Patrick E., Casper H. L. Beentjes, and Ásgeir Birkisson. <strong>The Computation of Disconnected Bifurcation Diagrams.</strong> ArXiv:1603.00809 [Math], March 2, 2016.</p></blockquote></li><li class="footnote" id="footnote-Wouters"><a class="tag is-link" href="#citeref-Wouters">Wouters</a><blockquote><p>Wouters. <strong>Automatic Exploration Techniques for the Numerical Continuation of Large–Scale Nonlinear Systems</strong>, 2019.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Sunday 8 December 2024 12:35">Sunday 8 December 2024</span>. Using Julia version 1.10.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>🟡 Colpitts–type Oscillator · Bifurcation Analysis in Julia</title><meta name="title" content="🟡 Colpitts–type Oscillator · Bifurcation Analysis in Julia"/><meta property="og:title" content="🟡 Colpitts–type Oscillator · Bifurcation Analysis in Julia"/><meta property="twitter:title" content="🟡 Colpitts–type Oscillator · Bifurcation Analysis in Julia"/><meta name="description" content="Documentation for Bifurcation Analysis in Julia."/><meta property="og:description" content="Documentation for Bifurcation Analysis in Julia."/><meta property="twitter:description" content="Documentation for Bifurcation Analysis in Julia."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img src="../../../assets/logo.svg" alt="Bifurcation Analysis in Julia logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">Bifurcation Analysis in Julia</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../capabilities/">Overview of capabilities</a></li><li><a class="tocitem" href="../../../gettingstarted/">Getting Started with BifurcationKit</a></li><li><a class="tocitem" href="../../tutorials/">Tutorials</a></li><li><input class="collapse-toggle" id="menuitem-5" type="checkbox"/><label class="tocitem" for="menuitem-5"><span class="docs-label">Basics</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../guidelines/">Guidelines</a></li><li><a class="tocitem" href="../../../educational/">Educational introduction</a></li><li><a class="tocitem" href="../../../overview/">Overview</a></li><li><a class="tocitem" href="../../../plotting/">Plot functions</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-6" type="checkbox"/><label class="tocitem" for="menuitem-6"><span class="docs-label">Problems</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../BifProblem/">Bifurcation Problem</a></li><li><a class="tocitem" href="../../../diffeq/">DiffEq wrapper</a></li><li><input class="collapse-toggle" id="menuitem-6-3" type="checkbox"/><label class="tocitem" for="menuitem-6-3"><span class="docs-label">Periodic Orbits</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../periodicOrbit/">Introduction</a></li><li><a class="tocitem" href="../../../periodicOrbitTrapeze/">Trapezoid</a></li><li><a class="tocitem" href="../../../periodicOrbitCollocation/">Collocation</a></li><li><a class="tocitem" href="../../../periodicOrbitShooting/">Shooting</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-6-4" type="checkbox"/><label class="tocitem" for="menuitem-6-4"><span class="docs-label">Symmetries / Waves</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../intro_wave/">Introduction</a></li><li><a class="tocitem" href="../../../waveEigen/">Eigen Solvers</a></li><li><a class="tocitem" href="../../../ModulatedTW/">Modulated Travelling waves</a></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-7" type="checkbox"/><label class="tocitem" for="menuitem-7"><span class="docs-label">Continuation methods</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../IntroContinuation/">Introduction</a></li><li><a class="tocitem" href="../../../Predictors/">Predictors / correctors</a></li><li><a class="tocitem" href="../../../PALC/">PALC</a></li><li><a class="tocitem" href="../../../MooreSpence/">Moore-Penrose continuation</a></li><li><a class="tocitem" href="../../../hybrid/">AutoSwitch</a></li><li><a class="tocitem" href="../../../ANM/">ANM</a></li><li><a class="tocitem" href="../../../DeflatedContinuation/">Deflated continuation</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8" type="checkbox"/><label class="tocitem" for="menuitem-8"><span class="docs-label">Functionalities</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><input class="collapse-toggle" id="menuitem-8-1" type="checkbox"/><label class="tocitem" for="menuitem-8-1"><span class="docs-label">Nonlinear equations (Newton)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../newton/">Krylov-Newton algorithm</a></li><li><a class="tocitem" href="../../../deflatedproblem/">Deflated problems</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-2" type="checkbox"/><label class="tocitem" for="menuitem-8-2"><span class="docs-label">Bifurcations (equilibria)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../detectionBifurcation/">Bifurcation detection (1 param)</a></li><li><a class="tocitem" href="../../../codim2Continuation/">Fold / Hopf Continuation (2 params)</a></li><li><a class="tocitem" href="../../../codim3Continuation/">Bogdanov-Takens refinement (3 params)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-3" type="checkbox"/><label class="tocitem" for="menuitem-8-3"><span class="docs-label">Bifurcations (periodic orbits)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../detectionBifurcationPO/">Bifurcation detection (1 param)</a></li><li><a class="tocitem" href="../../../FoldContinuationPO/">Fold continuation (2 params)</a></li><li><a class="tocitem" href="../../../PDContinuationPO/">Period-Doubling continuation (2 params)</a></li><li><a class="tocitem" href="../../../NSContinuationPO/">Neimark-Sacker continuation (2 params)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-4" type="checkbox"/><label class="tocitem" for="menuitem-8-4"><span class="docs-label">Normal form (equilibria)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../simplebp/">Simple branch point</a></li><li><a class="tocitem" href="../../../nonsimplebp/">Non-simple branch point</a></li><li><a class="tocitem" href="../../../simplehopf/">Simple Hopf</a></li><li><a class="tocitem" href="../../../cusp/">Cusp</a></li><li><a class="tocitem" href="../../../bt/">Bogdanov-Takens</a></li><li><a class="tocitem" href="../../../bautin/">Bautin</a></li><li><a class="tocitem" href="../../../zh/">Zero-Hopf</a></li><li><a class="tocitem" href="../../../hh/">Hopf-Hopf</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-5" type="checkbox"/><label class="tocitem" for="menuitem-8-5"><span class="docs-label">Normal form (periodic orbits)</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../bppo/">Simple branch point</a></li><li><a class="tocitem" href="../../../pd/">Period-doubling</a></li><li><a class="tocitem" href="../../../ns/">Neimark-Sacker</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-8-6" type="checkbox"/><label class="tocitem" for="menuitem-8-6"><span class="docs-label">Branch switching</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../intro-abs/">Introduction</a></li><li><a class="tocitem" href="../../../abs-from-eq/">From equilibria to equilibria</a></li><li><a class="tocitem" href="../../../abs-from-hopf/">From Hopf/PD/Branch to periodic orbits</a></li><li><a class="tocitem" href="../../../abs-from-codim2-eq/">From codim 2 to equilibria</a></li><li><a class="tocitem" href="../../../abs-from-codim2-po/">From codim 2 to periodic orbits</a></li></ul></li><li><a class="tocitem" href="../../../BifurcationDiagram/">Bifurcation diagram</a></li><li><a class="tocitem" href="../../../EventCallback/">Event handling and Callback</a></li><li><a class="tocitem" href="../../../iterator/">Iterator Interface</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-9" type="checkbox"/><label class="tocitem" for="menuitem-9"><span class="docs-label">Options</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../linearsolver/">Linear solvers</a></li><li><a class="tocitem" href="../../../borderedlinearsolver/">Bordered linear solvers</a></li><li><a class="tocitem" href="../../../eigensolver/">Eigen solvers</a></li><li><a class="tocitem" href="../../../Borderedarrays/">Bordered arrays</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-10" type="checkbox"/><label class="tocitem" for="menuitem-10"><span class="docs-label">Contributing</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><input class="collapse-toggle" id="menuitem-10-1" type="checkbox"/><label class="tocitem" for="menuitem-10-1"><span class="docs-label">Interfaces</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../interfaceLS/">Vector</a></li><li><a class="tocitem" href="../../../interfaceLS/">Linear / eigen Solvers</a></li><li><a class="tocitem" href="../../../interfacePred/">Predictor / corrector</a></li><li><a class="tocitem" href="../../../interfaceFlow/">Flow</a></li></ul></li></ul></li><li><a class="tocitem" href="../../../faq/">Frequently asked questions</a></li><li><a class="tocitem" href="../../../migration/">Migration from old versions</a></li><li><a class="tocitem" href="../../../library/">Library</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>🟡 Colpitts–type Oscillator</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>🟡 Colpitts–type Oscillator</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/bifurcationkit/BifurcationKitDocs.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/bifurcationkit/BifurcationKitDocs.jl/blob/main/docs/src/tutorials/ode/Colpitts.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Colpitts–type-Oscillator"><a class="docs-heading-anchor" href="#Colpitts–type-Oscillator">🟡 Colpitts–type Oscillator</a><a id="Colpitts–type-Oscillator-1"></a><a class="docs-heading-anchor-permalink" href="#Colpitts–type-Oscillator" title="Permalink"></a></h1><ul><li><a href="#Colpitts–type-Oscillator">🟡 Colpitts–type Oscillator</a></li><li class="no-marker"><ul><li><a href="#Periodic-orbits-with-Multiple-Standard-Shooting">Periodic orbits with Multiple Standard Shooting</a></li><li><a href="#References">References</a></li></ul></li></ul><p>In this tutorial, we show how to study parametrized quasilinear DAEs like:</p><p class="math-container">\[A(\mu,x)\dot x = G(\mu,x).\]</p><p>In particular, we detect a Hopf bifurcation and compute the periodic orbit branching from it using a multiple standard method.</p><p>The following DAE model is taken from <sup class="footnote-reference"><a id="citeref-Rabier" href="#footnote-Rabier">[Rabier]</a></sup>:</p><p class="math-container">\[\left(\begin{array}{cccc}
+-\left(C_{1}+C_{2}\right) &amp; C_{2} &amp; 0 &amp; 0 \\
+C_{2} &amp; -C_{2} &amp; 0 &amp; 0 \\
+C_{1} &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; L &amp; 0
+\end{array}\right)\left(\begin{array}{c}
+\dot{x}_{1} \\
+\dot{x}_{2} \\
+\dot{x}_{3} \\
+\dot{x}_{4}
+\end{array}\right)=\left(\begin{array}{c}
+R^{-1}\left(x_{1}-V\right)+I E\left(x_{1}, x_{2}\right) \\
+x_{3}+I C\left(x_{1}, x_{2}\right) \\
+-x_{3}-x_{4} \\
+-\mu+x_{2}
+\end{array}\right)\]</p><p>It is easy to encode the DAE as follows. The mass matrix is defined next.</p><pre><code class="language-julia hljs">using Revise, Plots
+using BifurcationKit
+using LinearAlgebra # for eigen
+const BK = BifurcationKit
+
+# function to record information from the soluton
+recordFromSolution(x, p; k...) = (u1 = norminf(x), x1 = x[1], x2 = x[2], x3 = x[3], x4 = x[4])
+
+# vector field
+f(x, p) = p.Is * (exp(p.q * x) - 1)
+IE(x1, x2, p) = -f(x2, p) + f(x1, p) / p.αF
+IC(x1, x2, p) = f(x2, p)/ p.αR - f(x1, p)
+
+function Colpitts!(dz, z, p, t = 0)
+	(;C1, C2, L, R, Is, q, αF, αR, V, μ) = p
+	x1, x2, x3, x4 = z
+	dz[1] = (x1 - V) / R + IE(x1, x2, p)
+	dz[2] =	x3 + IC(x1, x2, p)
+	dz[3] = -x3-x4
+	dz[4] = -μ+x2
+	dz
+end
+
+# parameter values
+par_Colpitts = (C1 = 1.0, C2 = 1.0, L = 1.0, R = 1/4., Is = 1e-16, q = 40., αF = 0.99, αR = 0.5, μ = 0.5, V = 6.)
+
+# initial condition
+z0 = [0.9957,0.7650,19.81,-19.81]
+
+# mass matrix
+Be = [-(par_Colpitts.C1+par_Colpitts.C2) par_Colpitts.C2 0 0;par_Colpitts.C2 -par_Colpitts.C2 0 0;par_Colpitts.C1 0 0 0; 0 0 par_Colpitts.L 0]
+
+# we group the differentials together
+prob = BifurcationProblem(Colpitts!, z0, par_Colpitts, (@optic _.μ); record_from_solution = recordFromSolution)</code></pre><p>We first compute the branch of equilibria. But we need  a generalized eigenvalue solver for this.</p><pre><code class="language-julia hljs"># we need  a specific eigensolver with mass matrix B
+struct EigenDAE{Tb} &lt;: BK.AbstractDirectEigenSolver
+	B::Tb
+end
+
+# compute the eigen elements
+function (eig::EigenDAE)(Jac, nev; k...)
+	F = eigen(Jac, eig.B)
+	I = sortperm(F.values, by = real, rev = true)
+	return Complex.(F.values[I]), Complex.(F.vectors[:, I]), true, 1
+end
+
+# continuation options
+optn = NewtonPar(tol = 1e-13, max_iterations = 10, eigsolver = EigenDAE(Be))
+opts_br = ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plot_every_step = 3, max_steps = 1000, newton_options = optn)
+opts_br = @set opts_br.newton_options.verbose = false
+br = continuation(prob, PALC(), opts_br; normC = norminf)
+
+scene = plot(br, vars = (:param, :x1))</code></pre><img src="829f0c9a.svg" alt="Example block output"/><h2 id="Periodic-orbits-with-Multiple-Standard-Shooting"><a class="docs-heading-anchor" href="#Periodic-orbits-with-Multiple-Standard-Shooting">Periodic orbits with Multiple Standard Shooting</a><a id="Periodic-orbits-with-Multiple-Standard-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-with-Multiple-Standard-Shooting" title="Permalink"></a></h2><p>We use shooting to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use <code>DifferentialEquations.jl</code>.</p><p>Thanks to <sup class="footnote-reference"><a id="citeref-Lamour" href="#footnote-Lamour">[Lamour]</a></sup>, we can  just compute the Floquet coefficients to get the nonlinear stability of the periodic orbit. Two period doubling bifurcations are detected.</p><p>Note that we use Automatic Branch Switching from a Hopf bifurcation despite the fact the normal form implemented in <code>BifurcationKit.jl</code> is not valid for DAE. For example, it predicts a subciritical Hopf point whereas we see below that it is supercritical. Nevertheless, it provides a</p><pre><code class="language-julia hljs">using DifferentialEquations
+
+# this is the ODEProblem used with `DiffEqBase.solve`
+# we  set  the initial conditions
+prob_dae = ODEFunction(Colpitts!; mass_matrix = Be)
+probFreez_ode = ODEProblem(prob_dae, z0, (0., 1.), par_Colpitts)
+
+# we lower the tolerance of newton for the periodic orbits
+optnpo = @set optn.tol = 1e-9
+@reset optnpo.eigsolver = DefaultEig()
+
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, p_min = 0.2, max_steps = 50, newton_options = optnpo, nev = 4, tol_stability = 1e-3, plot_every_step = 5)
+
+
+# Shooting functional. Note the  stringent tolerances used to cope with
+# the extreme parameters of the model
+probSH = ShootingProblem(10, probFreez_ode, Rodas5P(); reltol = 1e-10, abstol = 1e-13)
+
+# automatic branching from the Hopf point
+br_po = continuation(br, 1, opts_po_cont, probSH;
+	plot = true, verbosity = 3,
+	linear_algo = MatrixBLS(),
+	# δp is use to parametrise the first parameter point on the
+	# branch of periodic orbits
+	δp = 0.001,
+	record_from_solution = (u, p; k...) -&gt; begin
+		outt = BK.get_periodic_orbit(p.prob, u, p.p)
+		m = maximum(outt[1,:])
+		return (s = m, period = u[end])
+	end,
+	# plotting of a solution
+	plot_solution = (x, p; k...) -&gt; begin
+		outt = BK.get_periodic_orbit(p.prob, x, p.p)
+		plot!(outt.t, outt[2,:], subplot = 3)
+		plot!(br, vars = (:param, :x1), subplot = 1)
+	end,
+	# the newton Callback is used to reject residual &gt; 1
+	# this is to avoid numerical instabilities from DE.jl
+	callback_newton = BK.cbMaxNorm(1.0),
+	normC = norminf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">PeriodicOrbitCont from Hopf bifurcation point.</span></span>
+ ├─ Number of points: 38
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
+ ├─ Parameter <span class="sgr36"><span class="sgr1">μ</span></span> starts at 0.7642229295455085, ends at 0.6351258517090157
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      pd</span></span> at μ ≈ +0.73090682 ∈ (+0.73090682, +0.73162733), |δp|=7e-04, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  1), step =  17
+- #  2, <span class="sgr34"><span class="sgr1">      pd</span></span> at μ ≈ +0.67281695 ∈ (+0.67281695, +0.67355881), |δp|=7e-04, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1, -1), step =  27
+- #  3, <span class="sgr1">endpoint</span> at μ ≈ +0.63512585,                                                                     step =  37
+</code></pre><p><img src="../Colpitts1.png" alt/></p><p>with detailed information</p><pre><code class="language-julia hljs"> ┌─ Curve type: PeriodicOrbitCont from Hopf bifurcation point.
+ ├─ Number of points: 38
+ ├─ Type of vectors: Vector{Float64}
+ ├─ Parameter μ starts at 0.7642229295455086, ends at 0.6352549726782099
+ ├─ Algo: PALC
+ └─ Special points:
+
+If `br` is the name of the branch,
+ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`
+
+- #  1,       pd at μ ≈ +0.73116245 ∈ (+0.73116245, +0.73152250), |δp|=4e-04, [converged], δ = ( 1,  1), step =  17, eigenelements in eig[ 18], ind_ev =   1
+- #  2,       pd at μ ≈ +0.67272920 ∈ (+0.67272920, +0.67310008), |δp|=4e-04, [converged], δ = (-1, -1), step =  27, eigenelements in eig[ 28], ind_ev =   1
+- #  3, endpoint at μ ≈ +0.63525497,                                                                     step =  37</code></pre><p>Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation.</p><pre><code class="language-julia hljs">probFreez_ode = ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.733)
+
+solFreez = @time DifferentialEquations.solve(probFreez_ode, Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
+
+scene = plot(solFreez, vars = [2], xlims=(195,200), title=&quot;μ = $(probFreez_ode.p.μ)&quot;)</code></pre><img src="d6b19ffb.svg" alt="Example block output"/><p>and after the bifurcation</p><pre><code class="language-julia hljs">probFreez_ode = ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.72)
+
+solFreez = @time DifferentialEquations.solve(probFreez_ode, Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
+
+scene = plot(solFreez, vars = [2], xlims=(195,200), title=&quot;μ = $(probFreez_ode.p.μ)&quot;)</code></pre><img src="8a1428c3.svg" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Rabier"><a class="tag is-link" href="#citeref-Rabier">Rabier</a><blockquote><p>Rabier, Patrick J. “The Hopf Bifurcation Theorem for Quasilinear Differential-Algebraic Equations.” Computer Methods in Applied Mechanics and Engineering 170, no. 3–4 (March 1999): 355–71. https://doi.org/10.1016/S0045-7825(98)00203-5.</p></blockquote></li><li class="footnote" id="footnote-Lamour"><a class="tag is-link" href="#citeref-Lamour">Lamour</a><blockquote><p>Lamour, René, Roswitha März, and Renate Winkler. “How Floquet Theory Applies to Index 1 Differential Algebraic Equations.” Journal of Mathematical Analysis and Applications 217, no. 2 (January 1998): 372–94. https://doi.org/10.1006/jmaa.1997.5714.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Sunday 8 December 2024 12:35">Sunday 8 December 2024</span>. Using Julia version 1.10.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
