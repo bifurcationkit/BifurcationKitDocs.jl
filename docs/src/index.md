@@ -70,7 +70,7 @@ We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](h
 - `Base.eltype` must be extended to your vector type.
 
 ## Citations
-The papers citing this work are collected on [google scholar](https://scholar.google.fr/scholar?hl=fr&as_sdt=2005&cites=159498619004863176%2C8662907770106865595&scipsc=&as_ylo=&as_yhi=).
+The papers citing this work are collected on [google scholar](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=159498619004863176,12573642401780006854,8662907770106865595).
 
 ### Some unreferenced papers by google
 - Barland, S., O. D’Huys, and R. Veltz. “Excitable Response of a Noisy Adaptive Network of Spiking Lasers.” arXiv, December 13, 2024. https://doi.org/10.48550/arXiv.2412.10191.
