@@ -135,9 +135,9 @@ The sparse jacobian is computed in place, limiting memory allocations, with an a
 
 ## Linear solvers
 
-You can use the `DefaultLS()` for most jacobians. However, when the jacobian is dense, you should use 
+You can use the `DefaultLS()` for most jacobians. However, when the jacobian is dense, you should use condensation of parameters.
 
-- `COPLS()` or `COPBLS()` which is the method of **condensation of parameters** (COP) implemented in Auto-07p. For this to be most efficient, the vector field must be written in non-allocating form.
+- `COPLS()` or `COPBLS()` which is the method of **condensation of parameters** (COP) implemented in Auto-07p [^Govaerts]. For this to be most efficient, the vector field must be written in non-allocating form. In this case, this is almost 10x faster than using `DefaultLS()` for low dimensional ODEs (say dim = O(10))
 - you can use bordered linear solvers in large dimensions  to take advantage of the specific shape of the jacobian. See also Trapezoid method for additional information.
 
 
@@ -179,3 +179,4 @@ We refer to [`continuation`](@ref) for more information regarding the arguments.
 
 [^Lust]:> Lust, Kurt. “Improved Numerical Floquet Multipliers.” International Journal of Bifurcation and Chaos 11, no. 09 (September 2001): 2389–2410. https://doi.org/10.1142/S0218127401003486.
 
+[^Govaerts]:> Govaerts, Willy, Yuri A. Kuznetsov, and Annick Dhooge. “Auto94p.” SIAM Journal on Scientific Computing 27, no. 1 (January 1, 2005): 231–52. https://doi.org/10.1137/030600746.
