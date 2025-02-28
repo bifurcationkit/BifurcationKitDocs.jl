@@ -274,3 +274,17 @@ Bifurcation points:
 Fold points:
 - #  1, fold at p ≈ -0.21528694 ∈ (-0.21528694, -0.21528694), |δp|=-1e+00, [    guess], δ = ( 0,  0), step =  24, eigenelements in eig[ 24], ind_ev =   0
 ```
+
+## Automatic branch switching on the GPU
+
+Instead of relying on deflated newton, we can use [Branch switching](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/branchswitching/) to compute the different branches emanating from the bifurcation point. For example, the following code will perform automatic branch switching from the second bifurcation point of `br`:
+
+```julia
+br2 = continuation(br, 2, setproperties(optcont; ds = -0.001, detect_bifurcation = 3, plot_every_step = 5, max_steps = 170);  nev = 30,
+	plot = true, verbosity = 2,
+	normC = norminf)
+```
+
+We can then plot the branches using `plot(br, br1, br2)` and get
+
+![](SH2daBS.png)
