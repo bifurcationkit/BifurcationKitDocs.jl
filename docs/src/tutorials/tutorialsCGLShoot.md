@@ -158,8 +158,6 @@ br_po = continuation(
 	linear_algo = MatrixFreeBLS(@set ls.N = Mt*2n+2),
 	# regular parameters for the continuation
 	verbosity = 3, plot = true,
-	# a few parameters saved during run
-	record_from_solution = (u, p; k...) -> (amp = BK.getamplitude(p.prob, u, (@set par_cgl.r = p.p)), period = u[end]),
 	# plotting of a section
 	plot_solution = (x, p; k...) -> heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, k...),
 	# print the Floquet exponent
@@ -223,5 +221,5 @@ br_po = @time continuation(probSh,
 	verbosity = 3, plot = true,
 	linear_algo = MatrixFreeBLS(@set ls.N = probSh.M*2n+2),
 	plot_solution = (x, p; kwargs...) -> heatmap!(reshape(x[1:Nx*Ny], Nx, Ny); color=:viridis, kwargs...),
-	record_from_solution = (u, p; k...) -> BK.getamplitude(probSh, u, (@set par_cgl.r = p.p); ratio = 2), normC = norminf)
+	normC = norminf)
 ```

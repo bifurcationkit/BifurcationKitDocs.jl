@@ -276,7 +276,7 @@ We set the parameters for the `newton` solve.
 ```julia
 opt_po = @set opt_newton.verbose = true
 outpo_f = @time newton(poTrap, orbitguess_f,  (@set opt_po.linsolver = ls); normN = norminf)
-BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], ", amplitude = ", BK.amplitude(outpo_f.u, Nx*Ny, M; ratio = 2),"\n")
+BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], "\n")
 BK.plot_periodic_potrap(outpo_f.u, M, Nx, Ny; ratio = 2);
 ```
 
@@ -331,7 +331,7 @@ We can now use newton
 
 ```julia
 outpo_f = @time newton(poTrapMF, orbitguess_f, (@set opt_po.linsolver = ls); normN = norminf)
-BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], ", amplitude = ", BK.amplitude(outpo_f.u, Nx*Ny, M; ratio = 2),"\n")
+BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], "\n")
 ```
 
 which gives
@@ -551,7 +551,7 @@ br_po2 = @time continuation(poTrapMF, outpo_f.u, PALC(), opts_po_cont;
 	callback_newton = callbackPO,
 	linear_algo = BorderingBLS(solver = ls, check_precision = false),
 	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_potrap(x, M, Nx, Ny; ratio = 2, kwargs...),
-	record_from_solution = (u, p; k...) -> BK.getamplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)
+	normC = norminf)
 ```
 
 ## Continuation of Fold of periodic orbits

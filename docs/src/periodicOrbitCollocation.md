@@ -8,7 +8,10 @@ Depth = 3
 We compute `Ntst` time slices of a periodic orbit using orthogonal collocation. This is implemented in the structure `PeriodicOrbitOCollProblem`.
 
 !!! tip "Large scale"
-    The current implementation is optimized for ODE and for large scale problems for which the jacobian is sparse.     
+    The current implementation is optimized for ODE and for large scale problems for which the jacobian is sparse.
+
+!!! tip "small scale"
+    The current implementation is very optimized for ODE, see inplace `BifurcationProblem` and `COPBLS()`.
 
 The general method is very well exposed in [^Dankowicz],[^Doedel] and we adopt the notations of [^Dankowicz]. However our implementation is based on [^Doedel] because it is more economical (less equations) when it enforces the continuity of the solution.
 
@@ -137,7 +140,7 @@ The sparse jacobian is computed in place, limiting memory allocations, with an a
 
 You can use the `DefaultLS()` for most jacobians. However, when the jacobian is dense, you should use condensation of parameters.
 
-- `COPLS()` or `COPBLS()` which is the method of **condensation of parameters** (COP) implemented in Auto-07p [^Govaerts]. For this to be most efficient, the vector field must be written in non-allocating form. In this case, this is almost 10x faster than using `DefaultLS()` for low dimensional ODEs (say dim = O(10))
+- `COPLS()` or `COPBLS()` which is the method of **condensation of parameters** (COP) implemented in Auto-07p [^Govaerts]. For this to be most efficient, the vector field must be written in non-allocating form. In this case, this is almost 10x faster than using `DefaultLS()` for low dimensional ODEs (say dim = O(10)). The performances are closing in to that of Auto-07p.
 - you can use bordered linear solvers in large dimensions  to take advantage of the specific shape of the jacobian. See also Trapezoid method for additional information.
 
 
@@ -145,8 +148,8 @@ You can use the `DefaultLS()` for most jacobians. However, when the jacobian is 
 
 We provide three methods to compute the Floquet coefficients.
 
-- The algorithm (Default) `FloquetColl` is based on the method of condensation of parameters (COP) described in [^Doedel]. It is the fastest method.
-- The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here but this can be used to check the results of the previous method.
+- The algorithm (Default) `FloquetColl` is based on the method of condensation of parameters (COP) described in [^Doedel]. It is the fastest method. It can also be used for sparse jacobians.
+- The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here but this can be used to check the results of the previous method. 
 
 These methods allow to detect bifurcations of periodic orbits. It seems to work reasonably well for the tutorials considered here. However they may be imprecise[^Lust].
 

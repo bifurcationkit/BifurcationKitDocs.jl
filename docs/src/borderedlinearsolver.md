@@ -2,7 +2,10 @@
 
 > The bordered linear solvers must be subtypes of `AbstractBorderedLinearSolver <: AbstractLinearSolver`.
 
-The methods provided here solve bordered linear equations. More precisely, one is interested in the solution $u$ to $J\cdot u = v$ where
+The methods provided here solve bordered linear equations. 
+The detailed information for each one of them is located in the [API](@ref Library-BLS).
+
+We look for the solution $u$ of $J\cdot u = v$ where
 
 $$\tag E J=\left(\begin{array}{ll}
 {A} & {b} \\

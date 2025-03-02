@@ -34,6 +34,9 @@ In some cases, it may be advantageous to consider the **Cayley transform** $(\si
 
 
 ## List of implemented eigen solvers
+
+The detailed information for each one of them is located in the [API](@ref Library-EIG)
+
 1. Default `eigen` Julia eigensolver for matrices. You can create it via `eig = DefaultEig()`. Note that you can also specify how the eigenvalues are ordered (by decreasing real part by default). You can then compute 3 eigenelements of `J` like `eig(J, 3)`.
 2. Eigensolver from `Arpack.jl`. You can create one via `eigsolver = EigArpack()` and pass appropriate options (see [Arpack.jl](https://github.com/JuliaLinearAlgebra/Arpack.jl)). For example, you can compute eigenvalues using Shift-Invert method with shift `σ` by using `EigArpack(σ, :LR)`. Note that you can specify how the eigenvalues are ordered (by decreasing real part by default). Finally, this method can be used for (sparse) matrix or Matrix-Free formulation. For a matrix `J`, you can compute 3 eigen-elements using `eig(J, 3)`. In the case of a Matrix-Free jacobian `dx -> J(dx)`, you need to tell the eigensolver the dimension of the state space by giving an example of vector: `eig = EigArpack(v0 = zeros(10))`. You can then compute 3 eigen-elements using `eig(dx -> J(dx), 3)`. 
 3. Eigensolver from `KrylovKit.jl`. You create one via `eig = EigKrylovKit()` and pass appropriate options (see [KrylovKit.jl](https://github.com/Jutho/KrylovKit.jl)). This method can be used for (sparse) matrix or Matrix-Free formulation. In the case of a matrix `J`, you can create a solver like this `eig = EigKrylovKit()`. Then, you compute 3 eigen-elements using `eig(J, 3)`. In the case of a Matrix-Free jacobian `dx -> J(dx)`, you need to tell the eigensolver the dimension of the state space by giving an example of vector: `eig = EigKrylovKit(x₀ = zeros(10))`. You can then compute 3 eigen-elements using `eig(dx -> J(dx), 3)`.
@@ -46,3 +49,11 @@ In some cases, it may be advantageous to consider the **Cayley transform** $(\si
     using SuiteSparse
     SuiteSparse.UMFPACK.umf_ctrl[8] = 0
     ```
+
+## Generalized eigen solvers (GEV)
+
+Associated to an eigensolver `eig` in `(DefaultEig, EigArnoldiMethod, EigArpack)`, a GEV is provided which can be called as
+
+```julia
+    gev(eig, A, B, nev; k...)
+```

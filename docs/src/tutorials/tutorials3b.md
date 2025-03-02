@@ -231,7 +231,7 @@ poTrap = @set poTrap.prob_vf.params = (@set par_bru.l = l_hopf + 0.01)
 
 outpo_f = newton(poTrap, orbitguess_f, (@set opt_po.verbose = false), normN = norminf) # hide
 outpo_f = @time newton(poTrap, orbitguess_f, opt_po, normN = norminf)
-BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], ", amplitude = ", BK.amplitude(outpo_f.u, n, M; ratio = 2),"\n")
+BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], "\n")
 # plot of the periodic orbit
 BK.plot_periodic_potrap(outpo_f.u, n, M; ratio = 2)
 ```

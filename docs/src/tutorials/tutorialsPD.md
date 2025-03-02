@@ -118,7 +118,7 @@ ls = GMRESIterativeSolvers(reltol = 1e-7, N = length(initpo), maxiter = 50, verb
 optn = NewtonPar(verbose = true, tol = 1e-9,  max_iterations = 120, linsolver = ls)
 # Newton-Krylov solver
 out_po_sh = @time BK.newton(probSh, initpo, optn; normN = norminf)
-BK.converged(out_po_sh) && printstyled(color=:red, "--> T = ", out_po_sh.u[end], ", amplitude = ", BK.getamplitude(probSh, out_po_sh.u, par_br_hopf; ratio = 2),"\n")
+BK.converged(out_po_sh) && printstyled(color=:red, "--> T = ", out_po_sh.u[end], "\n")
 ```
 
 which gives
@@ -137,7 +137,7 @@ br_po_sh = @time continuation(probSh, out_po_sh.u, PALC(), opts_po_cont; verbosi
 	plot = true,
 	linear_algo = MatrixFreeBLS(@set ls.N = probSh.M*n+2),
   plot_solution = (x, p; k...) -> BK.plot_periodic_shooting!(x[1:end-1], 1; k...),
-  record_from_solution = (u, p; k...) -> BK.getmaximum(probSh, u, (@set par_br_hopf.C = p.p); ratio = 2), normC = norminf)
+  normC = norminf)
 ```
 
 We plot the result using `plot(br_po_sh, br, label = "")`:
@@ -168,7 +168,7 @@ For educational purposes, we show the newton outputs:
 
 ```julia
 out_po_sh_pd = newton(BK.set_params_po(probSh, par_br_pd), initpo_pd , optn; normN = norminf)
-BK.converged(out_po_sh_pd) && printstyled(color=:red, "--> T = ", out_po_sh_pd.u[end], ", amplitude = ", BK.getamplitude(probSh, out_po_sh_pd.u, (@set par_br.C = -0.86); ratio = 2),"\n")
+BK.converged(out_po_sh_pd) && printstyled(color=:red, "--> T = ", out_po_sh_pd.u[end], "\n")
 ```
 which gives
 
@@ -198,7 +198,7 @@ br_po_sh_pd = @time continuation(BK.set_params_po(probSh,par_br_pd), out_po_sh_p
   verbosity = 2, plot = true,
   linear_algo = MatrixFreeBLS(@set ls.N = probSh.M*n+2),
   plot_solution = (x, p; kwargs...) -> (BK.plot_periodic_shooting!(x[1:end-1], 1; kwargs...); plot!(br_po_sh; subplot=1, legend=false)),
-  record_from_solution = (u, p; k...) -> BK.getmaximum(probSh, u, (@set par_br_pd.C = p.p); ratio = 2), normC = norminf)
+  normC = norminf)
 ```
 
 and plot it using `plot(br_po_sh, br, br_po_sh_pd, label = "")`:

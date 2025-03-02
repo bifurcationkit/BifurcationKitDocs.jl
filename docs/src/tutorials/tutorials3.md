@@ -274,7 +274,7 @@ br = continuation(probBif, PALC(), opts_br_eq, normC = norminf)
 We need to build a problem which encodes the Shooting functional. This done as follows where we first create the time stepper:
 
 ```julia
-using DifferentialEquations
+using OrdinaryDiffEq
 
 FOde(f, x, p, t) = Fbru!(f, x, p, t)
 

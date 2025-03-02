@@ -61,6 +61,10 @@ $$ s(x,T) = T\cdot \langle x-x_\pi, \phi\rangle.$$
 
 The functional is encoded in the composite type [`ShootingProblem`](@ref). In particular, the user can pass its own time stepper or one can use the different ODE solvers in  [DifferentialEquations.jl](https://github.com/JuliaDiffEq/DifferentialEquations.jl) which makes it very easy to choose a solver tailored for the a specific problem. See the link [`ShootingProblem`](@ref) for more information ;  for example on how to access the underlying functional, its jacobian...
 
+### Jacobians
+
+We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the argument `jacobian` in the constructor of [`ShootingProblem`](@ref). For example, you can pass `jacobian  = AutodiffDense()`. Note that all the internal linear solvers and jacobians are set up automatically so you don't need to do anything. See [`ShootingProblem`](@ref) for the different `jacobian` available.
+
 ## Poincaré shooting
 
  The algorithm is based on the one described in [^Sanchez] and [^Waugh]. 
@@ -99,7 +103,7 @@ The functional is encoded in the composite type [`PoincareShootingProblem`](@ref
 
 
 ### Standard shooting
-The Floquet multipliers are computed as the eigenvalues of the monodromy matrix $M=M_M\cdots M_1$.
+The Floquet multipliers are the eigenvalues of the monodromy matrix $M=M_M\cdots M_1$.
 
 > Unlike the case with [Finite differences](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/periodicOrbitTrapeze/), the matrices $M_i$ are not sparse.
 

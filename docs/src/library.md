@@ -68,6 +68,71 @@ PoincareShootingProblem
 BifurcationKit.TWProblem
 ```
 
+## [Linear solvers](@id Library-LS)
+
+```@docs
+BifurcationKit.DefaultLS
+```
+
+```@docs
+BifurcationKit.DefaultPILS
+```
+
+```@docs
+BifurcationKit.GMRESIterativeSolvers
+```
+
+```@docs
+BifurcationKit.GMRESKrylovKit
+```
+
+```@docs
+BifurcationKit.KrylovLS
+```
+
+```@docs
+BifurcationKit.KrylovLSInplace
+```
+
+## [Eigen solvers](@id Library-EIG)
+
+```@docs
+BifurcationKit.DefaultEig
+```
+
+```@docs
+BifurcationKit.EigArpack
+```
+
+```@docs
+BifurcationKit.EigKrylovKit
+```
+
+```@docs
+BifurcationKit.EigArnoldiMethod
+```
+
+## [Bordered linear solvers](@id Library-BLS)
+
+```@docs
+BifurcationKit.MatrixBLS
+```
+
+```@docs
+BifurcationKit.BorderingBLS
+```
+
+```@docs
+BifurcationKit.MatrixFreeBLS
+```
+
+```@docs
+BifurcationKit.MatrixFreeBLSmap
+```
+
+```@docs
+BifurcationKit.LSFromBLS
+```
 ## Newton
 
 ```@docs
