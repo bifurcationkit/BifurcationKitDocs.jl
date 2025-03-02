@@ -5,7 +5,7 @@ Pages = ["periodicOrbitTrapeze.md"]
 Depth = 3
 ```
 
-The Trapezoid method allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule	. The method is implemented in the structure `PeriodicOrbitTrapProblem`. The general method is very well exposed in [^Uecker],[^Lust] and we adopt the notations of the first reference.
+The Trapezoid method allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule	. The method is implemented in the structure `PeriodicOrbitTrapProblem`. The general method is very well exposed in [^Uecker],[^Lust], [^Keller] and we adopt the notations of the first reference.
 
 We look for periodic orbits as solutions $(x(0),T)$ of
 
@@ -23,6 +23,7 @@ We note `m` the number of time slices of the periodic orbit. By discretizing the
 
 $$\begin{array}{l}
 		0= M_a\left(x_{j}-x_{j-1}\right)-\frac{h}{2} \left(F\left(x_{j}\right)+F\left(x_{j-1}\right)\right)\equiv G_j(x),\quad j=1,\cdots,m-1 \\
+		x_0=x_{M-1}\\
 0= x_m-x_1 \equiv G_m(x) \\
 0=\sum\limits_{i=1}^m\langle x_{i} - x_{\pi,i}, \phi_{i}\rangle=0
 \end{array}$$
@@ -156,3 +157,6 @@ continuation(prob::PeriodicOrbitTrapProblem,
 [^Uecker]:> Uecker, Hannes. Hopf Bifurcation and Time Periodic Orbits with Pde2path – Algorithms and Applications. Communications in Computational Physics 25, no. 3 (2019)
 
 [^Lust]:> Lust, Kurt, Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations, PhD thesis, 1997.
+
+[^Keller]:> Keller, Herbert B. “Accurate Difference Methods for Nonlinear Two-Point Boundary Value Problems.” SIAM Journal on Numerical Analysis 11, no. 2 (April 1974): 305–20. https://doi.org/10.1137/0711028.
+
