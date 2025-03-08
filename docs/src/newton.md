@@ -33,7 +33,7 @@ Another possibility is to pass a function `J(dx)` and to use **iterative** linea
 
 > The available linear solvers are explained in the section [Linear solvers (LS)](@ref).
 
-One can find a full description of the Krylov-Newton method in the [API](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/library/#Newton). 
+One can find a full description of the Krylov-Newton method in the [`solve`](@ref). 
 
 ## Simple example
 

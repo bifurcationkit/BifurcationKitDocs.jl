@@ -5,7 +5,7 @@ Pages = ["BifProblem.md"]
 Depth = 3
 ```
 
-The idea behind `BifurcationKit` is to compute bifurcation diagrams in memory limited environments where the device can barely hold the current continuation state. We thus disable by default saving all solutions along the branch and all eigenvectors (see [`ContinuationPar`](@ref) to change this behaviour). Still, one needs to save a few solution indicators, like for plotting. This is the reason for the function `record_from_solution` (see below).
+The idea behind `BifurcationKit` is to compute bifurcation diagrams in memory limited environments where the device can barely hold the current continuation state. We thus disable by default saving all solutions along the branch and all eigenvectors (see [`ContinuationPar`](@ref) to change this behavior). Still, one needs to save a few solution indicators, like for plotting. This is the reason for the function `record_from_solution` (see below).
 
 ## Generic bifurcation problem
 

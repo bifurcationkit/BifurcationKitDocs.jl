@@ -122,8 +122,8 @@ Reader interested in this advanced usage should look at the code `example/chan.j
 To compute the curve of Fold / Hopf points, one can call [`continuation`](@ref) with the following options
 
 ```@docs
- continuation(br::BifurcationKit.AbstractBranchResult, ind_bif::Int64,
-				lens2, options_cont::ContinuationPar = br.contparams ;
+ continuation(br::BifurcationKit.AbstractBranchResult, ind_bif,
+				lens2::BifurcationKit.AllOpticTypes, options_cont::ContinuationPar = br.contparams ;
 				kwargs...)
 ```
 

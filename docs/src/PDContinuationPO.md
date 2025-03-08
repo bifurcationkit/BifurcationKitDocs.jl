@@ -43,12 +43,16 @@ In order to apply the newton algorithm to the PD functional, one needs to invert
 
 ## PD points continuation
 
-To compute the codim 2 curve of PD points of periodic orbits, one can call [`continuation`](@ref) with the following options
+To compute the codim 2 curve of PD points of periodic orbits, one can call [`continuation`](@ref) with the following options (here with collocation but shooting works too)
 
 ```@docs
- continuation(br::BifurcationKit.AbstractBranchResult, ind_pd::Int64,
-				lens2::Lens, options_cont::ContinuationPar = br.contparams ;
-				kwargs...)
+continuation(br::BifurcationKit.AbstractResult{Tkind, Tprob},
+                    ind_bif::Int64,
+                    lens2::BifurcationKit.AllOpticTypes,
+                    options_cont::ContinuationPar = br.contparams ;
+                    detect_codim2_bifurcation::Int = 0,
+                    update_minaug_every_step = 1,
+                    kwargs...) where {Tkind <: BifurcationKit.PeriodicOrbitCont, Tprob <: BifurcationKit.WrapPOColl}
 ```
 
 where `br` is a branch of periodic orbits and the options are as above except with have an additional parameter axis `lens2` which is used to locate the bifurcation points.

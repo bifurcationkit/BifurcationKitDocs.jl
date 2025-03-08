@@ -1,5 +1,9 @@
 # Library
 
+```@meta
+CollapsedDocStrings = true
+```
+
 ```@contents
 Pages = ["library.md"]
 Depth = 3
@@ -133,10 +137,14 @@ BifurcationKit.MatrixFreeBLSmap
 ```@docs
 BifurcationKit.LSFromBLS
 ```
-## Newton
+## Nonlinear solver
 
 ```@docs
 solve
+```
+
+```@docs
+newton
 ```
 
 ## [Continuation](@id Library-Continuation)
@@ -152,13 +160,16 @@ continuation
 ## Continuation algorithms
 
 ```@docs
+PALC
+```
+
+```@docs
 Natural
 ```
 
 ```@docs
 Secant
 ```
-
 
 ```@docs
 Bordered
@@ -173,12 +184,9 @@ Multiple
 ```
 
 ```@docs
-BifurcationKit.PALC
-```
-
-```@docs
 BifurcationKit.AutoSwitch
 ```
+
 
 ```@docs
 MoorePenrose
@@ -250,14 +258,6 @@ getperiod
 ```
 
 ```@docs
-getamplitude
-```
-
-```@docs
-getmaximum
-```
-
-```@docs
 SectionSS
 ```
 
@@ -284,7 +284,7 @@ FloquetQaD
 ```
 
 ```@docs
-guess_from_hopf(br, ind_hopf, eigsolver::AbstractEigenSolver, M, amplitude; phase = 0)
+guess_from_hopf
 ```
 
 ```@docs

@@ -57,13 +57,8 @@ scene = plot(br)
 
 ### Choosing a continuation algorithm
 
-BifurcationKit.jl offers a much wider variety of continuation algorithms than traditional continuation softwares. Many of these algorithms are from recent research and have their own strengths and weaknesses. Each algoritm comes with a doc string, for example:
-
-```@docs
-PALC
-```
-
-For example, you can chose a different tangent predictor in `PALC`
+BifurcationKit.jl offers a much wider variety of continuation algorithms than traditional continuation softwares. Many of these algorithms are from recent research and have their own strengths and weaknesses. Each algoritm comes with a doc string, for example [`PALC`](@ref).
+You can also chose a different tangent predictor in `PALC`
 
 ```@example GETSTARTED1
 opts = ContinuationPar(p_min = -1., p_max = 1.)

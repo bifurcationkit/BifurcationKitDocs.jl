@@ -29,14 +29,14 @@ Note that you can add new solution `x0` to `M` by doing `push!(M, x0)`. Also `M[
 Most newton functions can be used with a deflated problem, see for example [Snaking computed with deflation](@ref sh2dfd). The idea is to pass the deflation operator `M`. For example, we have the following overloaded method, which works on GPUs:
 
 ```julia
-newton(prob::BifurcationKit.AbstractBifurcationProblem,
+solve(prob::BifurcationKit.AbstractBifurcationProblem,
 		defOp::DeflationOperator,
 		options::NewtonPar,
 		_linsolver = DefProbCustomLinearSolver();
 		kwargs...)
 ```
 
-We refer to the regular [`newton`](@ref) for more information. This newton penalises the roots saved in `defOp.roots`. 
+We refer to the regular [`solve`](@ref) for more information. This `solve` penalises the roots saved in `defOp.roots`. 
 
 Compared to [`newton`](@ref), the only different arguments are
 

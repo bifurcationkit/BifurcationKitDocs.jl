@@ -225,7 +225,8 @@ br_potrap = continuation(
 	# arguments for branch switching
 	br, 5,
 	# arguments for continuation
-	opts_po_cont, PeriodicOrbitTrapProblem(M = M, jacobian = :FullSparseInplace, update_section_every_step = 1);
+	opts_po_cont, 
+	PeriodicOrbitTrapProblem(M = M, jacobian = :FullSparseInplace, update_section_every_step = 1);
 	# parameter value used for branching
 	δp = 1e-5,
 	# use deflated Newton to find non-trivial solutions
