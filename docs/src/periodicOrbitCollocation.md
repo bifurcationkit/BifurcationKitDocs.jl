@@ -121,39 +121,36 @@ The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@r
 
 We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal linear solvers and jacobians are set up automatically so you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
-### 1. `DenseAnalytical()`
+1. `DenseAnalytical()`
 The jacobian is computed with an analytical formula, works for dense matrices. This is the default algorithm.
-
-### 2. `DenseAnalyticalInplace()`
-Same as 1. but cache more information to limit allocations.
-
-### 3. `AutoDiffDense()`
+2. `DenseAnalyticalInplace()`
+Same as 1. but cache more information to limit allocations. (Meant to become the default algorithm after testing).
+3. `AutoDiffDense()`
 The jacobian is computed with automatic differentiation, works for dense matrices. Can be used for debugging.
-
-### 4. `FullSparse()`
+4. `FullSparse()`
 The jacobian is computed with an analytical formula, works for sparse matrices.
-
-### 5. `FullSparseInplace()`
+5. `FullSparseInplace()`
 The sparse jacobian is computed in place, limiting memory allocations, with an analytical formula when the sparsity of the jacobian of the vector field is constant. This is much faster than `FullSparse()`.
 
 ## Linear solvers
 
-You can use the `DefaultLS()` for most jacobians. However, when the jacobian is dense, you should use condensation of parameters.
+When the jacobian is dense and dimension is small ~O(10), you should use condensation of parameters `COPBLS` for performance.
 
-- `COPLS()` or `COPBLS()` which is the method of **condensation of parameters** (COP) implemented in Auto-07p [^Govaerts]. For this to be most efficient, the vector field must be written in non-allocating form. In this case, this is almost 10x faster than using `DefaultLS()` for low dimensional ODEs (say dim = O(10)). The performances are closing in to that of Auto-07p.
-- you can use bordered linear solvers in large dimensions  to take advantage of the specific shape of the jacobian. See also Trapezoid method for additional information.
+1. `DefaultLS()` can be used for most jacobians
+2. `COPLS()` or `COPBLS()` which is the method of **condensation of parameters** (COP) implemented in Auto-07p [^Govaerts]. For this to be most efficient, the vector field must be written in non-allocating form. In this case, this is almost 10x faster than using `DefaultLS()` for low dimensional ODEs (say dim = O(10)). The performances are closing in to that of Auto-07p.
+3. you can use bordered linear solvers in large dimensions  to take advantage of the specific shape of the jacobian. See also Trapezoid method for additional information.
 
 
 ## Floquet multipliers computation
 
 We provide three methods to compute the Floquet coefficients.
 
-- The algorithm (Default) `FloquetColl` is based on the method of condensation of parameters (COP) described in [^Doedel]. It is the fastest method. It can also be used for sparse jacobians.
-- The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here but this can be used to check the results of the previous method. 
+1. The algorithm (Default) `FloquetColl` is based on the method of condensation of parameters (COP) described in [^Doedel]. It is the fastest method. It can also be used for sparse jacobians.
+2. The algorithm `FloquetCollGEV` is a simplified version of the procedure described in [^Fairgrieve]. It boils down to solving a large generalized eigenvalue problem. There is clearly room for improvements here but this can be used to check the results of the previous method. 
 
 These methods allow to detect bifurcations of periodic orbits. It seems to work reasonably well for the tutorials considered here. However they may be imprecise[^Lust].
 
-- The state of the art method is based on a Periodic Schur decomposition. It is available through the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
+3. The state of the art method is based on a Periodic Schur decomposition. It is available through the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
 
 
 ## Computation with `newton`

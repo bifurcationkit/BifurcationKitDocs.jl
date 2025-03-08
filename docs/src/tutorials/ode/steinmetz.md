@@ -105,7 +105,6 @@ fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fol
 		jacobian_ma = :minaug,
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
-		# bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false),
 		)
 plot(fold_po_sh)
 ```
@@ -120,7 +119,6 @@ ns_po_sh = continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
 		# plot = true,
 		detect_codim2_bifurcation = 2,
 		update_minaug_every_step = 1,
-		start_with_eigen = false,
 		jacobian_ma = :minaug,
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
@@ -146,7 +144,6 @@ opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0,
 	tol_stability = 1e-5)
 
 br_coll = @time continuation(deepcopy(probcoll), cicoll, PALC(), opts_po_cont;
-    # verbosity = 3, plot = true,
     callback_newton = BK.cbMaxNorm(10),
     argspo...)
 
