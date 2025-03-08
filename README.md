@@ -7,7 +7,7 @@
 
 `BifurcationKitDocs.jl` is a component package in the BifurcationKit ecosystem. It holds the documentation for the common user interface. Users interested in using these features should check out [BifurcationKit.jl](https://github.com/rveltz/BifurcationKit.jl)
 
-## Support and citation
+## 📚 Support and citation
 If you use [BifurcationKit.jl](https://github.com/rveltz/BifurcationKit.jl) for your work, we ask that you cite the following paper. Open source development as part of academic research strongly depends on this. Please also consider starring this repository if you like our work, this will help us to secure funding in the future. It is referenced on HAL-Inria as follows:
 
 ```
