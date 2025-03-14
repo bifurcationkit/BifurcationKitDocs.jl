@@ -1,6 +1,11 @@
 # Automatic Bifurcation diagram computation
+
+```@contents
+Pages = ["BifurcationDiagram.md"]
+Depth = 2
+```
  
-Thanks to the functionality presented in this part, we can compute the bifurcation diagram of a system recursively and **fully automatically**. More precisely, the function `bifurcationdiagram` allows to:
+Thanks to the functionality presented in this part, we can compute the bifurcation diagram of a system recursively and **fully automatically**. More precisely, the function [`bifurcationdiagram`](@ref) allows to:
 
 - compute a branch $\gamma$ of equilibria
 - detect all bifurcations on the branch
@@ -14,7 +19,7 @@ Thanks to the functionality presented in this part, we can compute the bifurcati
 - if the bifurcation diagram itself has loops (see example below), you may experience a large number of branches
 
 !!! warning "Memory"
-    The whole diagram is stored in RAM and you might be careful computing it on GPU. We'll add a file system for this in the future. 
+    The whole diagram is stored in RAM and you should be careful when computing it on GPU. We'll add a file system for this in the future. 
 
 ## Basic example with simple branch points
 
@@ -111,12 +116,14 @@ We can now plot the result:
 ```@example BDIAG2
 plot(diagram; putspecialptlegend =false, markersize=2, plotfold=false, title="#branch = $(size(diagram))")
 ```
- 
- We can access the different branches with `BK.getBranch(diagram, (1,))`. Alternatively, you can plot a specific branch:
- 
- ![](diagramD6b.png)
- 
- Finally, you can resume the computation of the bifurcation diagram if not complete by using the syntax
+
+We can access the different branches with `BK.getBranch(diagram, (1,))`. Alternatively, you can plot a specific branch:
+
+![](diagramD6b.png)
+
+## Computing a sub-part of the diagram
+
+Finally, you can resume the computation of the bifurcation diagram if not complete by using the method [`bifurcationdiagram!`](@ref)
  
 ```@example BDIAG2
 BK.bifurcationdiagram!(prob,
