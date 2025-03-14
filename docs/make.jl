@@ -19,7 +19,11 @@ makedocs(
 	draft = false,
 	warnonly = true,
 	sitename = "Bifurcation Analysis in Julia",
-	format = Documenter.HTML(collapselevel = 1,),# assets = ["assets/indigo.css"]),
+	format = Documenter.HTML(;
+		collapselevel = 1,
+		size_threshold_warn=200 * 2^10, # raise slightly from 100 to 200 KiB
+		size_threshold=300 * 2^10,      # raise slightly 200 to to 300 KiB
+	),# assets = ["assets/indigo.css"]),
 	authors = "Romain Veltz",
 	pages = Any[
 		"Home" => "index.md",
@@ -91,7 +95,7 @@ makedocs(
 						"From codim 2 to equilibria" => "abs-from-codim2-eq.md",
 						"From codim 2 to periodic orbits" => "abs-from-codim2-po.md",
 						],
-			"Bifurcation diagram" => "BifurcationDiagram.md",
+			"Automatic Bifurcation diagram" => "BifurcationDiagram.md",
 			"Event handling and Callback" => "EventCallback.md",
 			# "Constrained problem" => "constrainedproblem.md",
 			"Iterator Interface" => "iterator.md",
