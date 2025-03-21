@@ -114,13 +114,13 @@ par = (l = 0.1, ν = 1.2, L1 = L1);
 Let us run a quick benchmark to evaluate the direct linear solvers:
 
 ```julia
-julia> @time cholesky(L1) \ sol_hexa;
+julia> @time cholesky(L1) \ vec(sol0);
   0.152849 seconds (54 allocations: 87.273 MiB)
 
-julia> @time lu(L1) \ sol_hexa;
+julia> @time lu(L1) \ vec(sol0);
   0.556157 seconds (87 allocations: 226.210 MiB, 0.49% compilation time)
 
-julia> @time qr(L1) \ sol_hexa;
+julia> @time qr(L1) \ vec(sol0);
   1.609175 seconds (8.96 k allocations: 989.285 MiB, 2.67% gc time, 0.67% compilation time)
 ```
 

@@ -94,11 +94,11 @@ You can detect the following codim 2 bifurcation points by using the option `det
 
 In order to apply the newton algorithm to $F_f$ or $F_h$, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can select the following jacobians for your computations (see below):
 
-- `jacobian_ma = :autodiff` [Default], automatic differentiation is applied to $F_f$ (or $F_h$) and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
-- `jacobian_ma = :minaug`, a specific procedure for evaluating the jacobian $F_f$ (or $F_h$) and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions. It can be used for matrix-free (*e.g.* iterative) solvers.
-- `jacobian_ma = :MinAugMatrixBased` the jacobian matrix is evaluated using analytical formula. This allows for example to form a sparse matrix when the underlying problem has sparse jacobian.
+- `jacobian_ma = :autodiff` [Default], automatic differentiation is applied to $F_f$ (or $F_h$) and the jacobian matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100) but quite slow.
+- `jacobian_ma = :minaug`, a specific procedure for evaluating the jacobian $F_f$ (or $F_h$) and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions but it works in small dimensions. It can be used for matrix-free (*e.g.* iterative) solvers.
+- `jacobian_ma = :MinAugMatrixBased` the jacobian matrix is evaluated using an analytical formula. This allows for example to form a sparse matrix when the underlying problem has sparse jacobian.
 - `jacobian_ma = :finiteDifferencesMF` the jacobian is evaluated in a matrix-free version using finite differences. Mainly for debugging purposes.
-- `jacobian_ma = :finiteDifferences`. The jacobian matrix is evaluated using finite differences.
+- `jacobian_ma = :finiteDifferences`. The jacobian matrix is evaluated using finite differences. Mainly for debugging purposes.
 
 ## Newton refinement
 

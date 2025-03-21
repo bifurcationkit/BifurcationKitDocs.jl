@@ -67,25 +67,25 @@ The predictor for a non trivial guess at distance $\delta p$ from the bifurcatio
 
 ```@docs
 BifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, δp::T;
-        verbose::Bool = false,
-        ampfactor = T(1),
-        nbfailures = 30,
-        maxiter = 100,
-        perturb = identity,
-        J = nothing,
-        normN = norminf,
-        optn::NewtonPar) where T
+                    verbose::Bool = false,
+                    ampfactor = one(T),
+                    nbfailures = 50,
+                    maxiter = 100,
+                    perturb = identity,
+                    J = nothing,
+                    normN = norminf,
+                    optn::NewtonPar = NewtonPar(max_iterations = maxiter, verbose = verbose)) where T
 ```
 
 ```@docs
 BifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, ::Val{:exhaustive}, δp::T;
-                verbose::Bool,
-                ampfactor,
-                nbfailures,
-                maxiter,
-                perturb,
-                J,
-                igs,
-                normN,
-                optn::NewtonPar) where T
+                verbose::Bool = false,
+                ampfactor = T(1),
+                nbfailures = 30,
+                maxiter = 100,
+                perturb = identity,
+                J = nothing,
+                igs = nothing,
+                normN = norminf,
+                optn::NewtonPar = NewtonPar(max_iterations = maxiter, verbose = verbose)) where T
 ```

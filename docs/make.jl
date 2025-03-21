@@ -21,8 +21,8 @@ makedocs(
 	sitename = "Bifurcation Analysis in Julia",
 	format = Documenter.HTML(;
 		collapselevel = 1,
-		size_threshold_warn=200 * 2^10, # raise slightly from 100 to 200 KiB
-		size_threshold=300 * 2^10,      # raise slightly 200 to to 300 KiB
+		size_threshold_warn=300 * 2^10, # raise slightly from 100 to 200 KiB
+		size_threshold=400 * 2^10,      # raise slightly 200 to to 300 KiB
 	),# assets = ["assets/indigo.css"]),
 	authors = "Romain Veltz",
 	pages = Any[
@@ -48,7 +48,7 @@ makedocs(
 			"Symmetries / Waves" => [
 				"Introduction" => "intro_wave.md",
 				"Eigen Solvers" => "waveEigen.md",
-				"Modulated Travelling waves" => "ModulatedTW.md",
+				# "Modulated Travelling waves" => "ModulatedTW.md",
 				],
 		],
 		"Continuation methods" => [

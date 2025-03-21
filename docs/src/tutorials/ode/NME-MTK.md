@@ -20,39 +20,32 @@ The model is interesting because the branch of periodic solutions converges to a
 It is easy to encode the ODE as follows
 
 ```@example TUTNMEMTK
-using Revise, ModelingToolkit, LinearAlgebra
+using Revise
+using ModelingToolkit
+using ModelingToolkit: t_nounits as t, D_nounits as D
 using DifferentialEquations, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
-indexof(sym, syms) = findfirst(isequal(sym),syms)
-
-@variables t E(t) x(t) u(t) SS0(t) SS1(t) 	# independent and dependent variables
-@parameters U0 τ J E0 τD U0 τF τS α    		# parameters
-D = Differential(t) 				# define an operator for the differentiation w.r.t. time
+@variables E(t) x(t) u(t) SS0(t) SS1(t) 	# independent and dependent variables
+@parameters U0 τ J E0 τD U0 τF α    		# parameters
 
 # define the model
-@named NMmodel = ODESystem([SS0 ~ J * u * x * E + E0,
-	SS1 ~ α * log(1 + exp(SS0 / α)),
-	D(E) ~ (-E + SS1) / τ,
-	D(x) ~ (1.0 - x) / τD - u * x * E,
-	D(u) ~ (U0 - u) / τF +  U0 * (1 - u) * E],
-	defaults = Dict(E => 0.238616, x => 0.982747, u => 0.367876,
-	α => 1.5, τ => 0.013, J => 3.07, E0 => -2.0, τD => 0.200, U0 => 0.3, τF => 1.5, τS => 0.007))
+eqs = [ D(E) ~ (-E + α * log(1 + exp((J * u * x * E + E0) / α))) / τ,
+            D(x) ~ (1.0 - x) / τD - u * x * E,
+            D(u) ~ (U0 - u) / τF +  U0 * (1.0 - u) * E]
+@mtkbuild nsys = ODESystem(eqs, t)
+u0_guess = [E => 0.238616, x => 0.982747, u => 0.367876]
+p_start = Dict(α => 1.4, τ => 0.013, J => 3.07, E0 => -2.0, τD => 0.20, U0 => 0.3, τF => 1.5)
+bif_par = E0
+plot_var = E
 
-# get the vector field and jacobian
-odeprob = ODEProblem(structural_simplify(NMmodel), [], (0.,10.), [], jac = true)
-odefun = odeprob.f
-F = (u,p) -> odefun(u,p,0)
-J = (u,p) -> odefun.jac(u,p,0)
-
-id_E0 = indexof(E0, parameters(NMmodel))
-par_tm = odeprob.p
-
-# we collect the differentials together in a problem
-prob = BifurcationProblem(F, odeprob.u0, par_tm, (@lens _[id_E0]); J = J,
-    record_from_solution = (x, p) -> (E = x[1], x = x[2], u = x[3]))
-nothing #hide
+prob = BifurcationProblem(nsys,
+    u0_guess,
+    p_start,
+    bif_par;
+    plot_var = plot_var,
+    jac = false)
 ```
 
 We first compute the branch of equilibria
@@ -106,13 +99,11 @@ args_po = (	record_from_solution = (x, p; k...) -> begin
 		end,
 	normC = norminf)
 
-
-Mt = 30 # number of time sections
-	br_pocoll = @time continuation(
+br_pocoll = @time continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Collocation method to locate PO, with polynomial degree 5
-	PeriodicOrbitOCollProblem(Mt, 5; meshadapt = true);
+	PeriodicOrbitOCollProblem(30, 5; meshadapt = true);
 	# regular continuation options
 	args_po..., callback_newton = BK.cbMaxNorm(10))
 

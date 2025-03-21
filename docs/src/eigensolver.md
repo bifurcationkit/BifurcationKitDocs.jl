@@ -20,7 +20,7 @@ end
 ```
 
 !!! warning "Eigenvalues"
-    The eigenvalues must be ordered by increasing real part for the detection of bifurcations to work properly.
+    The eigenvalues must be ordered by decreasing real part for the detection of bifurcations to work properly.
 
 !!! warning "Eigenvectors"
     You have to implement the method `geteigenvector(eigsolver, eigenvectors, i::Int)` for `newtonHopf` to work properly.

@@ -70,7 +70,9 @@ We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](h
 - `Base.eltype` must be extended to your vector type.
 
 ## Citations
-The papers citing this work are collected on [google scholar](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=159498619004863176,12573642401780006854,8662907770106865595).
+The papers citing this work are collected on [google scholar](https://scholar.google.com/scholar?scisbd=2&q=bifurcationkit&hl=en&as_sdt=0,5).
+
+See also [google scholar](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=159498619004863176,12573642401780006854,8662907770106865595) but less papers are referenced
 
 ### Some unreferenced papers by google
 - Lloyd, David, Ryan Goh, and Jens D. M. Rademacher. “Numerical Continuation and Bifurcation in Nonlinear PDEs: Stability, Invasion and Wavetrains in the Swift-Hohenberg Equation.” arXiv, February 6, 2025. https://doi.org/10.48550/arXiv.2502.03858.
