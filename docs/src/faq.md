@@ -1,5 +1,13 @@
 # FAQ
 
+### Nothing is working as intended, how do I investigate the situation?
+
+The best thing to start with is to engage verbose mode by passing `verbosity = 3`. It is also important to monitor newton iterations by passing `NewtonPar(..., verbose = true)` to `ContinuationPar`.
+
+If this is not enough, one can engage debug mode by doing `ENV["JULIA_DEBUG"] = BifurcationKit` in the REPL. A lot of useful information will be printed in the screen and hopefully resolve the situation. In particular, look at the amplitude of the predictors, convergence of linear / nonlinear iterations, convergence of eigensolvers...
+
+If this is still not enough, open an issue on BifurcationKit website or on discourse.
+
 ### How can I save a solution every n steps, or at specific parameter values?
 
 You can use the callback `finalise_solution` in the function call `continuation`. For example, you can use something like this to save all steps
