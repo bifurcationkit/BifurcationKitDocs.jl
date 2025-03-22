@@ -13,7 +13,7 @@ Unlike other continuation softwares (Auto07p, MatCont, pde2path), `BifurcationKi
 
 ![](abs.png)
 
-Knowing a bifurcation point $X_0 = (x_0,p_0)$ on a branch `br`, we want to find the bifurcated (red) curve. To this, we need an initial guess $X_1$ on the bifurcated curve. Usually, the tangent $\vec v$ can be found which leaves two parameters `δp, ampfactor` to be determined. Note that both parameters needs to be small. For example, the default values are `δp = ds` (`ds` is in `ContinuationPar` ) and `ampfactor = 0.1`.
+Knowing a bifurcation point $X_0 = (x_0, p_0)$ on a branch `br`, we want to find the bifurcated (red) curve. To this, we need an initial guess $X_1$ on the bifurcated curve. Usually, the tangent $\vec v$ can be found which leaves two parameters `δp, ampfactor` to be determined. Note that both parameters needs to be small. For example, the default values are `δp = ds` (`ds` is in `ContinuationPar` ) and `ampfactor = 0.1`.
 
 - In case of **manual branch switching**, the user is asked to provide the couple `δp, ampfactor`. This can be tricky because minute errors in `δp, ampfactor` can imped newton correction. This is for example used in [Lur'e problem](@ref pdlure) for period-doubling with Trapezoid method. Thus, the general method is like
 ```
@@ -37,7 +37,7 @@ continuation(br, ind_bif, options_cont;
 ```
 
 !!! tip "Manual branch switching"
-    Manual branch switching is automatically used by `BifurcationKit` when the normal form of the bifurcation point is not implemented (like PD normal form for Trapezoid method). You can force `BifurcationKit` to use it using the `override` key word.
+    Manual branch switching is automatically used by `BifurcationKit` when the normal form of the bifurcation point is not implemented (like PD normal form for Trapezoid method). You can force `BifurcationKit` to use it using the `override = true` key word.
 
 ## Branch switching of non-simple bifurcation points
 

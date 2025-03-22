@@ -46,12 +46,12 @@ See [`AsymptoticNumericalMethod.ANM`](@ref) for more information.
 We provide an example of use. We define a `BifurcationProblem` as usual and pass the continuation algorithm `ANM`.
 
 ```@example ANM
-using AsymptoticNumericalMethod, Plots, Parameters
+using AsymptoticNumericalMethod, Plots
 using BifurcationKit
 const BK = BifurcationKit
 
 function F(x, p)
-	@unpack α = p
+	(;α) = p
 	f = similar(x)
 
 	f[1] = (-2x[1]+x[2]) + α * exp(x[1])
