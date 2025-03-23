@@ -6,7 +6,7 @@ pkg" add BifurcationKit AsymptoticNumericalMethod"
 
 
 using Documenter, BifurcationKit, AsymptoticNumericalMethod
-using DocumenterMermaid
+# using DocumenterMermaid
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 
