@@ -129,7 +129,7 @@ It may happen that the general procedure fails. We thus expose the procedure `mu
 The first step is to compute the reduced equation, say of the first bifurcation point in `br`.
 
 ```@example TUT2_ABS_EQ_EQ
-bp = get_normal_form(br, 1; autodiff=true)
+bp = get_normal_form(br, 1; autodiff = true)
 ```
 
 Next, we want to find the zeros of the reduced equation. This is usually achieved by calling the predictor

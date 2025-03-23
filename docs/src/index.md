@@ -12,7 +12,7 @@ Hence, it is possible to study large scale nonlinear problems on different hardw
 
 One design choice is that we try not to require `u` to be a subtype of an `AbstractArray` as this would forbid the use of spectral methods like the one from `ApproxFun.jl`. For now, our implementation does not allow this for all methods of the package.
 
-## Installation
+## 📦 Installation
 
 This package requires Julia >= v1.3.0 because of the use of methods added to abstract types (see [#31916](https://github.com/JuliaLang/julia/pull/31916)).
 
@@ -24,25 +24,10 @@ To install the bleeding edge version, please run
 
 `] add BifurcationKit#master`
 
-## Citing this work
-If you use this package for your work, we ask that you **cite** the following paper!! Open source development strongly depends on this. It is referenced on HAL-Inria as follows:
+## 📚 Citing this work
+If you use this package for your work, we ask that you **cite** the following paper!! Open source development strongly depends on this. It is referenced on [HAL-Inria](https://hal.archives-ouvertes.fr/hal-02902346) with *bibtex* entry [CITATION.bib](https://github.com/bifurcationkit/BifurcationKit.jl/blob/master/CITATION.bib).
 
-```
-@misc{veltz:hal-02902346,
-  TITLE = {{BifurcationKit.jl}},
-  AUTHOR = {Veltz, Romain},
-  URL = {https://hal.archives-ouvertes.fr/hal-02902346},
-  INSTITUTION = {{Inria Sophia-Antipolis}},
-  YEAR = {2020},
-  MONTH = Jul,
-  KEYWORDS = {pseudo-arclength-continuation ; periodic-orbits ; floquet ; gpu ; bifurcation-diagram ; deflation ; newton-krylov},
-  PDF = {https://hal.archives-ouvertes.fr/hal-02902346/file/354c9fb0d148262405609eed2cb7927818706f1f.tar.gz},
-  HAL_ID = {hal-02902346},
-  HAL_VERSION = {v1},
-}
-```
-
-## Other softwares
+## 🧑‍💻 Other softwares
 
 There are many good softwares already available.
 
@@ -56,7 +41,7 @@ In Julia, we have the following tools:
 - [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl) which is unmaintained.
 - [NumericalContinuation.jl](https://github.com/dawbarton/NumericalContinuation.jl) by David Barton.
 
-## A word on performance
+## 🚀 A word on performance
 
 The tutorials have not **all** been written with the goal of performance but rather simplicity (except maybe [2d Ginzburg-Landau equation](@ref cgl) and [Langmuir–Blodgett model](@ref langmuir)). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.
 
