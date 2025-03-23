@@ -148,7 +148,7 @@ Here `userD-1` means that the first component of the discrete event was detected
 We can combine more events and chain them like we want using `SetOfEvents`. In this example, we show how to do bifurcation detection and event location altogether:
 
 ```@example EVENT		
-ev1 = BK.ContinuousEvent(1, (iter, state) -> getp(state)-1)
+ev1 = BK.ContinuousEvent(1, (iter, state) ->  getp(state)-1)
 ev2 = BK.ContinuousEvent(2, (iter, state) -> (getp(state)-2, getp(state)-2.5))
 # event to detect bifurcation
 ev3 = BK.BifDetectEvent

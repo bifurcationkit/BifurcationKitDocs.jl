@@ -5,7 +5,8 @@ pkg" dev AbstractTrees BandedMatrices"
 pkg" add BifurcationKit AsymptoticNumericalMethod"
 
 
-using Documenter, BifurcationKit, Setfield, AsymptoticNumericalMethod
+using Documenter, BifurcationKit, AsymptoticNumericalMethod
+using DocumenterMermaid
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 

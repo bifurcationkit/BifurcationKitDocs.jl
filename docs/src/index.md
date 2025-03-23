@@ -70,7 +70,7 @@ We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](h
 - `Base.eltype` must be extended to your vector type.
 
 ## Citations
-The papers citing this work are collected on [google scholar](https://scholar.google.com/scholar?scisbd=2&q=bifurcationkit&hl=en&as_sdt=0,5).
+The papers citing this work are collected on [google scholar](https://scholar.google.com/scholar?q=bifurcationkit&hl=en&as_sdt=0,5).
 
 See also [google scholar](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=159498619004863176,12573642401780006854,8662907770106865595) but less papers are referenced
 

@@ -41,7 +41,7 @@ To compute the codim 2 curve of Fold points of periodic orbits, one can call [`c
 
 ```@docs
  continuation(br::BifurcationKit.AbstractBranchResult, ind_bif::Int64,
-				lens2::Lens, options_cont::ContinuationPar = br.contparams ;
+				lens2::BifurcationKit.AllOpticTypes, options_cont::ContinuationPar = br.contparams ;
 				kwargs...)
 ```
 
