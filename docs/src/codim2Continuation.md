@@ -137,11 +137,11 @@ See [Temperature model](@ref temperature) for an example of use.
 Here, we expose the solvers that are used to perform newton refinement or codim 2 continuation in case the above methods fails. This is useful in case it is too involved to expose the linear solver options. An example of advanced use is the continuation of Folds of periodic orbits, see [Continuation of Fold of periodic orbits](@ref fold-po).
 
 ```@docs
-newton_fold
+BifurcationKit.newton_fold
 ```
 
 ```@docs
-newton_hopf
+BifurcationKit.newton_hopf
 ```
 
 

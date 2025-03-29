@@ -59,7 +59,7 @@ function NL(u, p)
 
 	ua = u1.^2 .+ u2.^2
 
-	f = similar(u)
+	f = similar(u, promote_type(eltype(u), typeof(r), typeof(γ)))
 	f1 = @view f[1:n]
 	f2 = @view f[n+1:2n]
 
@@ -70,7 +70,7 @@ function NL(u, p)
 end
 
 function Fcgl(u, p)
-	f = similar(u)
+	f = similar(u, promote_type(eltype(u), typeof(p.r), typeof(p.γ)))
 	mul!(f, p.Δ, u)
 	f .= f .+ NL(u, p)
 end

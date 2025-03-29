@@ -135,7 +135,7 @@ scene = plot(br_po, br_po_pd, title = "Collocation based")
 We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the previous one. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the previous method. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf **aBS**.
 
 ```@example TUTLURE
-using OrdinaryDiffEq
+using DifferentialEquations
 
 # ODE problem for using DifferentialEquations
 prob_ode = ODEProblem(lur!, copy(z0), (0., 1.), par_lur; abstol = 1e-11, reltol = 1e-9)

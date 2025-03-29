@@ -52,11 +52,11 @@ nothing #hide
 This is very straightforward thanks to `SciML`.
 
 ```@example TUTPPREY
-using OrdinaryDiffEq
+using DifferentialEquations
 prob_de = ODEProblem(Pop!, z0, (0,200.), par_pop)
-sol = OrdinaryDiffEq.solve(prob_de, Rodas5())
+sol = DifferentialEquations.solve(prob_de, Rodas5())
 prob_de = ODEProblem(Pop!, sol.u[end], (0,3.), par_pop, reltol = 1e-8, abstol = 1e-10)
-sol = OrdinaryDiffEq.solve(prob_de, Rodas5())
+sol = DifferentialEquations.solve(prob_de, Rodas5())
 plot(sol)
 ```
 
