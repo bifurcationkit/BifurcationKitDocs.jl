@@ -56,7 +56,7 @@ re_make(prob::BifurcationKit.AbstractBifurcationProblem;
 ### Example
 
 ```@example 
-using BifurcationKit, Setfield
+using BifurcationKit
 F(x,p) = @. p.a + x^2
 # parameters
 par = (a = 0., b = 2)

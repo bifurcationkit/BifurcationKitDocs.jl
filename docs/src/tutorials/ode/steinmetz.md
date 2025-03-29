@@ -44,8 +44,9 @@ prob = BifurcationProblem(SL!, z0, par_sl, (@optic _.k8);)
 # record variables for plotting
 function recordFromSolution(x, p; k...) 
 	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-	return (max = maximum(xtt[1,:]),
-			min = minimum(xtt[1,:]),
+	mi, ma = @views extrema(xtt[1,:])
+	return (max = ma,
+			min = mi,
 			period = getperiod(p.prob, x, p.p))
 end
 
@@ -56,7 +57,8 @@ function plotSolution(x, p; k...)
 end
 
 # group parameters
-argspo = (record_from_solution = recordFromSolution,
+argspo = (
+	record_from_solution = recordFromSolution,
 	plot_solution = plotSolution,
 	normC = norminf)
 
@@ -68,9 +70,9 @@ We obtain some trajectories as seeds for computing periodic orbits.
 ```@example STEINMETZ
 using DifferentialEquations
 alg_ode = Rodas4()
-prob_de = ODEProblem(SL!, z0, (0,136.), par_sl)
+prob_de = ODEProblem(SL!, z0, (0, 136.), par_sl)
 sol_ode = DifferentialEquations.solve(prob_de, alg_ode)
-prob_de = ODEProblem(SL!, sol_ode.u[end], (0,30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
+prob_de = ODEProblem(SL!, sol_ode.u[end], (0, 30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
 sol_ode = DifferentialEquations.solve(prob_de, alg_ode)
 plot(sol_ode)
 ```
@@ -112,10 +114,10 @@ plot(fold_po_sh)
 ### Curve of NS points of periodic orbits
 ```@example STEINMETZ
 opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
-@reset opts_posh_ns.newton_options.tol = 1e-12
+@reset opts_posh_ns.newton_options.tol = 1e-11
 # @reset opts_posh_ns.newton_options.verbose = true
 ns_po_sh = continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
-		verbosity = 2, 
+		verbosity = 2,
 		# plot = true,
 		detect_codim2_bifurcation = 2,
 		update_minaug_every_step = 1,

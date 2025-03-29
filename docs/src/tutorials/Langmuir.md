@@ -15,8 +15,7 @@ $$\zeta(x)=-\frac{1}{2}\left[1+\tanh \left(\frac{x-x_{s}}{l_{s}}\right)\right].$
 As can be seen in the reference above, the bifurcation diagram is significantly more involved as $L$ increases. So we set up for the "simple" case $L=50$.
 
 ```@example TUTLangmuir
-using Revise
-using SparseArrays
+using Revise, SparseArrays
 using BifurcationKit, LinearAlgebra, Plots, ForwardDiff
 const BK = BifurcationKit
 
@@ -107,7 +106,7 @@ Flgvf(x, p, t = 0) = Flgvf!(similar(x), x, p, t)
 end
 
 # we thus define a bifurcation problem
-prob  = BifurcationProblem(Flgvf, 0X .-0.9, par, (@optic _.ν );
+prob  = BifurcationProblem(Flgvf!, 0X .-0.9, par, (@optic _.ν );
 		J = JanaSP,
 		record_from_solution = (x, p; k...) -> normL2(x),
 		plot_solution = (x, p; kwargs...) -> plot!(X, x, subplot = 3, xlabel = "Nx = $(length(x))", label = ""))
