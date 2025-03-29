@@ -73,6 +73,14 @@ Pages = ["ode/lorenz84-PO.md",]
 Depth = 1
 ```
 
+### Multi-parameters
+
+
+Based on the package [MultiParamContinuation.jl](https://github.com/bifurcationkit/MultiParamContinuation.jl) and its [docs](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/). This functionality allows to continue solutions in two parameters.
+
+- 🟢 [sphere example](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphere/#Sphere)
+- 🟢 [sphere example based in BifurcationKit](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphereBK/#Sphere-based-on-BifurcationKit.jl)
+
 ### Homoclinic orbits
 
 Based on the package [HclinicBifurcationKit.jl](https://github.com/bifurcationkit/HclinicBifurcationKit.jl) and its [docs](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/).
