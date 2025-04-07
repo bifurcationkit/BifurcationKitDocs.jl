@@ -73,20 +73,13 @@ Pages = ["ode/lorenz84-PO.md",]
 Depth = 1
 ```
 
-### Multi-parameters
-
-
-Based on the package [MultiParamContinuation.jl](https://github.com/bifurcationkit/MultiParamContinuation.jl) and its [docs](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/). This functionality allows to continue solutions in two parameters.
-
-- 🟢 [sphere example](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphere/#Sphere)
-- 🟢 [sphere example based in BifurcationKit](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphereBK/#Sphere-based-on-BifurcationKit.jl)
-
 ### Homoclinic orbits
 
 Based on the package [HclinicBifurcationKit.jl](https://github.com/bifurcationkit/HclinicBifurcationKit.jl) and its [docs](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/).
 
 - 🟡 [Autonomous electronic circuit (aBS from BT)](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/tutorialsFreire/#Autonomous-electronic-circuit-(aBS-from-BT))
 - 🟡 [Nonlinear laser model](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/OPL/#Nonlinear-laser-model)
+
 
 ## DAE examples
 
@@ -112,6 +105,14 @@ Depth = 1
 ## Examples based on Catalyst
 
 `Catalyst` provides a tailored interface to `BifurcationKit` and the user is encouraged to have a look at its specific [documentation](https://docs.sciml.ai/Catalyst/stable/steady_state_functionality/bifurcation_diagrams/)
+
+## Multi-parameters
+
+
+Based on the package [MultiParamContinuation.jl](https://github.com/bifurcationkit/MultiParamContinuation.jl) and its [docs](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/). This functionality allows to continue solutions in two parameters.
+
+- 🟢 [sphere example](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphere/#Sphere)
+- 🟢 [sphere example based in BifurcationKit](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphereBK/#Sphere-based-on-BifurcationKit.jl)
 
 ## PDEs: bifurcations of equilibria
 ```@contents
