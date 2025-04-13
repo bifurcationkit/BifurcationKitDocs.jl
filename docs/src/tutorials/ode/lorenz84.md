@@ -97,8 +97,6 @@ sn_codim2 = continuation(br, 5, (@optic _.T),
 	ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, 
 		dsmin=1e-5, ds = -0.001, dsmax = 0.005) ; 
 	normC = norminf,
-	# detection of codim 2 bifurcations with bisection
-	detect_codim2_bifurcation = 2,
 	# we save the different components for plotting
 	record_from_solution = recordFromSolutionLor,
 	)
@@ -126,8 +124,6 @@ We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to 
 hp_codim2_1 = continuation(br, 3, (@optic _.T), 
 	ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ;
 	normC = norminf,
-	# detection of codim 2 bifurcations with bisection
-	detect_codim2_bifurcation = 2,
 	# we save the different components for plotting
 	record_from_solution = recordFromSolutionLor,
 	# compute both sides of the initial condition

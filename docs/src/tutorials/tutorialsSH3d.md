@@ -114,14 +114,14 @@ par = (l = 0.1, ν = 1.2, L1 = L1);
 Let us run a quick benchmark to evaluate the direct linear solvers:
 
 ```julia
-julia> @time cholesky(L1) \ vec(sol0);
-  0.152849 seconds (54 allocations: 87.273 MiB)
+julia> @time cholesky(Symmetric(L1)) \ vec(sol0);
+  0.069329 seconds (67 allocations: 85.233 MiB)
 
 julia> @time lu(L1) \ vec(sol0);
-  0.556157 seconds (87 allocations: 226.210 MiB, 0.49% compilation time)
+  0.193397 seconds (91 allocations: 225.885 MiB, 0.81% gc time)
 
 julia> @time qr(L1) \ vec(sol0);
-  1.609175 seconds (8.96 k allocations: 989.285 MiB, 2.67% gc time, 0.67% compilation time)
+  0.652569 seconds (206 allocations: 988.797 MiB, 1.44% gc time)
 ```
 
 Hence, `cholesky` is the big winner but it requires a positive matrix so let's see how to do that.
@@ -129,7 +129,7 @@ Hence, `cholesky` is the big winner but it requires a positive matrix so let's s
 As said in the introduction, the LU linear solver does not scale well with dimension $N$. Hence, we do something else. We note that the matrix $L_1$ is hermitian positive and use it as a preconditioner. Thus, we pre-factorize it using a Cholesky decomposition:
 
 ```julia
-Pr = cholesky(L1);
+Pr = cholesky(Symmetric(L1));
 using SuiteSparse
 # we need this "hack" to be able to use Pr as a preconditioner.
 LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= (P \ v)

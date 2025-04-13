@@ -166,7 +166,6 @@ br_hopf = @time continuation(
 	update_minaug_every_step = 1,
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
-	start_with_eigen = true,
 	jacobian_ma = :minaug, # specific to high dimensions
 	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false))
 
