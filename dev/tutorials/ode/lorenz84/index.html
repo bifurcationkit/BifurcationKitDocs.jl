@@ -39,7 +39,7 @@ br = continuation(prob, PALC(), opts_br;
 	normC = norminf,
 	bothside = true)
 
-scene = plot(br, plotfold = false, markersize = 4, legend = :topleft)</code></pre><img src="21d01d2b.svg" alt="Example block output"/><p>With detailed information:</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
+scene = plot(br, plotfold = false, markersize = 4, legend = :topleft)</code></pre><img src="a112bf7b.svg" alt="Example block output"/><p>With detailed information:</p><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
  ├─ Number of points: 33
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameter <span class="sgr36"><span class="sgr1">F</span></span> starts at 3.0, ends at 3.0
@@ -57,40 +57,26 @@ sn_codim2 = continuation(br, 5, (@optic _.T),
 	ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1,
 		dsmin=1e-5, ds = -0.001, dsmax = 0.005) ;
 	normC = norminf,
-	# detection of codim 2 bifurcations with bisection
-	detect_codim2_bifurcation = 2,
 	# we save the different components for plotting
 	record_from_solution = recordFromSolutionLor,
 	)
 
-scene = plot(sn_codim2, vars=(:X, :U), branchlabel = &quot;Folds&quot;, ylims=(-0.5, 0.5))</code></pre><img src="27d4a262.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">sn_codim2</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">FoldCont</span></span>
- ├─ Number of points: 82
+scene = plot(sn_codim2, vars=(:X, :U), branchlabel = &quot;Folds&quot;, ylims=(-0.5, 0.5))</code></pre><img src="0633a82a.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">sn_codim2</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">FoldCont</span></span>
+ ├─ Number of points: 81
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameters (:F, :T)
  ├─ Parameter <span class="sgr36"><span class="sgr1">T</span></span> starts at 0.04, ends at -0.1
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
-- #  1, <span class="sgr34"><span class="sgr1">      bt</span></span> at T ≈ +0.02094014 ∈ (+0.02094014, +0.02094020), |δp|=6e-08, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  12
-- #  2, <span class="sgr34"><span class="sgr1">      zh</span></span> at T ≈ +0.00012644 ∈ (+0.00012644, +0.00012666), |δp|=2e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  29
-- #  3, <span class="sgr34"><span class="sgr1">      zh</span></span> at T ≈ -0.00012655 ∈ (-0.00012655, -0.00012644), |δp|=1e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  32
-- #  4, <span class="sgr34"><span class="sgr1">      bt</span></span> at T ≈ -0.02094041 ∈ (-0.02094041, -0.02093949), |δp|=9e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  49
-- #  5, <span class="sgr1">endpoint</span> at T ≈ -0.10000000,                                                                     step =  81
-</code></pre><p>For example, we can compute the following normal form</p><pre><code class="language-julia hljs">get_normal_form(sn_codim2, 1; nev = 4)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr36"><span class="sgr1">Bogdanov-Takens</span></span> bifurcation point at (:F, :T) ≈ (1.4467165285461676, 0.020940139624102603).
-Normal form (B, β1 + β2⋅B + b⋅A⋅B + a⋅A²)
-Normal form coefficients:
- a = 0.21442327431975258
- b = 0.6065142321262053
-
-You can call various predictors:
- - predictor(::BogdanovTakens, ::Val{:HopfCurve}, ds)
- - predictor(::BogdanovTakens, ::Val{:FoldCurve}, ds)
- - predictor(::BogdanovTakens, ::Val{:HomoclinicCurve}, ds)
-</code></pre><h2 id="Continuation-of-Hopf-points"><a class="docs-heading-anchor" href="#Continuation-of-Hopf-points">Continuation of Hopf points</a><a id="Continuation-of-Hopf-points-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-of-Hopf-points" title="Permalink"></a></h2><p>We follow the Hopf points in the parameter plane <span>$(T,F)$</span>. We tell the solver to consider <code>br.specialpoint[3]</code> and continue it.</p><pre><code class="language-julia hljs">hp_codim2_1 = continuation(br, 3, (@optic _.T),
+- #  1, <span class="sgr34"><span class="sgr1">      zh</span></span> at T ≈ +0.02094014 ∈ (+0.02094014, +0.02094020), |δp|=6e-08, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step =  12
+- #  2, <span class="sgr34"><span class="sgr1">      zh</span></span> at T ≈ +0.00008001 ∈ (+0.00008001, +0.00019454), |δp|=1e-04, [<span class="sgr31"><span class="sgr1">   guessL</span></span>], δ = (-2, -2), step =  29
+- #  3, <span class="sgr34"><span class="sgr1">      zh</span></span> at T ≈ -0.00037404 ∈ (-0.00037404, -0.00006728), |δp|=3e-04, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 2,  2), step =  32
+- #  4, <span class="sgr34"><span class="sgr1">      bt</span></span> at T ≈ -0.02094024 ∈ (-0.02094024, -0.02094012), |δp|=1e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  0), step =  48
+- #  5, <span class="sgr1">endpoint</span> at T ≈ -0.10000000,                                                                     step =  80
+</code></pre><p>For example, we can compute the following normal form</p><pre><code class="language- hljs">get_normal_form(sn_codim2, 1; nev = 4)</code></pre><h2 id="Continuation-of-Hopf-points"><a class="docs-heading-anchor" href="#Continuation-of-Hopf-points">Continuation of Hopf points</a><a id="Continuation-of-Hopf-points-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-of-Hopf-points" title="Permalink"></a></h2><p>We follow the Hopf points in the parameter plane <span>$(T,F)$</span>. We tell the solver to consider <code>br.specialpoint[3]</code> and continue it.</p><pre><code class="language-julia hljs">hp_codim2_1 = continuation(br, 3, (@optic _.T),
 	ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ;
 	normC = norminf,
-	# detection of codim 2 bifurcations with bisection
-	detect_codim2_bifurcation = 2,
 	# we save the different components for plotting
 	record_from_solution = recordFromSolutionLor,
 	# compute both sides of the initial condition
@@ -99,23 +85,23 @@ You can call various predictors:
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = &quot;Folds&quot;)
 plot!(hp_codim2_1, vars=(:X, :U), branchlabel = &quot;Hopfs&quot;)
-ylims!(-0.7,0.7);xlims!(1,1.3)</code></pre><img src="b54f5379.svg" alt="Example block output"/><pre><code class="language-julia hljs">hp_codim2_1</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont</span></span>
- ├─ Number of points: 429
+ylims!(-0.7,0.7);xlims!(1,1.3)</code></pre><img src="d0fd66fc.svg" alt="Example block output"/><pre><code class="language-julia hljs">hp_codim2_1</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont</span></span>
+ ├─ Number of points: 802
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameters (:F, :T)
- ├─ Parameter <span class="sgr36"><span class="sgr1">T</span></span> starts at 0.020940169755254544, ends at -0.15356949274656473
+ ├─ Parameter <span class="sgr36"><span class="sgr1">T</span></span> starts at -0.14706943151472426, ends at -0.15357975432787585
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
-- #  1, <span class="sgr1">endpoint</span> at T ≈ +0.02094017,                                                                     step =   0
-- #  2, <span class="sgr34"><span class="sgr1">      bt</span></span> at T ≈ +0.02094017 ∈ (+0.02094017, +0.02094017), |δp|=6e-11, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =   0
-- #  3, <span class="sgr34"><span class="sgr1">      gh</span></span> at T ≈ +0.05019751 ∈ (+0.05019655, +0.05019751), |δp|=1e-06, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  19
-- #  4, <span class="sgr34"><span class="sgr1">      hh</span></span> at T ≈ +0.02627340 ∈ (+0.02627340, +0.02627528), |δp|=2e-06, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step =  35
-- #  5, <span class="sgr1">endpoint</span> at T ≈ -0.15372759,                                                                     step = 429
-</code></pre><p>For example, we can compute the following normal form</p><pre><code class="language-julia hljs">get_normal_form(hp_codim2_1, 3; nev = 4)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr36"><span class="sgr1">Bautin</span></span> bifurcation point at (:F, :T) ≈ (2.3763590366726275, 0.05019751302158533).
-ω = 0.6903670769045963
-Second lyapunov coefficient l₂ = 0.15577531801388655
-Normal form: i⋅ω⋅z + l₂⋅z⋅|z|⁴
+- #  1, <span class="sgr1">endpoint</span> at T ≈ -0.14723397,                                                                     step =  -1
+- #  2, <span class="sgr34"><span class="sgr1">      hh</span></span> at T ≈ +0.02509172 ∈ (+0.02509172, +0.02676438), |δp|=2e-03, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 2,  2), step = 352
+- #  3, <span class="sgr34"><span class="sgr1">      hh</span></span> at T ≈ +0.02541156 ∈ (+0.02541156, +0.02637641), |δp|=1e-03, [<span class="sgr31"><span class="sgr1">   guessL</span></span>], δ = (-2, -2), step = 408
+- #  4, <span class="sgr1">endpoint</span> at T ≈ -0.15373784,                                                                     step = 802
+</code></pre><p>For example, we can compute the following normal form</p><pre><code class="language-julia hljs">get_normal_form(hp_codim2_1, 3; nev = 4)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr36"><span class="sgr1">Hopf-Hopf</span></span> bifurcation point at (:F, :T) ≈ (2.5365165590507286, 0.025411558557093924).
+Eigenvalues:
+λ1 = -0.0024602367795248936 + 1.1506787857735017im
+λ2 = 1.3877787807814457e-16 + 0.744042999195727im
+(λ1 = -0.0024602367795248936 + 1.1506787857735017im, λ2 = 1.3877787807814457e-16 + 0.744042999195727im, G2100 = 0.4951781219456526 + 0.13313738617258042im, G0021 = -0.3090832788495159 + 0.21218934917386378im, G1110 = -0.2734499471893299 - 1.423043698979615im, G1011 = 0.5470796102245956 - 1.2834479968585375im, γ₁₁₀ = -0.09108399332666783 + 0.018467722649667125im, γ₁₀₁ = 2.5015469319268537 + 1.0639933831760022im, γ₂₁₀ = 0.06282321799322829 + 0.28482215793049337im, γ₂₀₁ = 0.2381109605359213 + 0.14474134227255864im, Γ = ComplexF64[-0.09108399332666783 + 0.018467722649667125im 2.5015469319268537 + 1.0639933831760022im; 0.06282321799322829 + 0.28482215793049337im 0.2381109605359213 + 0.14474134227255864im], h₁₁₀₀ = ComplexF64[0.15639669587604282 + 0.0im, -0.4078006629310759 - 0.0im, 0.5266012749665344 + 0.0im, 1.7278257922595728 - 0.0im], h₀₀₁₁ = ComplexF64[0.1646051265999119 + 0.0im, 0.5989620461000718 - 0.0im, 0.2388557308231652 + 0.0im, 0.9837726476260619 - 0.0im], h₀₀₀₀₁₀ = [-0.01892251445158322, 0.003117575650809403, 0.004514013862905299, -0.22929844177494238], h₀₀₀₀₀₁ = [1.834387607942936, -0.30222421841992114, -0.4375978210180883, 0.24817999904667404], h₂₀₀₀ = ComplexF64[-0.133952644355269 + 0.21632751142487133im, -0.5806580497621784 + 0.3393970912126489im, 0.36995264621629254 + 0.5510187793704826im, -0.12350863974757664 - 0.06653434693519789im], h₀₀₂₀ = ComplexF64[-0.5515330897904689 - 1.2608664684096849im, -1.3215029793411448 - 0.7025328440759735im, -0.7258412756696685 + 1.5826985322670368im, 0.9644588375127134 - 0.26471965520978896im], ns1 = (dω1 = 0.19893382741252413, dω2 = -0.23218568465589606, α = [-4.154482947777161, -0.05229477586394897]), ns2 = (dω1 = -1.3508055370492358, dω2 = 0.9128097263194911, α = [-2.8900089750776874, 0.1134682097712925]))
 </code></pre><h2 id="Continuation-of-Hopf-points-from-the-Bogdanov-Takens-point"><a class="docs-heading-anchor" href="#Continuation-of-Hopf-points-from-the-Bogdanov-Takens-point">Continuation of Hopf points from the Bogdanov-Takens point</a><a id="Continuation-of-Hopf-points-from-the-Bogdanov-Takens-point-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-of-Hopf-points-from-the-Bogdanov-Takens-point" title="Permalink"></a></h2><p>When we computed the curve of Fold points, we detected a Bogdanov-Takens bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:</p><pre><code class="language-julia hljs">hp_from_bt = continuation(sn_codim2, 4,
 	ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ;
 	normC = norminf,
@@ -128,17 +114,17 @@ Normal form: i⋅ω⋅z + l₂⋅z⋅|z|⁴
 plot(sn_codim2, vars=(:X, :U), branchlabel = &quot;SN&quot;)
 plot!(hp_codim2_1, vars=(:X, :U), branchlabel = &quot;Hopf1&quot;)
 plot!(hp_from_bt, vars=(:X, :U), branchlabel = &quot;Hopf2&quot;)
-ylims!(-0.7,0.75); xlims!(0.95,1.3)</code></pre><img src="664b9b2b.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">hp_from_bt</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont from BogdanovTakens bifurcation point.</span></span>
+ylims!(-0.7,0.75); xlims!(0.95,1.3)</code></pre><img src="711d4341.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">hp_from_bt</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont from BogdanovTakens bifurcation point.</span></span>
  ├─ Number of points: 401
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameters (:F, :T)
- ├─ Parameter <span class="sgr36"><span class="sgr1">T</span></span> starts at -0.02682482675922117, ends at 0.15063717400158005
+ ├─ Parameter <span class="sgr36"><span class="sgr1">T</span></span> starts at -0.026823959138524478, ends at 0.1506371396616536
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
-- #  1, <span class="sgr34"><span class="sgr1">      gh</span></span> at T ≈ -0.05018361 ∈ (-0.05022014, -0.05018361), |δp|=4e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  23
-- #  2, <span class="sgr34"><span class="sgr1">      hh</span></span> at T ≈ -0.02626030 ∈ (-0.02631231, -0.02626030), |δp|=5e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step =  26
-- #  3, <span class="sgr1">endpoint</span> at T ≈ +0.15079813,                                                                     step = 401
+- #  1, <span class="sgr34"><span class="sgr1">      gh</span></span> at T ≈ -0.05018460 ∈ (-0.05022113, -0.05018460), |δp|=4e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  23
+- #  2, <span class="sgr34"><span class="sgr1">      hh</span></span> at T ≈ -0.02626316 ∈ (-0.02631517, -0.02626316), |δp|=5e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step =  26
+- #  3, <span class="sgr1">endpoint</span> at T ≈ +0.15079809,                                                                     step = 401
 </code></pre><h2 id="Continuation-of-Hopf-points-from-the-Zero-Hopf-point"><a class="docs-heading-anchor" href="#Continuation-of-Hopf-points-from-the-Zero-Hopf-point">Continuation of Hopf points from the Zero-Hopf point</a><a id="Continuation-of-Hopf-points-from-the-Zero-Hopf-point-1"></a><a class="docs-heading-anchor-permalink" href="#Continuation-of-Hopf-points-from-the-Zero-Hopf-point" title="Permalink"></a></h2><p>When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:</p><pre><code class="language-julia hljs">hp_from_zh = continuation(sn_codim2, 2,
 	ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02) ;
 	normC = norminf,
@@ -150,15 +136,15 @@ plot(hp_codim2_1, vars=(:X, :U), branchlabel = &quot;Hopf&quot;)
 plot!(hp_from_bt, vars=(:X, :U),  branchlabel = &quot;Hopf2&quot;)
 plot!( hp_from_zh, vars=(:X, :U), branchlabel = &quot;Hopf&quot;, legend = :topleft)
 plot!(sn_codim2,vars=(:X, :U),)
-ylims!(-0.7,0.75); xlims!(0.95,1.3)</code></pre><img src="59890127.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">hp_from_zh</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont from BifurcationKit.ZeroHopf bifurcation point.</span></span>
+ylims!(-0.7,0.75); xlims!(0.95,1.3)</code></pre><img src="049a9a85.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">hp_from_zh</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont from BifurcationKit.ZeroHopf bifurcation point.</span></span>
  ├─ Number of points: 401
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameters (:F, :T)
- ├─ Parameter <span class="sgr36"><span class="sgr1">T</span></span> starts at 0.00012643994894409697, ends at 0.6669634456430219
+ ├─ Parameter <span class="sgr36"><span class="sgr1">T</span></span> starts at 8.000500426234362e-5, ends at 0.6669650656671116
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
-- #  1, <span class="sgr34"><span class="sgr1">      gh</span></span> at T ≈ +0.00012660 ∈ (+0.00012654, +0.00012660), |δp|=6e-08, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =   1
-- #  2, <span class="sgr34"><span class="sgr1">      hh</span></span> at T ≈ +0.02627444 ∈ (+0.02627324, +0.02627444), |δp|=1e-06, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  27
-- #  3, <span class="sgr1">endpoint</span> at T ≈ +0.66778051,                                                                     step = 401
-</code></pre><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Kuznetsov"><a class="tag is-link" href="#citeref-Kuznetsov">Kuznetsov</a><blockquote><p>Kuznetsov, Yu A., H. G. E. Meijer, W. Govaerts, and B. Sautois. “Switching to Nonhyperbolic Cycles from Codim 2 Bifurcations of Equilibria in ODEs.” Physica D: Nonlinear Phenomena 237, no. 23 (December 2008): 3061–68.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.1 on <span class="colophon-date" title="Monday 7 April 2025 16:17">Monday 7 April 2025</span>. Using Julia version 1.10.9.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+- #  1, <span class="sgr34"><span class="sgr1">      zh</span></span> at T ≈ +0.00012654 ∈ (+0.00012652, +0.00012654), |δp|=2e-08, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1,  0), step =   2
+- #  2, <span class="sgr34"><span class="sgr1">      hh</span></span> at T ≈ +0.02627930 ∈ (+0.02624096, +0.02627930), |δp|=4e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  27
+- #  3, <span class="sgr1">endpoint</span> at T ≈ +0.66778213,                                                                     step = 401
+</code></pre><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Kuznetsov"><a class="tag is-link" href="#citeref-Kuznetsov">Kuznetsov</a><blockquote><p>Kuznetsov, Yu A., H. G. E. Meijer, W. Govaerts, and B. Sautois. “Switching to Nonhyperbolic Cycles from Codim 2 Bifurcations of Equilibria in ODEs.” Physica D: Nonlinear Phenomena 237, no. 23 (December 2008): 3061–68.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.1 on <span class="colophon-date" title="Sunday 13 April 2025 19:27">Sunday 13 April 2025</span>. Using Julia version 1.10.9.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
