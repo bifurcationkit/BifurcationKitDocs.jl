@@ -117,7 +117,6 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, ContinuationPar(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
-	prm = true, detailed = true,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## add previous branch
@@ -138,16 +137,16 @@ We use a different method to compute periodic orbits: we rely on a fixed point o
 using DifferentialEquations
 
 # ODE problem for using DifferentialEquations
-prob_ode = ODEProblem(lur!, copy(z0), (0., 1.), par_lur; abstol = 1e-11, reltol = 1e-9)
+prob_ode = ODEProblem(lur!, copy(z0), (0., 1.), par_lur; abstol = 1e-12, reltol = 1e-10)
 
 # continuation parameters
 # we decrease a bit the newton tolerance to help automatic branch switching from PD point
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= -0.001, newton_options = NewtonPar(tol = 1e-9), tol_stability = 1e-5, n_inversion = 8, nev = 3)
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds= -0.001, newton_options = NewtonPar(tol = 1e-10), tol_stability = 1e-5, n_inversion = 8, nev = 3, plot_every_step = 1)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
-	# parallel shooting functional with 5 sections
-	ShootingProblem(15, prob_ode, Rodas5(); parallel = true);
+	# parallel shooting functional with 10 sections
+	ShootingProblem(10, prob_ode, Rodas5(); parallel = true);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -164,8 +163,10 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, 
 	ContinuationPar(br_po.contparams, max_steps = 20, ds = -0.008);
-	plot = true, verbosity = 2,
-	δp = -0.005, ampfactor = 0.1,
+	# plot = true, verbosity = 2,
+	δp = -0.005,
+	ampfactor = 0.01,
+	use_normal_form = false,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		# add previous branch
