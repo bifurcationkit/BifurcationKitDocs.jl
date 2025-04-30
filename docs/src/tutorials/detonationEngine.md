@@ -137,11 +137,11 @@ br
 
 We have detected 6 Hopf bifurcations. We now study the periodic orbits branching from them.
 
-## Computing the branches of Travelling waves
+## Computing the branches of Traveling waves
 
-The periodic orbits emanating from the Hopf points look like travelling waves. This is intuitive because the equation is mostly advective as the diffusion coefficients $\nu_i$ are small. We will thus seek for travelling waves instead of periodic orbits. The advantage is that the possible Neimark-Sacker bifurcation is transformed into a regular Hopf one which allows the study of modulated travelling waves.
+The periodic orbits emanating from the Hopf points look like traveling waves. This is intuitive because the equation is mostly advective as the diffusion coefficients $\nu_i$ are small. We will thus seek for traveling waves instead of periodic orbits. The advantage is that the possible Neimark-Sacker bifurcation is transformed into a regular Hopf one which allows the study of modulated traveling waves.
 
-As we will do the same thing 3 times, we bundle the procedure in functions. We first use the regular Hopf normal form to create a guess for the travelling wave:
+As we will do the same thing 3 times, we bundle the procedure in functions. We first use the regular Hopf normal form to create a guess for the traveling wave:
 
 ```@example DETENGINE
 function getGuess(br, nb; δp = 0.005)
@@ -152,12 +152,12 @@ end
 nothing #hide
 ```
 
-Using this guess, we can continue the travelling wave as function of a parameter. Note that in the following code, a generalized eigensolver is automatically created during the call to `continuation` which properly computes the stability of the wave.
+Using this guess, we can continue the traveling wave as function of a parameter. Note that in the following code, a generalized eigensolver is automatically created during the call to `continuation` which properly computes the stability of the wave.
 
 ```@example DETENGINE
 function computeBranch(br, nb; δp = 0.005, max_steps = 190)
 	_p, sol = getGuess(br, nb)
-	# travelling wave problem
+	# traveling wave problem
 	probTW = TWProblem(
 		re_make(br.prob, params = (getparams(br)..., up = _p)),
 		getparams(br).Db,
@@ -169,7 +169,7 @@ function computeBranch(br, nb; δp = 0.005, max_steps = 190)
 	optn = NewtonPar(verbose = true, eigsolver = eig)
 	# continuation parameters
 	opt_cont_br = ContinuationPar(p_min = 0.1, p_max = 1.3, newton_options = optn, ds= -0.001, dsmax = 0.01, plot_every_step = 5, detect_bifurcation = 3, nev = 10, max_steps = max_steps)
-	# we build a guess for the travelling wave with speed -0.9
+	# we build a guess for the traveling wave with speed -0.9
 	twguess = vcat(sol, -0.9)
 	br_wave = continuation(probTW, twguess, PALC(), opt_cont_br;
 		verbosity = 3, plot = true, bothside = true,

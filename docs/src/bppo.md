@@ -29,13 +29,15 @@ where `prm` indicates whether you want to use the method based on Poincaré retu
 
 ## Predictor
 
-The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the method
+The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the method:
 
 ```@docs
 predictor(hp::BifurcationKit.BranchPointPO{ <: ShootingProblem }, δp, 
                     ampfactor; 
                     override = false)
 ```
+
+If `override = true`, then the predictor is simply `x0 .+ ampfactor .* e` for the parameter `p0 + δp` and where `e` is a bifurcating eigenvector.
 
 ## Which method to use?
 

@@ -104,7 +104,7 @@ br_po = continuation(
 	record_from_solution = recordPO,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
-		## plot previous branch
+		# plot previous branch
 		plot!(br, subplot = 1, putbifptlegend = false)
 		end,
 	normC = norminf)
@@ -168,7 +168,7 @@ br_po_pd = continuation(deepcopy(br_po), 1,
 	δp = -0.005, ampfactor = 0.1,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
-		## add previous branch
+		# add previous branch
 		plot!(br_po; subplot = 1)
 	end,
 	record_from_solution = recordPO,
@@ -187,10 +187,9 @@ We use finite differences to discretize the problem for finding periodic orbits.
 # continuation parameters
 opts_po_cont = ContinuationPar(dsmax = 0.02, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
 
-Mt = 120 # number of time sections
 br_po = continuation(
 	br, 1, opts_po_cont,
-	PeriodicOrbitTrapProblem(M = Mt);
+	PeriodicOrbitTrapProblem(M = 120);
 	record_from_solution = recordPO,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -211,7 +210,7 @@ br_po_pd = continuation(deepcopy(br_po), 1, ContinuationPar(br_po.contparams, ma
 	ampfactor = .2, δp = -0.005,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
-		## add previous branch
+		# add previous branch
 		plot!(br_po; legend=false, subplot=1)
 	end,
 	record_from_solution = recordPO,

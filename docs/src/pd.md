@@ -46,6 +46,8 @@ predictor(hp::BifurcationKit.PeriodDoublingPO{ <: ShootingProblem }, δp,
                     override = false)
 ```
 
+If `override = true`, then the predictor is simply `x0 .+ ampfactor .* e` for the parameter `p0 + δp` and where `e` is a bifurcating eigenvector.
+
 ## Normal form based on Poincaré return map
 
 Given a transversal section $\Sigma$ to $x_0$ at $x_0(0)$, the Poincaré return map $\mathcal P$ associates to each point $x\in\Sigma$ close to $x_0(0)$ the first point $\mathcal P(x,p)\in\Sigma$ where the orbit of (E) with initial condition $x$ intersects again $\Sigma$ at $\mathcal P(x,p)$. Hence, the discrete map $x_{n+1}=\mathcal P(x_n,p)$ has normal form

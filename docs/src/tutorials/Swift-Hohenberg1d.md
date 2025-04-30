@@ -38,9 +38,8 @@ normweighted(x) = norm(_weight .* x)
 L1 = -(I + Δ)^2
 
 # functional of the problem
-function R_SH(u, par)
+function R_SH!(out, u, par)
 	(;λ, ν, L1) = par
-	out = similar(u)
 	out .= L1 * u .+ λ .* u .+ ν .* u.^3 - u.^5
 end
 
@@ -60,7 +59,7 @@ parSH = (λ = -0.7, ν = 2., L1 = L1)
 sol0 = zeros(N)
 
 # Bifurcation Problem
-prob = BifurcationProblem(R_SH, sol0, parSH, (@optic _.λ); J = Jac_sp,
+prob = BifurcationProblem(R_SH!, sol0, parSH, (@optic _.λ); J = Jac_sp,
 	record_from_solution = (x, p; k...) -> (n2 = norm(x), nw = normweighted(x), s = sum(x), s2 = x[end ÷ 2], s4 = x[end ÷ 4], s5 = x[end ÷ 5]),
 	plot_solution = (x, p;kwargs...)->(plot!(X, x; ylabel="solution", label="", kwargs...)))
 ```

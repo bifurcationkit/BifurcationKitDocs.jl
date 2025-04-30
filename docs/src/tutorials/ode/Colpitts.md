@@ -118,7 +118,6 @@ optnpo = @set optn.tol = 1e-9
 
 opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, p_min = 0.2, max_steps = 50, newton_options = optnpo, nev = 4, tol_stability = 1e-3, plot_every_step = 5)
 
-
 # Shooting functional. Note the  stringent tolerances used to cope with
 # the extreme parameters of the model
 probSH = ShootingProblem(10, probFreez_ode, Rodas5P(); reltol = 1e-10, abstol = 1e-13)

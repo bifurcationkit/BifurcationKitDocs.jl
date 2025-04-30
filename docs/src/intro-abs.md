@@ -32,12 +32,12 @@ When the bifurcation diagram is very stiff, **automatic branch switching** may f
 ```
 continuation(br, ind_bif, options_cont; 
     δp = 0.1, ampfactor = 0.1,
-    override = true,
+    use_normal_form = false,
     kwargs...)
 ```
 
 !!! tip "Manual branch switching"
-    Manual branch switching is automatically used by `BifurcationKit` when the normal form of the bifurcation point is not implemented (like PD normal form for Trapezoid method). You can force `BifurcationKit` to use it using the `override = true` key word.
+    Manual branch switching is automatically used by `BifurcationKit` when the normal form of the bifurcation point is not implemented (like PD normal form for Trapezoid method). You can force `BifurcationKit` to use it using the `use_normal_form = false` key word.
 
 ## Branch switching of non-simple bifurcation points
 

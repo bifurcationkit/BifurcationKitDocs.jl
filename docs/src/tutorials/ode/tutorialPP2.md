@@ -74,7 +74,6 @@ diagram = bifurcationdiagram(prob, PALC(),
 scene = plot(diagram; code = (), title="$(size(diagram)) branches", legend = false)
 ```
 
-
 ## Branch of periodic orbits with collocation method
 
 As you can see on the diagram, there is a Hopf bifurcation indicated by a red dot.  Let us compute the periodic orbit branching from the Hopf point.

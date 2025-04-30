@@ -55,9 +55,9 @@ parlor = (α = 1//4, β = 1, G = .25, δ = 1.04, γ = 0.987, F = 1.7620532879639
 z0 = [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.02105288273117459]
 
 # bifurcation problem
-recordFromSolutionLor(x, p; k...) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
+record_from_solution_Lor(x, p; k...) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
 prob = BifurcationProblem(Lor, z0, (parlor..., T=0.04, F=3.), (@optic _.F);
-    record_from_solution = recordFromSolutionLor)
+    record_from_solution = record_from_solution_Lor)
 nothing #hide
 ```
 
@@ -98,7 +98,7 @@ sn_codim2 = continuation(br, 5, (@optic _.T),
 		dsmin=1e-5, ds = -0.001, dsmax = 0.005) ; 
 	normC = norminf,
 	# we save the different components for plotting
-	record_from_solution = recordFromSolutionLor,
+	record_from_solution = record_from_solution_Lor,
 	)
 
 scene = plot(sn_codim2, vars=(:X, :U), branchlabel = "Folds", ylims=(-0.5, 0.5))
@@ -113,7 +113,7 @@ sn_codim2
 For example, we can compute the following normal form
 
 ```@example LORENZ84
-get_normal_form(sn_codim2, 1; nev = 4)
+get_normal_form(sn_codim2, 1)
 ```
 
 ## Continuation of Hopf points
@@ -125,7 +125,7 @@ hp_codim2_1 = continuation(br, 3, (@optic _.T),
 	ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ;
 	normC = norminf,
 	# we save the different components for plotting
-	record_from_solution = recordFromSolutionLor,
+	record_from_solution = record_from_solution_Lor,
 	# compute both sides of the initial condition
 	bothside = true,
 	)
@@ -142,7 +142,7 @@ hp_codim2_1
 For example, we can compute the following normal form
 
 ```@example LORENZ84
-get_normal_form(hp_codim2_1, 3; nev = 4)
+get_normal_form(hp_codim2_1, 3)
 ```
 
 ## Continuation of Hopf points from the Bogdanov-Takens point
@@ -156,7 +156,7 @@ hp_from_bt = continuation(sn_codim2, 4,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
 	# we save the different components for plotting
-	record_from_solution = recordFromSolutionLor,
+	record_from_solution = record_from_solution_Lor,
 	)
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "SN")
@@ -180,12 +180,12 @@ hp_from_zh = continuation(sn_codim2, 2,
 	ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02) ;
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
-	record_from_solution = recordFromSolutionLor,
+	record_from_solution = record_from_solution_Lor,
 	)
 
 plot(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf")
 plot!(hp_from_bt, vars=(:X, :U),  branchlabel = "Hopf2")
-plot!( hp_from_zh, vars=(:X, :U), branchlabel = "Hopf", legend = :topleft)
+plot!(hp_from_zh, vars=(:X, :U), branchlabel = "Hopf", legend = :topleft)
 plot!(sn_codim2,vars=(:X, :U),)
 ylims!(-0.7,0.75); xlims!(0.95,1.3)
 ```

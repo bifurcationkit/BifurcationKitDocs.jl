@@ -97,7 +97,6 @@ scene = plot(br_sh)
 ```@example STEINMETZ
 opts_posh_fold = ContinuationPar(br_sh.contparams, detect_bifurcation = 2, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
 @reset opts_posh_fold.newton_options.tol = 1e-12
-# @reset opts_posh_fold.newton_options.verbose = true
 fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fold;
 		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 0,
@@ -155,7 +154,7 @@ scene = plot(br_coll)
 ### Curve of Fold points of periodic orbits
 
 ```@example STEINMETZ
-opts_pocl_fold = ContinuationPar(br_coll.contparams, detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2, max_steps = 100, ds = 0.01)
+opts_pocl_fold = ContinuationPar(br_coll.contparams,detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2, max_steps = 100, ds = 0.01)
 @reset opts_pocl_fold.newton_options.verbose = true
 @reset opts_pocl_fold.newton_options.tol = 1e-11
 fold_po_cl = @time continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold;

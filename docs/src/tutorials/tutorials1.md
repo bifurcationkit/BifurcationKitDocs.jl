@@ -13,7 +13,7 @@ This is a simple example in which we aim at solving $\Delta T+\alpha N(T,\beta)=
 using Revise, BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
-N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
+NL(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
 nothing #hide
 ```
 
@@ -27,7 +27,7 @@ function F_chan(x, p)
 	f[1] = x[1] - β
 	f[n] = x[n] - β
 	for i=2:n-1
-		f[i] = (x[i-1] - 2 * x[i] + x[i+1]) * (n-1)^2 + α * N(x[i], b = β)
+		f[i] = (x[i-1] - 2 * x[i] + x[i+1]) * (n-1)^2 + α * NL(x[i], b = β)
 	end
 	return f
 end
