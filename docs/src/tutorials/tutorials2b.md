@@ -195,11 +195,11 @@ You should see this:
 │       8     │       1.6393e-04     │       11       │
 │       9     │       7.3277e-08     │       10       │
 └─────────────┴──────────────────────┴────────────────┘
-  0.317790 seconds (42.67 k allocations: 1.256 MiB)
+  0.070565 seconds (127.18 k allocations: 3.261 MiB)
 --> norm(sol) = 1.26017611779702
 ```
 
-**Note that this is about the 10x faster than Example 2 but for a problem almost 100x larger! (On a V100 GPU)**
+**Note that this is about the 30x faster than Example 2 but for a problem almost 100x larger! (On a V100 GPU)**
 
 The solution is:
 
@@ -248,31 +248,37 @@ We have the following information about the branch of hexagons
 
 ```julia
 julia> br
-Branch number of points: 67
-Branch of Equilibrium
-Bifurcation points:
- (ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`)
-- #  1,    nd at p ≈ -0.21522461 ∈ (-0.21528614, -0.21522461), |δp|=6e-05, [converged], δ = ( 3,  0), step =  24, eigenelements in eig[ 25], ind_ev =   3
-- #  2,    nd at p ≈ -0.21469007 ∈ (-0.21479652, -0.21469007), |δp|=1e-04, [converged], δ = ( 2,  0), step =  25, eigenelements in eig[ 26], ind_ev =   5
-- #  3,    nd at p ≈ -0.21216919 ∈ (-0.21264341, -0.21216919), |δp|=5e-04, [converged], δ = ( 2,  0), step =  27, eigenelements in eig[ 28], ind_ev =   7
-- #  4,    nd at p ≈ -0.21052576 ∈ (-0.21110899, -0.21052576), |δp|=6e-04, [converged], δ = ( 2,  0), step =  28, eigenelements in eig[ 29], ind_ev =   9
-- #  5,    nd at p ≈ -0.20630678 ∈ (-0.21052576, -0.20630678), |δp|=4e-03, [converged], δ = ( 8,  0), step =  29, eigenelements in eig[ 30], ind_ev =  17
-- #  6,    nd at p ≈ -0.19896508 ∈ (-0.19897308, -0.19896508), |δp|=8e-06, [converged], δ = ( 6,  0), step =  30, eigenelements in eig[ 31], ind_ev =  23
-- #  7,    nd at p ≈ -0.18621673 ∈ (-0.18748234, -0.18621673), |δp|=1e-03, [converged], δ = ( 2,  0), step =  33, eigenelements in eig[ 34], ind_ev =  25
-- #  8,    nd at p ≈ -0.17258147 ∈ (-0.18096574, -0.17258147), |δp|=8e-03, [converged], δ = ( 4,  0), step =  35, eigenelements in eig[ 36], ind_ev =  29
-- #  9,    nd at p ≈ -0.14951737 ∈ (-0.15113148, -0.14951737), |δp|=2e-03, [converged], δ = (-4,  0), step =  39, eigenelements in eig[ 40], ind_ev =  29
-- # 10,    nd at p ≈ -0.14047758 ∈ (-0.14130979, -0.14047758), |δp|=8e-04, [converged], δ = (-2,  0), step =  41, eigenelements in eig[ 42], ind_ev =  25
-- # 11,    nd at p ≈ -0.11304882 ∈ (-0.11315916, -0.11304882), |δp|=1e-04, [converged], δ = (-4,  0), step =  45, eigenelements in eig[ 46], ind_ev =  23
-- # 12,    nd at p ≈ -0.09074623 ∈ (-0.09085968, -0.09074623), |δp|=1e-04, [converged], δ = (-6,  0), step =  49, eigenelements in eig[ 50], ind_ev =  19
-- # 13,    nd at p ≈ -0.07062574 ∈ (-0.07246519, -0.07062574), |δp|=2e-03, [converged], δ = (-4,  0), step =  52, eigenelements in eig[ 53], ind_ev =  13
-- # 14,    nd at p ≈ -0.06235903 ∈ (-0.06238787, -0.06235903), |δp|=3e-05, [converged], δ = (-2,  0), step =  54, eigenelements in eig[ 55], ind_ev =   9
-- # 15,    nd at p ≈ -0.05358077 ∈ (-0.05404312, -0.05358077), |δp|=5e-04, [converged], δ = (-2,  0), step =  56, eigenelements in eig[ 57], ind_ev =   7
-- # 16,    nd at p ≈ -0.02494422 ∈ (-0.02586444, -0.02494422), |δp|=9e-04, [converged], δ = (-2,  0), step =  60, eigenelements in eig[ 61], ind_ev =   5
-- # 17,    nd at p ≈ -0.00484022 ∈ (-0.00665356, -0.00484022), |δp|=2e-03, [converged], δ = (-2,  0), step =  63, eigenelements in eig[ 64], ind_ev =   3
-- # 18,    nd at p ≈ +0.00057801 ∈ (-0.00122418, +0.00057801), |δp|=2e-03, [converged], δ = ( 5,  0), step =  64, eigenelements in eig[ 65], ind_ev =   6
-- # 19,    nd at p ≈ +0.00320921 ∈ (+0.00141327, +0.00320921), |δp|=2e-03, [converged], δ = (10,  0), step =  65, eigenelements in eig[ 66], ind_ev =  16
-Fold points:
-- #  1, fold at p ≈ -0.21528694 ∈ (-0.21528694, -0.21528694), |δp|=-1e+00, [    guess], δ = ( 0,  0), step =  24, eigenelements in eig[ 24], ind_ev =   0
+┌─ Curve type: EquilibriumCont
+ ├─ Number of points: 66
+ ├─ Type of vectors: CuArray{Float64, 2, CUDA.DeviceMemory}
+ ├─ Parameter l starts at -0.15, ends at 0.005
+ ├─ Algo: PALC
+ └─ Special points:
+
+- #  1,       nd at l ≈ -0.21527227 ∈ (-0.21528429, -0.21527227), |δp|=1e-05, [   guessL], δ = ( 2,  0), step =  17
+- #  2,       nd at l ≈ -0.21473544 ∈ (-0.21478790, -0.21473544), |δp|=5e-05, [   guessL], δ = ( 2,  0), step =  18
+- #  3,       nd at l ≈ -0.21250580 ∈ (-0.21262132, -0.21250580), |δp|=1e-04, [   guessL], δ = ( 2,  0), step =  20
+- #  4,       nd at l ≈ -0.21049751 ∈ (-0.21064704, -0.21049751), |δp|=1e-04, [    guess], δ = ( 2,  0), step =  21
+- #  5,       nd at l ≈ -0.20955332 ∈ (-0.20971589, -0.20955332), |δp|=2e-04, [   guessL], δ = ( 4,  0), step =  22
+- #  6,       bp at l ≈ -0.20586004 ∈ (-0.20606348, -0.20586004), |δp|=2e-04, [   guessL], δ = ( 1,  0), step =  24
+- #  7,       nd at l ≈ -0.19890182 ∈ (-0.19915853, -0.19890182), |δp|=3e-04, [   guessL], δ = ( 2,  0), step =  26
+- #  8,       nd at l ≈ -0.19864215 ∈ (-0.19890182, -0.19864215), |δp|=3e-04, [    guess], δ = ( 2,  0), step =  27
+- #  9,       nd at l ≈ -0.18708961 ∈ (-0.18740461, -0.18708961), |δp|=3e-04, [   guessL], δ = ( 2,  0), step =  30
+- # 10,       nd at l ≈ -0.17710705 ∈ (-0.17745465, -0.17710705), |δp|=3e-04, [   guessL], δ = ( 3,  0), step =  32
+- # 11,       bp at l ≈ -0.17357172 ∈ (-0.17392941, -0.17357172), |δp|=4e-04, [   guessL], δ = ( 1,  0), step =  33
+- # 12,       bp at l ≈ -0.15063090 ∈ (-0.15103338, -0.15063090), |δp|=4e-04, [   guessL], δ = (-1,  0), step =  37
+- # 13,       nd at l ≈ -0.15022700 ∈ (-0.15063090, -0.15022700), |δp|=4e-04, [    guess], δ = (-3,  0), step =  38
+- # 14,       nd at l ≈ -0.14079246 ∈ (-0.14120844, -0.14079246), |δp|=4e-04, [    guess], δ = (-2,  0), step =  40
+- # 15,       nd at l ≈ -0.11282985 ∈ (-0.11327206, -0.11282985), |δp|=4e-04, [    guess], δ = (-4,  0), step =  45
+- # 16,       nd at l ≈ -0.09040810 ∈ (-0.09086196, -0.09040810), |δp|=5e-04, [   guessL], δ = (-6,  0), step =  49
+- # 17,       nd at l ≈ -0.07120307 ∈ (-0.07166296, -0.07120307), |δp|=5e-04, [   guessL], δ = (-3,  0), step =  52
+- # 18,       nd at l ≈ -0.06198642 ∈ (-0.06244792, -0.06198642), |δp|=5e-04, [   guessL], δ = (-2,  0), step =  54
+- # 19,       nd at l ≈ -0.05366990 ∈ (-0.05413224, -0.05366990), |δp|=5e-04, [   guessL], δ = (-2,  0), step =  56
+- # 20,       nd at l ≈ -0.02503291 ∈ (-0.02549304, -0.02503291), |δp|=5e-04, [   guessL], δ = (-2,  0), step =  60
+- # 21,       nd at l ≈ -0.00628734 ∈ (-0.00674105, -0.00628734), |δp|=5e-04, [    guess], δ = (-2,  0), step =  63
+- # 22,       nd at l ≈ +0.00004100 ∈ (-0.00040962, +0.00004100), |δp|=5e-04, [   guessL], δ = ( 2,  0), step =  64
+- # 23,       nd at l ≈ +0.00500000 ∈ (+0.00500000, +0.00500000), |δp|=0e+00, [    guess], δ = ( 9,  0), step =  65
+- # 24, endpoint at l ≈ +0.00500000,                                                                     step =  65
 ```
 
 ## Automatic branch switching on the GPU

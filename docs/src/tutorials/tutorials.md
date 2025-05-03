@@ -80,6 +80,18 @@ Based on the package [HclinicBifurcationKit.jl](https://github.com/bifurcationki
 - 🟡 [Autonomous electronic circuit (aBS from BT)](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/tutorialsFreire/#Autonomous-electronic-circuit-(aBS-from-BT))
 - 🟡 [Nonlinear laser model](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/OPL/#Nonlinear-laser-model)
 
+## Multi-parameters continuation
+
+
+Based on the package [MultiParamContinuation.jl](https://github.com/bifurcationkit/MultiParamContinuation.jl) and its [docs](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/). This functionality allows to continue solutions in two parameters.
+
+- 🟢 [sphere example](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphere/#Sphere)
+- 🟢 [sphere example based in BifurcationKit](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphereBK/#Sphere-based-on-BifurcationKit.jl)
+
+In the next tutorial, we continue solutions (equilibria, Hopf points, periodic orbits) as function of two free parameters:
+
+- 🟢 [ABC problem](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/abc/#ABC-problem)
+
 
 ## DAE examples
 
@@ -96,23 +108,9 @@ See the [tutorials](https://bifurcationkit.github.io/DDEBifurcationKit.jl/dev/tu
 
 `ModelingToolkit` provides a tailored interface to `BifurcationKit` and the user is encouraged to have a look at its specific [documentation](https://docs.sciml.ai/ModelingToolkit/stable/tutorials/bifurcation_diagram_computation/).
 
-We also provide some alternative example(s): 
-
-```@contents
-Pages = ["ode/NME-MTK.md"]
-Depth = 1
-```
 ## Examples based on Catalyst
 
 `Catalyst` provides a tailored interface to `BifurcationKit` and the user is encouraged to have a look at its specific [documentation](https://docs.sciml.ai/Catalyst/stable/steady_state_functionality/bifurcation_diagrams/)
-
-## Multi-parameters
-
-
-Based on the package [MultiParamContinuation.jl](https://github.com/bifurcationkit/MultiParamContinuation.jl) and its [docs](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/). This functionality allows to continue solutions in two parameters.
-
-- 🟢 [sphere example](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphere/#Sphere)
-- 🟢 [sphere example based in BifurcationKit](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/sphereBK/#Sphere-based-on-BifurcationKit.jl)
 
 ## PDEs: bifurcations of equilibria
 ```@contents

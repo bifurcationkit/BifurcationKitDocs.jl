@@ -116,6 +116,7 @@ makedocs(
 				]
 		],
 		"Frequently asked questions" => "faq.md",
+		"Debugging" => "debug.md",
 		"Migration from old versions" => "migration.md",
 		"Library" => "library.md"
 	]
