@@ -79,7 +79,7 @@ scene = plot(br, xlims = (0.8,1.8))
 If we vary the parameter $k$, the previous bifurcation points changes. Let us compute branches for different values of $k$.
 
 ```@example LORENZ84
-_branches = [continuation(re_make(prob, params = BK.@set par_com.k = k),
+_branches = [continuation(re_make(prob, params = @set par_com.k = k),
 				 PALC(), ContinuationPar(opts_br, p_min = 0.6, p_max = 1.5);
 				normC = norminf,
 				bothside = true)
