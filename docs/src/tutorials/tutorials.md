@@ -19,7 +19,7 @@ There are three levels of automatization of the computation in these tutorials:
 3. manual bifurcation diagram computation: one does not use automatic branch switching. This has only educational purposes or for complex problems where aBS fails.
 
 
-## ODE examples
+## 1. ODE examples
 
 These examples are specific to ODEs. 
 
@@ -80,7 +80,7 @@ Based on the package [HclinicBifurcationKit.jl](https://github.com/bifurcationki
 - 🟡 [Autonomous electronic circuit (aBS from BT)](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/tutorialsFreire/#Autonomous-electronic-circuit-(aBS-from-BT))
 - 🟡 [Nonlinear laser model](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/tutorials/ode/OPL/#Nonlinear-laser-model)
 
-## Multi-parameters continuation
+## 2. Multi-parameters continuation
 
 
 Based on the package [MultiParamContinuation.jl](https://github.com/bifurcationkit/MultiParamContinuation.jl) and its [docs](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/). This functionality allows to continue solutions in two parameters.
@@ -93,50 +93,50 @@ In the next tutorial, we continue solutions (equilibria, Hopf points, periodic o
 - 🟢 [ABC problem](https://bifurcationkit.github.io/MultiParamContinuation.jl/dev/tutorials/ode/abc/#ABC-problem)
 
 
-## DAE examples
+## 3. DAE examples
 
 ```@contents
 Pages = ["ode/Colpitts.md"]
 Depth = 1
 ```
 
-## DDE examples
+## 4. DDE examples
 
 See the [tutorials](https://bifurcationkit.github.io/DDEBifurcationKit.jl/dev/tutorials/tutorials/) of [DDEBifurcationKit.jl](https://github.com/bifurcationkit/DDEBifurcationKit.jl).
 
-## SciML examples based on ModelingToolkit
+## 5. SciML examples based on ModelingToolkit
 
 `ModelingToolkit` provides a tailored interface to `BifurcationKit` and the user is encouraged to have a look at its specific [documentation](https://docs.sciml.ai/ModelingToolkit/stable/tutorials/bifurcation_diagram_computation/).
 
-## SciML examples based on Catalyst
+## 6. SciML examples based on Catalyst
 
 `Catalyst` provides a tailored interface to `BifurcationKit` and the user is encouraged to have a look at its specific [documentation](https://docs.sciml.ai/Catalyst/stable/steady_state_functionality/bifurcation_diagrams/)
 
-## PDEs: bifurcations of equilibria
+## 7. PDEs: bifurcations of equilibria
 ```@contents
 Pages = ["tutorials1.md", "tutorials1b.md", "tutorials2.md", "mittelmann.md", "tutorials2b.md", "tutorialsSH3d.md"]
 Depth = 1
 ```
 
-## PDEs: automatic bifurcation diagram
+## 8. PDEs: automatic bifurcation diagram
 ```@contents
 Pages = ["Swift-Hohenberg1d.md", "tutorialCarrier.md", "ks1d.md", "mittelmannAuto.md", "ks2d.md"]
 Depth = 1
 ```
 
-## PDEs: bifurcations of periodic orbits
+## 9. PDEs: bifurcations of periodic orbits
 ```@contents
 Pages = ["tutorials3.md","tutorials3b.md", "BrusselatorFF.md", "tutorialsPD.md", "tutorialsCGL.md", "tutorialsCGLShoot.md","Langmuir.md"]
 Depth = 1
 ```
 
-## PDEs based on FEM with [Gridap.jl](https://github.com/gridap/Gridap.jl)
+## 10. PDEs based on FEM with [Gridap.jl](https://github.com/gridap/Gridap.jl)
 ```@contents
 Pages = ["mittelmannGridap.md"]
 Depth = 1
 ```
 
-## Symmetries, freezing, waves, fronts
+## 11. Symmetries, freezing, waves, fronts
 
 ```@contents
 Pages = ["autocatalyticAuto.md", "autocatalytic.md", "cgl1dwave.md", "detonationEngine.md"]
