@@ -26,7 +26,7 @@ using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
 ω(u, p) = p.k * exp((u - p.uc) / p.α)
-β(u, p) = p.s * p.up /(1 + exp(p.r * (u - p.up)) )
+β(u, p) = p.s * p.up / (1 + exp(p.r * (u - p.up)) )
 
 # utilities for plotting solutions
 function plotsol!(x; k...)
@@ -39,7 +39,7 @@ end
 plotsol(x; k...) = (plot();plotsol!(x; k...))
 
 # nonlinearity of the model
-function NL!(dest, U, p, t = 0.)
+function NL!(dest, U, p, t = 0)
 	N = p.N
 	u = @view U[1:N]
 	λ = @view U[N+1:2N]
@@ -107,7 +107,7 @@ We are now ready to compute the bifurcation of the trivial (constant in space) s
 
 ```@example DETENGINE
 # bifurcation problem
-prob = BifurcationProblem(Fdet, U0, (par_det..., q = 0.5), (@optic _.up); 
+prob = BifurcationProblem(Fdet!, U0, (par_det..., q = 0.5), (@optic _.up); 
 	J = JdetAD,
 	plot_solution = (x, p; k...) -> plotsol!(x; k...),
 	record_from_solution = (x, p; k...) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))
@@ -144,7 +144,7 @@ The periodic orbits emanating from the Hopf points look like traveling waves. Th
 As we will do the same thing 3 times, we bundle the procedure in functions. We first use the regular Hopf normal form to create a guess for the traveling wave:
 
 ```@example DETENGINE
-function getGuess(br, nb; δp = 0.005)
+function get_guess(br, nb; δp = 0.005)
 	nf = get_normal_form(br, nb; verbose  = false)
 	pred = predictor(nf, δp)
 	return pred.p, pred.orbit(0)
@@ -156,7 +156,7 @@ Using this guess, we can continue the traveling wave as function of a parameter.
 
 ```@example DETENGINE
 function computeBranch(br, nb; δp = 0.005, max_steps = 190)
-	_p, sol = getGuess(br, nb)
+	_p, sol = get_guess(br, nb)
 	# traveling wave problem
 	probTW = TWProblem(
 		re_make(br.prob, params = (getparams(br)..., up = _p)),
