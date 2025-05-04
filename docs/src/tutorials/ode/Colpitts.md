@@ -102,7 +102,7 @@ We use shooting to compute periodic orbits: we rely on a fixed point of the flow
 
 Thanks to [^Lamour], we can  just compute the Floquet coefficients to get the nonlinear stability of the periodic orbit. Two period doubling bifurcations are detected.
 
-Note that we use Automatic Branch Switching from a Hopf bifurcation despite the fact the normal form implemented in `BifurcationKit.jl` is not valid for DAE. For example, it predicts a subciritical Hopf point whereas we see below that it is supercritical. Nevertheless, it provides a
+Note that we use Automatic Branch Switching from a Hopf bifurcation despite the fact the normal form implemented in `BifurcationKit.jl` is not valid for DAE. For example, it predicts a subcritical Hopf point whereas we see below that it is supercritical. Nevertheless, it provides a
 
 ```@example TUTDAE1
 using DifferentialEquations
@@ -126,7 +126,7 @@ probSH = ShootingProblem(10, probFreez_ode, Rodas5P(); reltol = 1e-10, abstol = 
 br_po = continuation(br, 1, opts_po_cont, probSH;
 	plot = true, verbosity = 3,
 	linear_algo = MatrixBLS(),
-	# δp is use to parametrise the first parameter point on the
+	# δp is use to parametrize the first parameter point on the
 	# branch of periodic orbits
 	δp = 0.001,
 	record_from_solution = (u, p; k...) -> begin
@@ -137,7 +137,7 @@ br_po = continuation(br, 1, opts_po_cont, probSH;
 	# plotting of a solution
 	plot_solution = (x, p; k...) -> begin
 		outt = BK.get_periodic_orbit(p.prob, x, p.p)
-		plot!(outt.t, outt[2,:], subplot = 3)
+		plot!(outt.t, outt[2, :], subplot = 3)
 		plot!(br, vars = (:param, :x1), subplot = 1)
 	end,
 	# the newton Callback is used to reject residual > 1
@@ -150,20 +150,8 @@ br_po = continuation(br, 1, opts_po_cont, probSH;
 
 with detailed information
 
-```julia
- ┌─ Curve type: PeriodicOrbitCont from Hopf bifurcation point.
- ├─ Number of points: 38
- ├─ Type of vectors: Vector{Float64}
- ├─ Parameter μ starts at 0.7642229295455086, ends at 0.6352549726782099
- ├─ Algo: PALC
- └─ Special points:
-
-If `br` is the name of the branch,
-ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`
-
-- #  1,       pd at μ ≈ +0.73116245 ∈ (+0.73116245, +0.73152250), |δp|=4e-04, [converged], δ = ( 1,  1), step =  17, eigenelements in eig[ 18], ind_ev =   1
-- #  2,       pd at μ ≈ +0.67272920 ∈ (+0.67272920, +0.67310008), |δp|=4e-04, [converged], δ = (-1, -1), step =  27, eigenelements in eig[ 28], ind_ev =   1
-- #  3, endpoint at μ ≈ +0.63525497,                                                                     step =  37
+```@example TUTDAE1
+show(br)
 ```
 
 Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation.
@@ -185,7 +173,6 @@ solFreez = @time DifferentialEquations.solve(probFreez_ode, Rodas4(), progress =
 
 scene = plot(solFreez, vars = [2], xlims=(195,200), title="μ = $(probFreez_ode.p.μ)")
 ```
-
 
 ## References 
 
