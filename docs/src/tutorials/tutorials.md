@@ -104,11 +104,11 @@ Depth = 1
 
 See the [tutorials](https://bifurcationkit.github.io/DDEBifurcationKit.jl/dev/tutorials/tutorials/) of [DDEBifurcationKit.jl](https://github.com/bifurcationkit/DDEBifurcationKit.jl).
 
-## Examples based on ModelingToolkit
+## SciML examples based on ModelingToolkit
 
 `ModelingToolkit` provides a tailored interface to `BifurcationKit` and the user is encouraged to have a look at its specific [documentation](https://docs.sciml.ai/ModelingToolkit/stable/tutorials/bifurcation_diagram_computation/).
 
-## Examples based on Catalyst
+## SciML examples based on Catalyst
 
 `Catalyst` provides a tailored interface to `BifurcationKit` and the user is encouraged to have a look at its specific [documentation](https://docs.sciml.ai/Catalyst/stable/steady_state_functionality/bifurcation_diagrams/)
 
