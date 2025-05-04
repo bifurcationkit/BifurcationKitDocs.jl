@@ -81,7 +81,7 @@ plot(sol_ode)
 We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of $k_8$
 
 ```@example STEINMETZ
-probsh, cish = generate_ci_problem( ShootingProblem(M=4), prob, prob_de, sol_ode, 16.; reltol = 1e-10, abstol = 1e-12, parallel = true)
+probsh, cish = generate_ci_problem( ShootingProblem(M=5; jacobian = BK.AutoDiffDenseAnalytical() ), prob, prob_de, sol_ode, 16.; reltol = 1e-10, abstol = 1e-13, parallel = true)
 
 opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.05, n_inversion = 8, detect_bifurcation = 3, max_bisection_steps = 25, nev = 4, max_steps = 60, tol_stability = 1e-3)
 @reset opts_po_cont.newton_options.max_iterations = 10
@@ -187,7 +187,7 @@ ns_po_cl = continuation(deepcopy(br_coll), 1, (@optic _.k7), opts_pocl_ns;
         detect_codim2_bifurcation = 0,
         update_minaug_every_step = 1,
         start_with_eigen = false,
-        jacobian_ma = BK.MinAugMatrixBased(),
+        jacobian_ma = :MinAugMatrixBased,
         normC = norminf,
         callback_newton = BK.cbMaxNorm(1e1),
         )
