@@ -166,7 +166,7 @@ br_hopf = @time continuation(
 	update_minaug_every_step = 1,
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
-	jacobian_ma = :minaug, # specific to high dimensions
+	jacobian_ma = BK.MinAug(), # specific to high dimensions
 	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false))
 
 plot(br_hopf, branchlabel = "Hopf curve", legend = :topleft)
@@ -189,7 +189,7 @@ brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detect_b
 	detect_codim2_bifurcation = 2,
 	callback_newton = BK.cbMaxNorm(1e5),
 	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false),
-	jacobian_ma = :minaug, # !! specific to high dimensions
+	jacobian_ma = BK.MinAug(), # !! specific to high dimensions
 	bothside = true, normC = norminf)
 
 plot(br_hopf, branchlabel = "Hopf"); plot!(brfold, legend = :topleft, branchlabel = "Fold")
@@ -621,7 +621,7 @@ optcontfold = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 40.
 outfoldco = BK.continuation_fold(probFold,
 	br_po, indfold, (@optic _.c5),
 	optcontfold;
-	jacobian_ma = :minaug,
+	jacobian_ma = BK.MinAug(),
 	bdlinsolver = BorderingBLS(solver = ls, check_precision = false),
 	plot = true, verbosity = 2)
 ```

@@ -9,14 +9,14 @@ Depth = 3
 
 - Newton-Krylov solver with generic linear / eigen *preconditioned* solver. Idem for the arc-length continuation.
 - Newton-Krylov solver with nonlinear deflation and preconditioner. It can be used for branch switching for example. It is used for deflated continuation.
-- Continuation written as an [iterator](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/iterator/)
-- Monitoring user functions along curves computed by continuation, see [events](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/EventCallback/)
+- Continuation written as an [iterator](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/iterator/).
+- Monitoring user functions along curves computed by continuation, see [events](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/EventCallback/).
 - Continuation methods: PALC, Moore Penrose, Multiple, Polynomial, Deflated continuation, ANM, ...
-- Bifurcation points / events located with bisection
+- Bifurcation points / events located with bisection.
 - Compatible with GPU
 
 ## Capabilities related to equilibria
-- Detection of Branch, Fold, Hopf bifurcation points of stationary solutions and computation of their normal form.
+- Detection of Branch, Fold, Hopf bifurcation points of stationary solutions and computation of their normal form. Other non-generic bifurcations based on spectrum are also detected.
 - Automatic branch switching at branch points (**whatever the dimension of the kernel**) to equilibria
 - **Automatic computation of bifurcation diagrams of equilibria**
 - Fold / Hopf continuation based on Minimally Augmented formulation, with Matrix Free / Sparse / Dense Jacobian.
@@ -26,6 +26,8 @@ Depth = 3
 ## (limited) Capabilities related to maps
 - continuation of fixed points of maps
 - computation of normal form of Period-doubling, Neimark-Sacker, Branch point bifurcations.
+
+## Summary table for equilibria
 
 **Note that you can combine most solvers, like use Deflation for Periodic orbit computation or Fold of periodic orbits family.**
 
@@ -56,7 +58,7 @@ Depth = 3
 - Detection of Branch, Fold, Neimark-Sacker (NS), Period Doubling (PD) bifurcation points of PO.
 - Fold / PD / NS continuation based on Minimally Augmented formulation (for shooting and collocation). Trapezoid method only allows continuing Fold of PO.
 - Detection of all codim 2 bifurcations of PO (R1, R2, R3, R4, GPD, NS-NS, Chenciner, Fold-Flip, Fold-NS, PD-NS)
-- Computation of the normal forms of PD, NS (for shooting and collocation) using the method based on Poincaré return map or the Iooss normal form (more precise).
+- Computation of the normal forms of PD, NS (for shooting and collocation) using the method based on Poincaré return map or the Iooss normal form.
 - automatic branching from Bautin to curve of Fold of PO
 - automatic branching from Zero-Hopf to curve of NS of PO
 - automatic branching from Hopf-Hopf to curve of NS of PO
@@ -82,7 +84,7 @@ Depth = 3
 
 ## Capabilities related to Homoclinic orbits
 
-This is available through the plugin [HclinicBifurcationKit.jl](https://github.com/bifurcationkit/HclinicBifurcationKit.jl). Please see the [specific docs](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/) for more information.
+These are available through the plugin [HclinicBifurcationKit.jl](https://github.com/bifurcationkit/HclinicBifurcationKit.jl). Please see the [specific docs](https://bifurcationkit.github.io/HclinicBifurcationKit.jl/dev/) for more information.
 
 - compute Homoclinic to Hyperbolic Saddle Orbits (HomHS) using Orthogonal collocation or Standard shooting
 - compute bifurcation of HomHS

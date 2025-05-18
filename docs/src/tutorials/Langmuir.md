@@ -180,7 +180,7 @@ sn_codim2 = continuation(br, 7, (@optic _.Δx),
 	# compute both sides of the initial condition
 	bothside = true,
 	# we invert the Fold linear problem using Min. Aug.
-	jacobian_ma = :minaug,
+	jacobian_ma = BK.MinAug(),
 	)
 
 # compute branch of Hopf points from 5th bifurcation point on br
@@ -190,7 +190,7 @@ hp_codim2 = continuation(br, 5, (@optic _.Δx), ContinuationPar(opts_cont, p_max
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
 	# we invert the Hopf linear problem using Min. Aug.
-	jacobian_ma = :minaug,
+	jacobian_ma = BK.MinAug(),
 	)
 
 # plot the branches

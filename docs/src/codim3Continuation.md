@@ -81,7 +81,7 @@ outfold = newton(br::AbstractBranchResult, ind_bif::Int;
 	normN = norm,
 	options = br.contparams.newton_options,
 	bdlinsolver = BorderingBLS(options.linsolver),
-	jacobian_ma = :autodiff,
+	jacobian_ma = AutoDiff(),
 	start_with_eigen = false, kwargs...)
 ```
 

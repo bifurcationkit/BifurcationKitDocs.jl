@@ -167,7 +167,7 @@ br_hopf = continuation(br, ind_hopf, (@optic _.β),
 	detect_codim2_bifurcation = 2,
 	# we update the Hopf problem at every continuation step
 	update_minaug_every_step = 1,
-	jacobian_ma = :minaug, # specific to large dimensions
+	jacobian_ma = BK.MinAug(), # specific to large dimensions
 	normC = norminf)
 
 scene = plot(br_hopf) 	

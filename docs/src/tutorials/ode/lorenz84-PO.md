@@ -69,7 +69,7 @@ sn_codim2 = continuation(br, 5, (@optic _.T), ContinuationPar(opts_br, p_max = 3
 	bothside = false,
 	)
 
-hp_codim2_1 = continuation(br, 3, (@optic _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 8, save_sol_every_step = 1, detect_bifurcation = 1) ;
+hp_codim2_1 = continuation(br, 3, (@optic _.T), ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 8, detect_bifurcation = 1) ;
 	# plot = false, verbosity = 0,
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
@@ -93,7 +93,7 @@ fold_po = continuation(hp_codim2_1, 3, opts_fold_po,
 		normC = norminf,
 		δp = 0.02,
 		update_minaug_every_step = 0,
-		jacobian_ma = :minaug,
+		jacobian_ma = BK.MinAug(),
 		verbosity = 0, plot = false,
 	)
 plot!(fold_po, vars=(:F, :T), branchlabel = "Fold-PO")
@@ -116,7 +116,7 @@ ns_po1 = continuation(hp_codim2_1, 4, opts_ns_po,
 		update_minaug_every_step = 1,
 		# which of the 2 NS curves should we compute?
 		whichns = 1,
-		jacobian_ma = :minaug,
+		jacobian_ma = BK.MinAug(),
 		)
 plot!(ns_po1, vars=(:F, :T), branchlabel = "NS1")
 ```
@@ -130,7 +130,7 @@ ns_po2 = continuation(hp_codim2_1, 4, opts_ns_po,
 		update_minaug_every_step = 1,
 		# which of the 2 NS curves should we compute?
 		whichns = 2,
-		jacobian_ma = :minaug,
+		jacobian_ma = BK.MinAug(),
 		)
 plot!(ns_po2, vars=(:F, :T), branchlabel = "NS2")
 ```

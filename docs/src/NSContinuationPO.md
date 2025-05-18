@@ -24,16 +24,16 @@ The continuation of Neimark-Sacker bifurcation points is based on a **Minimally 
 You can detect the following codim 2 bifurcation points by using the keyword argument `detect_codim2_bifurcation` in the method `continuation` 
 
 - the detection of Chenciner bifurcation is done by the the computating the NS normal form
-- the detection the above bifurcation points is done by monitoring the number of eigenvalues $\lambda$ such that $\Re\lambda > \min\limits_{\nu\in\Sigma(dF)}|\Re\nu|$ and $\Im\lambda > \epsilon$ where $\epsilon$ is the Newton tolerance.
+- the detection the other above bifurcation points is done by monitoring the number of eigenvalues $\lambda$ such that $\Re\lambda > \min\limits_{\nu\in\Sigma(dF)}|\Re\nu|$ and $\Im\lambda > \epsilon$ where $\epsilon$ is the Newton tolerance.
 
 ## Setting the jacobian
 
 In order to apply the newton algorithm to the PD functional, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can select the following jacobians for your computations (see below):
 
-- `jacobian_ma = :autodiff` [Default]: automatic differentiation is applied to the NS functional and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
-- `jacobian_ma = :finiteDifferences`: same as `jacobian_ma = :autodiff` but the jacobian is computed using finite differences.
-- `jacobian_ma = :minaug`: a specific procedure for evaluating the jacobian and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions and for matrix-free version.
-- `jacobian_ma = :MinAugMatrixBased` the jacobian matrix is evaluated using analytical formula. This is faster than `:autodiff`.
+- `jacobian_ma = AutoDiff()` [Default]: automatic differentiation is applied to the NS functional and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
+- `jacobian_ma = FiniteDifferences()`: same as `jacobian_ma = AutoDiff()` but the jacobian is computed using finite differences.
+- `jacobian_ma = MinAug()`: a specific procedure for evaluating the jacobian and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions and for matrix-free version.
+- `jacobian_ma = MinAugMatrixBased()` the jacobian matrix is evaluated using analytical formula. This is faster than `AutoDiff()`.
 
 ## NS points continuation
 

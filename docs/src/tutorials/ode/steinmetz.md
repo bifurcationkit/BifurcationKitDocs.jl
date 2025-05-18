@@ -102,9 +102,9 @@ fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fol
 		alg = PALC(),
 		detect_codim2_bifurcation = 0,
 		update_minaug_every_step = 1,
-		jacobian_ma = :minaug,
 		start_with_eigen = false,
 		usehessian = true,
+		jacobian_ma = BK.MinAug(),
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
 		)
@@ -121,7 +121,7 @@ ns_po_sh = continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
 		# plot = true,
 		detect_codim2_bifurcation = 2,
 		update_minaug_every_step = 1,
-		jacobian_ma = :minaug,
+		jacobian_ma = BK.MinAug(),
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
 		)
@@ -168,8 +168,8 @@ fold_po_cl = @time continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_f
         detect_codim2_bifurcation = 2,
         update_minaug_every_step = 1,
         start_with_eigen = false,
-        jacobian_ma = :minaug,
         usehessian = true,
+        jacobian_ma = BK.MinAug(),
         normC = norminf,
         callback_newton = BK.cbMaxNorm(1e1),
         )
@@ -187,7 +187,7 @@ ns_po_cl = continuation(deepcopy(br_coll), 1, (@optic _.k7), opts_pocl_ns;
         detect_codim2_bifurcation = 0,
         update_minaug_every_step = 1,
         start_with_eigen = false,
-        jacobian_ma = :MinAugMatrixBased,
+        jacobian_ma = BK.MinAugMatrixBased(),
         normC = norminf,
         callback_newton = BK.cbMaxNorm(1e1),
         )
