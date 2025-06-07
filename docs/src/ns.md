@@ -35,8 +35,8 @@ where `prm` indicates whether you want to use the method based on Poincaré retu
 Depending on the method used for computing the periodic orbits, you have several possibilities:
 
 - For shooting, you can only the PRM method. Shooting is the preferred way for large scale systems. Note that the PRM method is not very precise numerically.
-- For collocation, you can use PRM and Iooss methods. Note that the Iooss method is the most precise.
-- For Trapezoid method, NS normal form is not yet implemented.
+- For collocation, you can use PRM and Iooss methods. Note that the Iooss method is **the most precise**.
+- For Trapezoid method, NS normal form is **not yet implemented**.
 
 ## Normal form based on Poincaré return map
 

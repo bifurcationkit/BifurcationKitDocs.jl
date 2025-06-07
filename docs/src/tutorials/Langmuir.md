@@ -1,5 +1,11 @@
 # [🟠 1d Langmuir–Blodgett transfer model](@id langmuir)
 
+
+```@contents
+Pages = ["Langmuir.md"]
+Depth = 3
+```
+
 In this tutorial, we try to replicate some of the results of the amazing paper [^Köpf]. This example is quite a marvel in the realm of bifurcation analysis, featuring a harp-like bifurcation diagram. The equations of the thin film are as follows:
 
 $$\partial_{t} c=-\partial_{x}^{2}\left[\partial_{x}^{2} c-c^{3}+c-\mu \zeta(x)\right]-V \partial_{x} c$$
