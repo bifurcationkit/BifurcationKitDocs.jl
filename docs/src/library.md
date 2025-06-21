@@ -19,6 +19,14 @@ NewtonPar
 ContinuationPar
 ```
 
+```@docs
+cbMaxNorm
+```
+
+```@docs
+cbMaxNormAndΔp
+```
+
 ## Results
 
 
