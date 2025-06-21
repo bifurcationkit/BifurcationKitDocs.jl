@@ -20,11 +20,11 @@ ContinuationPar
 ```
 
 ```@docs
-cbMaxNorm
+BifurcationKit.cbMaxNorm
 ```
 
 ```@docs
-cbMaxNormAndΔp
+BifurcationKit.cbMaxNormAndΔp
 ```
 
 ## Results
