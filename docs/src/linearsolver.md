@@ -31,7 +31,7 @@ The detailed information for each one of them is located in the [API](@ref Libra
 1. Default `\` solver based on `LU` or `Cholesky` depending on the type of the Jacobian. This works for sparse matrices as well. You can create one via `linsolver = DefaultLS()`.
 2. GMRES from `IterativeSolvers.jl`. You can create one via `linsolver = GMRESIterativeSolvers()` and pass appropriate options.
 3. GMRES from `KrylovKit.jl`. You can create one via `linsolver = GMRESKrylovKit()` and pass appropriate options.
-4. All solvers in `Krylov.jl`. You can create one via `linsolver = KrylovLS()` or `KrylovLSInplace()` and pass appropriate options. This is available for `BifurcationKit@0.4.5`
+4. All solvers in `Krylov.jl`. You can create one via `linsolver = KrylovLS()` or `KrylovLSInplace()` and pass appropriate options. This is available from `BifurcationKit@0.4.5`
     
 !!! tip "Different linear solvers"
     By tuning the options of [`GMRESKrylovKit`](@ref), you can select CG, GMRES... see [KrylovKit.jl](https://jutho.github.io/KrylovKit.jl/stable/man/linear/#KrylovKit.linsolve).

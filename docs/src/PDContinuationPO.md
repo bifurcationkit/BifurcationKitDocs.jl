@@ -94,7 +94,7 @@ $$N:=\left(\begin{array}{cccccc}
 I & {\cdots} & {\cdots} & 0 & {M_{m}} \\
 \end{array}\right).$$
 
-## 
+### Orthogonal collocation
 
 In the case of orthogonal collocation, the matrix $N$ is the jacobian of the periodic orbit functional stripped of the phase condition ($m=2$):
 

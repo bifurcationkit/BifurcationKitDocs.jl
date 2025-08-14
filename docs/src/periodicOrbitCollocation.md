@@ -119,16 +119,16 @@ The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@r
 
 ## Jacobians
 
-We provide many different linear solvers to take advantage of the formulations or the dimensionality. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal linear solvers and jacobians are set up automatically so you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+We provide many different jacobians to take advantage of the problem or the dimensionality. These jacobians are available through the argument `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal linear solvers and jacobians are set up automatically so you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
 1. `DenseAnalytical()`
-The jacobian is computed with an analytical formula, works for dense matrices. This is the default algorithm.
+The jacobian is computed with an analytical formula, it works for dense matrices. This is the default algorithm.
 2. `DenseAnalyticalInplace()`
-Same as 1. but cache more information to limit allocations. (Meant to become the default algorithm after testing).
+Same as 1. but caches more information to limit allocations. (Meant to become the default jacobian in the future).
 3. `AutoDiffDense()`
-The jacobian is computed with automatic differentiation, works for dense matrices. Can be used for debugging.
+The jacobian is computed with automatic differentiation, it works for dense matrices. Can be used for debugging.
 4. `FullSparse()`
-The jacobian is computed with an analytical formula, works for sparse matrices.
+The jacobian is computed with an analytical formula, it works for sparse matrices.
 5. `FullSparseInplace()`
 The sparse jacobian is computed in place, limiting memory allocations, with an analytical formula when the sparsity of the jacobian of the vector field is constant. This is much faster than `FullSparse()`.
 
@@ -137,8 +137,8 @@ The sparse jacobian is computed in place, limiting memory allocations, with an a
 When the jacobian is dense and dimension is small ~O(10), you should use condensation of parameters `COPBLS` for performance.
 
 1. `DefaultLS()` can be used for most jacobians
-2. `COPLS()` or `COPBLS()` which is the method of **condensation of parameters** (COP) implemented in Auto-07p [^Govaerts]. For this to be most efficient, the vector field must be written in non-allocating form. In this case, this is almost 10x faster than using `DefaultLS()` for low dimensional ODEs (say dim = O(10)). The performances are closing in to that of Auto-07p.
-3. you can use bordered linear solvers in large dimensions  to take advantage of the specific shape of the jacobian. See also Trapezoid method for additional information.
+2. `COPLS()` or `COPBLS()` which is the method of **condensation of parameters** (COP) implemented in Auto-07p [^Govaerts]. For this to be most efficient, the vector field must be written in non-allocating form. In this case, this is almost 10x faster than using `DefaultLS()` for low dimensional ODEs (say dim = O(10)). The performances are closing on to that of Auto-07p.
+3. You can use bordered linear solvers in large dimensions to take advantage of the specific shape of the jacobian. See also Trapezoid method for additional information.
 
 
 ## Floquet multipliers computation

@@ -55,18 +55,9 @@ We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](h
 - `Base.eltype` must be extended to your vector type.
 
 ## Citations
-The papers citing this work are collected on [google scholar](https://scholar.google.com/scholar?q=bifurcationkit&hl=en&as_sdt=0,5).
+The papers citing this work are collected on [google scholar](https://scholar.google.com/scholar?q=bifurcationkit&hl=en&as_sdt=0,5) and [zotero](https://www.zotero.org/groups/6097154/citations_of_bifurcationkit/library).
 
-See also [google scholar](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=159498619004863176,12573642401780006854,8662907770106865595) but less papers are referenced
-
-### Some unreferenced papers by google
-- Lloyd, David, Ryan Goh, and Jens D. M. Rademacher. “Numerical Continuation and Bifurcation in Nonlinear PDEs: Stability, Invasion and Wavetrains in the Swift-Hohenberg Equation.” arXiv, February 6, 2025. https://doi.org/10.48550/arXiv.2502.03858.
-- Barland, S., O. D’Huys, and R. Veltz. “Excitable Response of a Noisy Adaptive Network of Spiking Lasers.” arXiv, December 13, 2024. https://doi.org/10.48550/arXiv.2412.10191.
-- Eydam, Sebastian, Igor Franović, and Louis Kang. “Control of Seizure-like Dynamics in Neuronal Populations with Excitability Adaptation Related to Ketogenic Diet.” Chaos: An Interdisciplinary Journal of Nonlinear Science 34, no. 5 (May 1, 2024): 053128. https://doi.org/10.1063/5.0180954.
-- Stasenko, Sergey V., Sergey M. Olenin, Eugene A. Grines, and Tatiana A. Levanova. “Firing Rate Model for Brain Rhythms Controlled by Astrocytes.” arXiv, May 6, 2024. http://arxiv.org/abs/2405.03601.
-- Olenin, Sergey, Sergey Stasenko, and Tatiana Levanova. “Spiral Attractors in a Reduced Mean-Field Model of Neuron-Glial Interaction.” arXiv, May 7, 2024. http://arxiv.org/abs/2405.04291.
-
-
+See also this other [google scholar](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=159498619004863176,12573642401780006854,8662907770106865595) but less papers are referenced.
 
 
 ## Reproducibility
