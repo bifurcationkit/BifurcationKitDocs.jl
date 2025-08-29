@@ -34,10 +34,11 @@ There are many good softwares already available.
 - For continuation in small dimension, most softwares are listed on [DSWeb](https://dsweb.siam.org/Software). One can mention the widely used [AUTO-07p](https://github.com/auto-07p/auto-07p), or also, [XPPAUT](http://www.math.pitt.edu/~bard/xpp/xpp.html), [MATCONT](https://sourceforge.net/projects/matcont/), [PyDSTool](https://github.com/robclewley/pydstool) and [COCO](https://sourceforge.net/projects/cocotools/). All these are very reliable and some address high codimensional bifurcations.
 
 - For large scale problems, there is the versatile and feature full [pde2path](http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/) but also [Trilinos-LOCA](https://trilinos.github.io/nox_and_loca.html), [CL_MATCONTL](https://github.com/careljonkhout/cl_matcontL), [COCO](https://sourceforge.net/projects/cocotools/), [GetFEM](https://getfem.org/userdoc/model_continuation.html) and the python libraries [pyNCT](https://pypi.org/project/PyNCT/) and [pacopy](https://github.com/nschloe/pacopy). There are also some nice [lectures](https://zenodo.org/record/3821169#.Y-zsAy8w08Q) by D. Avitabile *et al.* on matrix free secant continuation based on a concise Matlab implementation which are used in the influential paper [^Rankin]. At the time of initial release of `BifurcationKit.jl`, these [lectures](https://zenodo.org/record/3821169#.Y-zsAy8w08Q) provided one of the only libraries for matrix-free continuation, much easier to use than [Trilinos-LOCA](https://trilinos.github.io/nox_and_loca.html).
-- For *deflated continuation*, there is [defcont](https://bitbucket.org/pefarrell/defcon/src/master/) (by the inventor of the algo. P. E. Farrell) and this [code](https://github.com/evstigneevnm/deflated_continuation) by N. M. Evstigneev.
+- For *deflated continuation*, there is the python package [defcont](https://bitbucket.org/pefarrell/defcon/src/master/) (by the inventor of the algo. P. E. Farrell) and this C++ [code](https://github.com/evstigneevnm/deflated_continuation) by N. M. Evstigneev.
 
 In Julia, we have the following tools:
 
+- [HomotopyContinuation.jl](https://www.juliahomotopycontinuation.org) which focuses on continuation of zeros of polynomials.
 - [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl) which is unmaintained.
 - [NumericalContinuation.jl](https://github.com/dawbarton/NumericalContinuation.jl) by David Barton.
 

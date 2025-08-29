@@ -233,7 +233,7 @@ poTrap = PeriodicOrbitTrapProblem(
 # space dimension
 	2n,
 # jacobian of the periodic orbit functional
-  jacobian = :FullMatrixFree)
+  jacobian = BK.MatrixFree())
 ```
 
 We can use this (family) problem `poTrap` with `newton` on our periodic orbit guess to find a periodic orbit. Hence, one can be tempted to use
@@ -323,7 +323,7 @@ poTrapMF = PeriodicOrbitTrapProblem(
 	2n,
   ls0,
 # jacobian of the periodic orbit functional
-  jacobian = :FullMatrixFree)
+  jacobian = BK.MatrixFree())
 ```
 
 We can now use newton
@@ -439,7 +439,7 @@ poTrapMFi = PeriodicOrbitTrapProblem(
 	2n,
   ls0,
 # jacobian of the periodic orbit functional
-  jacobian = :FullMatrixFree)
+  jacobian = BK.MatrixFree())
 ```
 and run the `newton` method:
 
@@ -477,7 +477,7 @@ Precilu = @time ilu(Jpo2, τ = 0.005)
 ls2 = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, N = size(Jpo2, 1), restart = 30, maxiter = 50, Pl = Precilu, log=true)
 
 opt_po = @set opt_newton.verbose = true
-outpo_f = @time newton((@set poTrapMF.jacobian = :BorderedMatrixFree),
+outpo_f = @time newton((@set poTrapMF.jacobian = BK.BorderedMatrixFree()),
 	orbitguess_f,
 	(@set opt_po.linsolver = ls2), 
 	normN = norminf)
@@ -720,7 +720,7 @@ poTrapMFGPU = PeriodicOrbitTrapProblem(
 	CuArray(real.(eigvec)),
 	CuArray(hopfpt.u),
 	M, 2n, ls0gpu;
-  jacobian = :FullMatrixFree,
+  jacobian = BK.MatrixFree(),
 	ongpu = true) # this is required to alter the way the constraint is handled
 ```
 

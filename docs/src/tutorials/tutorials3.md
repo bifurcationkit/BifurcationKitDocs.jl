@@ -201,8 +201,8 @@ M = 51
 probFD = PeriodicOrbitTrapProblem(M = M;
   # specific method for solving the linear system for newton
   # of periodic orbits with trapeze method.
-  # We could use the default one :FullLU (slower here)
-  jacobian = :BorderedSparseInplace)
+  # We could use the default one FullLU() (slower here)
+  jacobian = BK.BorderedSparseInplace())
 
 br_po = continuation(
 	# arguments for branch switching from the first

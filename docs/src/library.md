@@ -124,6 +124,22 @@ BifurcationKit.EigKrylovKit
 BifurcationKit.EigArnoldiMethod
 ```
 
+## [Floquet solvers](@id Library-FLOQUET)
+
+```@docs
+FloquetQaD
+```
+
+### Collocation
+
+```@docs
+BifurcationKit.FloquetGEV
+```
+
+```@docs
+BifurcationKit.FloquetColl
+```
+
 ## [Bordered linear solvers](@id Library-BLS)
 
 ```@docs

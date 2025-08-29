@@ -210,7 +210,7 @@ poTrap = PeriodicOrbitTrapProblem(
 	real.(vec_hopf),	 # used to set ϕ, see the phase constraint
 	hopfpt.u,          # used to set uhopf, see the phase constraint
 	M, 2n;             # number of time slices
-	jacobian = :FullSparseInplace) # jacobian of PO functional			      
+	jacobian = BK.FullSparseInplace()) # jacobian of PO functional			      
 
 nothing #hide 	
 ```
