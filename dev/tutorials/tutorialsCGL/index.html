@@ -90,12 +90,12 @@ br = continuation(prob, PALC(), opts_br)</code></pre><pre class="documenter-exam
 - #  1, <span class="sgr34"><span class="sgr1">    hopf</span></span> at r ≈ +1.14777610 ∈ (+1.14766562, +1.14777610), |δp|=1e-04, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  94
 - #  2, <span class="sgr34"><span class="sgr1">    hopf</span></span> at r ≈ +1.86107007 ∈ (+1.86018618, +1.86107007), |δp|=9e-04, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step = 195
 - #  3, <span class="sgr1">endpoint</span> at r ≈ +2.00000000,                                                                     step = 215
-</code></pre><p>which gives</p><pre><code class="language-julia hljs">scene = plot(br, ylims=(-0.1,0.1))</code></pre><img src="d0894c04.svg" alt="Example block output"/><h2 id="Normal-form-computation"><a class="docs-heading-anchor" href="#Normal-form-computation">Normal form computation</a><a id="Normal-form-computation-1"></a><a class="docs-heading-anchor-permalink" href="#Normal-form-computation" title="Permalink"></a></h2><p>We compute the Hopf normal form of the first bifurcation point.</p><pre><code class="language-julia hljs">hopfpt = get_normal_form(br, 1)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr36"><span class="sgr1">SubCritical - Hopf</span></span> bifurcation point at r ≈ 1.1477761028276166.
-Frequency ω ≈ 0.9999999999999973
-Period of the periodic orbit ≈ 6.283185307179603
+</code></pre><p>which gives</p><pre><code class="language-julia hljs">scene = plot(br, ylims=(-0.1,0.1))</code></pre><img src="1a55a7d1.svg" alt="Example block output"/><h2 id="Normal-form-computation"><a class="docs-heading-anchor" href="#Normal-form-computation">Normal form computation</a><a id="Normal-form-computation-1"></a><a class="docs-heading-anchor-permalink" href="#Normal-form-computation" title="Permalink"></a></h2><p>We compute the Hopf normal form of the first bifurcation point.</p><pre><code class="language-julia hljs">hopfpt = get_normal_form(br, 1)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr36"><span class="sgr1">SubCritical - Hopf</span></span> bifurcation point at r ≈ 1.1477761028276166.
+Frequency ω ≈ 1.0000000000000022
+Period of the periodic orbit ≈ 6.283185307179572
 Normal form z⋅(iω + a⋅δp + b⋅|z|²):
-┌─ a = 1.0 + 5.0416459811760024e-18im
-└─ b = 0.004870129870129869 + 0.0004870129870129875im
+┌─ a = 1.0 + 1.57384902293386e-16im
+└─ b = 0.004870129870129868 + 0.0004870129870129872im
 </code></pre><p>So the Hopf branch is subcritical.</p><h2 id="Codim-2-Hopf-continuation"><a class="docs-heading-anchor" href="#Codim-2-Hopf-continuation">Codim 2 Hopf continuation</a><a id="Codim-2-Hopf-continuation-1"></a><a class="docs-heading-anchor-permalink" href="#Codim-2-Hopf-continuation" title="Permalink"></a></h2><p>Having detected 2 hopf bifurcation points, we now continue them in the plane <span>$(\gamma, r)$</span>.</p><p>Before we start the codim 2 continuation, we tell <code>BifurcationKit.jl</code> to use the spectral information <code>start_with_eigen = true</code> because the left eigenvector of the Jacobian is simply not the conjugate of the right one.</p><pre><code class="language-julia hljs"># we perform Hopf continuation of the first Hopf point in br
 ind_hopf = 1
 br_hopf = @time continuation(
@@ -107,11 +107,11 @@ br_hopf = @time continuation(
 	jacobian_ma = BK.MinAug(), # specific to high dimensions
 	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false))
 
-plot(br_hopf, branchlabel = &quot;Hopf curve&quot;, legend = :topleft)</code></pre><img src="8384089b.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">br_hopf</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont</span></span>
+plot(br_hopf, branchlabel = &quot;Hopf curve&quot;, legend = :topleft)</code></pre><img src="ff974968.svg" alt="Example block output"/><p>with detailed information</p><pre><code class="language-julia hljs">br_hopf</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">HopfCont</span></span>
  ├─ Number of points: 46
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">BorderedArray{Vector{Float64}, Vector{Float64}}</span></span>
  ├─ Parameters (:r, :γ)
- ├─ Parameter <span class="sgr36"><span class="sgr1">γ</span></span> starts at 0.0, ends at 1.0098353536851157
+ ├─ Parameter <span class="sgr36"><span class="sgr1">γ</span></span> starts at 0.0, ends at 1.0098353536796318
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
@@ -129,7 +129,7 @@ brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detect_b
 	jacobian_ma = BK.MinAug(), # !! specific to high dimensions
 	bothside = true, normC = norminf)
 
-plot(br_hopf, branchlabel = &quot;Hopf&quot;); plot!(brfold, legend = :topleft, branchlabel = &quot;Fold&quot;)</code></pre><img src="c677d5d3.svg" alt="Example block output"/><h2 id="Periodic-orbits-continuation-with-stability"><a class="docs-heading-anchor" href="#Periodic-orbits-continuation-with-stability">Periodic orbits continuation with stability</a><a id="Periodic-orbits-continuation-with-stability-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-continuation-with-stability" title="Permalink"></a></h2><p>Having found two Hopf bifurcation points, we aim at computing the periodic orbits branching from them. Like for the Brusselator example, we need to find some educated guess for the periodic orbits in order to have a successful Newton call.</p><p>The following code is very close to the one explained in the tutorial <a href="@ref">1d Brusselator (advanced user)</a> so we won&#39;t give too much details here.</p><p>We focus on the first Hopf bifurcation point. Note that, we do not improve the guess for the Hopf bifurcation point, <em>e.g.</em> by calling <code>newtonHopf</code>, as this is not really needed.</p><pre><code class="language-julia hljs"># index of the Hopf point we want to branch from
+plot(br_hopf, branchlabel = &quot;Hopf&quot;); plot!(brfold, legend = :topleft, branchlabel = &quot;Fold&quot;)</code></pre><img src="eb64bcd6.svg" alt="Example block output"/><h2 id="Periodic-orbits-continuation-with-stability"><a class="docs-heading-anchor" href="#Periodic-orbits-continuation-with-stability">Periodic orbits continuation with stability</a><a id="Periodic-orbits-continuation-with-stability-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-continuation-with-stability" title="Permalink"></a></h2><p>Having found two Hopf bifurcation points, we aim at computing the periodic orbits branching from them. Like for the Brusselator example, we need to find some educated guess for the periodic orbits in order to have a successful Newton call.</p><p>The following code is very close to the one explained in the tutorial <a href="@ref">1d Brusselator (advanced user)</a> so we won&#39;t give too much details here.</p><p>We focus on the first Hopf bifurcation point. Note that, we do not improve the guess for the Hopf bifurcation point, <em>e.g.</em> by calling <code>newtonHopf</code>, as this is not really needed.</p><pre><code class="language-julia hljs"># index of the Hopf point we want to branch from
 ind_hopf = 1
 
 # number of time slices in the periodic orbit
@@ -153,7 +153,7 @@ orbitguess_f = vcat(vec(orbitguess_f2), Th) |&gt; vec</code></pre><p>We create a
 # space dimension
 	2n,
 # jacobian of the periodic orbit functional
-  jacobian = :FullMatrixFree)</code></pre><p>We can use this (family) problem <code>poTrap</code> with <code>newton</code> on our periodic orbit guess to find a periodic orbit. Hence, one can be tempted to use</p><div class="admonition is-danger" id="Don&#39;t-run-this!!-e2d3dffe15663e8d"><header class="admonition-header">Don&#39;t run this!!<a class="admonition-anchor" href="#Don&#39;t-run-this!!-e2d3dffe15663e8d" title="Permalink"></a></header><div class="admonition-body"><p>It uses too much memory</p><pre><code class="language-julia hljs">opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.03, ds= 0.001, p_max = 2.5, max_steps = 250, plot_every_step = 3, newton_options = (@set opt_po.linsolver = DefaultLS()))
+  jacobian = BK.MatrixFree())</code></pre><p>We can use this (family) problem <code>poTrap</code> with <code>newton</code> on our periodic orbit guess to find a periodic orbit. Hence, one can be tempted to use</p><div class="admonition is-danger" id="Don&#39;t-run-this!!-e2d3dffe15663e8d"><header class="admonition-header">Don&#39;t run this!!<a class="admonition-anchor" href="#Don&#39;t-run-this!!-e2d3dffe15663e8d" title="Permalink"></a></header><div class="admonition-body"><p>It uses too much memory</p><pre><code class="language-julia hljs">opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.03, ds= 0.001, p_max = 2.5, max_steps = 250, plot_every_step = 3, newton_options = (@set opt_po.linsolver = DefaultLS()))
 br_po = @time continuation(poTrap, vec(sol0), PALC(), opts_po_cont)</code></pre></div></div><p><strong>However, the linear system associated to the newton iterations will be solved by forming the sparse jacobian of size <span>$(2N_xN_yM+1)^2$</span> and the use of <code>\</code> (based on LU decomposition). It takes way too much time and memory.</strong></p><p>Instead, we use a preconditioner. We build the jacobian once, compute its <strong>incomplete LU decomposition</strong> (ILU) and use it as a preconditioner.</p><pre><code class="language-julia hljs">using IncompleteLU
 
 # Sparse matrix representation of the jacobian of the periodic orbit functional
@@ -200,7 +200,7 @@ poTrapMF = PeriodicOrbitTrapProblem(
 	2n,
   ls0,
 # jacobian of the periodic orbit functional
-  jacobian = :FullMatrixFree)</code></pre><p>We can now use newton</p><pre><code class="language-julia hljs">outpo_f = @time newton(poTrapMF, orbitguess_f, (@set opt_po.linsolver = ls); normN = norminf)
+  jacobian = BK.MatrixFree())</code></pre><p>We can now use newton</p><pre><code class="language-julia hljs">outpo_f = @time newton(poTrapMF, orbitguess_f, (@set opt_po.linsolver = ls); normN = norminf)
 BK.converged(outpo_f) &amp;&amp; printstyled(color=:red, &quot;--&gt; T = &quot;, outpo_f.u[end], &quot;\n&quot;)</code></pre><p>which gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton step         residual      linear iterations │
 ├─────────────┬──────────────────────┬────────────────┤
@@ -288,7 +288,7 @@ poTrapMFi = PeriodicOrbitTrapProblem(
 	2n,
   ls0,
 # jacobian of the periodic orbit functional
-  jacobian = :FullMatrixFree)</code></pre><p>and run the <code>newton</code> method:</p><pre><code class="language-julia hljs">outpo_f = @time newton(poTrapMFi, orbitguess_f, (@set opt_po.linsolver = ls); normN = norminf)</code></pre><p>It gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
+  jacobian = BK.MatrixFree())</code></pre><p>and run the <code>newton</code> method:</p><pre><code class="language-julia hljs">outpo_f = @time newton(poTrapMFi, orbitguess_f, (@set opt_po.linsolver = ls); normN = norminf)</code></pre><p>It gives</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
 │ Newton step         residual      linear iterations │
 ├─────────────┬──────────────────────┬────────────────┤
 │       0     │       6.5442e-03     │        0       │
@@ -305,7 +305,7 @@ Precilu = @time ilu(Jpo2, τ = 0.005)
 ls2 = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, N = size(Jpo2, 1), restart = 30, maxiter = 50, Pl = Precilu, log=true)
 
 opt_po = @set opt_newton.verbose = true
-outpo_f = @time newton((@set poTrapMF.jacobian = :BorderedMatrixFree),
+outpo_f = @time newton((@set poTrapMF.jacobian = BK.BorderedMatrixFree()),
 	orbitguess_f,
 	(@set opt_po.linsolver = ls2), 
 	normN = norminf)</code></pre><p>but it gives:</p><pre><code class="language-julia hljs">┌─────────────────────────────────────────────────────┐
@@ -432,7 +432,7 @@ poTrapMFGPU = PeriodicOrbitTrapProblem(
 	CuArray(real.(eigvec)),
 	CuArray(hopfpt.u),
 	M, 2n, ls0gpu;
-  jacobian = :FullMatrixFree,
+  jacobian = BK.MatrixFree(),
 	ongpu = true) # this is required to alter the way the constraint is handled</code></pre><p>Let us have a look at the linear solvers and compare the speed on CPU and GPU:</p><pre><code class="language-julia hljs">ls = GMRESKrylovKit(verbose = 2, Pl = Precilu, rtol = 1e-3, dim  = 20)
    # runs in 	2.990495 seconds (785 allocations: 31.564 MiB, 0.98% gc time)
 	outh, = @time ls((Jpo), orbitguess_f)
@@ -449,4 +449,4 @@ outpo_f = @time newton(poTrapMFGPU, orbitguess_cu,
 br_po = @time continuation(poTrapMFGPU, orbitguess_cu, PALC(),
    opts_po_cont;
    verbosity = 2,
-   record_from_solution = (u, p; k...) -&gt; getAmplitude(poTrapMFGPU, u, par_cgl_gpu), normC = x-&gt;maximum(abs.(x)))</code></pre><div class="admonition is-info" id="Preconditioner-update-5f4260704d050e03"><header class="admonition-header">Preconditioner update<a class="admonition-anchor" href="#Preconditioner-update-5f4260704d050e03" title="Permalink"></a></header><div class="admonition-body"><p>For now, the preconditioner has been precomputed on the CPU which forbids its (efficient) update during continuation of a branch of periodic orbits. This could be improved using <code>ilu0!</code> and friends in <code>CuArrays</code>.</p></div></div></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Thursday 14 August 2025 07:57">Thursday 14 August 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+   record_from_solution = (u, p; k...) -&gt; getAmplitude(poTrapMFGPU, u, par_cgl_gpu), normC = x-&gt;maximum(abs.(x)))</code></pre><div class="admonition is-info" id="Preconditioner-update-5f4260704d050e03"><header class="admonition-header">Preconditioner update<a class="admonition-anchor" href="#Preconditioner-update-5f4260704d050e03" title="Permalink"></a></header><div class="admonition-body"><p>For now, the preconditioner has been precomputed on the CPU which forbids its (efficient) update during continuation of a branch of periodic orbits. This could be improved using <code>ilu0!</code> and friends in <code>CuArrays</code>.</p></div></div></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Saturday 30 August 2025 08:14">Saturday 30 August 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
