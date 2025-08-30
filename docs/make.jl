@@ -2,11 +2,12 @@ using Pkg
 cd(@__DIR__)
 pkg" activate ."
 pkg" dev AbstractTrees BandedMatrices"
-pkg" add BifurcationKit AsymptoticNumericalMethod"
+pkg" add BifurcationKit AsymptoticNumericalMethod DocumenterMermaid BenchmarkTools"
 
 
 using Documenter, BifurcationKit, AsymptoticNumericalMethod
 # using DocumenterMermaid
+using DocumenterMermaid
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 
