@@ -5,11 +5,11 @@ Pages = ["Colpitts.md"]
 Depth = 3
 ```
 
-In this tutorial, we show how to study parametrized quasilinear DAEs like:
+In this tutorial, we show how to study parametrized DAEs like:
 
 $$A(\mu,x)\dot x = G(\mu,x).$$
 
-In particular, we detect a Hopf bifurcation and compute the periodic orbit branching from it using a multiple standard method.
+In particular, we detect a Hopf bifurcation and compute the periodic orbit branching from it using a multiple standard shooting method.
 
 The following DAE model is taken from [^Rabier]:
 
