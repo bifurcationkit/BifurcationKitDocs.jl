@@ -10,7 +10,7 @@ BifurcationKit = "0f109fa4-8a5d-4b75-95aa-f515264e7665"
 
 [compat]
 julia = "1.9"
-AsymptoticNumericalMethod = "^0.2.0"
+AsymptoticNumericalMethod = "^0.2.2"
 BifurcationKit = "^0.5.1"
 
 [extras]
