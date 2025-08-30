@@ -52,6 +52,9 @@ where $\mathcal C=d^3\mathcal P(\gamma(0))$, $\mathcal B = d^2\mathcal P(\gamma(
 
 $$\mathcal{A} v=e^{i \theta} v, \mathcal{A}^{\mathrm{T}} v^*=e^{-i \theta} v^*, \text { and }\left\langle v^*, v\right\rangle=1$$
 
+!!! danger "Large scale problems"
+    The computation of the normal form is not optimized for Matrix-Free problems (e.g. Monodromy) yet.
+
 ## Normal form based on Iooss method
 
 This is based on [^Iooss],[^Kuz2]. Suppose that the $T$ periodic orbit $\gamma(\tau)$ has a Neimark-Sacker bifurcation for a parameter value $p_0$. We also assume that there are no strong resonances.

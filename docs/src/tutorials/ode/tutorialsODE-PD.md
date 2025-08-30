@@ -34,14 +34,8 @@ function lur!(dz, u, p, t = 0)
 	dz
 end
 
-# parameters
-par_lur = (α = -1.0, β = 1.0)
-
-# initial guess
-z0 = zeros(3)
-
 # bifurcation problem
-prob = BifurcationProblem(lur!, z0, par_lur, (@optic _.α);
+prob_bif = ODEBifProblem(lur!, zeros(3), (α = -1.0, β = 1.0), (@optic _.α);
     record_from_solution = recordFromSolution)
 nothing #hide
 ```
@@ -53,7 +47,7 @@ We first compute the branch of equilibria
 opts_br = ContinuationPar(p_min = -1.4, p_max = 1.8, dsmax = 0.01, max_steps = 1000)
 
 # computation of the branch
-br = continuation(prob, PALC(), opts_br)
+br = continuation(prob_bif, PALC(), opts_br)
 
 scene = plot(br)
 ```
@@ -95,7 +89,7 @@ Continuation of periodic orbits from the Hopf point:
 
 ```@example TUTLURE
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds = 0.01, dsmin = 1e-4, max_steps = 70, tol_stability = 1e-4, plot_every_step = 20)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds = 0.01, dsmin = 1e-4, max_steps = 80, tol_stability = 1e-4, plot_every_step = 20)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
@@ -134,10 +128,10 @@ scene = plot(br_po, br_po_pd, title = "Collocation based")
 We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the previous one. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the previous method. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf **aBS**.
 
 ```@example TUTLURE
-using DifferentialEquations
+import DifferentialEquations as DE
 
 # ODE problem for using DifferentialEquations
-prob_ode = ODEProblem(lur!, copy(z0), (0., 1.), par_lur; abstol = 1e-12, reltol = 1e-10)
+prob_ode = DE.ODEProblem(lur!, prob_bif.u0, (0., 1.), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
 
 # continuation parameters
 # we decrease a bit the newton tolerance to help automatic branch switching from PD point
@@ -146,7 +140,7 @@ opts_po_cont = ContinuationPar(dsmax = 0.03, ds= -0.001, newton_options = Newton
 br_po = continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 10 sections
-	ShootingProblem(10, prob_ode, Rodas5(); parallel = true);
+	ShootingProblem(10, prob_ode, DE.Vern9(); parallel = true);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -162,17 +156,15 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, 
-	ContinuationPar(br_po.contparams, max_steps = 20, ds = -0.008);
-	# plot = true, verbosity = 2,
-	δp = -0.005,
-	ampfactor = 0.01,
-	use_normal_form = false,
+	ContinuationPar(br_po.contparams, max_steps = 6, ds = -0.008);
+	plot = true, verbosity = 2,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		# add previous branch
 		plot!(br_po; subplot = 1)
 	end,
 	record_from_solution = recordPO,
+	autodiff_nf = true,
 	normC = norminf,
 	callback_newton = BK.cbMaxNorm(10),
 	)

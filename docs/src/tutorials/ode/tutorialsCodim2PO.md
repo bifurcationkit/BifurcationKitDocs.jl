@@ -39,7 +39,7 @@ par_pop = ( K = 1., r = 6.28, a = 12.56, b0 = 0.25, e = 1., d = 6.28, ϵ = 0.2, 
 
 z0 = [0.1,0.1,1,0]
 
-prob = BifurcationProblem(Pop!, z0, par_pop, (@optic _.b0);
+prob_bif = BifurcationProblem(Pop!, z0, par_pop, (@optic _.b0);
 	record_from_solution = (x, p; k...) -> (x = x[1], y = x[2], u = x[3]))
 
 opts_br = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.01, n_inversion = 6, nev = 4)
@@ -52,11 +52,11 @@ nothing #hide
 This is very straightforward thanks to `SciML`.
 
 ```@example TUTPPREY
-using DifferentialEquations
-prob_de = ODEProblem(Pop!, z0, (0,200.), par_pop)
-sol = DifferentialEquations.solve(prob_de, Rodas5())
-prob_de = ODEProblem(Pop!, sol.u[end], (0,3.), par_pop, reltol = 1e-8, abstol = 1e-10)
-sol = DifferentialEquations.solve(prob_de, Rodas5())
+import DifferentialEquations as DE
+prob_de = DE.ODEProblem(Pop!, z0, (0,200.), par_pop)
+sol = DE.solve(prob_de, DE.Vern9())
+prob_de = DE.ODEProblem(Pop!, sol.u[end], (0,3.), par_pop, reltol = 1e-8, abstol = 1e-10)
+sol = DE.solve(prob_de, DE.Vern9())
 plot(sol)
 ```
 
@@ -88,7 +88,7 @@ We are now equipped to build a periodic orbit problem from a solution `sol::ODEP
 ```@example TUTPPREY
 # function to build probtrap from sol
 probtrap, ci = BK.generate_ci_problem(PeriodicOrbitTrapProblem(M = 150),
-	prob, sol, 2.)
+	prob_bif, sol, 2.)
 
 opts_po_cont = ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
 brpo_fold = continuation(probtrap, ci, PALC(), opts_po_cont;
@@ -115,7 +115,7 @@ We are now ready to build a periodic orbit problem from a solution `sol::ODEProb
 
 ```@example TUTPPREY
 probsh, cish = generate_ci_problem( ShootingProblem(M=3),
-	prob, prob_de, sol, 2.; alg = Rodas5(), abstol = 1e-12, reltol = 1e-10)
+	prob_bif, prob_de, sol, 2.; alg = DE.Vern9(), abstol = 1e-12, reltol = 1e-10)
 
 opts_po_cont = ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-3)
 br_fold_sh = continuation(probsh, cish, PALC(tangent = Bordered()), opts_po_cont;
@@ -142,7 +142,7 @@ We do the same as in the previous section but using orthogonal collocation. This
 ```@example TUTPPREY
 # this is the function which builds probcoll from sol
 probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 4),
-	prob, sol, 2.)
+	prob_bif, sol, 2.)
 
 opts_po_cont = ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
 brpo_fold = continuation(probcoll, ci, PALC(), opts_po_cont;
@@ -167,7 +167,8 @@ scene = plot(brpo_pd)
 We continue the previously detected fold/period-doubling bifurcations as function of two parameters and detect codim 2 bifurcations. We first start with the computation of the curve of Folds.
 
 ```@example TUTPPREY
-opts_pocoll_fold = ContinuationPar(brpo_fold.contparams, detect_bifurcation = 3, max_steps = 100, p_min = 0.01, p_max = 1.2)
+opts_pocoll_fold = ContinuationPar(brpo_fold.contparams, max_steps = 100, p_min = 0.01, p_max = 1.2)
+# we can increase the precision for collocation
 @reset opts_pocoll_fold.newton_options.tol = 1e-12
 
 fold_po_coll2 = continuation(brpo_fold, 1, (@optic _.ϵ), opts_pocoll_fold;
@@ -191,11 +192,11 @@ We turn to the computation of the curve of PD points.
 
 ```@example TUTPPREY
 par_pop2 = @set par_pop.b0 = 0.45
-sol2 = DifferentialEquations.solve(remake(prob_de, p = par_pop2, u0 = [0.1,0.1,1,0], tspan=(0,1000)), Rodas5())
-sol2 = DifferentialEquations.solve(remake(sol2.prob, tspan = (0,10), u0 = sol2[end]), Rodas5())
+sol2 = DE.solve(DE.remake(prob_de, p = par_pop2, u0 = [0.1,0.1,1,0], tspan=(0,1000)), DE.Vern9())
+sol2 = DE.solve(DE.remake(sol2.prob, tspan = (0,10), u0 = sol2[end]), DE.Vern9())
 plot(sol2, xlims = (8, 10))
 
-probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 3), re_make(prob, params = sol2.prob.p), sol2, 1.)
+probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 3), re_make(prob_bif, params = sol2.prob.p), sol2, 1.)
 
 prob2 = @set probcoll.prob_vf.lens = @optic _.ϵ
 brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);

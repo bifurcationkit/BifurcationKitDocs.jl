@@ -68,12 +68,12 @@ nothing #hide
 We obtain some trajectories as seeds for computing periodic orbits.
 
 ```@example STEINMETZ
-using DifferentialEquations
-alg_ode = Rodas4()
-prob_de = ODEProblem(SL!, z0, (0, 136.), par_sl)
-sol_ode = DifferentialEquations.solve(prob_de, alg_ode)
-prob_de = ODEProblem(SL!, sol_ode.u[end], (0, 30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
-sol_ode = DifferentialEquations.solve(prob_de, alg_ode)
+import DifferentialEquations as DE
+alg_ode = DE.Vern9()
+prob_de = DE.ODEProblem(SL!, z0, (0, 136.), par_sl)
+sol_ode = DE.solve(prob_de, alg_ode)
+prob_de = DE.ODEProblem(SL!, sol_ode.u[end], (0, 30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
+sol_ode = DE.solve(prob_de, alg_ode)
 plot(sol_ode)
 ```
 
@@ -81,9 +81,9 @@ plot(sol_ode)
 We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of $k_8$
 
 ```@example STEINMETZ
-probsh, cish = generate_ci_problem( ShootingProblem(M=5; jacobian = BK.AutoDiffDenseAnalytical() ), prob, prob_de, sol_ode, 16.; reltol = 1e-10, abstol = 1e-13, parallel = true)
+probsh, cish = generate_ci_problem( ShootingProblem(M = 5; jacobian = BK.AutoDiffDenseAnalytical() ), prob, prob_de, sol_ode, 16.; reltol = 1e-11, abstol = 1e-13, parallel = true)
 
-opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.05, n_inversion = 8, detect_bifurcation = 3, max_bisection_steps = 25, nev = 4, max_steps = 60, tol_stability = 1e-3)
+opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.1, n_inversion = 6, detect_bifurcation = 3, nev = 4, max_steps = 40, tol_stability = 1e-3)
 @reset opts_po_cont.newton_options.max_iterations = 10
 br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po_cont;
 	# verbosity = 3, plot = true,
@@ -101,7 +101,7 @@ fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fol
 		# verbosity = 2, plot = true,
 		alg = PALC(),
 		detect_codim2_bifurcation = 0,
-		update_minaug_every_step = 1,
+		# update_minaug_every_step = 1,
 		start_with_eigen = false,
 		usehessian = true,
 		jacobian_ma = BK.MinAug(),
@@ -113,14 +113,14 @@ plot(fold_po_sh)
 
 ### Curve of NS points of periodic orbits
 ```@example STEINMETZ
-opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
+opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 5e-2, ds = 1e-2)
 @reset opts_posh_ns.newton_options.tol = 1e-11
 # @reset opts_posh_ns.newton_options.verbose = true
 ns_po_sh = continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
 		# verbosity = 2,
 		# plot = true,
 		detect_codim2_bifurcation = 2,
-		update_minaug_every_step = 1,
+		# update_minaug_every_step = 1,
 		jacobian_ma = BK.MinAug(),
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
@@ -137,7 +137,7 @@ scene
 
 ```@example STEINMETZ
 probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4; 
-	jacobian = BK.DenseAnalyticalInplace(), update_section_every_step = 0), 
+	jacobian = BK.DenseAnalyticalInplace()), 
 	prob, 
 	sol_ode, 
 	16.)
@@ -163,10 +163,8 @@ opts_pocl_fold = ContinuationPar(br_coll.contparams,detect_bifurcation = 1, plot
 @reset opts_pocl_fold.newton_options.verbose = true
 @reset opts_pocl_fold.newton_options.tol = 1e-11
 fold_po_cl = @time continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold;
-        # verbosity = 3, 
-        # plot = true,
+        # verbosity = 3, # plot = true,
         detect_codim2_bifurcation = 2,
-        update_minaug_every_step = 1,
         start_with_eigen = false,
         usehessian = true,
         jacobian_ma = BK.MinAug(),
@@ -184,8 +182,7 @@ opts_pocl_ns = ContinuationPar(br_coll.contparams, detect_bifurcation = 0, plot_
 ns_po_cl = continuation(deepcopy(br_coll), 1, (@optic _.k7), opts_pocl_ns;
         # verbosity = 3, 
         # plot = true,
-        detect_codim2_bifurcation = 0,
-        update_minaug_every_step = 1,
+        detect_codim2_bifurcation = 1,
         start_with_eigen = false,
         jacobian_ma = BK.MinAugMatrixBased(),
         normC = norminf,

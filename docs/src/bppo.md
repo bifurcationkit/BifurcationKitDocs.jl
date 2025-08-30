@@ -51,7 +51,11 @@ Depending on the method used for computing the periodic orbits, you have several
 
 Given a transversal section $\Sigma$ to $\gamma$ at $\gamma(0)$, the Poincaré return map $\mathcal P$ associates to each point $x\in\Sigma$ close to $\gamma(0)$ the first point $\mathcal P(x,p)\in\Sigma$ where the orbit of (E) with initial condition $x$ intersects again $\Sigma$ at $\mathcal P(x,p)$. Hence, the discrete map $x_{n+1}=\mathcal P(x_n,p)$ has normal form
 
-$$x_{n+1} = x_n+a_{10}\delta p + a_{11}\delta p x+a_{02}x^2+a_{03}x^3$$
+$$x_{n+1} = x_n + a_{10}\delta p + a_{11}\delta p x + a_{02}x^2 + a_{03}x^3$$
+
+!!! danger "Large scale problems"
+    The computation of the normal form is not optimized for Matrix-Free problems (e.g. Monodromy) yet.
+
 ## References
 
 [^Kuznetsov]: > Yu. A. Kuznetsov, "Elements of Applied Bifurcation Theory", 2nd ed., 1998.

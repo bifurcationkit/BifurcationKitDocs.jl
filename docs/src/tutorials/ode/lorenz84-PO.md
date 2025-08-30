@@ -25,7 +25,7 @@ $$\left\{\begin{array}{l}
 We recall the problem setting:
 
 ```@example LORENZ84V2
-using Revise, ForwardDiff, Plots, LinearAlgebra
+using Revise, Plots, LinearAlgebra
 using BifurcationKit
 const BK = BifurcationKit
 
@@ -92,11 +92,10 @@ fold_po = continuation(hp_codim2_1, 3, opts_fold_po,
 		PeriodicOrbitOCollProblem(20, 3, meshadapt = false);
 		normC = norminf,
 		δp = 0.02,
-		update_minaug_every_step = 0,
 		jacobian_ma = BK.MinAug(),
 		verbosity = 0, plot = false,
 	)
-plot!(fold_po, vars=(:F, :T), branchlabel = "Fold-PO")
+plot!(fold_po, vars=(:F, :T), branchlabel = "Fold-PO", color=:blue)
 ```
 
 ## NS bifurcations of periodic orbits from Hopf-Hopf bifurcation
@@ -106,14 +105,12 @@ When we computed the curve of Hopf points, we detected a Hopf-Hopf bifurcation. 
 ```@example LORENZ84V2
 opts_ns_po = ContinuationPar(hp_codim2_1.contparams, dsmax = 0.02, detect_bifurcation = 1, max_steps = 20, ds = -0.001, detect_event = 0)
 @reset opts_ns_po.newton_options.verbose = false
-@reset opts_ns_po.newton_options.tol = 1e-9
+# @reset opts_ns_po.newton_options.tol = 1e-9
 @reset opts_ns_po.newton_options.max_iterations = 10
 ns_po1 = continuation(hp_codim2_1, 4, opts_ns_po, 
-		PeriodicOrbitOCollProblem(20, 3, update_section_every_step = 1);
-		detect_codim2_bifurcation = 0,
+		PeriodicOrbitOCollProblem(20, 3);
 		normC = norminf,
 		δp = 0.02,
-		update_minaug_every_step = 1,
 		# which of the 2 NS curves should we compute?
 		whichns = 1,
 		jacobian_ma = BK.MinAug(),
@@ -123,11 +120,9 @@ plot!(ns_po1, vars=(:F, :T), branchlabel = "NS1")
 
 ```@example LORENZ84V2
 ns_po2 = continuation(hp_codim2_1, 4, opts_ns_po, 
-		PeriodicOrbitOCollProblem(30, 3, update_section_every_step = 1);
-		detect_codim2_bifurcation = 0,
+		PeriodicOrbitOCollProblem(30, 3);
 		normC = norminf,
 		δp = 0.02,
-		update_minaug_every_step = 1,
 		# which of the 2 NS curves should we compute?
 		whichns = 2,
 		jacobian_ma = BK.MinAug(),

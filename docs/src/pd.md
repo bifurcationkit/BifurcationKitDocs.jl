@@ -52,7 +52,7 @@ If `override = true`, then the predictor is simply `x0 .+ ampfactor .* e` for th
 
 Given a transversal section $\Sigma$ to $x_0$ at $x_0(0)$, the Poincaré return map $\mathcal P$ associates to each point $x\in\Sigma$ close to $x_0(0)$ the first point $\mathcal P(x,p)\in\Sigma$ where the orbit of (E) with initial condition $x$ intersects again $\Sigma$ at $\mathcal P(x,p)$. Hence, the discrete map $x_{n+1}=\mathcal P(x_n,p)$ has normal form
 
-$$x_{n+1} = -x_n+cx_n^3+...$$
+$$x_{n+1} = -x_n + cx_n^3 + ...$$
 
 where [^Kuz2]
 
@@ -61,6 +61,9 @@ $$c =\frac{1}{6}\left\langle p^*, \mathcal{C}(p, p, p)+3 \mathcal{B}\left(p,\lef
 where $\mathcal C=d^3\mathcal P(x_0(0))$, $\mathcal B = d^2\mathcal P(x_0(0))$ and $\mathcal A = d\mathcal P(x_0(0))$. Also:
 
 $$\mathcal{A} p=-p, \mathcal{A}^{\mathrm{T}} p^*=-p^*$$
+
+!!! danger "Large scale problems"
+    The computation of the normal form is not optimized for Matrix-Free problems (e.g. Monodromy) yet.
 
 ## Normal form based on Iooss method
 

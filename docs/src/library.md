@@ -164,7 +164,7 @@ BifurcationKit.LSFromBLS
 ## Nonlinear solver
 
 ```@docs
-solve
+BifurcationKit.solve
 ```
 
 ```@docs

@@ -55,7 +55,7 @@ The **nodes** $(z_l)$ are associated with a Gauss–Legendre quadrature.
 
 In order to have a unique solution, we need to remove the phase freedom. This is done by imposing a *phase* condition.
 
-## Number of unknowns
+### Number of unknowns
 
 Putting the period unknown aside, we have to find the $x_{j,k}$ which gives $n\times N_{tst}\times (m+1)$ unknowns. 
 
@@ -65,14 +65,13 @@ $$n\times N_{tst}\times (m+1)$$
 
 equations which matches the number of unknowns.
 
-## Phase condition
+### Phase condition
 
 To ensure uniqueness of the solution to the functional, we use the following phase condition
 
 $$\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_0(s)\right\rangle d s =0$$
 
 > During continuation at step $k$, we use $\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_{k-1}(s)\right\rangle d s$
-
 
 ## Discretization of the BVP and jacobian
 
@@ -166,6 +165,145 @@ The docs for this specific `newton` are located at [`newton`](@ref).
 ## Continuation
 
 We refer to [`continuation`](@ref) for more information regarding the arguments. `continuation` will look for `prob.jacobian` in order to select the requested way to compute the jacobian.
+
+## Examples of optimized use
+
+We show in this part how to optimize the use of collocation for small systems. We consider a small dynamical system which has a Hopf bifurcation and we compute the branch of periodic orbits from the Hopf bifurcation.
+
+The basic code is as follows (see Tutorials).
+
+```@example OptimColl
+using BifurcationKit, BenchmarkTools
+
+@inbounds function auto_cat!(dz, z, p, t = 0)
+    (;κ, μ, σ, δ) = p
+    a,b,c = z
+    ab2 = a*b^2
+    dz[1] = μ *(κ+c) - ab2 - a
+    dz[2] = (ab2 + a - b)/σ
+    dz[3] = (b-c)/δ
+    dz
+end
+
+prob = BifurcationProblem(auto_cat!, [1.,0,1], (κ = 65., μ = 0.01, σ = 5e-3, δ = 2e-2 ) , (@optic _.μ);
+        record_from_solution = (x, p; k...) -> (E = x[1], x = x[2], u = x[3]),
+        )
+
+opts_br = ContinuationPar(p_min = -0.0, p_max = .19, ds = 0.04, dsmax = 0.1, n_inversion = 8, detect_bifurcation = 3, max_bisection_steps = 25, nev = 3)
+br = continuation(prob, PALC(tangent=Bordered()), opts_br; plot = false, normC = norminf, bothside = true)
+```
+
+```@example OptimColl
+# collocation method to discretize the periodic orbit
+po_method = PeriodicOrbitOCollProblem(80, 4,
+                jacobian = BifurcationKit.DenseAnalyticalInplace(),
+                );
+
+opts_po_cont = ContinuationPar(dsmax = 0.03, 
+                            ds= -0.001, 
+                            dsmin = 1e-4,
+                            p_max = 0.8, 
+                            p_min=-5., 
+                            max_steps = 280,
+
+
+                            newton_options = NewtonPar(tol = 1e-9,  max_iterations = 4), 
+                            nev = 3, 
+                            tol_stability = 1e-3, 
+                            detect_bifurcation = 3,
+                            plot_every_step = 20,
+                            save_sol_every_step = 1,
+                            detect_fold = false,
+                            n_inversion = 6)
+
+br_po = @benchmark continuation(
+    br, 3, opts_po_cont,
+    po_method,
+    alg = PALC(),
+    δp = 0.001,
+    normC = norminf,
+    # under-optimized Floquet computation. ~Slow but general.
+    eigsolver = BifurcationKit.FloquetColl(small_n = false),
+    )
+```
+
+The slow runnning time comes from `\` used to invert the collocation jacobian. 
+
+### Inplace jacobian
+
+The first optimization is to pass an inplace jacobian of the vector field. Right now, `ForwardDiff.jl` provides this in `BifurcationProblem` but it is not very optimized.
+
+```@example OptimColl
+@inbounds function auto_cat_jac!(J, z, p, t = 0)
+    (;κ, μ, σ, δ) = p
+    a,b,c = z
+    ab = 2*a*b
+    J[1,1] = -1-(b^2)
+    J[1,2] = -ab
+    J[1,3] = μ
+    J[2,1] = (1+b^2) / σ
+    J[2,2] = (-1+ab) / σ
+    # J[2,3] = 0
+    # J[3,1] = 0
+    J[3,2] = 1 / δ 
+    J[3,3] = -1 / δ
+    J
+end
+
+prob = BifurcationProblem(auto_cat!, [1.,0,1], (κ = 65., μ = 0.01, σ = 5e-3, δ = 2e-2 ) , (@optic _.μ);
+        record_from_solution = (x, p; k...) -> (E = x[1], x = x[2], u = x[3]),
+        J! = auto_cat_jac!,
+        )
+
+br = continuation(prob, PALC(tangent=Bordered()), opts_br; plot = false, normC = norminf, bothside = true)
+
+br_po = @benchmark continuation(
+    br, 3, opts_po_cont,
+    po_method,
+    alg = PALC(),
+    δp = 0.001,
+    normC = norminf,
+    # under-optimized Floquet computation. ~Slow but general.
+    eigsolver = BifurcationKit.FloquetColl(small_n = false),
+    )
+```
+
+This is not a large gain.
+
+### Optimized linear solver
+
+The next optimization is to used the specific linear solver based on condensation of parameters:
+
+```@example OptimColl
+br_po = @benchmark continuation(
+    br, 3, opts_po_cont,
+    po_method,
+    alg = PALC(),
+    δp = 0.001,
+    linear_algo = BifurcationKit.COPBLS(),
+    eigsolver = BifurcationKit.FloquetColl(small_n = false),
+    normC = norminf,
+    )
+```
+
+This is massive gain, almost 10x faster!
+
+### Optimized Floquet computation
+
+```@example OptimColl
+br_po = @benchmark continuation(
+    br, 3, opts_po_cont,
+    po_method,
+    alg = PALC(),
+    δp = 0.001,
+    # verbosity = 3,
+    linear_algo = BifurcationKit.COPBLS(),
+    eigsolver = BifurcationKit.FloquetColl(small_n = true),
+    normC = norminf,
+    )
+```
+
+This is massive gain, almost 4x faster, overall 40x faster than basic version. The allocations are quite minimal.
 
 ## References
 
