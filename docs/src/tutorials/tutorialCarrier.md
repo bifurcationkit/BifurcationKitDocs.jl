@@ -81,6 +81,7 @@ diagram = bifurcationdiagram(prob,
     # particular bordered linear solver to use
 	# BandedMatrices.
     PALC(bls = BorderingBLS(solver = DefaultLS(), check_precision = false)),
+	autodiff = false,
     2,
 	optcont)
 

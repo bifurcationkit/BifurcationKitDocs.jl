@@ -1,6 +1,14 @@
 # [Continuation of Fold of periodic orbits](@id fold-po)
 
+```@contents
+Pages = ["FoldContinuationPO.md"]
+Depth = 2
+```
+
 In this page, we explain how to perform continuation of Fold points and detect the associated codim 2 bifurcations.
+
+!!! danger "Large scale problems"
+    The continuation of Fold bifurcations is not optimized for Shooting Matrix-Free problems (e.g. Monodromy) yet.
 
 ### List of detected codim 2 bifurcation points
 |Bifurcation|symbol used|Multipliers

@@ -80,7 +80,7 @@ Same as `FullLU()` but the Jacobian is allocated only once and updated inplace. 
 ### 3. Dense
 Same as `FullSparseInplace()` above but the matrix `dG` is dense. It is also updated inplace. This is useful to study ODE of small dimension.
 
-### 4. MatrixFree
+### 4. FullMatrixFree
 A matrix free linear solver is used for $\mathcal J$: note that a preconditioner is very likely required here because of the cyclic shape of $\mathcal J$ which affects negatively the convergence properties of iterative solvers. Note that $\mathcal J$ is never formed in this case.
 
 ### 5. BorderedLU

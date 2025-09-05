@@ -140,7 +140,7 @@ br_po = continuation(br, 1, opts_po_cont, probSH;
 		plot!(outt.t, outt[2, :], subplot = 3)
 		plot!(br, vars = (:param, :x1), subplot = 1)
 	end,
-	# the newton Callback is used to reject residual > 1
+	# the newton callback is used to reject residual > 1
 	# this is to avoid numerical instabilities from DE.jl
 	callback_newton = BK.cbMaxNorm(1.0),
 	normC = norminf)

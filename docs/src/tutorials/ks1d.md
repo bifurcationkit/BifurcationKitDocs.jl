@@ -79,7 +79,7 @@ and continuation options
 optn = NewtonPar(tol = 1e-9, max_iterations = 15)
 optc = ContinuationPar(p_min = 1/150., p_max = 1., max_steps = 700, newton_options = optn,
 dsmax = 0.01, dsmin = 1e-4, ds = -0.001, nev = N, n_inversion = 8,
-max_bisection_steps = 30, dsmin_bisection = 1e-10, plot_every_step = 50)
+max_bisection_steps = 30, plot_every_step = 50)
 
 kwargscont = (verbosity = 2, plot = true, normC = norm)
 ```
@@ -100,16 +100,24 @@ end
 # we now compute the bifurcation diagram
 # that is the connected component of (0,0)
 diagram = @time bifurcationdiagram(prob, PALC(), 4, optrec;
-		kwargscont..., verbosity = 0,
+		kwargscont..., 
+		verbosity = 0,
 		)
 ```
 
 Plotting the result can be done using
 
 ```julia
-plot(diagram; code = (), plotfold = false,  markersize = 3, putspecialptlegend = false,
-	 plotcirclesbif = true, applytoX = x->2/x, vars = (:param, :nrm),
-	 xlim = (0,150), ylim=(0,8))
+plot(diagram; code = (), 
+	plotfold = false,  
+	markersize = 3, 
+	putspecialptlegend = false,
+	plotcirclesbif = true, 
+	applytoX = x->2/x, 
+	vars = (:param, :nrm),
+	labels = "",
+	xlim = (0,150), 
+	ylim=(0,8))
 title!("#branches = $(size(diagram))")
 ```
 

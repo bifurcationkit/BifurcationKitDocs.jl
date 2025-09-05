@@ -162,7 +162,7 @@ Before we start the codim 2 continuation, we tell `BifurcationKit.jl` to use the
 ind_hopf = 1
 br_hopf = @time continuation(
 	br, ind_hopf, (@optic _.γ),
-	ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds= 0.01, p_max = 6.5, p_min = -10., newton_options = opts_br.newton_options, detect_bifurcation = 1); plot = true,
+	ContinuationPar(opts_br; dsmin = 0.001, dsmax = 0.02, ds= 0.01, p_max = 6.5, p_min = -10., detect_bifurcation = 1); plot = true,
 	update_minaug_every_step = 1,
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
@@ -233,7 +233,7 @@ poTrap = PeriodicOrbitTrapProblem(
 # space dimension
 	2n,
 # jacobian of the periodic orbit functional
-  jacobian = BK.MatrixFree())
+  jacobian = BK.FullMatrixFree())
 ```
 
 We can use this (family) problem `poTrap` with `newton` on our periodic orbit guess to find a periodic orbit. Hence, one can be tempted to use
@@ -323,7 +323,7 @@ poTrapMF = PeriodicOrbitTrapProblem(
 	2n,
   ls0,
 # jacobian of the periodic orbit functional
-  jacobian = BK.MatrixFree())
+  jacobian = BK.FullMatrixFree())
 ```
 
 We can now use newton
@@ -439,13 +439,14 @@ poTrapMFi = PeriodicOrbitTrapProblem(
 	2n,
   ls0,
 # jacobian of the periodic orbit functional
-  jacobian = BK.MatrixFree())
+  jacobian = BK.FullMatrixFree())
 ```
 and run the `newton` method:
 
 ```julia
 outpo_f = @time newton(poTrapMFi, orbitguess_f, (@set opt_po.linsolver = ls); normN = norminf)
 ```
+
 It gives
 
 ```julia
@@ -511,14 +512,18 @@ We can now perform continuation of the newly found periodic orbit and compute th
 opt_po = @set opt_po.eigsolver = EigKrylovKit(tol = 1e-3, x₀ = rand(2n), verbose = 2, dim = 25)
 
 # parameters for the continuation
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds = 0.001, p_max = 2.2, max_steps = 250, plot_every_step = 3, newton_options = (@set opt_po.linsolver = ls),
+opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.02, ds = 0.001, p_max = 2.0, max_steps = 250, plot_every_step = 3, newton_options = (@set opt_po.linsolver = ls),
 	nev = 5, tol_stability = 1e-7, detect_bifurcation = 3)
 
 br_po = @time continuation(poTrapMF, outpo_f.u, PALC(),	opts_po_cont;
 	verbosity = 2,	plot = true,
 	linear_algo = BorderingBLS(solver = ls, check_precision = false),
 	plot_solution = (x, p; kwargs...) -> BK.plot_periodic_potrap(x, M, Nx, Ny; ratio = 2, kwargs...),
-	record_from_solution = (u, p; k...) -> BK.getamplitude(poTrapMF, u, par_cgl; ratio = 2), normC = norminf)
+	record_from_solution = (u, p; k...) -> begin
+		solpo = BK.get_periodic_orbit(p.prob, u, nothing)
+		maximum(solpo.u)
+	end, 
+	normC = norminf)
 ```
 
 This gives the following bifurcation diagram:
@@ -570,10 +575,10 @@ We select the Fold point from the branch `br_po` and redefine our linear solver 
 
 ```julia
 indfold = 1
-foldpt = foldpoint(br_po, indfold)
+foldpt = BK.fold_point(br_po, indfold)
 
-Jpo = poTrap(Val(:JacFullSparse), orbitguess_f, (@set par_cgl.r = r_hopf - 0.1))
-Precilu = @time ilu(Jpo, τ = 0.005);
+Jpo = poTrap(Val(:JacFullSparse), orbitguess_f, (@set par_cgl.r = foldpt.p))
+Precilu = @time ilu(Jpo, τ = 0.002);
 ls = GMRESIterativeSolvers(verbose = false, reltol = 1e-4, N = size(Jpo, 1), restart = 40, maxiter = 60, Pl = Precilu);
 ```
 
@@ -582,16 +587,16 @@ We can then use our functional to call `newtonFold` unlike for a regular functio
 ```julia
 # define a bifurcation problem for the fold
 # this will be made automatic in the future
-probFold = BifurcationProblem((x, p) -> poTrap(x, p), foldpt, getparams(br), getlens(br);
+probFold = BifurcationProblem((x, p) -> BK.residual(poTrap, x, p), foldpt, getparams(br), getlens(br);
 			J = (x, p) -> poTrap(Val(:JacFullSparse), x, p),
-			d2F = (x, p, dx1, dx2) -> d2Fcglpb(z -> poTrap(z, p), x, dx1, dx2))
+			d2F = (x, p, dx1, dx2) -> d2Fcglpb(z -> BK.residual(poTrap, z, p), x, dx1, dx2))
 
 outfold = @time BK.newton_fold(
   br_po, indfold; #index of the fold point
   prob = probFold,
 	# we change the linear solver for the one we
 	# defined above
-	options = (@set opt_po.linsolver = ls),
+	options = NewtonPar(tol = 1e-10, linsolver = ls, verbose = true),
 	bdlinsolver = BorderingBLS(solver = ls, check_precision = false))
 BK.converged(outfold) && printstyled(color=:red, "--> We found a Fold Point at α = ", outfold.u.p," from ", br_po.specialpoint[indfold].param,"\n")
 ```

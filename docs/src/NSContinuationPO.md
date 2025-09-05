@@ -1,6 +1,14 @@
 # Continuation of Neimark-Sacker (NS) bifurcations of periodic orbits
 
+```@contents
+Pages = ["NSContinuationPO.md"]
+Depth = 2
+```
+
 In this page, we explain how to perform continuation of NS points of periodic orbits and detect the associated codim 2 bifurcations.
+
+!!! danger "Large scale problems"
+    The continuation of NS bifurcations is not optimized for Shooting Matrix-Free problems (e.g. Monodromy) yet.
 
 ### List of detected codim 2 bifurcation points
 |Bifurcation|symbol used|Multipliers|

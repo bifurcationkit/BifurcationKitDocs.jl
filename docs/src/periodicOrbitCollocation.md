@@ -227,7 +227,7 @@ br_po = @benchmark continuation(
     )
 ```
 
-The slow runnning time comes from `\` used to invert the collocation jacobian. 
+The slow running time comes from `\` used to invert the collocation jacobian. 
 
 ### Inplace jacobian
 
@@ -303,7 +303,7 @@ br_po = @benchmark continuation(
     )
 ```
 
-This is massive gain, almost 4x faster, overall 40x faster than basic version. The allocations are quite minimal.
+This is massive gain (typically from `4.6s` to `180ms` on Apple M2), almost 4x faster, overall 40x faster than basic version. The allocations are quite minimal.
 
 ## References
 

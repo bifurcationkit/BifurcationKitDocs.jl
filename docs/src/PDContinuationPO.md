@@ -5,6 +5,9 @@ Pages = ["PDContinuationPO.md"]
 Depth = 2
 ```
 
+!!! danger "Large scale problems"
+    The continuation of PD bifurcations is not optimized for Shooting Matrix-Free problems (e.g. Monodromy) yet.
+
 In this page, we explain how to perform continuation of PD points of periodic orbits and detect the following codim 2 bifurcations.
 
 ### List of detected codim 2 bifurcation points
