@@ -25,7 +25,7 @@ There are two ways to compute the normal form of this bifurcation
 You can obtain the normal form of a NS bifurcation using 
 
 ```
-pd = get_normal_form(br, ind; prm = false)
+ns = get_normal_form(br, ind; prm = false)
 ```
 
 where `prm` indicates whether you want to use the method based on Poincaré return map (PRM) or the one based on Iooss method.

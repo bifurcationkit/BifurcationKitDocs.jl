@@ -106,6 +106,12 @@ br_po = continuation(
 scene = plot(br, br_po)
 ```
 
+Note that you can compute the PD normal form
+
+```@example TUTLURE
+get_normal_form(br_po, 1)
+```
+
 We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
 
 ```@example TUTLURE
@@ -149,6 +155,12 @@ br_po = continuation(
 	normC = norminf)
 
 plot(br_po)
+```
+
+Note that you can compute the PD normal form
+
+```@example TUTLURE
+get_normal_form(br_po, 1; autodiff = true)
 ```
 
 We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
