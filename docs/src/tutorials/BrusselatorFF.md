@@ -5,7 +5,11 @@ Depth = 3
 ```
 
 !!! info "Acknowledgment"
-    The example was done in collaboration with Navid C. Constantinou.    
+    The example was done in collaboration with Navid C. Constantinou.
+
+
+!!! info "Old code"
+    This is a very old code that has not been updated. Very little is required to make it up to date. 
 
 We look at the Brusselator in 1d, see [^Tzou]. The equations are
 

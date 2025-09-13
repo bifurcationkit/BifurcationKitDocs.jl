@@ -1,5 +1,10 @@
 # FAQ
 
+```@contents
+Pages = ["faq.md"]
+Depth = 3
+```
+
 ### Nothing is working as intended, how do I investigate the situation?
 
 The best thing to start with is to engage verbose mode by passing `verbosity = 3`. It is also important to monitor newton iterations by passing `NewtonPar(..., verbose = true)` to `ContinuationPar`.
@@ -7,6 +12,23 @@ The best thing to start with is to engage verbose mode by passing `verbosity = 3
 If this is not enough, one can engage debug mode by doing `ENV["JULIA_DEBUG"] = BifurcationKit` in the REPL. A lot of useful information will be printed in the screen and hopefully resolve the situation. In particular, look at the amplitude of the predictors, convergence of linear / nonlinear iterations, convergence of eigensolvers...
 
 If this is still not enough, open an issue on BifurcationKit website or on discourse.
+
+
+### I want to stop the computation in the middle and still get the result!
+
+You can save the branch in a file during computation, see `save_to_file` in `ContinuationPar`.
+
+If you do not want to save to file, you can use following the syntax
+
+```julia
+# create iterable and state
+iter = ContIterable(prob, alg, contparams; kwargs...)
+state, = iterate(iter)
+# allocate variable for the result
+contRes = ContResult(it, state)
+# run computation
+continuation!(it, state, contRes)
+```
 
 ### How can I save a solution every n steps, or at specific parameter values?
 
@@ -21,7 +43,7 @@ and pass it like `continuation(prob, alg, opts; finalise_solution = (z, tau, ste
 
 ### The Fold / Hopf Continuation does not work, why?
 
-This requires some precise computations. Have you tried passing the expression of the Jacobian instead of relying on finite differences.
+This requires some precise computations. Have you tried passing the expression of the Jacobian instead of relying on finite differences. Idem for the second derivative?
 
 ### What is the parameter `theta` about in `ContinuationPar`?
 
@@ -65,7 +87,7 @@ function mycallback((x, f, J, res, iteration, itlinear, options); kwargs...)
 end
 ```
 
-### How do I stop `continuation`?
+### How do I stop `continuation` with user defined condition?
 
 Using the argument `finalise_solution` in `continuation`. Simply make this function `finalise_solution` return false.
 
@@ -73,7 +95,7 @@ Using the argument `finalise_solution` in `continuation`. Simply make this funct
 
 Instead of using two calls to `continuation`, you can pass the keyword `bothside=true` to `continuation`
 
-### How do I compute period orbits for non-autonomous problems
+### How do I compute period orbits for non-autonomous problems?
 
 The package does not yet allow to compute periodic orbits solutions of non-autonomous Cauchy problems like
 
@@ -86,11 +108,11 @@ $$\dot u = cos(u) + cos(\omega \cdot t).$$
 Then one can use the following autonomous vector field
 
 ```julia
-function vectorField(U, par)
+function vector_field(U, par)
 	u, x, y = U
 	out = similar(U)
 	out[1] = cos(u) + x
-	x2 = x^2+y^2
+	x2 = x^2 + y^2
 	out[2] = x + par.ω * y - x * x2
 	out[3] = y - par.ω * x - y * x2
 	out

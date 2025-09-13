@@ -168,7 +168,8 @@ br_hopf = continuation(br, ind_hopf, (@optic _.β),
 	# we update the Hopf problem at every continuation step
 	update_minaug_every_step = 1,
 	jacobian_ma = BK.MinAug(), # specific to large dimensions
-	normC = norminf)
+	normC = norminf,
+	)
 
 scene = plot(br_hopf) 	
 ```
@@ -310,7 +311,7 @@ optn_po = NewtonPar(verbose = true,
 	linsolver = ls,
 	eigsolver = eig)
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= 0.01, p_max = 2.5, max_steps = 10,
+opts_po_cont = ContinuationPar(dsmax = 0.03, ds = 0.01, p_max = 2.5, max_steps = 10,
 	newton_options = optn_po, nev = 15, tol_stability = 1e-3,
 	plot_every_step = 2)
 

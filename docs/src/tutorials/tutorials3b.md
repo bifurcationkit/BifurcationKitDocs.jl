@@ -240,7 +240,7 @@ Finally, we can perform continuation of this periodic orbit using the specialize
 
 ```@example TUTBRUmanual
 opt_po = @set opt_po.eigsolver = EigArpack(; tol = 1e-5, v0 = rand(2n))
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.03, ds= 0.01,
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.03, ds = 0.01,
 	p_max = 3.0, max_steps = 20,
 	newton_options = opt_po, nev = 5, tol_stability = 1e-8, detect_bifurcation = 0)
 
@@ -340,7 +340,7 @@ initpo = vcat(vec(orbitsection), 3.0)
 Finally, we need to build a problem which encodes the Shooting functional. This done as follows where we first create the time stepper. For performance reasons, we rely on `SparseDiffTools `
 
 ```julia
-using DifferentialEquations, SparseDiffTools, SparseArrays
+using OrdinaryDiffEq, SparseArrays
 
 FOde(f, x, p, t) = Fbru!(f, x, p)
 
@@ -351,8 +351,7 @@ par_hopf = (@set par_bru.l = l_hopf + 0.01)
 
 jac_prototype = Jbru_sp(ones(2n), @set par_bru.β = 0)
 jac_prototype.nzval .= ones(length(jac_prototype.nzval))
-_colors = matrix_colors(jac_prototype)
-vf = ODEFunction(FOde; jac_prototype = jac_prototype, colorvec = _colors)
+vf = ODEFunction(FOde; jac_prototype = jac_prototype)
 prob = ODEProblem(vf,  sol0, (0.0, 520.), par_bru)
 ```
 
@@ -399,22 +398,19 @@ which gives (note that we did not have a really nice guess...)
 ┌─────────────────────────────────────────────────────┐
 │ Newton step         residual      linear iterations │
 ├─────────────┬──────────────────────┬────────────────┤
-│       0     │       2.6239e-01     │        0       │
-│       1     │       8.8979e-03     │       27       │
-│       2     │       9.6221e-04     │       28       │
-│       3     │       5.0540e-02     │       31       │
-│       4     │       3.4149e-03     │       28       │
-│       5     │       1.1336e+00     │       31       │
-│       6     │       9.5418e-02     │       25       │
-│       7     │       1.1996e-02     │       28       │
-│       8     │       1.2655e-02     │       28       │
-│       9     │       3.8820e-03     │       30       │
-│      10     │       4.1901e-04     │       31       │
-│      11     │       5.4309e-06     │       31       │
-│      12     │       1.1430e-09     │       33       │
-│      13     │       5.2525e-14     │       34       │
+│       0     │       2.5430e-01     │        0       │
+│       1     │       1.6066e-01     │       28       │
+│       2     │       2.1740e-02     │       28       │
+│       3     │       1.9221e-02     │       28       │
+│       4     │       4.3868e-03     │       28       │
+│       5     │       2.2229e-02     │       30       │
+│       6     │       6.0958e-02     │       30       │
+│       7     │       8.2300e-03     │       28       │
+│       8     │       2.7926e-05     │       30       │
+│       9     │       3.6948e-08     │       33       │
+│      10     │       5.6932e-13     │       34       │
 └─────────────┴──────────────────────┴────────────────┘
-  3.396345 seconds (5.38 M allocations: 17.675 GiB, 1.66% gc time)
+  2.753860 seconds (4.10 M allocations: 13.260 GiB, 1.96% gc time)
 ```
 
 and
@@ -425,20 +421,17 @@ Note that using Simple Shooting, the convergence is much faster. Indeed, running
 
 ```julia
 ┌─────────────────────────────────────────────────────┐
-│ Newton step         residual     linear iterations  │
+│ Newton step         residual      linear iterations │
 ├─────────────┬──────────────────────┬────────────────┤
-│       0     │       6.1712e-03     │        0       │
-│       1     │       3.4465e-03     │        6       │
-│       2     │       1.0516e-01     │        8       │
-│       3     │       7.4614e-03     │        6       │
-│       4     │       1.6620e-03     │        7       │
-│       5     │       3.9589e-04     │        7       │
-│       6     │       4.3043e-05     │        8       │
-│       7     │       1.7232e-06     │        8       │
-│       8     │       8.0455e-09     │        8       │
-│       9     │       3.9453e-11     │        8       │
+│       0     │       6.2762e-03     │        0       │
+│       1     │       3.5695e-03     │        6       │
+│       2     │       6.4564e-02     │        7       │
+│       3     │       4.8785e-03     │        6       │
+│       4     │       7.5721e-04     │        7       │
+│       5     │       5.7958e-05     │        7       │
+│       6     │       9.2495e-07     │        7       │
+│       7     │       1.6988e-10     │        8       │
 └─────────────┴──────────────────────┴────────────────┘
-  0.612070 seconds (217.21 k allocations: 523.069 MiB, 4.83% gc time)
 ```
 
 !!! info "Convergence and speedup"
@@ -450,7 +443,7 @@ Finally, we can perform continuation of this periodic orbit using a specialized 
 ```julia
 # note the eigensolver computes the eigenvalues of the monodromy matrix. Hence
 # the dimension of the state space for the eigensolver is 2n
-opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 1.5,
+opts_po_cont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds = 0.01, p_max = 1.5,
 	max_steps = 500, newton_options = (@set optn_po.tol = 1e-7), nev = 25,
 	tol_stability = 1e-8, detect_bifurcation = 0)
 
@@ -537,8 +530,8 @@ br_po = @time continuation(probHPsh, vec(initpo_bar), PALC(),
 	opts_po_cont_floquet; verbosity = 3,
 	linear_algo = MatrixFreeBLS(@set ls.N = ls.N+1),
 	plot = true,
-	plot_solution = (x, p; kwargs...) -> BK.plot!(x; label="", kwargs...),
-	normC = norminf)		
+	plot_solution = (x, p; kwargs...) -> plot!(x; label="", kwargs...),
+	normC = norminf)
 ```
 
 ![](brus-psh-cont.png)

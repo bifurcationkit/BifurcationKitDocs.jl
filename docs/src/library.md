@@ -38,6 +38,20 @@ NonLinearSolution
 ContResult
 ```
 
+```@docs
+BifurcationKit.Branch
+```
+
+
+```@docs
+BifurcationKit.SpecialPoint
+```
+
+```@docs
+BifurcationKit.BifDiagNode
+```
+
+
 ## Problems
 
 ```@docs
@@ -269,10 +283,6 @@ get_branch
 
 ```@docs
 get_branches_from_BP
-```
-
-```@docs
-BifurcationKit.SpecialPoint
 ```
 
 ## Utils for periodic orbits
