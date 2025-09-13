@@ -56,7 +56,7 @@ br_po = continuation(
 		end,
 	normC = norminf)
 
-scene = plot(br, br_po)</code></pre><p>We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:</p><pre><code class="language- hljs"># aBS from PD
+scene = plot(br, br_po)</code></pre><p>Note that you can compute the PD normal form</p><pre><code class="language- hljs">get_normal_form(br_po, 1)</code></pre><p>We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:</p><pre><code class="language- hljs"># aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, ContinuationPar(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
 	plot_solution = (x, p; k...) -&gt; begin
 		plotPO(x, p; k...)
@@ -87,7 +87,7 @@ br_po = continuation(
 	callback_newton = BK.cbMaxNorm(10),
 	normC = norminf)
 
-plot(br_po)</code></pre><p>We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:</p><pre><code class="language- hljs"># aBS from PD
+plot(br_po)</code></pre><p>Note that you can compute the PD normal form</p><pre><code class="language- hljs">get_normal_form(br_po, 1; autodiff = true)</code></pre><p>We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:</p><pre><code class="language- hljs"># aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, 
 	ContinuationPar(br_po.contparams, max_steps = 6, ds = -0.008);
 	plot = true, verbosity = 2,
@@ -133,4 +133,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Friday 5 September 2025 19:38">Friday 5 September 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Saturday 13 September 2025 08:32">Saturday 13 September 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
