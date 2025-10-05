@@ -12,7 +12,6 @@ BifurcationKit = "0f109fa4-8a5d-4b75-95aa-f515264e7665"
 julia = "1.10"
 AsymptoticNumericalMethod = "^0.2.3"
 BifurcationKit = "^0.5.2"
-SciMLBase = "^0.2.120"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
