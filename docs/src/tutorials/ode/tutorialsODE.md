@@ -126,10 +126,10 @@ plot(sol, title = "Periodic orbit", marker = :d, markersize=1)
 We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the Trapezoid method. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the two other methods.
 
 ```@example TUTODE
-using DifferentialEquations
+import OrdinaryDiffEq as ODE
 
 # this is the ODEProblem used with `DiffEqBase.solve`
-probsh = ODEProblem(TMvf!, copy(z0), (0., 1.), par_tm; abstol = 1e-12, reltol = 1e-10)
+probsh = ODE.ODEProblem(TMvf!, copy(z0), (0., 1.), par_tm; abstol = 1e-12, reltol = 1e-10)
 
 opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, max_steps = 110, tol_stability = 1e-4)
 
@@ -137,7 +137,7 @@ br_posh = @time continuation(
 	br, 4, opts_po_cont,
 	# this is where we tell that we want Standard Shooting
 	# with 15 time sections
-	ShootingProblem(15, probsh, Rodas5(), parallel = true);
+	ShootingProblem(15, probsh, ODE.Rodas5(), parallel = true);
 	# regular continuation parameters
 	plot = true,
 	args_po...,

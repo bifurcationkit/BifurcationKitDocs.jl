@@ -115,9 +115,9 @@ plot(fold_po_sh)
 ```@example STEINMETZ
 opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 5e-2, ds = 1e-2)
 @reset opts_posh_ns.newton_options.tol = 1e-11
-# @reset opts_posh_ns.newton_options.verbose = true
+@reset opts_posh_ns.newton_options.verbose = true
 ns_po_sh = continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
-		# verbosity = 2,
+		verbosity = 2,
 		# plot = true,
 		detect_codim2_bifurcation = 2,
 		# update_minaug_every_step = 1,
