@@ -52,7 +52,7 @@ nothing #hide
 This is very straightforward thanks to `SciML`.
 
 ```@example TUTPPREY
-import DifferentialEquations as DE
+import OrdinaryDiffEq as DE
 prob_de = DE.ODEProblem(Pop!, z0, (0,200.), par_pop)
 sol = DE.solve(prob_de, DE.Vern9())
 prob_de = DE.ODEProblem(Pop!, sol.u[end], (0,3.), par_pop, reltol = 1e-8, abstol = 1e-10)

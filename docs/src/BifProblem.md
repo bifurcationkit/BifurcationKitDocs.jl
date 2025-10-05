@@ -48,8 +48,8 @@ re_make(prob::BifurcationKit.AbstractBifurcationProblem;
 		lens = prob.lens,
 		record_from_solution = prob.record_from_solution,
 		plot_solution = prob.plot_solution,
-       J = missing,
-       d2F = missing,
+		J = missing,
+		d2F = missing,
 		d3F = missing)
 ```
 

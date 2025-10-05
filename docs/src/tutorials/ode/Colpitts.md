@@ -105,12 +105,12 @@ Thanks to [^Lamour], we can  just compute the Floquet coefficients to get the no
 Note that we use Automatic Branch Switching from a Hopf bifurcation despite the fact the normal form implemented in `BifurcationKit.jl` is not valid for DAE. For example, it predicts a subcritical Hopf point whereas we see below that it is supercritical. Nevertheless, it provides a
 
 ```@example TUTDAE1
-using DifferentialEquations
+import OrdinaryDiffEq as ODE
 
 # this is the ODEProblem used with `DiffEqBase.solve`
 # we  set  the initial conditions
-prob_dae = ODEFunction(Colpitts!; mass_matrix = Be)
-probFreez_ode = ODEProblem(prob_dae, z0, (0., 1.), par_Colpitts)
+prob_dae = ODE.ODEFunction(Colpitts!; mass_matrix = Be)
+probFreez_ode = ODE.ODEProblem(prob_dae, z0, (0., 1.), par_Colpitts)
 
 # we lower the tolerance of newton for the periodic orbits
 optnpo = @set optn.tol = 1e-9
@@ -120,7 +120,7 @@ opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, p_min
 
 # Shooting functional. Note the  stringent tolerances used to cope with
 # the extreme parameters of the model
-probSH = ShootingProblem(10, probFreez_ode, Rodas5P(); reltol = 1e-10, abstol = 1e-13)
+probSH = ShootingProblem(10, probFreez_ode, ODE.Rodas5P(); reltol = 1e-10, abstol = 1e-13)
 
 # automatic branching from the Hopf point
 br_po = continuation(br, 1, opts_po_cont, probSH;

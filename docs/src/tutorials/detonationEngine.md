@@ -21,7 +21,7 @@ We start by discretizing the above PDE based on finite differences.
 
 ```@example DETENGINE
 using Revise, ForwardDiff
-using DifferentialEquations, SparseArrays
+using SparseArrays
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
@@ -88,27 +88,16 @@ nothing #hide
 
 ## Jacobian with sparsity detection
 
-Writing the jacobian explicitly is cumbersome. We rely on automatic differentiation to get the sparse jacobian.
+Writing the jacobian explicitly is cumbersome. We rely on automatic differentiation to get the jacobian.
 
-```@example DETENGINE
-# improved jacobian with sparse coloring
-using SparseArrays, SparseDiffTools, Test
-const L1 = copy(Jdet(rand(2N), par_det))
-const colors = matrix_colors(L1)
-function JlgvfColorsAD(J, u, p, colors)
-	SparseDiffTools.forwarddiff_color_jacobian!(J, (out, x) -> out .= Fdet(x,p), u, colorvec = colors)
-	J
-end
-JdetAD(x,p) = JlgvfColorsAD(L1, x, p, colors)
-nothing #hide
-```
+!!! tip "Sparse jacobian"
+    The computation can be greatly sped up using sparse jacobian computation based on `DifferentiationInterface.jl`
 
 We are now ready to compute the bifurcation of the trivial (constant in space) solution:
 
 ```@example DETENGINE
 # bifurcation problem
 prob = BifurcationProblem(Fdet!, U0, (par_det..., q = 0.5), (@optic _.up); 
-	J = JdetAD,
 	plot_solution = (x, p; k...) -> plotsol!(x; k...),
 	record_from_solution = (x, p; k...) -> (u∞ = norminf(x[1:N]), n2 = norm(x)))
 
@@ -120,13 +109,12 @@ eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
 
 # newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)
-solhomo = BK.solve(prob, Newton(), optnew; normN = norminf)
 optcont = ContinuationPar(newton_options = NewtonPar(optnew, verbose = false),
 	detect_bifurcation = 3, nev = 50, n_inversion = 8, max_bisection_steps = 25,
 	dsmax = 0.01, ds = 0.01, p_max = 1.4, max_steps = 1000, plot_every_step = 50)
 
 br = continuation(
-		re_make(prob, params = (@set par_det.q = 0.5), u0 = solhomo.u),
+		re_make(prob, params = (@set par_det.q = 0.5)),
 		PALC(), optcont; plot = true)
 Scene = title!("")
 ```

@@ -68,12 +68,12 @@ nothing #hide
 We obtain some trajectories as seeds for computing periodic orbits.
 
 ```@example STEINMETZ
-import DifferentialEquations as DE
-alg_ode = DE.Vern9()
-prob_de = DE.ODEProblem(SL!, z0, (0, 136.), par_sl)
-sol_ode = DE.solve(prob_de, alg_ode)
-prob_de = DE.ODEProblem(SL!, sol_ode.u[end], (0, 30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
-sol_ode = DE.solve(prob_de, alg_ode)
+import OrdinaryDiffEq as ODE
+alg_ode = ODE.Vern9()
+prob_de = ODE.ODEProblem(SL!, z0, (0, 136.), par_sl)
+sol_ode = ODE.solve(prob_de, alg_ode)
+prob_de = ODE.ODEProblem(SL!, sol_ode.u[end], (0, 30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
+sol_ode = ODE.solve(prob_de, alg_ode)
 plot(sol_ode)
 ```
 
@@ -83,7 +83,7 @@ We generate a shooting problem from the computed trajectories and continue the p
 ```@example STEINMETZ
 probsh, cish = generate_ci_problem( ShootingProblem(M = 5; jacobian = BK.AutoDiffDenseAnalytical() ), prob, prob_de, sol_ode, 16.; reltol = 1e-11, abstol = 1e-13, parallel = true)
 
-opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.1, n_inversion = 6, detect_bifurcation = 3, nev = 4, max_steps = 40, tol_stability = 1e-3)
+opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, n_inversion = 6, nev = 4, max_steps = 40, tol_stability = 1e-3)
 @reset opts_po_cont.newton_options.max_iterations = 10
 br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po_cont;
 	# verbosity = 3, plot = true,
@@ -101,7 +101,6 @@ fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fol
 		# verbosity = 2, plot = true,
 		alg = PALC(),
 		detect_codim2_bifurcation = 0,
-		# update_minaug_every_step = 1,
 		start_with_eigen = false,
 		usehessian = true,
 		jacobian_ma = BK.MinAug(),

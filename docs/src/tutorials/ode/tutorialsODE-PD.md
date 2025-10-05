@@ -134,19 +134,19 @@ scene = plot(br_po, br_po_pd, title = "Collocation based")
 We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the previous one. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the previous method. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf **aBS**.
 
 ```@example TUTLURE
-import DifferentialEquations as DE
+import OrdinaryDiffEq as ODE
 
 # ODE problem for using DifferentialEquations
-prob_ode = DE.ODEProblem(lur!, prob_bif.u0, (0., 1.), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
+prob_ode = ODE.ODEProblem(lur!, prob_bif.u0, (0., 1.), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
 
 # continuation parameters
 # we decrease a bit the newton tolerance to help automatic branch switching from PD point
-opts_po_cont = ContinuationPar(dsmax = 0.03, ds= -0.001, newton_options = NewtonPar(tol = 1e-10), tol_stability = 1e-5, n_inversion = 8, nev = 3, plot_every_step = 1)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, newton_options = NewtonPar(tol = 1e-10), tol_stability = 1e-5, n_inversion = 8, nev = 3, max_steps = 100)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 10 sections
-	ShootingProblem(10, prob_ode, DE.Vern9(); parallel = true);
+	ShootingProblem(10, prob_ode, ODE.Vern9(); parallel = true);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -168,7 +168,7 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, 
-	ContinuationPar(br_po.contparams, max_steps = 6, ds = -0.008);
+	ContinuationPar(br_po.contparams, max_steps = 6, ds = -0.01);
 	plot = true, verbosity = 2,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)

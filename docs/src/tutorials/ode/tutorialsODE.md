@@ -137,7 +137,7 @@ br_posh = @time continuation(
 	br, 4, opts_po_cont,
 	# this is where we tell that we want Standard Shooting
 	# with 15 time sections
-	ShootingProblem(15, probsh, ODE.Rodas5(), parallel = true);
+	ShootingProblem(15, probsh, ODE.Vern9(), parallel = true);
 	# regular continuation parameters
 	plot = true,
 	args_po...,
