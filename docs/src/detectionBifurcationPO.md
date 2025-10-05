@@ -1,5 +1,10 @@
 # Detection of bifurcation points of periodic orbits
 
+```@contents
+Pages = ["detectionBifurcationPO.md"]
+Depth = 3
+```
+
 The bifurcations are detected during a call to `br = continuation(prob, alg, contParams::ContinuationPar;kwargs...)` by turning on the following flags:
 
 - `contParams.detect_bifurcation = 2`

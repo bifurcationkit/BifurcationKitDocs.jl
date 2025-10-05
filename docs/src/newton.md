@@ -1,5 +1,10 @@
 # Krylov-Newton algorithm
 
+```@contents
+Pages = ["newton.md"]
+Depth = 3
+```
+
 `BifurcationKit` is built upon the newton algorithm for solving (large-dimensional) nonlinear equations 
 
 $$F(x)=0\in\mathbb R^n,\quad x\in\mathbb R^n.$$

@@ -1,5 +1,10 @@
 # Guidelines
 
+```@contents
+Pages = ["guidelines.md"]
+Depth = 3
+```
+
 The goal of this package is to find solutions $x$ to nonlinear equations 
 
 $$F(x,p) = 0 \quad\tag{E}$$

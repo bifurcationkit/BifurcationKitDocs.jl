@@ -1,5 +1,10 @@
 # Linear solvers (LS)
 
+```@contents
+Pages = ["linearsolver.md"]
+Depth = 3
+```
+
 > If you provide your own linear solver, it must be a subtype of `AbstractLinearSolver` otherwise `BifurcationKit.jl` will not recognize it. See example just below. 
 
 The linear solvers provide a way of inverting the Jacobian `J` or solving `J * x = rhs`. Such linear solver `linsolve` will be called like `sol, success, itnumber = linsolve(J, rhs; kwargs...)` throughout the package.

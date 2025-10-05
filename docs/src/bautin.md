@@ -1,5 +1,10 @@
 # Normal form of the Bautin bifurcation
 
+```@contents
+Pages = ["bautin.md"]
+Depth = 2
+```
+
 We follow the paper[^Kuznetsov] and consider a Cauchy problem
 
 $$\dot x=\mathbf F(x,p).$$

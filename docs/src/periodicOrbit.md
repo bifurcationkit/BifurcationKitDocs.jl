@@ -1,5 +1,10 @@
 # Periodic orbits computation
 
+```@contents
+Pages = ["periodicOrbit.md"]
+Depth = 3
+```
+
 Consider the Cauchy problem
 
 $$\frac{du}{dt}=F(u,p).$$

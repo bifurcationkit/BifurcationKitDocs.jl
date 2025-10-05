@@ -1,5 +1,10 @@
 # Bordered linear solvers (BLS)
 
+```@contents
+Pages = ["borderedlinearsolver.md"]
+Depth = 3
+```
+
 > The bordered linear solvers must be subtypes of `AbstractBorderedLinearSolver <: AbstractLinearSolver`.
 
 The methods provided here solve bordered linear equations. 

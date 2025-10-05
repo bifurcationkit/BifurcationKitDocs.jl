@@ -1,5 +1,10 @@
 # Educational introduction to bifurcation analysis (contributed by G. Datseris)
 
+```@contents
+Pages = ["educational.md"]
+Depth = 3
+```
+
 This page is an educational introduction to bifurcation analysis and creation of bifurcation diagrams. It will show a completely self-contained approach, and its goal is to serve as an introduction to users not yet fully familiar with bifurcation analysis. 
 
 The text here is based on Chapter 4 of [Nonlinear Dynamics: a concise introduction interlaced with code](https://link.springer.com/book/9783030910310) and is presented in a shortened form. It is focusing on using the simplest possible method for bifurcation continuation (the secant method) and can only address fixed points (the standard version of Newton's algorithm). Of course, this does not reflect the full features and power of BifurcationKit.jl, but it shows the basic guiding principles.

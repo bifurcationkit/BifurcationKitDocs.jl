@@ -1,5 +1,10 @@
 # Eigen solvers (Eig)
 
+```@contents
+Pages = ["eigensolver.md"]
+Depth = 3
+```
+
 > The eigen solvers must be subtypes of `AbstractEigenSolver`. 
 
 They provide a way of computing the eigen elements of the Jacobian `J`. Such eigen solver `eigsolve` will be called like `ev, evecs, itnumber = eigsolve(J, nev; kwargs...)` throughout the package, `nev` being the number of requested eigen elements of largest real part and `kwargs` being used to send information about the algorithm (perform bisection,...).

@@ -1,5 +1,10 @@
 # Event Handling
 
+```@contents
+Pages = ["EventCallback.md"]
+Depth = 3
+```
+
 `BifurcationKit.jl` allows the detection of events along the branch of solutions. Its main use consists in detecting bifurcation points but they can be used and combined together by the user too.
 
 The events are detected during a call to `br = continuation(prob, alg, contParams::ContinuationPar;kwargs...)` by turning on the following flag(s):

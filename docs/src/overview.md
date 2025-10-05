@@ -1,5 +1,10 @@
 # Overview of BifurcationKit.jl
 
+```@contents
+Pages = ["overview.md"]
+Depth = 3
+```
+
 The general workflow for using the package is as follows:
 
 - Define a problem

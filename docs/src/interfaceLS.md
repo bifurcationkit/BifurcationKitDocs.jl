@@ -1,5 +1,10 @@
 # Interface for Linear Solvers
 
+```@contents
+Pages = ["interfaceLS.md"]
+Depth = 3
+```
+
 The linear solver `ls` must be a subtype of the abstract type `AbstractLinearSolver`. It is then called as follows
 
 | Required methods               |                        | Brief description                                                                     |

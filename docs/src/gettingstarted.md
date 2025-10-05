@@ -1,5 +1,10 @@
 # 🚀 Get Started with BifurcationKit
 
+```@contents
+Pages = ["gettingstarted.md"]
+Depth = 3
+```
+
 This tutorial will introduce you to the functionalities for computing bifurcation diagrams and follow branches of solutions.
 
 ## Example 1: solving the perturbed pitchfork equation

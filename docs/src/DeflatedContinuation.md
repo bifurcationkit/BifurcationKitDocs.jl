@@ -1,5 +1,11 @@
 # Deflated Continuation
 
+
+```@contents
+Pages = ["DeflatedContinuation.md"]
+Depth = 3
+```
+
 !!! unknown "References"
     Farrell, Patrick E., Casper H. L. Beentjes, and Ásgeir Birkisson. **The Computation of Disconnected Bifurcation Diagrams.** ArXiv:1603.00809 [Math], March 2, 2016. http://arxiv.org/abs/1603.00809.
 

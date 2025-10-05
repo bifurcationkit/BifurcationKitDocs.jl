@@ -1,5 +1,10 @@
 # Iterator Interface
 
+```@contents
+Pages = ["iterator.md"]
+Depth = 3
+```
+
 The iterator interface gives the possibility of stepping through the numerical steps of the continuation procedure. It thus allows to inject custom monitoring function (saving, plotting, bifurcation detection, ...) at will and during the continuation run. In short, it allows to completely re-write the continuation algorithm as one sees fit and this, in a straightforward manner.
 
 The general method `continuation` is built upon this iterator interface and we refer to the source code for a complete example of use.
