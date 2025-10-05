@@ -117,9 +117,11 @@ We can now plot the result:
 plot(diagram; putspecialptlegend =false, markersize=2, plotfold=false, title="#branch = $(size(diagram))")
 ```
 
-We can access the different branches with `BK.getBranch(diagram, (1,))`. Alternatively, you can plot a specific branch:
+We can access the different branches with `BK.get_branch(diagram, (1,))`. Alternatively, you can plot a specific branch:
 
-![](diagramD6b.png)
+```@example BDIAG2
+plot(BK.get_branch(diagram, (1,)), putspecialptlegend =false)
+```
 
 ## Computing a sub-part of the diagram
 
@@ -155,30 +157,30 @@ We can also use `GraphPlot` to plot the tree underlying the bifurcation diagram:
 ```julia
 using LightGraphs, MetaGraphs, GraphPlot
 
-function graphFromDiagram!(_graph, diagram, indp)
+function graph_from_diagram!(_graph, diagram, indp)
 	# ind is the index of the parent node
 	# add vertex and associated information
-	add_vertex!(_graph)
-	set_props!(_graph, nv(_graph), Dict(:code => diagram.code, :level => diagram.level))
-	if nv(_graph) > 1
-		add_edge!(_graph, indp, nv(_graph))
+	MetaGraphs.add_vertex!(_graph)
+	MetaGraphs.set_props!(_graph, MetaGraphs.nv(_graph), Dict(:code => diagram.code, :level => diagram.level))
+	if MetaGraphs.nv(_graph) > 1
+		MetaGraphs.add_edge!(_graph, indp, MetaGraphs.nv(_graph))
 	end
 	if length(diagram.child) > 0
 		# we now run through the children
-		new_indp = nv(_graph)
+		new_indp = MetaGraphs.nv(_graph)
 		for diag in diagram.child
-			graphFromDiagram!(_graph, diag, new_indp)
+			graph_from_diagram!(_graph, diag, new_indp)
 		end
 	end
 end
 
-function graphFromDiagram(diagram) 
+function graph_from_diagram(diagram) 
 	_g = MetaGraph()
-	graphFromDiagram!(_g, diagram, 1)
+	graph_from_diagram!(_g, diagram, 1)
 	return _g
 end
 
-_g = graphFromDiagram(bdiag)
+_g = graph_from_diagram(diagram)
 
 gplot(_g, nodelabel = [props(_g, ve)[:code] for ve in vertices(_g)])
 ```
@@ -193,8 +195,8 @@ Another solution is to use `GraphRecipes` and
 ```julia
 using GraphRecipes
 
-graphplot(_g, 
-	node_weights = ones(nv(_g)).*10, 
-	names=[props(_g, ve)[:code] for ve in vertices(_g)], 
+graphplot(_g,
+	node_weights = ones(MetaGraphs.nv(_g)).*10, 
+	names=[props(_g, ve)[:code] for ve in MetaGraphs.vertices(_g)], 
 	curvature_scalar=0.)
 ```

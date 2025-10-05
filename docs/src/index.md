@@ -5,29 +5,46 @@ Pages = ["index.md"]
 Depth = 2
 ```
 
-This Julia package aims at performing **automatic bifurcation analysis** of possibly large dimensional equations F(u, λ)=0 where λ is real by taking advantage of iterative methods, dense / sparse formulation and specific hardwares (*e.g.* GPU).
+`BifurcationKit.jl` is a comprehensive Julia package for **automatic bifurcation analysis** of large-scale equations F(u, λ)=0 where λ is a real parameter. It leverages iterative methods, dense/sparse formulations, and specialized hardware (e.g., GPUs) for high-performance computations.
 
-It incorporates continuation algorithms (PALC, deflated continuation, ...) based on a Newton-Krylov method to correct the predictor step and a Matrix-Free/Dense/Sparse eigensolver is used to compute stability and bifurcation points.
+## Key features
 
-> Despite initial focus on large scale problems, the package can easily handle low dimensional problems.
+- **Continuation algorithms**: PALC, deflated continuation, and more
+- **Newton-Krylov methods**: Efficient predictor-corrector schemes
+- **Flexible eigensolvers**: Matrix-free, dense, and sparse eigensolvers for stability analysis
+- **Periodic orbit computation**: Shooting, finite differences and collocation methods
+- **Hardware flexibility**: CPU and GPU support for massive computations
+- **General vector interface**: Does not require `u` to be an `AbstractArray`
 
-The package can also seek for periodic orbits of Cauchy problems . **It is by now, one of the only softwares which provides shooting methods and methods based on finite differences or collocation to compute periodic orbits.**
+> Despite its focus on large-scale problems, the package handles low-dimensional problems with equal ease.
 
-Hence, it is possible to study large scale nonlinear problems on different hardwares. 
+**Unique capabilities**: `BifurcationKit.jl` is one of the few software packages that provides shooting methods alongside finite difference and collocation methods for computing periodic orbits of dynamical systems.
 
-One design choice is that we try not to require `u` to be a subtype of an `AbstractArray` as this would forbid the use of spectral methods like the one from `ApproxFun.jl`. For now, our implementation does not allow this for all methods of the package.
+**Design philosophy**: The package avoids requiring `u` to be a subtype of `AbstractArray`, enabling the use of `KrylovKit.jl` for linear solvers. Note that this flexibility is not yet available for all methods in the package.
 
 ## 📦 Installation
 
-This package requires Julia >= v1.3.0 because of the use of methods added to abstract types (see [#31916](https://github.com/JuliaLang/julia/pull/31916)).
+This package requires Julia >= v1.3.0 (due to methods added to abstract types, see [#31916](https://github.com/JuliaLang/julia/pull/31916)).
 
-To install it, please run
+To install the stable version:
 
-`] add BifurcationKit`
+```julia
+using Pkg
+Pkg.add("BifurcationKit")
+```
 
-To install the bleeding edge version, please run
+Or in the Julia REPL package mode:
 
-`] add BifurcationKit#master`
+```julia
+] add BifurcationKit
+```
+
+To install the development version:
+
+```julia
+] add BifurcationKit#master
+```
+
 
 ## 📚 Citing this work
 If you use this package for your work, we ask that you **cite** the following paper!! Open source development strongly depends on this. It is referenced on [HAL-Inria](https://hal.archives-ouvertes.fr/hal-02902346) with *bibtex* entry [CITATION.bib](https://github.com/bifurcationkit/BifurcationKit.jl/blob/master/CITATION.bib).
@@ -49,21 +66,31 @@ In Julia, we have the following tools:
 
 ## 🚀 A word on performance
 
-The tutorials have not **all** been written with the goal of performance but rather simplicity (except maybe [2d Ginzburg-Landau equation](@ref cgl) and [Langmuir–Blodgett model](@ref langmuir)). One could surely turn them into more efficient codes. The intricacies of PDEs make the writing of efficient code highly problem dependent and one should take advantage of every particularity of the problem under study.
+The tutorials prioritize **clarity and simplicity** over maximum performance (with exceptions like the [2d Ginzburg-Landau equation](@ref cgl) and [Langmuir–Blodgett model](@ref langmuir)). These examples can be optimized further for specific use cases. The intricacies of PDEs make efficient code highly problem-dependent, and users should leverage the specific characteristics of their problems.
 
-## Requested methods for custom arrays
-Needless to say, if you use "regular" arrays, you don't need to worry about what follows.
+!!! note "Large scale computations"
+    This package has been used for massive computations (millions of unknowns), on the GPU. You can look at the citations below, or for example at [article1](
+    https://doi.org/10.48550/arXiv.2508.19134), [article2](https://comptes-rendus.academie-sciences.fr/mathematique/item/CRMATH_2022__360_G1_59_0/)
 
-We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](https://jutho.github.io/KrylovKit.jl/stable/#Package-features-and-alternatives-1) and the [vector-like interface](https://github.com/Jutho/VectorInterface.jl?tab=readme-ov-file) for more information. We additionally require the following methods to be available:
+!!! danger "Performance of tutorials"
+    Do not get fooled by the small dimensions of the discretization of the PDE in the tutorials. The documentation has to be run on github CI so the machines are not powerful. You can increase the discretization on your computer. 
 
-- `Base.length(x)`: it is used in the constraint equation of the pseudo arclength continuation method (see [`continuation`](@ref) for more details). If `length` is not available for your "vector", define `length(x) = 1` and adjust the parameter `θ` in `PALC`.
-- `Base.copyto!(dest, in)` this is required to reduce the allocations
-- `Base.eltype` must be extended to your vector type.
+## Required methods for custom arrays
+
+If you use standard arrays, you can skip this section.
+
+We make the same requirements as `KrylovKit.jl`. Hence, we refer to its [docs](https://jutho.github.io/KrylovKit.jl/stable/#Package-features-and-alternatives-1) and the package [VectorInterface.jl](https://github.com/Jutho/VectorInterface.jl?tab=readme-ov-file) for more information. We additionally require the following methods to be available:
+
+- `Base.length(x)`: it is used in the constraint equation of the pseudo arclength continuation method (see [`continuation`](@ref) for more details). If `length` is not available for your "vector" type, define `length(x) = 1` and adjust the parameter `θ` in `PALC`.
+- `Base.copyto!(dest, in)` this is used to reduce the allocations.
+- `real` this is used to compute normal forms.
+- `conj` this is used to compute normal forms.
 
 ## Citations
-The papers citing this work are collected on [zotero](https://www.zotero.org/groups/6097154/citations_of_bifurcationkit/library).
 
-These are collected from [google scholar 1](https://scholar.google.com/scholar?q=bifurcationkit&hl=en&as_sdt=0,5) and [google scholar 2](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=159498619004863176,12573642401780006854,8662907770106865595);  less papers are referenced in each link.
+Papers citing this work are collected on [Zotero](https://www.zotero.org/groups/6097154/citations_of_bifurcationkit/library).
+
+These citations are aggregated from [Google Scholar (search)](https://scholar.google.com/scholar?q=bifurcationkit&hl=en&as_sdt=0,5) and [Google Scholar (citations)](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=159498619004863176,12573642401780006854,8662907770106865595). Note that each link may reference different subsets of papers.
 
 
 ## Reproducibility

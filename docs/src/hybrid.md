@@ -2,7 +2,7 @@
 
 This is one of the continuation methods implemented in the package. It is set by the option `AutoSwitch()` in [`continuation`](@ref). See also [`AutoSwitch`](@ref) for more information.
 
-This algorithm uses a `Natural` continuation when the branch is "horizontal" and switches to `PALC` otherwise.
+This algorithm uses a `Natural` continuation when the branch is "horizontal" and switches to `PALC` (or other which cab be specified) otherwise.
 
 ## Example
 

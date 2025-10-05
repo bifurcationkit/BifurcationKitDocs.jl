@@ -63,6 +63,18 @@ BifurcationProblem
 ```
 
 ```@docs
+ODEBifProblem
+```
+
+```@docs
+DAEBifProblem
+```
+
+```@docs
+PDEBifProblem
+```
+
+```@docs
 DeflationOperator
 ```
 
