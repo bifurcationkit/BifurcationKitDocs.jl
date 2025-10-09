@@ -4,7 +4,7 @@
 \frac{\partial u}{\partial t}=\nu_{1} \frac{\partial^{2} u}{\partial x^{2}}-u \frac{\partial u}{\partial x}+k q(1-\lambda) \exp \left(\frac{u-u_{c}}{\alpha}\right)-\epsilon u^{2} \\
 \frac{\partial \lambda}{\partial t}=\nu_{2} \frac{\partial^{2} \lambda}{\partial x^{2}}+k(1-\lambda) \exp \left(\frac{u-u_{c}}{\alpha}\right) -\frac{s u_{p} \lambda}{1+\exp \left(r\left(u-u_{p}\right)\right)}
 \end{gathered}\right.\]</p><h2 id="Problem-discretization"><a class="docs-heading-anchor" href="#Problem-discretization">Problem discretization</a><a id="Problem-discretization-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-discretization" title="Permalink"></a></h2><p>We start by discretizing the above PDE based on finite differences.</p><pre><code class="language-julia hljs">using Revise, ForwardDiff
-using DifferentialEquations, SparseArrays
+using SparseArrays
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
@@ -58,17 +58,8 @@ par_det = (N = N, q = 0.5, α = 0.3, up = 0.0, uc = 1.1, s = 3.5, k = 1., ϵ = 0
 u0 = 0.5ones(N)
 λ0 = 0.5ones(N)
 U0 = vcat(u0, λ0)
-U0cons = vcat(copy(U0), 1.)</code></pre><h2 id="Jacobian-with-sparsity-detection"><a class="docs-heading-anchor" href="#Jacobian-with-sparsity-detection">Jacobian with sparsity detection</a><a id="Jacobian-with-sparsity-detection-1"></a><a class="docs-heading-anchor-permalink" href="#Jacobian-with-sparsity-detection" title="Permalink"></a></h2><p>Writing the jacobian explicitly is cumbersome. We rely on automatic differentiation to get the sparse jacobian.</p><pre><code class="language-julia hljs"># improved jacobian with sparse coloring
-using SparseArrays, SparseDiffTools, Test
-const L1 = copy(Jdet(rand(2N), par_det))
-const colors = matrix_colors(L1)
-function JlgvfColorsAD(J, u, p, colors)
-	SparseDiffTools.forwarddiff_color_jacobian!(J, (out, x) -&gt; out .= Fdet(x,p), u, colorvec = colors)
-	J
-end
-JdetAD(x,p) = JlgvfColorsAD(L1, x, p, colors)</code></pre><p>We are now ready to compute the bifurcation of the trivial (constant in space) solution:</p><pre><code class="language-julia hljs"># bifurcation problem
+U0cons = vcat(copy(U0), 1.)</code></pre><h2 id="Jacobian-with-sparsity-detection"><a class="docs-heading-anchor" href="#Jacobian-with-sparsity-detection">Jacobian with sparsity detection</a><a id="Jacobian-with-sparsity-detection-1"></a><a class="docs-heading-anchor-permalink" href="#Jacobian-with-sparsity-detection" title="Permalink"></a></h2><p>Writing the jacobian explicitly is cumbersome. We rely on automatic differentiation to get the jacobian.</p><div class="admonition is-success" id="Sparse-jacobian-70777ccd3073db78"><header class="admonition-header">Sparse jacobian<a class="admonition-anchor" href="#Sparse-jacobian-70777ccd3073db78" title="Permalink"></a></header><div class="admonition-body"><p>The computation can be greatly sped up using sparse jacobian computation based on <code>DifferentiationInterface.jl</code></p></div></div><p>We are now ready to compute the bifurcation of the trivial (constant in space) solution:</p><pre><code class="language-julia hljs"># bifurcation problem
 prob = BifurcationProblem(Fdet!, U0, (par_det..., q = 0.5), (@optic _.up);
-	J = JdetAD,
 	plot_solution = (x, p; k...) -&gt; plotsol!(x; k...),
 	record_from_solution = (x, p; k...) -&gt; (u∞ = norminf(x[1:N]), n2 = norm(x)))
 
@@ -80,26 +71,25 @@ eig = EigArpack(0.2, :LM, tol = 1e-13, v0 = rand(2N))
 
 # newton options
 optnew = NewtonPar(verbose = true, eigsolver = eig)
-solhomo = BK.solve(prob, Newton(), optnew; normN = norminf)
 optcont = ContinuationPar(newton_options = NewtonPar(optnew, verbose = false),
 	detect_bifurcation = 3, nev = 50, n_inversion = 8, max_bisection_steps = 25,
 	dsmax = 0.01, ds = 0.01, p_max = 1.4, max_steps = 1000, plot_every_step = 50)
 
 br = continuation(
-		re_make(prob, params = (@set par_det.q = 0.5), u0 = solhomo.u),
+		re_make(prob, params = (@set par_det.q = 0.5)),
 		PALC(), optcont; plot = true)
-Scene = title!(&quot;&quot;)</code></pre><img src="80e52c8b.svg" alt="Example block output"/><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
+Scene = title!(&quot;&quot;)</code></pre><img src="0892d989.svg" alt="Example block output"/><pre><code class="language-julia hljs">br</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">EquilibriumCont</span></span>
  ├─ Number of points: 152
  ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
  ├─ Parameter <span class="sgr36"><span class="sgr1">up</span></span> starts at 0.0, ends at 1.4
  ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
  └─ Special points:
 
-- #  1, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +0.56970295 ∈ (+0.56970262, +0.56970295), |δp|=3e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  74
-- #  2, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +0.58997693 ∈ (+0.58997627, +0.58997693), |δp|=7e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  76
-- #  3, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +0.67245132 ∈ (+0.67243040, +0.67245132), |δp|=2e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  84
-- #  4, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +0.86069748 ∈ (+0.86069747, +0.86069748), |δp|=1e-08, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step = 102
-- #  5, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +1.05349842 ∈ (+1.05349825, +1.05349842), |δp|=2e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step = 120
+- #  1, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +0.56970299 ∈ (+0.56970266, +0.56970299), |δp|=3e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  74
+- #  2, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +0.58997697 ∈ (+0.58997631, +0.58997697), |δp|=7e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  76
+- #  3, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +0.67245136 ∈ (+0.67243044, +0.67245136), |δp|=2e-05, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 2,  2), step =  84
+- #  4, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +0.86069748 ∈ (+0.86069748, +0.86069748), |δp|=3e-09, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step = 102
+- #  5, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +1.05349841 ∈ (+1.05349824, +1.05349841), |δp|=2e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step = 120
 - #  6, <span class="sgr34"><span class="sgr1">    hopf</span></span> at up ≈ +1.15401807 ∈ (+1.15401772, +1.15401807), |δp|=3e-07, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-2, -2), step = 129
 - #  7, <span class="sgr1">endpoint</span> at up ≈ +1.40000000,                                                                     step = 151
 </code></pre><p>We have detected 6 Hopf bifurcations. We now study the periodic orbits branching from them.</p><h2 id="Computing-the-branches-of-Traveling-waves"><a class="docs-heading-anchor" href="#Computing-the-branches-of-Traveling-waves">Computing the branches of Traveling waves</a><a id="Computing-the-branches-of-Traveling-waves-1"></a><a class="docs-heading-anchor-permalink" href="#Computing-the-branches-of-Traveling-waves" title="Permalink"></a></h2><p>The periodic orbits emanating from the Hopf points look like traveling waves. This is intuitive because the equation is mostly advective as the diffusion coefficients <span>$\nu_i$</span> are small. We will thus seek for traveling waves instead of periodic orbits. The advantage is that the possible Neimark-Sacker bifurcation is transformed into a regular Hopf one which allows the study of modulated traveling waves.</p><p>As we will do the same thing 3 times, we bundle the procedure in functions. We first use the regular Hopf normal form to create a guess for the traveling wave:</p><pre><code class="language-julia hljs">function get_guess(br, nb; δp = 0.005)
@@ -133,10 +123,10 @@ end</code></pre><p>Using this guess, we can continue the traveling wave as funct
 		)
 end</code></pre><p>We can try this continuation as follows</p><pre><code class="language-julia hljs">amplitude(x) = maximum(x) - minimum(x)
 br_wave = computeBranch(br, 1; max_steps = 10)
-Scene = title!(&quot;&quot;)</code></pre><img src="2d4daf92.svg" alt="Example block output"/><h2 id="Building-the-full-diagram"><a class="docs-heading-anchor" href="#Building-the-full-diagram">Building the full diagram</a><a id="Building-the-full-diagram-1"></a><a class="docs-heading-anchor-permalink" href="#Building-the-full-diagram" title="Permalink"></a></h2><pre><code class="language-julia hljs">branches = [computeBranch(br, i) for i in 1:3]
-plot(br, branches..., legend=:topleft, xlims = (0.5, 1.25), ylims=(0.5, 2.3))</code></pre><img src="62bd2401.svg" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+Scene = title!(&quot;&quot;)</code></pre><img src="4f8e1dbd.svg" alt="Example block output"/><h2 id="Building-the-full-diagram"><a class="docs-heading-anchor" href="#Building-the-full-diagram">Building the full diagram</a><a id="Building-the-full-diagram-1"></a><a class="docs-heading-anchor-permalink" href="#Building-the-full-diagram" title="Permalink"></a></h2><pre><code class="language-julia hljs">branches = [computeBranch(br, i) for i in 1:3]
+plot(br, branches..., legend=:topleft, xlims = (0.5, 1.25), ylims=(0.5, 2.3))</code></pre><img src="6e6fcf33.svg" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Koch"><a class="tag is-link" href="#citeref-Koch">Koch</a><blockquote><p>Koch, James, Mitsuru Kurosaka, Carl Knowlen, and J. Nathan Kutz. “Multi-Scale Physics of Rotating Detonation Engines: Autosolitons and Modulational Instabilities.” ArXiv:2003.06655 [Nlin, Physics:Physics], March 14, 2020. http://arxiv.org/abs/2003.06655.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Sunday 5 October 2025 17:36">Sunday 5 October 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Koch"><a class="tag is-link" href="#citeref-Koch">Koch</a><blockquote><p>Koch, James, Mitsuru Kurosaka, Carl Knowlen, and J. Nathan Kutz. “Multi-Scale Physics of Rotating Detonation Engines: Autosolitons and Modulational Instabilities.” ArXiv:2003.06655 [Nlin, Physics:Physics], March 14, 2020. http://arxiv.org/abs/2003.06655.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Thursday 9 October 2025 08:53">Thursday 9 October 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
