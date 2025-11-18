@@ -177,7 +177,7 @@ In this example, we will compute periodic orbits of the Stuart-Landau oscillator
 
 $$\begin{aligned}
 \frac{du}{dt} &= r  u - \nu v - (u^2+v^2)  (c_3  u - \mu v) \\
-\frac{dv}{dt} &= r  v + \nu u - (u^2+v^2)  (c_3 + \mu  u).
+\frac{dv}{dt} &= r  v + \nu u - (u^2+v^2)  (c_3  v + \mu u).
 \end{aligned}$$
 
 The ODE is easily written with a function:
