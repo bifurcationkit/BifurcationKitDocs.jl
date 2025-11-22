@@ -45,8 +45,8 @@ and where $w,v$ are chosen in order to have a non-singular matrix $(M_{bt})$. Mo
 
 In order to apply the newton algorithm to $F_{bt}$, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can select the following jacobians for your computations (see below):
 
-- `jacobian_ma = :autodiff`: [Default] automatic differentiation is applied to $F_{bt}$ and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
-- `jacobian_ma = :minaug`: a specific procedure for evaluating the jacobian $F_{bt}$ and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions.
+- `jacobian_ma = AutoDiff()`: [Default] automatic differentiation is applied to $F_{bt}$ and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
+- `jacobian_ma = MinAug()`: a specific procedure for evaluating the jacobian $F_{bt}$ and inverting it (without forming the jacobian!) is used. This is well suited for large dimensions.
 
 ## Example
 
@@ -85,7 +85,7 @@ outfold = newton(br::AbstractBranchResult, ind_bif::Int;
 	start_with_eigen = false, kwargs...)
 ```
 
-For the options parameters, we refer to [Newton](@ref).
+For the options parameters, we refer to [newton](@ref).
 
 It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. `BifurcationProblem` provides it by default using AD though.
 

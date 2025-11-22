@@ -13,8 +13,7 @@ $$\left\{\begin{array}{l}
 \dot{z}=-\alpha z-\beta y-x+x^{2}
 \end{array}\right.$$
 
-
-The model is interesting because there is a period doubling bifurcation and we want to show the branch switching capabilities of `BifurcationKit.jl` in this case. We provide 3 different ways to compute this periodic orbits and highlight their pro / cons.
+The model is interesting because there is a period doubling bifurcation and we want to show the branch switching capabilities of `BifurcationKit.jl` in this case. We provide 3 different ways to compute the periodic orbits and highlight their pro / cons.
 
 It is easy to encode the ODE as follows
 
@@ -44,7 +43,7 @@ We first compute the branch of equilibria
 
 ```@example TUTLURE
 # continuation options
-opts_br = ContinuationPar(p_min = -1.4, p_max = 1.8, dsmax = 0.01, max_steps = 1000)
+opts_br = ContinuationPar(p_min = -1.4, p_max = 1.8, nev = 3)
 
 # computation of the branch
 br = continuation(prob_bif, PALC(), opts_br)
@@ -89,7 +88,7 @@ Continuation of periodic orbits from the Hopf point:
 
 ```@example TUTLURE
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, ds = 0.01, dsmin = 1e-4, max_steps = 80, tol_stability = 1e-4, plot_every_step = 20)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, dsmin = 1e-4, max_steps = 80, tol_stability = 1e-4, plot_every_step = 20)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
@@ -131,22 +130,21 @@ scene = plot(br_po, br_po_pd, title = "Collocation based")
 
 ## Periodic orbits with Parallel Standard Shooting
 
-We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the previous one. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the previous method. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf **aBS**.
+We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `OrdinaryDiffEq.jl`. This way of computing periodic orbits should be less precise than the previous one. We rely on parallel multiple shooting. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf **aBS**.
 
 ```@example TUTLURE
 import OrdinaryDiffEq as ODE
 
 # ODE problem for using DifferentialEquations
-prob_ode = ODE.ODEProblem(lur!, prob_bif.u0, (0., 1.), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
+prob_ode = ODE.ODEProblem(lur!, prob_bif.u0, (0, 1), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
 
 # continuation parameters
-# we decrease a bit the newton tolerance to help automatic branch switching from PD point
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, newton_options = NewtonPar(tol = 1e-10), tol_stability = 1e-5, n_inversion = 8, nev = 3, max_steps = 100)
+opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, newton_options = NewtonPar(tol = 1e-10), tol_stability = 1e-5, n_inversion = 8, max_steps = 100)
 
 br_po = continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 10 sections
-	ShootingProblem(10, prob_ode, ODE.Vern9(); parallel = true);
+	ShootingProblem(15, prob_ode, ODE.Vern9(); parallel = true);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -168,7 +166,7 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = continuation(deepcopy(br_po), 1, 
-	ContinuationPar(br_po.contparams, max_steps = 6, ds = -0.01);
+	ContinuationPar(br_po.contparams, max_steps = 10, ds = -0.005);
 	plot = true, verbosity = 2,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -206,7 +204,9 @@ br_po = continuation(
 scene = plot(br, br_po)
 ```
 
-Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching as we do not have the PD normal form computed for `PeriodicOrbitTrapProblem`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
+Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching for Trapezoid method as we do not have yet the PD normal form computed for `PeriodicOrbitTrapProblem`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
+
+> This is like in MatCont and Auto-07p here...
 
 ```@example TUTLURE
 # aBS from PD

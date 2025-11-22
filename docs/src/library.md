@@ -274,6 +274,10 @@ BifurcationKit.PairOfEvents
 continuation(br::BifurcationKit.AbstractResult{BifurcationKit.EquilibriumCont}, ind_bif::Int, optionsCont::ContinuationPar ; kwargs...)
 ```
 
+```@docs
+BifurcationKit.multicontinuation
+```
+
 ## Branch switching (Hopf point)
 ```@docs
 continuation(br::BifurcationKit.AbstractBranchResult, ind_bif::Int, _contParams::ContinuationPar, prob::BifurcationKit.AbstractPeriodicOrbitProblem ; kwargs...)
