@@ -3,7 +3,7 @@
 Pkg.add(&quot;BifurcationKit&quot;)</code></pre><p>Or in the Julia REPL package mode:</p><pre><code class="language-julia hljs">] add BifurcationKit</code></pre><p>To install the development version:</p><pre><code class="language-julia hljs">] add BifurcationKit#master</code></pre><h2 id="Citing-this-work"><a class="docs-heading-anchor" href="#Citing-this-work">📚 Citing this work</a><a id="Citing-this-work-1"></a><a class="docs-heading-anchor-permalink" href="#Citing-this-work" title="Permalink"></a></h2><p>If you use this package for your work, we ask that you <strong>cite</strong> the following paper!! Open source development strongly depends on this. It is referenced on <a href="https://hal.archives-ouvertes.fr/hal-02902346">HAL-Inria</a> with <em>bibtex</em> entry <a href="https://github.com/bifurcationkit/BifurcationKit.jl/blob/master/CITATION.bib">CITATION.bib</a>.</p><h2 id="Other-softwares"><a class="docs-heading-anchor" href="#Other-softwares">🧑‍💻 Other softwares</a><a id="Other-softwares-1"></a><a class="docs-heading-anchor-permalink" href="#Other-softwares" title="Permalink"></a></h2><p>There are many good softwares already available.</p><ul><li><p>For continuation in small dimension, most softwares are listed on <a href="https://dsweb.siam.org/Software">DSWeb</a>. One can mention the widely used <a href="https://github.com/auto-07p/auto-07p">AUTO-07p</a>, or also, <a href="http://www.math.pitt.edu/~bard/xpp/xpp.html">XPPAUT</a>, <a href="https://sourceforge.net/projects/matcont/">MATCONT</a>, <a href="https://github.com/robclewley/pydstool">PyDSTool</a> and <a href="https://sourceforge.net/projects/cocotools/">COCO</a>. All these are very reliable and some address high codimensional bifurcations.</p></li><li><p>For large scale problems, there is the versatile and feature full <a href="http://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/">pde2path</a> but also <a href="https://trilinos.github.io/nox_and_loca.html">Trilinos-LOCA</a>, <a href="https://github.com/careljonkhout/cl_matcontL">CL_MATCONTL</a>, <a href="https://sourceforge.net/projects/cocotools/">COCO</a>, <a href="https://getfem.org/userdoc/model_continuation.html">GetFEM</a> and the python libraries <a href="https://pypi.org/project/PyNCT/">pyNCT</a> and <a href="https://github.com/nschloe/pacopy">pacopy</a>. There are also some nice <a href="https://zenodo.org/record/3821169#.Y-zsAy8w08Q">lectures</a> by D. Avitabile <em>et al.</em> on matrix free secant continuation based on a concise Matlab implementation which are used in the influential paper <sup class="footnote-reference"><a id="citeref-Rankin" href="#footnote-Rankin" class="footnote-ref">[Rankin]</a><span class="footnote-preview" id="fn-Rankin"></span></sup>. At the time of initial release of <code>BifurcationKit.jl</code>, these <a href="https://zenodo.org/record/3821169#.Y-zsAy8w08Q">lectures</a> provided one of the only libraries for matrix-free continuation, much easier to use than <a href="https://trilinos.github.io/nox_and_loca.html">Trilinos-LOCA</a>.</p></li><li><p>For <em>deflated continuation</em>, there is the python package <a href="https://bitbucket.org/pefarrell/defcon/src/master/">defcont</a> (by the inventor of the algo. P. E. Farrell) and this C++ <a href="https://github.com/evstigneevnm/deflated_continuation">code</a> by N. M. Evstigneev.</p></li></ul><p>In Julia, we have the following tools:</p><ul><li><a href="https://www.juliahomotopycontinuation.org">HomotopyContinuation.jl</a> which focuses on continuation of zeros of polynomials.</li><li><a href="https://github.com/tkf/Bifurcations.jl">Bifurcations.jl</a> which is unmaintained.</li><li><a href="https://github.com/dawbarton/NumericalContinuation.jl">NumericalContinuation.jl</a> by David Barton.</li></ul><h2 id="A-word-on-performance"><a class="docs-heading-anchor" href="#A-word-on-performance">🚀 A word on performance</a><a id="A-word-on-performance-1"></a><a class="docs-heading-anchor-permalink" href="#A-word-on-performance" title="Permalink"></a></h2><p>The tutorials prioritize <strong>clarity and simplicity</strong> over maximum performance (with exceptions like the <a href="tutorials/tutorialsCGL/#cgl">2d Ginzburg-Landau equation</a> and <a href="tutorials/Langmuir/#langmuir">Langmuir–Blodgett model</a>). These examples can be optimized further for specific use cases. The intricacies of PDEs make efficient code highly problem-dependent, and users should leverage the specific characteristics of their problems.</p><div class="admonition is-info" id="Large-scale-computations-18f7eba4a7f9bc56"><header class="admonition-header">Large scale computations<a class="admonition-anchor" href="#Large-scale-computations-18f7eba4a7f9bc56" title="Permalink"></a></header><div class="admonition-body"><p>This package has been used for massive computations (millions of unknowns), on the GPU. You can look at the citations below, or for example at <a href=" https://doi.org/10.48550/arXiv.2508.19134">article1</a>, <a href="https://comptes-rendus.academie-sciences.fr/mathematique/item/CRMATH_2022__360_G1_59_0/">article2</a></p></div></div><div class="admonition is-danger" id="Performance-of-tutorials-df5150e3178633dc"><header class="admonition-header">Performance of tutorials<a class="admonition-anchor" href="#Performance-of-tutorials-df5150e3178633dc" title="Permalink"></a></header><div class="admonition-body"><p>Do not get fooled by the small dimensions of the discretization of the PDE in the tutorials. The documentation has to be run on github CI so the machines are not powerful. You can increase the discretization on your computer. </p></div></div><h2 id="Required-methods-for-custom-arrays"><a class="docs-heading-anchor" href="#Required-methods-for-custom-arrays">Required methods for custom arrays</a><a id="Required-methods-for-custom-arrays-1"></a><a class="docs-heading-anchor-permalink" href="#Required-methods-for-custom-arrays" title="Permalink"></a></h2><p>If you use standard arrays, you can skip this section.</p><p>We make the same requirements as <code>KrylovKit.jl</code>. Hence, we refer to its <a href="https://jutho.github.io/KrylovKit.jl/stable/#Package-features-and-alternatives-1">docs</a> and the package <a href="https://github.com/Jutho/VectorInterface.jl?tab=readme-ov-file">VectorInterface.jl</a> for more information. We additionally require the following methods to be available:</p><ul><li><code>Base.length(x)</code>: it is used in the constraint equation of the pseudo arclength continuation method (see <a href="library/#BifurcationKit.continuation"><code>continuation</code></a> for more details). If <code>length</code> is not available for your &quot;vector&quot; type, define <code>length(x) = 1</code> and adjust the parameter <code>θ</code> in <code>PALC</code>.</li><li><code>Base.copyto!(dest, in)</code> this is used to reduce the allocations.</li><li><code>real</code> this is used to compute normal forms.</li><li><code>conj</code> this is used to compute normal forms.</li></ul><h2 id="Citations"><a class="docs-heading-anchor" href="#Citations">Citations</a><a id="Citations-1"></a><a class="docs-heading-anchor-permalink" href="#Citations" title="Permalink"></a></h2><p>Papers citing this work are collected on <a href="https://www.zotero.org/groups/6097154/citations_of_bifurcationkit/library">Zotero</a>.</p><p>These citations are aggregated from <a href="https://scholar.google.com/scholar?q=bifurcationkit&amp;hl=en&amp;as_sdt=0,5">Google Scholar (search)</a> and <a href="https://scholar.google.com/scholar?oi=bibs&amp;hl=en&amp;cites=159498619004863176,12573642401780006854,8662907770106865595">Google Scholar (citations)</a>. Note that each link may reference different subsets of papers.</p><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of BifurcationKit was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl/docs/Project.toml`
   [1520ce14] AbstractTrees v0.4.5 `~/.julia/dev/AbstractTrees`
   [49cd1f3c] AsymptoticNumericalMethod v0.2.3
-  [aae01518] BandedMatrices v1.10.1 `~/.julia/dev/BandedMatrices`
+  [aae01518] BandedMatrices v1.10.2 `~/.julia/dev/BandedMatrices`
   [6e4b80f9] BenchmarkTools v1.6.3
   [0f109fa4] BifurcationKit v0.5.2
   [52551710] BifurcationKitDocs v0.4.16 `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl`
@@ -40,15 +40,15 @@ Environment:
   [ec485272] ArnoldiMethod v0.4.0
 ⌅ [7d9fca2a] Arpack v0.5.3
   [4fba245c] ArrayInterface v7.22.0
-  [4c555306] ArrayLayouts v1.12.0
+  [4c555306] ArrayLayouts v1.12.1
   [49cd1f3c] AsymptoticNumericalMethod v0.2.3
-  [aae01518] BandedMatrices v1.10.1 `~/.julia/dev/BandedMatrices`
+  [aae01518] BandedMatrices v1.10.2 `~/.julia/dev/BandedMatrices`
   [6e4b80f9] BenchmarkTools v1.6.3
   [0f109fa4] BifurcationKit v0.5.2
   [52551710] BifurcationKitDocs v0.4.16 `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl`
   [d1d4a3ce] BitFlags v0.1.9
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
-  [8e7c35d0] BlockArrays v1.9.2
+  [8e7c35d0] BlockArrays v1.9.3
   [70df07ce] BracketingNonlinearSolve v1.6.0
   [2a0fbf3d] CPUSummary v0.2.7
   [d360d2e6] ChainRulesCore v1.26.0
@@ -102,7 +102,7 @@ Environment:
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [46192b85] GPUArraysCore v0.2.0
-  [28b8d3ca] GR v0.73.18
+  [28b8d3ca] GR v0.73.19
   [c145ed77] GenericSchur v0.5.6
   [d7ba0133] Git v1.5.0
   [42e2da0e] Grisu v1.0.2
@@ -125,9 +125,9 @@ Environment:
   [23fbe1c1] Latexify v0.16.10
   [10f19ff3] LayoutPointers v0.1.17
   [0e77f7df] LazilyInitializedFields v1.3.0
-  [5078a376] LazyArrays v2.9.0
+  [5078a376] LazyArrays v2.9.1
   [87fe0de2] LineSearch v0.1.4
-  [d3d80556] LineSearches v7.4.0
+  [d3d80556] LineSearches v7.4.1
   [7a12625a] LinearMaps v3.11.4
   [7ed4a6bd] LinearSolve v3.47.0
   [2ab3a3ac] LogExpFunctions v0.3.29
@@ -207,7 +207,7 @@ Environment:
   [0bca4576] SciMLBase v2.127.0
   [19f34311] SciMLJacobianOperators v0.1.11
   [a6db7da4] SciMLLogging v1.5.0
-  [c0aeaf25] SciMLOperators v1.11.0
+  [c0aeaf25] SciMLOperators v1.13.0
   [431bcebd] SciMLPublic v1.0.0
   [53ae85a6] SciMLStructures v1.7.0
   [6c6a2e73] Scratch v1.3.0
@@ -254,7 +254,7 @@ Environment:
   [d7e528f0] FreeType2_jll v2.13.4+0
   [559328eb] FriBidi_jll v1.0.17+0
   [0656b61e] GLFW_jll v3.4.0+2
-  [d2c73de3] GR_jll v0.73.18+0
+  [d2c73de3] GR_jll v0.73.19+1
   [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
   [020c3dae] Git_LFS_jll v3.7.0+0
@@ -268,7 +268,7 @@ Environment:
   [88015f11] LERC_jll v4.0.1+0
   [1d63c593] LLVMOpenMP_jll v18.1.8+0
   [dd4b983a] LZO_jll v2.10.3+0
-  [e9f186c6] Libffi_jll v3.4.7+0
+⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
   [4b2f31a3] Libmount_jll v2.41.2+0
@@ -382,4 +382,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Rankin"><a class="tag is-link" href="#citeref-Rankin">Rankin</a><blockquote><p>J. Rankin et al., &quot;Continuation of localized coherent structures in nonlocal neural field equations&quot;, SIAM J. Scientific Computing 36, pp. B70–B93 (2014): https://epubs.siam.org/doi/10.1137/130918721</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="capabilities/">Overview of capabilities »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.0 on <span class="colophon-date" title="Tuesday 18 November 2025 08:03">Tuesday 18 November 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Rankin"><a class="tag is-link" href="#citeref-Rankin">Rankin</a><blockquote><p>J. Rankin et al., &quot;Continuation of localized coherent structures in nonlocal neural field equations&quot;, SIAM J. Scientific Computing 36, pp. B70–B93 (2014): https://epubs.siam.org/doi/10.1137/130918721</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="capabilities/">Overview of capabilities »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.0 on <span class="colophon-date" title="Saturday 22 November 2025 09:50">Saturday 22 November 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
