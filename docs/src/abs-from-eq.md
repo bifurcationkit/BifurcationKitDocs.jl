@@ -27,13 +27,13 @@ where `br` is a branch computed after a call to `continuation` with detection of
 using BifurcationKit, Plots
 
 # vector field of transcritical bifurcation
-F(x, p) = [x[1] * (p.μ - x[1])]
+F(x, p) = [x[1] * (p[1] - x[1])]
 
 # parameters of the vector field
-par = (μ = -0.2, )
+par = [-0.2]
 
 # problem (with automatic differentiation)
-prob = BifurcationProblem(F, [0.], par, (@optic _.μ); record_from_solution = (x, p; k...) -> x[1])
+prob = BifurcationProblem(F, [0.], par, 1; record_from_solution = (x, p; k...) -> x[1])
 
 # compute branch of trivial equilibria and detect a bifurcation point
 br = continuation(prob, PALC(), ContinuationPar())
@@ -50,13 +50,13 @@ scene = plot(br, br1; branchlabel = ["trivial branch", "bifurcated branch"], leg
 using BifurcationKit, Plots
 
 # vector field of pitchfork bifurcation
-F(x, p) = [x[1] * (p.μ - x[1]^2)]
+F(x, p) = [x[1] * (p[1] - x[1]^2)]
 
 # parameters of the vector field
-par = (μ = -0.2, )
+par = [-0.2]
 
 # problem (with automatic differentiation)
-prob = BifurcationProblem(F, [0.], par, (@optic _.μ); record_from_solution = (x, p; k...) -> x[1])
+prob = BifurcationProblem(F, [0.], par, 1; record_from_solution = (x, p; k...) -> x[1])
 
 # compute branch of trivial equilibria and 
 # detect a bifurcation point with improved precision
@@ -68,6 +68,25 @@ br1 = continuation(br, 1; bothside = true )
 scene = plot(br, br1; branchlabel = ["trivial branch", "bifurcated branch"], legend = :topleft)
 ```
 
+### Simple example: quadratic parameter dependency
+
+In the previous examples, we need to have $O(p)$ dependency on the parameter $p$. If this is not the case, BifurcationKit can handle $O(p^2)$ dependency on the parameter $p$ although this is not generic. For higher order degeneracy, the user needs to provide the predictor him/herself.
+
+```@example TUT1c_ABS_EQ_EQ
+# vector field with degenerate transcritical bifurcation
+Fdegenerate(x, p) = [x[1]^2 - p[1]^2]
+
+# parameters of the vector field
+par = [-1.0]
+
+# problem (with automatic differentiation)
+prob = BifurcationProblem(Fdegenerate, [1.], par, 1; record_from_solution = (x, p; k...)->x[1])
+# compute branch of trivial equilibria
+br = continuation(prob, PALC(), ContinuationPar(n_inversion = 6); normC = norminf)
+# perform branch switching on both sides of the bifurcation point
+br1 = continuation(br, 1, bothside = true)
+scene = plot(br, br1; branchlabel = ["trivial branch", "bifurcated branch"], legend = :topleft)
+```
 
 ## [From non simple branch point to equilibria](@id abs-nonsimple-eq)
 

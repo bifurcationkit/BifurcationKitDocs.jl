@@ -5,7 +5,7 @@
 
 A simple branch point $(x_0,p_0)$ for the problem $F(x,p)=0$ satisfies $\dim \ker dF(x_0,p_0) = 1$. At such point, we can apply **Lyapunov-Schmidt** reduction to transform the initial problem in large dimensions to a **scalar** polynomial ($\delta p \equiv p-p_0$): 
 
-$$a\delta p + z\left(b_1\delta p + \frac{b_2}{2}z + \frac{b_3}{6}z^2\right) = 0 \tag{E}$$
+$$a_{01}\delta p + a_{02}\delta p^2 + z\left(b_{11}\delta p + \frac{b_{20}}{2}z + \frac{b_{30}}{6}z^2\right) = 0 \tag{E}$$
 
 whose solutions give access to all solutions in a neighborhood of $(x,p)$.
 
@@ -13,11 +13,11 @@ More precisely, if $\ker dF(x_0,p_0) = \mathbb R\zeta$, one can show that $x_0+z
 
 In the above scalar equation,
 
-- if $a\neq 0$, this is a *Saddle-Node* bifurcation
-- if $a=0,b_2\neq 0$, the bifurcation point is *Transcritical* and the bifurcated branch exists on each side of $p_0$.
-- if $a=0,b_2=0, b_3\neq 0$, the bifurcation point is a *Pitchfork* and the bifurcated branch only exists on one side of $p_0$.
+- if $a_{01}\neq 0$, this is a *Saddle-Node* bifurcation
+- if $a{01}=0,b_{20}\neq 0$, the bifurcation point is *Transcritical* and the bifurcated branch exists on each side of $p_0$.
+- if $a_{01}=0,b_{20}=0, b_{30}\neq 0$, the bifurcation point is a *Pitchfork* and the bifurcated branch only exists on one side of $p_0$.
 
-## Normal form computation
+## Reduced equation computation
 
 The reduced equation (E) can be automatically computed as follows
 
@@ -30,6 +30,9 @@ where `prob` is the bifurcation problem. `br` is a branch computed after a call 
 
 !!! info "Note"
     You should not need to call `get_normal_form` except if you need the full information about the branch point.
+
+!!! info "Note"
+    Strictly speaking, this is not a normal form but a reduced equation. However, to keep the API simple, we use the same name especially for `get_normal_form` because it returns the Hopf/BT/... normal forms which are true normal forms.
 
 ## Predictor
 
