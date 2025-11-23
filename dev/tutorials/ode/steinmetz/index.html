@@ -49,7 +49,7 @@ prob_de = ODE.ODEProblem(SL!, z0, (0, 136.), par_sl)
 sol_ode = ODE.solve(prob_de, alg_ode)
 prob_de = ODE.ODEProblem(SL!, sol_ode.u[end], (0, 30.), sol_ode.prob.p, reltol = 1e-11, abstol = 1e-13)
 sol_ode = ODE.solve(prob_de, alg_ode)
-plot(sol_ode)</code></pre><img src="7f2f461b.svg" alt="Example block output"/><h2 id="Computation-with-Shooting"><a class="docs-heading-anchor" href="#Computation-with-Shooting">Computation with Shooting</a><a id="Computation-with-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Computation-with-Shooting" title="Permalink"></a></h2><p>We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of <span>$k_8$</span></p><pre><code class="language-julia hljs">probsh, cish = generate_ci_problem( ShootingProblem(M = 5; jacobian = BK.AutoDiffDenseAnalytical() ), prob, prob_de, sol_ode, 16.; reltol = 1e-11, abstol = 1e-13, parallel = true)
+plot(sol_ode)</code></pre><img src="a5799126.svg" alt="Example block output"/><h2 id="Computation-with-Shooting"><a class="docs-heading-anchor" href="#Computation-with-Shooting">Computation with Shooting</a><a id="Computation-with-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Computation-with-Shooting" title="Permalink"></a></h2><p>We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of <span>$k_8$</span></p><pre><code class="language-julia hljs">probsh, cish = generate_ci_problem( ShootingProblem(M = 5; jacobian = BK.AutoDiffDenseAnalytical() ), prob, prob_de, sol_ode, 16.; reltol = 1e-11, abstol = 1e-13, parallel = true)
 
 opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, n_inversion = 6, nev = 4, max_steps = 40, tol_stability = 1e-3)
 @reset opts_po_cont.newton_options.max_iterations = 10
@@ -57,7 +57,7 @@ br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po
 	# verbosity = 3, plot = true,
 	callback_newton = BK.cbMaxNorm(10),
 	argspo...)
-scene = plot(br_sh)</code></pre><img src="0758871c.svg" alt="Example block output"/><h3 id="Curve-of-Fold-points-of-periodic-orbits"><a class="docs-heading-anchor" href="#Curve-of-Fold-points-of-periodic-orbits">Curve of Fold points of periodic orbits</a><a id="Curve-of-Fold-points-of-periodic-orbits-1"></a><a class="docs-heading-anchor-permalink" href="#Curve-of-Fold-points-of-periodic-orbits" title="Permalink"></a></h3><pre><code class="language- hljs">opts_posh_fold = ContinuationPar(br_sh.contparams, detect_bifurcation = 2, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
+scene = plot(br_sh)</code></pre><img src="1cd44ab2.svg" alt="Example block output"/><h3 id="Curve-of-Fold-points-of-periodic-orbits"><a class="docs-heading-anchor" href="#Curve-of-Fold-points-of-periodic-orbits">Curve of Fold points of periodic orbits</a><a id="Curve-of-Fold-points-of-periodic-orbits-1"></a><a class="docs-heading-anchor-permalink" href="#Curve-of-Fold-points-of-periodic-orbits" title="Permalink"></a></h3><pre><code class="language-julia hljs">opts_posh_fold = ContinuationPar(br_sh.contparams, detect_bifurcation = 2, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
 @reset opts_posh_fold.newton_options.tol = 1e-12
 fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fold;
 		# verbosity = 2, plot = true,
@@ -69,7 +69,7 @@ fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fol
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
 		)
-plot(fold_po_sh)</code></pre><h3 id="Curve-of-NS-points-of-periodic-orbits"><a class="docs-heading-anchor" href="#Curve-of-NS-points-of-periodic-orbits">Curve of NS points of periodic orbits</a><a id="Curve-of-NS-points-of-periodic-orbits-1"></a><a class="docs-heading-anchor-permalink" href="#Curve-of-NS-points-of-periodic-orbits" title="Permalink"></a></h3><pre><code class="language- hljs">opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 5e-2, ds = 1e-2)
+plot(fold_po_sh)</code></pre><img src="0ecb9d44.svg" alt="Example block output"/><h3 id="Curve-of-NS-points-of-periodic-orbits"><a class="docs-heading-anchor" href="#Curve-of-NS-points-of-periodic-orbits">Curve of NS points of periodic orbits</a><a id="Curve-of-NS-points-of-periodic-orbits-1"></a><a class="docs-heading-anchor-permalink" href="#Curve-of-NS-points-of-periodic-orbits" title="Permalink"></a></h3><pre><code class="language-julia hljs">opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 5e-2, ds = 1e-2)
 @reset opts_posh_ns.newton_options.tol = 1e-11
 @reset opts_posh_ns.newton_options.verbose = true
 ns_po_sh = continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
@@ -80,26 +80,37 @@ ns_po_sh = continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
 		jacobian_ma = BK.MinAug(),
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
-		)</code></pre><pre><code class="language- hljs">scene = plot(ns_po_sh, vars = (:k7, :k8))
+		)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">NSPeriodicOrbitCont</span></span>
+ ├─ Number of points: 35
+ ├─ Type of vectors: <span class="sgr36"><span class="sgr1">BorderedArray{Vector{Float64}, Vector{Float64}}</span></span>
+ ├─ Parameters (:k8, :k7)
+ ├─ Parameter <span class="sgr36"><span class="sgr1">k7</span></span> starts at 1.5, ends at 1.8598214540492017
+ ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
+ └─ Special points:
+
+- #  1, <span class="sgr34"><span class="sgr1">      ch</span></span> at k7 ≈ +1.74705003 ∈ (+1.74704315, +1.74705003), |δp|=7e-06, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 0,  0), step =  25
+- #  2, <span class="sgr34"><span class="sgr1">      R1</span></span> at k7 ≈ +1.85982145 ∈ (+1.85622624, +1.85982145), |δp|=4e-03, [<span class="sgr31"><span class="sgr1">   guessL</span></span>], δ = ( 0,  0), step =  34
+- #  3, <span class="sgr1">endpoint</span> at k7 ≈ +1.85982145,                                                                     step =  34
+</code></pre><pre><code class="language-julia hljs">scene = plot(ns_po_sh, vars = (:k7, :k8))
 plot!(scene, fold_po_sh)
-scene</code></pre><h2 id="Computation-with-collocation"><a class="docs-heading-anchor" href="#Computation-with-collocation">Computation with collocation</a><a id="Computation-with-collocation-1"></a><a class="docs-heading-anchor-permalink" href="#Computation-with-collocation" title="Permalink"></a></h2><pre><code class="language-julia hljs">probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4;
-	jacobian = BK.DenseAnalyticalInplace()),
-	prob,
-	sol_ode,
+scene</code></pre><img src="1927c322.svg" alt="Example block output"/><h2 id="Computation-with-collocation"><a class="docs-heading-anchor" href="#Computation-with-collocation">Computation with collocation</a><a id="Computation-with-collocation-1"></a><a class="docs-heading-anchor-permalink" href="#Computation-with-collocation" title="Permalink"></a></h2><pre><code class="language- hljs">probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4; 
+	jacobian = BK.DenseAnalyticalInplace()), 
+	prob, 
+	sol_ode, 
 	16.)
 
-opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0,
-	ds = 0.002, dsmax = 0.05,
+opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0, 
+	ds = 0.002, dsmax = 0.05, 
 	n_inversion = 6,
 	nev = 4,
-	max_steps = 50,
+	max_steps = 50, 
 	detect_bifurcation = 3,
 	tol_stability = 1e-5)
 
 br_coll = @time continuation(deepcopy(probcoll), deepcopy(cicoll), PALC(), opts_po_cont;
     argspo...)
 
-scene = plot(br_coll)</code></pre><img src="239ab138.svg" alt="Example block output"/><h3 id="Curve-of-Fold-points-of-periodic-orbits-2"><a class="docs-heading-anchor" href="#Curve-of-Fold-points-of-periodic-orbits-2">Curve of Fold points of periodic orbits</a><a class="docs-heading-anchor-permalink" href="#Curve-of-Fold-points-of-periodic-orbits-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">opts_pocl_fold = ContinuationPar(br_coll.contparams,detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2, max_steps = 100, ds = 0.01)
+scene = plot(br_coll)</code></pre><h3 id="Curve-of-Fold-points-of-periodic-orbits-2"><a class="docs-heading-anchor" href="#Curve-of-Fold-points-of-periodic-orbits-2">Curve of Fold points of periodic orbits</a><a class="docs-heading-anchor-permalink" href="#Curve-of-Fold-points-of-periodic-orbits-2" title="Permalink"></a></h3><pre><code class="language- hljs">opts_pocl_fold = ContinuationPar(br_coll.contparams,detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2, max_steps = 100, ds = 0.01)
 @reset opts_pocl_fold.newton_options.verbose = true
 @reset opts_pocl_fold.newton_options.tol = 1e-11
 fold_po_cl = @time continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold;
@@ -112,31 +123,20 @@ fold_po_cl = @time continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_f
         callback_newton = BK.cbMaxNorm(1e1),
         )
 
-plot(fold_po_cl)</code></pre><img src="b36e22b5.svg" alt="Example block output"/><h3 id="Curve-of-NS-points-of-periodic-orbits-2"><a class="docs-heading-anchor" href="#Curve-of-NS-points-of-periodic-orbits-2">Curve of NS points of periodic orbits</a><a class="docs-heading-anchor-permalink" href="#Curve-of-NS-points-of-periodic-orbits-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">opts_pocl_ns = ContinuationPar(br_coll.contparams, detect_bifurcation = 0, plot_every_step = 10, dsmax = 4e-2)
+plot(fold_po_cl)</code></pre><h3 id="Curve-of-NS-points-of-periodic-orbits-2"><a class="docs-heading-anchor" href="#Curve-of-NS-points-of-periodic-orbits-2">Curve of NS points of periodic orbits</a><a class="docs-heading-anchor-permalink" href="#Curve-of-NS-points-of-periodic-orbits-2" title="Permalink"></a></h3><pre><code class="language- hljs">opts_pocl_ns = ContinuationPar(br_coll.contparams, detect_bifurcation = 0, plot_every_step = 10, dsmax = 4e-2)
 ns_po_cl = continuation(deepcopy(br_coll), 1, (@optic _.k7), opts_pocl_ns;
-        # verbosity = 3,
+        # verbosity = 3, 
         # plot = true,
         detect_codim2_bifurcation = 1,
         start_with_eigen = false,
         jacobian_ma = BK.MinAugMatrixBased(),
         normC = norminf,
         callback_newton = BK.cbMaxNorm(1e1),
-        )</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">NSPeriodicOrbitCont</span></span>
- ├─ Number of points: 44
- ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameters (:k8, :k7)
- ├─ Parameter <span class="sgr36"><span class="sgr1">k7</span></span> starts at 1.5, ends at 1.8575574022149854
- ├─ Algo: <span class="sgr36"><span class="sgr1">PALC</span></span>
- └─ Special points:
-
-- #  1, <span class="sgr34"><span class="sgr1">      ch</span></span> at k7 ≈ +1.85581936 ∈ (+1.84505635, +1.85581936), |δp|=1e-02, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 0,  0), step =  40
-- #  2, <span class="sgr34"><span class="sgr1">      ch</span></span> at k7 ≈ +1.85755740 ∈ (+1.85755703, +1.85755740), |δp|=4e-07, [<span class="sgr31"><span class="sgr1">    guess</span></span>], δ = ( 0,  0), step =  43
-- #  3, <span class="sgr1">endpoint</span> at k7 ≈ +1.85755740,                                                                     step =  43
-</code></pre><pre><code class="language-julia hljs">scene = plot(ns_po_cl; vars = (:k7, :k8))</code></pre><img src="f2ede543.svg" alt="Example block output"/><pre><code class="language-julia hljs">scene = plot(fold_po_cl)
+        )</code></pre><pre><code class="language- hljs">scene = plot(ns_po_cl; vars = (:k7, :k8))</code></pre><pre><code class="language- hljs">scene = plot(fold_po_cl)
 plot!(ns_po_cl; vars = (:k7, :k8))
-scene</code></pre><img src="b9920193.svg" alt="Example block output"/><p>```</p><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+scene</code></pre><p>```</p><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Sunday 23 November 2025 10:24">Sunday 23 November 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Sunday 23 November 2025 20:07">Sunday 23 November 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
