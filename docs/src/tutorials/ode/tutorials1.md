@@ -5,8 +5,9 @@
 This is a simple example in which we aim at solving $\Delta T+\alpha N(T,\beta)=0$ with boundary conditions $T(0) = T(1)=\beta$. This example is coded in `examples/chan.jl`. We start with some imports:
 
 ```@example TUT1ODE
-using BifurcationKit, Plots
-const BK = BifurcationKit
+using Plots
+import BifurcationKit as BK
+import BifurcationKit: @optic, @set
 
 N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
 nothing #hide
@@ -42,19 +43,19 @@ nothing #hide
 Finally, we need to provide some parameters for the Newton iterations. This is done by calling
 
 ```@example TUT1ODE
-optnewton = NewtonPar(tol = 1e-9, max_iterations = 10)
+optnewton = BK.NewtonPar(tol = 1e-9, max_iterations = 10)
 nothing #hide
 ```
 
 We call the Newton solver:
 
 ```@example TUT1ODE
-prob = ODEBifProblem(F_chan, sol0, par, (@optic _.α),
+prob = BK.ODEBifProblem(F_chan, sol0, par, (@optic _.α),
 	# function to plot the solution
 	plot_solution = (x, p; k...) -> plot!(x; ylabel = "solution", label = "", k...))
-sol = BK.solve(prob, Newton(), optnewton) # hide
+sol = BK.solve(prob, BK.Newton(), optnewton) # hide
 # we set verbose to true to see the newton iterations
-sol = @time BK.solve(prob, Newton(), @set optnewton.verbose = true)
+sol = @time BK.solve(prob, BK.Newton(), @set optnewton.verbose = true)
 nothing #hide
 ```
 
@@ -63,16 +64,16 @@ Note that, in this case, we did not give the Jacobian. It was computed internall
 We can perform numerical continuation w.r.t. the parameter $\alpha$. This time, we need to provide additional parameters, but now for the continuation method:
 
 ```@example TUT1ODE
-optcont = ContinuationPar(max_steps = 150,
+optcont = BK.ContinuationPar(max_steps = 150,
 	p_min = 0., p_max = 4.2,
-	newton_options =optnewton)
+	newton_options = optnewton)
 nothing #hide
 ```
 
 Next, we call the continuation routine as follows.
 
 ```@example TUT1ODE
-br = continuation(prob, PALC(), optcont; plot = true)
+br = BK.continuation(prob, BK.PALC(), optcont; plot = true)
 nothing #hide		
 ```
 
@@ -84,7 +85,7 @@ The parameter axis `lens = @optic _.α` is used to extract the component of `par
 You should see
 
 ```@example TUT1ODE
-scene = title!("") #hide		
+scene = title!("") #hide
 ```
 
 The left figure is the norm of the solution as function of the parameter $p=\alpha$, the *y-axis* can be changed by passing a different `record_from_solution` to `BifurcationProblem `. The top right figure is the value of $\alpha$ as function of the iteration number. The bottom right is the solution for the current value of the parameter. This last plot can be modified by changing the argument `plot_solution` to `BifurcationProblem `.
@@ -95,6 +96,6 @@ The left figure is the norm of the solution as function of the parameter $p=\alp
 What if we want to compute to continue both ways in one call?
 
 ```@example TUT1ODE
-br = continuation(prob, PALC(), optcont; bothside = true)
+br = BK.continuation(prob, BK.PALC(), optcont; bothside = true)
 plot(br)
 ```

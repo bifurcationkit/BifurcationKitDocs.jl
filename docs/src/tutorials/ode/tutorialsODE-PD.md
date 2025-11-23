@@ -19,8 +19,8 @@ It is easy to encode the ODE as follows
 
 ```@example TUTLURE
 using Revise, Plots
-using BifurcationKit
-const BK = BifurcationKit
+import BifurcationKit as BK
+import BifurcationKit: @optic
 
 recordFromSolution(x, p; k...) = (u1 = x[1], u2 = x[2])
 
@@ -34,7 +34,7 @@ function lur!(dz, u, p, t = 0)
 end
 
 # bifurcation problem
-prob_bif = ODEBifProblem(lur!, zeros(3), (α = -1.0, β = 1.0), (@optic _.α);
+prob_bif = BK.ODEBifProblem(lur!, zeros(3), (α = -1.0, β = 1.0), (@optic _.α);
     record_from_solution = recordFromSolution)
 nothing #hide
 ```
@@ -43,10 +43,10 @@ We first compute the branch of equilibria
 
 ```@example TUTLURE
 # continuation options
-opts_br = ContinuationPar(p_min = -1.4, p_max = 1.8, nev = 3)
+opts_br = BK.ContinuationPar(p_min = -1.4, p_max = 1.8, nev = 3)
 
 # computation of the branch
-br = continuation(prob_bif, PALC(), opts_br)
+br = BK.continuation(prob_bif, BK.PALC(), opts_br)
 
 scene = plot(br)
 ```
@@ -69,7 +69,7 @@ We first define a plotting function and a record function which are used for all
 ```@example TUTLURE
 # plotting function
 function plotPO(x, p; k...)
-	xtt = get_periodic_orbit(p.prob, x, p.p)
+	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
 	plot!(xtt.t, xtt[1,:]; markersize = 2, k...)
 	plot!(xtt.t, xtt[2,:]; k...)
 	plot!(xtt.t, xtt[3,:]; legend = false, k...)
@@ -77,8 +77,8 @@ end
 
 # record function
 function recordPO(x, p; k...)
-	xtt = get_periodic_orbit(p.prob, x, p.p)
-	period = getperiod(p.prob, x, p.p)
+	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+	period = BK.getperiod(p.prob, x, p.p)
 	mn, mx = extrema(xtt[1,:])
 	return (;max = mx, min = mn, period)
 end
@@ -88,19 +88,20 @@ Continuation of periodic orbits from the Hopf point:
 
 ```@example TUTLURE
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, dsmin = 1e-4, max_steps = 80, tol_stability = 1e-4, plot_every_step = 20)
+opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, dsmin = 1e-4, max_steps = 80, tol_stability = 1e-4, plot_every_step = 20)
 
-br_po = continuation(
+br_po = BK.continuation(
 	br, 1, opts_po_cont,
-	PeriodicOrbitOCollProblem(40, 4);
+	BK.PeriodicOrbitOCollProblem(40, 4);
 	plot = true,
+	# linear_algo = BK.COPBLS(),
 	record_from_solution = recordPO,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		# plot previous branch
 		plot!(br, subplot = 1, putbifptlegend = false)
 		end,
-	normC = norminf)
+	normC = BK.norminf)
 
 scene = plot(br, br_po)
 ```
@@ -108,21 +109,21 @@ scene = plot(br, br_po)
 Note that you can compute the PD normal form
 
 ```@example TUTLURE
-get_normal_form(br_po, 1)
+BK.get_normal_form(br_po, 1)
 ```
 
 We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(deepcopy(br_po), 1, ContinuationPar(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
+br_po_pd = BK.continuation(deepcopy(br_po), 1, BK.ContinuationPar(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## add previous branch
 		plot!(br_po; subplot = 1)
 	end,
 	record_from_solution = recordPO,
-	normC = norminf,
+	normC = BK.norminf,
 	)
 
 scene = plot(br_po, br_po_pd, title = "Collocation based")
@@ -139,18 +140,18 @@ import OrdinaryDiffEq as ODE
 prob_ode = ODE.ODEProblem(lur!, prob_bif.u0, (0, 1), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.03, newton_options = NewtonPar(tol = 1e-10), tol_stability = 1e-5, n_inversion = 8, max_steps = 100)
+opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, newton_options = BK.NewtonPar(tol = 1e-10), tol_stability = 1e-5, n_inversion = 8, max_steps = 100)
 
-br_po = continuation(
+br_po = BK.continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 10 sections
-	ShootingProblem(15, prob_ode, ODE.Vern9(); parallel = true);
+	BK.ShootingProblem(15, prob_ode, ODE.Vern9(); parallel = true);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
 	# limit the residual, useful to help DifferentialEquations
 	callback_newton = BK.cbMaxNorm(10),
-	normC = norminf)
+	normC = BK.norminf)
 
 plot(br_po)
 ```
@@ -158,15 +159,15 @@ plot(br_po)
 Note that you can compute the PD normal form
 
 ```@example TUTLURE
-get_normal_form(br_po, 1; autodiff = true)
+BK.get_normal_form(br_po, 1; autodiff = true)
 ```
 
 We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(deepcopy(br_po), 1, 
-	ContinuationPar(br_po.contparams, max_steps = 10, ds = -0.005);
+br_po_pd = BK.continuation(deepcopy(br_po), 1, 
+	BK.ContinuationPar(br_po.contparams, max_steps = 10, ds = -0.005);
 	plot = true, verbosity = 2,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -175,7 +176,7 @@ br_po_pd = continuation(deepcopy(br_po), 1,
 	end,
 	record_from_solution = recordPO,
 	autodiff_nf = true,
-	normC = norminf,
+	normC = BK.norminf,
 	callback_newton = BK.cbMaxNorm(10),
 	)
 
@@ -188,18 +189,18 @@ We use finite differences to discretize the problem for finding periodic orbits.
 
 ```@example TUTLURE
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.02, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
+opts_po_cont = BK.ContinuationPar(dsmax = 0.02, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
 
-br_po = continuation(
+br_po = BK.continuation(
 	br, 1, opts_po_cont,
-	PeriodicOrbitTrapProblem(M = 120);
+	BK.PeriodicOrbitTrapProblem(M = 120);
 	record_from_solution = recordPO,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		## plot previous branch
 		plot!(br, subplot=1, putbifptlegend = false)
 		end,
-	normC = norminf)
+	normC = BK.norminf)
 
 scene = plot(br, br_po)
 ```
@@ -210,7 +211,7 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 
 ```@example TUTLURE
 # aBS from PD
-br_po_pd = continuation(deepcopy(br_po), 1, ContinuationPar(br_po.contparams, max_steps = 70);
+br_po_pd = BK.continuation(deepcopy(br_po), 1, BK.ContinuationPar(br_po.contparams, max_steps = 70);
 	# plot = true,
 	ampfactor = .2, δp = -0.005,
 	plot_solution = (x, p; k...) -> begin
@@ -219,7 +220,7 @@ br_po_pd = continuation(deepcopy(br_po), 1, ContinuationPar(br_po.contparams, ma
 		plot!(br_po; legend=false, subplot=1)
 	end,
 	record_from_solution = recordPO,
-	normC = norminf
+	normC = BK.norminf
 	)
 Scene = title!("")
 ```

@@ -17,8 +17,8 @@ We start with some imports:
 
 ```@example TUTCO
 using Revise, Plots
-using BifurcationKit
-const BK = BifurcationKit
+import BifurcationKit as BK
+import BifurcationKit: @optic, @set, norminf
 
 nothing # hide
 ```
@@ -50,7 +50,7 @@ recordCO(x, p; k...) = (x = x[1], y = x[2], s = x[3])
 z0 = [0.07, 0.2, 05]
 
 # Bifurcation Problem
-prob = BifurcationProblem(COm, z0, par_com, (@optic _.q2); record_from_solution = recordCO)
+prob = BK.ODEBifProblem(COm, z0, par_com, (@optic _.q2); record_from_solution = recordCO)
 nothing # hide
 ```
 
@@ -60,10 +60,10 @@ Once the problem is set up, we can continue the state w.r.t. $q_2$ and detect co
 
 ```@example TUTCO
 # continuation parameters
-opts_br = ContinuationPar(p_max = 1.9, dsmax = 0.01)
+opts_br = BK.ContinuationPar(p_max = 1.9, dsmax = 0.01)
 
 # compute the branch of solutions
-br = continuation(prob, PALC(), opts_br; normC = norminf)
+br = BK.continuation(prob, BK.PALC(), opts_br; normC = norminf)
 ```
 
 ```@example TUTCO
@@ -79,19 +79,19 @@ scene = plot(br, xlims = (0.8,1.8))
 If we vary the parameter $k$, the previous bifurcation points changes. Let us compute branches for different values of $k$.
 
 ```@example LORENZ84
-_branches = [continuation(re_make(prob, params = @set par_com.k = k),
-				 PALC(), ContinuationPar(opts_br, p_min = 0.6, p_max = 1.5);
+_branches = [BK.continuation(BK.re_make(prob, params = @set par_com.k = k),
+				 BK.PALC(), BK.ContinuationPar(opts_br, p_min = 0.6, p_max = 1.5);
 				normC = norminf,
 				bothside = true)
 			for k in LinRange(0.4, 0.45, 60)	
 				];
 plot()
 for b in _branches
-	plot!(fill(getparams(b).k,length(b)), b.param, b.x, label = "", color = :blue)
+	plot!(fill(BK.getparams(b).k,length(b)), b.param, b.x, label = "", color = :blue)
 	for pb in b.specialpoint
 		if pb.type in (:hopf, :bp)
 			col = pb.type == :hopf ? :red : :blue
-			scatter!([getparams(b).k], [pb.param], [pb.printsol.x], label = "", color = col)
+			scatter!([BK.getparams(b).k], [pb.param], [pb.printsol.x], label = "", color = col)
 		end
 	end
 end
@@ -106,8 +106,8 @@ This is cumbersome and inefficient. We can in fact directly follow the Hopf / Fo
 We follow the Fold points in the parameter plane $(q_2, k)$. We tell the solver to consider `br.specialpoint[2]` and continue it.
 
 ```@example TUTCO
-sn_codim2 = continuation(br, 2, (@optic _.k),
-	ContinuationPar(opts_br, p_max = 2.2, ds = -0.001, dsmax = 0.05);
+sn_codim2 = BK.continuation(br, 2, (@optic _.k),
+	BK.ContinuationPar(opts_br, p_max = 2.2, ds = -0.001, dsmax = 0.05);
 	normC = norminf,
 	# compute both sides of the initial condition
 	bothside = true,
@@ -124,8 +124,8 @@ plot!(scene, br, xlims=(0.8, 1.8))
 We tell the solver to consider `br.specialpoint[1]` and continue it.
 
 ```@example TUTCO
-hp_codim2 = continuation(br, 1, (@optic _.k),
-	ContinuationPar(opts_br, p_max = 2.8, ds = -0.001, dsmax = 0.025) ;
+hp_codim2 = BK.continuation(br, 1, (@optic _.k),
+	BK.ContinuationPar(opts_br, p_max = 2.8, ds = -0.001, dsmax = 0.025) ;
 	normC = norminf,
 	# detection of codim 2 bifurcations
 	detect_codim2_bifurcation = 2,

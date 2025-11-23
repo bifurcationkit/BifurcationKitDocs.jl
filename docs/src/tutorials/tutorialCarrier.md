@@ -59,7 +59,7 @@ dx = X[2] - X[1]
 par_car = (ϵ = 0.7, X = X, dx = dx)
 sol0 = -(1 .- par_car.X.^2)
 
-recordFromSolution(x, p; k...) = (x[2]-x[1]) * sum(x->x^2, x)
+recordFromSolution(x, p; k...) = (x[2]-x[1]) * sum(z->z^2, x)
 
 prob = BifurcationProblem(F_carr, zeros(N), par_car, (@optic _.ϵ); J = Jac_carr, record_from_solution = recordFromSolution)
 
@@ -92,7 +92,7 @@ However, this is a bit disappointing as we only find two branches.
 
 ## Second try with deflated continuation
 
-```julia
+```@example TUTCARRIER
 # deflation operator to hold solutions
 deflationOp = DeflationOperator(2, dot, 1.0, [sol.u])
 
@@ -116,16 +116,31 @@ alg = DefCont(deflation_operator = deflationOp, perturb_solution = perturbsol, m
 # call the deflated continuation method
 br = @time continuation(
 	re_make(prob; params = par_def), alg,
-	setproperties(optcont; ds = -0.00021, dsmin=1e-5, max_steps = 20000,
+	setproperties(optcont; ds = -0.001, dsmin=1e-5, max_steps = 20000,
 		p_max = 0.7, p_min = 0.05, detect_bifurcation = 0, plot_every_step = 40,
 		newton_options = setproperties(optnew; tol = 1e-9, max_iterations = 100, verbose = false));
 	normC = norminf,
   verbosity = 0,
 	)
 
-plot(br...)
+plot(br)
 ```
 
 We obtain the following result which is remarkable because it contains many more disconnected branches which we did not find in the first try.
+
+If we use a smaller parameter step, we get more branches. We don't do it here because the docs run on githiub CI and is ressource limited.
+
+```julia
+br = @time continuation(
+	re_make(prob; params = par_def), alg,
+	setproperties(optcont; ds = -0.0001, dsmin=1e-5, max_steps = 20000,
+		p_max = 0.7, p_min = 0.05, detect_bifurcation = 0, plot_every_step = 40,
+		newton_options = setproperties(optnew; tol = 1e-9, max_iterations = 100, verbose = false));
+	normC = norminf,
+  verbosity = 0,
+	)
+
+plot(br)
+```
 
 ![](carrier.png)

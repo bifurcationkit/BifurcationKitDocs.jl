@@ -34,12 +34,12 @@ It is easy to encode the DAE as follows. The mass matrix is defined next.
 
 ```@example TUTDAE1
 using Revise, Plots
-using BifurcationKit
-using LinearAlgebra # for eigen
-const BK = BifurcationKit
+import LinearAlgebra as LA
+import BifurcationKit as BK
+import BifurcationKit: @optic, @set, @reset
 
 # function to record information from the soluton
-recordFromSolution(x, p; k...) = (u1 = norminf(x), x1 = x[1], x2 = x[2], x3 = x[3], x4 = x[4])
+recordFromSolution(x, p; k...) = (u1 = BK.norminf(x), x1 = x[1], x2 = x[2], x3 = x[3], x4 = x[4])
 
 # vector field
 f(x, p) = p.Is * (exp(p.q * x) - 1)
@@ -66,7 +66,7 @@ z0 = [0.9957,0.7650,19.81,-19.81]
 Be = [-(par_Colpitts.C1+par_Colpitts.C2) par_Colpitts.C2 0 0;par_Colpitts.C2 -par_Colpitts.C2 0 0;par_Colpitts.C1 0 0 0; 0 0 par_Colpitts.L 0]
 
 # we group the differentials together
-prob = BifurcationProblem(Colpitts!, z0, par_Colpitts, (@optic _.μ); record_from_solution = recordFromSolution)
+prob = BK.DAEBifProblem(Colpitts!, z0, par_Colpitts, (@optic _.μ); record_from_solution = recordFromSolution)
 
 nothing #hide
 ```
@@ -81,16 +81,16 @@ end
 
 # compute the eigen elements
 function (eig::EigenDAE)(Jac, nev; k...)
-	F = eigen(Jac, eig.B)
+	F = LA.eigen(Jac, eig.B)
 	I = sortperm(F.values, by = real, rev = true)
 	return Complex.(F.values[I]), Complex.(F.vectors[:, I]), true, 1
 end
 
 # continuation options
-optn = NewtonPar(tol = 1e-13, max_iterations = 10, eigsolver = EigenDAE(Be))
-opts_br = ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plot_every_step = 3, max_steps = 1000, newton_options = optn)
+optn = BK.NewtonPar(tol = 1e-13, max_iterations = 10, eigsolver = EigenDAE(Be))
+opts_br = BK.ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plot_every_step = 3, max_steps = 1000, newton_options = optn)
 opts_br = @set opts_br.newton_options.verbose = false
-br = continuation(prob, PALC(), opts_br; normC = norminf)
+br = BK.continuation(prob, BK.PALC(), opts_br; normC = BK.norminf)
 
 scene = plot(br, vars = (:param, :x1))
 ```
@@ -110,22 +110,22 @@ import OrdinaryDiffEq as ODE
 # this is the ODEProblem used with `DiffEqBase.solve`
 # we  set  the initial conditions
 prob_dae = ODE.ODEFunction(Colpitts!; mass_matrix = Be)
-probFreez_ode = ODE.ODEProblem(prob_dae, z0, (0., 1.), par_Colpitts)
+probFreez_ode = ODE.ODEProblem(prob_dae, z0, (0, 1), par_Colpitts)
 
 # we lower the tolerance of newton for the periodic orbits
 optnpo = @set optn.tol = 1e-9
-@reset optnpo.eigsolver = DefaultEig()
+@reset optnpo.eigsolver = BK.DefaultEig()
 
-opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, p_min = 0.2, max_steps = 50, newton_options = optnpo, nev = 4, tol_stability = 1e-3, plot_every_step = 5)
+opts_po_cont = BK.ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, p_min = 0.2, max_steps = 50, newton_options = optnpo, nev = 4, tol_stability = 1e-3, plot_every_step = 5)
 
 # Shooting functional. Note the  stringent tolerances used to cope with
 # the extreme parameters of the model
-probSH = ShootingProblem(10, probFreez_ode, ODE.Rodas5P(); reltol = 1e-10, abstol = 1e-13)
+probSH = BK.ShootingProblem(10, probFreez_ode, ODE.Rodas5P(); reltol = 1e-10, abstol = 1e-13)
 
 # automatic branching from the Hopf point
-br_po = continuation(br, 1, opts_po_cont, probSH;
+br_po = BK.continuation(br, 1, opts_po_cont, probSH;
 	plot = true, verbosity = 3,
-	linear_algo = MatrixBLS(),
+	linear_algo = BK.MatrixBLS(),
 	# δp is use to parametrize the first parameter point on the
 	# branch of periodic orbits
 	δp = 0.001,
@@ -143,7 +143,7 @@ br_po = continuation(br, 1, opts_po_cont, probSH;
 	# the newton callback is used to reject residual > 1
 	# this is to avoid numerical instabilities from DE.jl
 	callback_newton = BK.cbMaxNorm(1.0),
-	normC = norminf)
+	normC = BK.norminf)
 ```
 
 ![](Colpitts1.png)
@@ -157,9 +157,9 @@ show(br)
 Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation.
 
 ```@example TUTDAE1
-probFreez_ode = ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.733)
+probFreez_ode = ODE.ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.733)
 
-solFreez = @time DifferentialEquations.solve(probFreez_ode, Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
+solFreez = @time ODE.solve(probFreez_ode, ODE.Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
 
 scene = plot(solFreez, vars = [2], xlims=(195,200), title="μ = $(probFreez_ode.p.μ)")
 ```
@@ -167,9 +167,9 @@ scene = plot(solFreez, vars = [2], xlims=(195,200), title="μ = $(probFreez_ode.
 and after the bifurcation
 
 ```@example TUTDAE1
-probFreez_ode = ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.72)
+probFreez_ode = ODE.ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.72)
 
-solFreez = @time DifferentialEquations.solve(probFreez_ode, Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
+solFreez = @time ODE.solve(probFreez_ode, ODE.Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
 
 scene = plot(solFreez, vars = [2], xlims=(195,200), title="μ = $(probFreez_ode.p.μ)")
 ```

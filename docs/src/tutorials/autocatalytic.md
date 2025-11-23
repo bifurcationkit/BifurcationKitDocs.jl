@@ -197,8 +197,8 @@ struct EigenWave <: BK.AbstractEigenSolver end
 
 # implementation of the solver for the generalized Eigen problem
 function (eig::EigenWave)(Jac, nev; k...)
-	N = size(Jac,1)
-	B = diagm(vcat(ones(N-1),0))
+	N = size(Jac, 1)
+	B = diagm(vcat(ones(N-1), 0))
 	F = eigen(Array(Jac), B)
 	I = sortperm(F.values, by = real, rev = true)
 	nev2 = min(nev, length(I))

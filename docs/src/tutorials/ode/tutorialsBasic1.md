@@ -18,8 +18,8 @@ It is easy to encode the ODE as follows
 
 ```@example TUTODE0
 using Revise, Plots
-using BifurcationKit
-const BK = BifurcationKit
+import BifurcationKit as BK
+import BifurcationKit: @optic
 
 # vector field
 function TMvf(z, p)
@@ -41,7 +41,7 @@ par_tm = (α = 1.5, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.200, U0 = 0.3, τF 
 z0 = [0.238616, 0.982747, 0.367876]
 
 # Bifurcation Problem
-prob = ODEBifProblem(TMvf, z0, par_tm, (@optic _.E0);
+prob = BK.ODEBifProblem(TMvf, z0, par_tm, (@optic _.E0);
 	record_from_solution = (x, p; k...) -> (E = x[1], x = x[2], u = x[3]),)
 
 nothing #hide
@@ -51,10 +51,10 @@ We first compute the branch of equilibria
 
 ```@example TUTODE0
 # continuation options, we limit the parameter range for E0
-opts_br = ContinuationPar(p_min = -4.0, p_max = -0.9)
+opts_br = BK.ContinuationPar(p_min = -4.0, p_max = -0.9)
 
 # continuation of equilibria
-br = continuation(prob, PALC(), opts_br;
+br = BK.continuation(prob, BK.PALC(), opts_br;
 	# we want to compute both sides of the branch of the initial
 	# value of E0 = -2
 	bothside = true)
@@ -71,11 +71,11 @@ br
 If you only  want to compute the branch without the bifurcations (more information is provided [Detection of bifurcation points of Equilibria](@ref) ), change the continuation options to
 
 ```@example TUTODE0
-opts_br = ContinuationPar(p_min = -4.0, p_max = -0.9,
+opts_br = BK.ContinuationPar(p_min = -4.0, p_max = -0.9,
 	detect_bifurcation = 0)
 	
 # continuation of equilibria
-br = continuation(prob, PALC(), opts_br;
+br = BK.continuation(prob, BK.PALC(), opts_br;
 	# we want to compute both sides of the branch of the initial
 	# value of E0 = -2
 	bothside = true)

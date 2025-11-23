@@ -26,8 +26,8 @@ We start with some imports:
 
 ```@example LORENZ84
 using Revise, Plots
-using BifurcationKit
-const BK = BifurcationKit
+import BifurcationKit as BK
+import BifurcationKit: @optic#, @reset
 
 nothing #hide
 ```
@@ -56,7 +56,7 @@ z0 = [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.021052
 
 # bifurcation problem
 record_from_solution_Lor(x, p; k...) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
-prob = ODEBifProblem(Lor, z0, (parlor..., T=0.04, F=3.), (@optic _.F);
+prob = BK.ODEBifProblem(Lor, z0, (parlor..., T=0.04, F=3.), (@optic _.F);
     record_from_solution = record_from_solution_Lor)
 nothing #hide
 ```
@@ -67,15 +67,15 @@ Once the problem is set up, we can continue the state w.r.t. $F$ and detect codi
 
 ```@example LORENZ84
 # continuation options
-opts_br = ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.15,
+opts_br = BK.ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.15,
 	# Optional: bisection options for locating bifurcations
 	n_inversion = 6,
 	# number of eigenvalues
 	nev = 4)
 
 # compute the branch of solutions
-br = continuation(prob, PALC(), opts_br;
-	normC = norminf,
+br = BK.continuation(prob, BK.PALC(), opts_br;
+	normC = BK.norminf,
 	bothside = true)
 
 scene = plot(br, plotfold = false, markersize = 4, legend = :topleft)
@@ -93,10 +93,10 @@ We follow the Fold points in the parameter plane $(T,F)$. We tell the solver to 
 
 ```@example LORENZ84
 # function to record the current state
-sn_codim2 = continuation(br, 5, (@optic _.T), 
-	ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, 
+sn_codim2 = BK.continuation(br, 5, (@optic _.T), 
+	BK.ContinuationPar(opts_br, p_max = 3.2, p_min = -0.1, 
 		dsmin=1e-5, ds = -0.001, dsmax = 0.005) ; 
-	normC = norminf,
+	normC = BK.norminf,
 	# we save the different components for plotting
 	record_from_solution = record_from_solution_Lor,
 	)
@@ -113,7 +113,7 @@ sn_codim2
 For example, we can compute the following normal form
 
 ```@example LORENZ84
-get_normal_form(sn_codim2, 1)
+BK.get_normal_form(sn_codim2, 1)
 ```
 
 ## Continuation of Hopf points
@@ -121,9 +121,9 @@ get_normal_form(sn_codim2, 1)
 We follow the Hopf points in the parameter plane $(T,F)$. We tell the solver to consider `br.specialpoint[3]` and continue it.
 
 ```@example LORENZ84
-hp_codim2_1 = continuation(br, 3, (@optic _.T), 
-	ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ;
-	normC = norminf,
+hp_codim2_1 = BK.continuation(br, 3, (@optic _.T), 
+	BK.ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ;
+	normC = BK.norminf,
 	# we save the different components for plotting
 	record_from_solution = record_from_solution_Lor,
 	# compute both sides of the initial condition
@@ -132,7 +132,7 @@ hp_codim2_1 = continuation(br, 3, (@optic _.T),
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "Folds")
 plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopfs")
-ylims!(-0.7,0.7);xlims!(1,1.3)
+ylims!(-0.7,0.7); xlims!(1,1.3)
 ```
 
 ```@example LORENZ84
@@ -142,7 +142,7 @@ hp_codim2_1
 For example, we can compute the following normal form
 
 ```@example LORENZ84
-get_normal_form(hp_codim2_1, 3)
+BK.get_normal_form(hp_codim2_1, 3)
 ```
 
 ## Continuation of Hopf points from the Bogdanov-Takens point
@@ -150,9 +150,9 @@ get_normal_form(hp_codim2_1, 3)
 When we computed the curve of Fold points, we detected a Bogdanov-Takens bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
 ```@example LORENZ84
-hp_from_bt = continuation(sn_codim2, 4, 
-	ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ; 
-	normC = norminf,
+hp_from_bt = BK.continuation(sn_codim2, 4, 
+	BK.ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4) ; 
+	normC = BK.norminf,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
 	# we save the different components for plotting
@@ -176,9 +176,9 @@ hp_from_bt
 When we computed the curve of Fold points, we detected a Zero-Hopf bifurcation. We can branch from it to get the curve of Hopf points. This is done as follows:
 
 ```@example LORENZ84
-hp_from_zh = continuation(sn_codim2, 2, 
-	ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02) ;
-	normC = norminf,
+hp_from_zh = BK.continuation(sn_codim2, 2, 
+	BK.ContinuationPar(opts_br, ds = 0.001, dsmax = 0.02) ;
+	normC = BK.norminf,
 	detect_codim2_bifurcation = 2,
 	record_from_solution = record_from_solution_Lor,
 	)

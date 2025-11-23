@@ -25,8 +25,8 @@ It is easy to encode the ODE as follows
 
 ```@example TUTODE
 using Revise, Plots
-using BifurcationKit
-const BK = BifurcationKit
+import BifurcationKit as BK
+import BifurcationKit: @optic, @reset
 
 # vector field
 function TMvf!(dz, z, p, t = 0)
@@ -35,8 +35,8 @@ function TMvf!(dz, z, p, t = 0)
 	SS0 = J * u * x * E + E0
 	SS1 = α * log(1 + exp(SS0 / α))
 	dz[1] = (-E + SS1) / τ
-	dz[2] =	(1.0 - x) / τD - u * x * E
-	dz[3] = (U0 - u) / τF +  U0 * (1.0 - u) * E
+	dz[2] =	(1 - x) / τD - u * x * E
+	dz[3] = (U0 - u) / τF +  U0 * (1 - u) * E
 	dz
 end
 
@@ -47,7 +47,7 @@ par_tm = (α = 1.4, τ = 0.013, J = 3.07, E0 = -2.0, τD = 0.20, U0 = 0.3, τF =
 z0 = [0.238616, 0.982747, 0.367876]
 
 # Bifurcation Problem
-prob = ODEBifProblem(TMvf!, z0, par_tm, (@optic _.E0);
+prob = BK.ODEBifProblem(TMvf!, z0, par_tm, (@optic _.E0);
 	record_from_solution = (x, p; k...) -> (E = x[1], x = x[2], u = x[3]),)
 
 nothing #hide
@@ -57,10 +57,10 @@ We first compute the branch of equilibria
 
 ```@example TUTODE
 # continuation options
-opts_br = ContinuationPar(p_min = -2.0, p_max = -1.)
+opts_br = BK.ContinuationPar(p_min = -2.0, p_max = -1.)
 
 # continuation of equilibria
-br = continuation(prob, PALC(tangent=Bordered()), opts_br; normC = norminf)
+br = BK.continuation(prob, BK.PALC(tangent = BK.Bordered()), opts_br; normC = BK.norminf)
 
 scene = plot(br, plotfold=false, markersize=4, legend=:topleft)
 ```
@@ -81,13 +81,13 @@ We compute the branch of periodic orbits from the last Hopf bifurcation point (o
 # one function to record information and one
 # function for plotting
 args_po = (	record_from_solution = (x, p; k...) -> begin
-		xtt = get_periodic_orbit(p.prob, x, p.p)
+		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
-				period = getperiod(p.prob, x, p.p))
+				period = BK.getperiod(p.prob, x, p.p))
 	end,
 	plot_solution = (x, p; k...) -> begin
-		xtt = get_periodic_orbit(p.prob, x, p.p)
+		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
 		arg = (marker = :d, markersize = 1)
 		plot!(xtt.t, xtt[1,:]; label = "E", arg..., k...)
 		plot!(xtt.t, xtt[2,:]; label = "x", arg..., k...)
@@ -95,18 +95,18 @@ args_po = (	record_from_solution = (x, p; k...) -> begin
 		plot!(br; subplot = 1, putspecialptlegend = false)
 		end,
 	# we use the supremum norm
-	normC = norminf)
+	normC = BK.norminf)
 
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, ds= 0.001, dsmin = 1e-4, dsmax = 0.1,
+opts_po_cont = BK.ContinuationPar(opts_br, ds= 0.001, dsmin = 1e-4, dsmax = 0.1,
 	max_steps = 110,
 	tol_stability = 1e-5)
 
-br_pocoll = @time continuation(
+br_pocoll = @time BK.continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Collocation method to locate PO, with polynomial degree 4
-	PeriodicOrbitOCollProblem(50, 4; meshadapt = true);
+	BK.PeriodicOrbitOCollProblem(50, 4; meshadapt = true);
 	# regular continuation options
 	plot = true,
 	args_po...)
@@ -117,8 +117,8 @@ Scene = title!("")
 Let us plot the periodic orbit close to the end of the branch
 
 ```@example TUTODE
-sol = get_periodic_orbit(br_pocoll, 100)
-plot(sol, title = "Periodic orbit", marker = :d, markersize=1)
+sol = BK.get_periodic_orbit(br_pocoll, 100)
+plot(sol, title = "Periodic orbit", marker = :d, markersize = 1)
 ```
 
 ## Periodic orbits with Parallel Standard Shooting
@@ -128,16 +128,15 @@ We use a different method to compute periodic orbits: we rely on a fixed point o
 ```@example TUTODE
 import OrdinaryDiffEq as ODE
 
-# this is the ODEProblem used with `DiffEqBase.solve`
-probsh = ODE.ODEProblem(TMvf!, copy(z0), (0., 1.), par_tm; abstol = 1e-12, reltol = 1e-10)
+probsh = ODE.ODEProblem(TMvf!, copy(z0), (0, 1), par_tm; abstol = 1e-12, reltol = 1e-10)
 
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, max_steps = 110, tol_stability = 1e-4)
+opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.1, ds= -0.0001, dsmin = 1e-4, max_steps = 110, tol_stability = 1e-4)
 
-br_posh = @time continuation(
+br_posh = @time BK.continuation(
 	br, 4, opts_po_cont,
 	# this is where we tell that we want Standard Shooting
 	# with 15 time sections
-	ShootingProblem(15, probsh, ODE.Vern9(), parallel = true);
+	BK.ShootingProblem(15, probsh, ODE.Vern9(), parallel = true);
 	# regular continuation parameters
 	plot = true,
 	args_po...,

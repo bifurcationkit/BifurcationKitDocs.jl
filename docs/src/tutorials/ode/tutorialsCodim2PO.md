@@ -20,8 +20,8 @@ This tutorial is useful in that we show how to start periodic orbits continuatio
 
 ```@example TUTPPREY
 using Revise, Plots
-using BifurcationKit
-const BK = BifurcationKit
+import BifurcationKit as BK
+import BifurcationKit: @optic, @set, @reset
 
 function Pop!(du, X, p, t = 0)
 	(;r,K,a,ϵ,b0,e,d) = p
@@ -39,10 +39,10 @@ par_pop = ( K = 1., r = 6.28, a = 12.56, b0 = 0.25, e = 1., d = 6.28, ϵ = 0.2, 
 
 z0 = [0.1,0.1,1,0]
 
-prob_bif = ODEBifProblem(Pop!, z0, par_pop, (@optic _.b0);
+prob_bif = BK.ODEBifProblem(Pop!, z0, par_pop, (@optic _.b0);
 	record_from_solution = (x, p; k...) -> (x = x[1], y = x[2], u = x[3]))
 
-opts_br = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.01, n_inversion = 6, nev = 4)
+opts_br = BK.ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.01, n_inversion = 6, nev = 4)
 
 nothing #hide
 ```
@@ -66,13 +66,13 @@ We start with two helper functions that record and plot the periodic orbits. The
 
 ```@example TUTPPREY
 argspo = (record_from_solution = (x, p; k...) -> begin
-		xtt = get_periodic_orbit(p.prob, x, p.p)
+		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 				min = minimum(xtt[1,:]),
-				period = getperiod(p.prob, x, p.p))
+				period = BK.getperiod(p.prob, x, p.p))
 	end,
 	plot_solution = (x, p; k...) -> begin
-		xtt = get_periodic_orbit(p.prob, x, p.p)
+		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
 		plot!(xtt.t, xtt[1,:]; label = "x", k...)
 		plot!(xtt.t, xtt[2,:]; label = "y", k...)
 		# plot!(br; subplot = 1, putspecialptlegend = false)
@@ -87,11 +87,11 @@ We are now equipped to build a periodic orbit problem from a solution `sol::ODEP
 
 ```@example TUTPPREY
 # function to build probtrap from sol
-probtrap, ci = BK.generate_ci_problem(PeriodicOrbitTrapProblem(M = 150),
+probtrap, ci = BK.generate_ci_problem(BK.PeriodicOrbitTrapProblem(M = 150),
 	prob_bif, sol, 2.)
 
-opts_po_cont = ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
-brpo_fold = continuation(probtrap, ci, PALC(), opts_po_cont;
+opts_po_cont = BK.ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
+brpo_fold = BK.continuation(probtrap, ci, BK.PALC(), opts_po_cont;
 	verbosity = 3, plot = true,
 	argspo...
 	)
@@ -103,7 +103,7 @@ We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 
 ```@example TUTPPREY
 prob2 = @set probtrap.prob_vf.lens = (@optic _.ϵ)
-brpo_pd = continuation(prob2, ci, PALC(), opts_po_cont;
+brpo_pd = BK.continuation(prob2, ci, BK.PALC(), opts_po_cont;
 	argspo...
 	)
 scene = plot(brpo_pd)
@@ -114,11 +114,11 @@ scene = plot(brpo_pd)
 We are now ready to build a periodic orbit problem from a solution `sol::ODEProblem`.
 
 ```@example TUTPPREY
-probsh, cish = generate_ci_problem( ShootingProblem(M=3),
+probsh, cish = BK.generate_ci_problem( BK.ShootingProblem(M = 3),
 	prob_bif, prob_de, sol, 2.; alg = DE.Vern9(), abstol = 1e-12, reltol = 1e-10)
 
-opts_po_cont = ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-3)
-br_fold_sh = continuation(probsh, cish, PALC(tangent = Bordered()), opts_po_cont;
+opts_po_cont = BK.ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-3)
+br_fold_sh = BK.continuation(probsh, cish, BK.PALC(tangent = BK.Bordered()), opts_po_cont;
 	argspo...
 )
 
@@ -129,7 +129,7 @@ We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 
 ```@example TUTPPREY
 probsh2 = @set probsh.lens = @optic _.ϵ
-brpo_pd_sh = continuation(probsh2, cish, PALC(), opts_po_cont;
+brpo_pd_sh = BK.continuation(probsh2, cish, BK.PALC(), opts_po_cont;
 	argspo...
 	)
 scene = plot(brpo_pd_sh)
@@ -141,11 +141,11 @@ We do the same as in the previous section but using orthogonal collocation. This
 
 ```@example TUTPPREY
 # this is the function which builds probcoll from sol
-probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 4),
-	prob_bif, sol, 2.)
+probcoll, ci = BK.generate_ci_problem(BK.PeriodicOrbitOCollProblem(30, 4),
+	prob_bif, sol, 2)
 
-opts_po_cont = ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
-brpo_fold = continuation(probcoll, ci, PALC(), opts_po_cont;
+opts_po_cont = BK.ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
+brpo_fold = BK.continuation(probcoll, ci, BK.PALC(), opts_po_cont;
 	argspo...
 	)
 scene = plot(brpo_fold)
@@ -155,7 +155,7 @@ We continue w.r.t. to $\epsilon$ and find a period-doubling bifurcation.
 
 ```@example TUTPPREY
 prob2 = @set probcoll.prob_vf.lens = @optic _.ϵ
-brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);
+brpo_pd = BK.continuation(prob2, ci, BK.PALC(), BK.ContinuationPar(opts_po_cont, dsmax = 5e-3);
 	argspo...
 	)
 
@@ -164,14 +164,14 @@ scene = plot(brpo_pd)
 
 ## Continuation of Fold / PD of periodic orbits with Collocation
 
-We continue the previously detected fold/period-doubling bifurcations as function of two parameters and detect codim 2 bifurcations. We first start with the computation of the curve of Folds.
+We continue the previously detected fold / period-doubling bifurcations as function of two parameters and detect codim 2 bifurcations. We first start with the computation of the curve of Folds.
 
 ```@example TUTPPREY
-opts_pocoll_fold = ContinuationPar(brpo_fold.contparams, max_steps = 100, p_min = 0.01, p_max = 1.2)
+opts_pocoll_fold = BK.ContinuationPar(brpo_fold.contparams, max_steps = 100, p_min = 0.01, p_max = 1.2)
 # we can increase the precision for collocation
 @reset opts_pocoll_fold.newton_options.tol = 1e-12
 
-fold_po_coll2 = continuation(brpo_fold, 1, (@optic _.ϵ), opts_pocoll_fold;
+fold_po_coll2 = BK.continuation(brpo_fold, 1, (@optic _.ϵ), opts_pocoll_fold;
 		verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = BK.MinAug(),
@@ -179,7 +179,7 @@ fold_po_coll2 = continuation(brpo_fold, 1, (@optic _.ϵ), opts_pocoll_fold;
 		bothside = true,
 		)
 
-fold_po_coll1 = continuation(brpo_fold, 2, (@optic _.ϵ), opts_pocoll_fold;
+fold_po_coll1 = BK.continuation(brpo_fold, 2, (@optic _.ϵ), opts_pocoll_fold;
 		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = BK.MinAug(),
@@ -198,21 +198,21 @@ sol2 = DE.solve(DE.remake(prob_de, p = par_pop2, u0 = [0.1,0.1,1,0], tspan=(0,10
 sol2 = DE.solve(DE.remake(sol2.prob, tspan = (0,10), u0 = sol2[end]), DE.Vern9())
 plot(sol2, xlims = (8, 10))
 
-probcoll, ci = generate_ci_problem(PeriodicOrbitOCollProblem(30, 3), re_make(prob_bif, params = sol2.prob.p), sol2, 1.)
+probcoll, ci = BK.generate_ci_problem(BK.PeriodicOrbitOCollProblem(30, 3), BK.re_make(prob_bif, params = sol2.prob.p), sol2, 1.)
 
 prob2 = @set probcoll.prob_vf.lens = @optic _.ϵ
-brpo_pd = continuation(prob2, ci, PALC(), ContinuationPar(opts_po_cont, dsmax = 5e-3);
+brpo_pd = BK.continuation(prob2, ci, BK.PALC(), BK.ContinuationPar(opts_po_cont, dsmax = 5e-3);
 	argspo...,
 	bothside = true,
 	)
 
-opts_pocoll_pd = ContinuationPar(brpo_pd.contparams, max_steps = 40, p_min = 1.e-2, dsmax = 1e-2, ds = -1e-3)
+opts_pocoll_pd = BK.ContinuationPar(brpo_pd.contparams, max_steps = 40, p_min = 1.e-2, dsmax = 1e-2, ds = -1e-3)
 @reset opts_pocoll_pd.newton_options.tol = 1e-12
-pd_po_coll2 = continuation(brpo_pd, 2, (@optic _.b0), opts_pocoll_pd;
+pd_po_coll2 = BK.continuation(brpo_pd, 2, (@optic _.b0), opts_pocoll_pd;
 		detect_codim2_bifurcation = 1,
 		start_with_eigen = false,
 		jacobian_ma = BK.MinAug(),
-		normC = norminf,
+		normC = BK.norminf,
 		bothside = true,
 		)
 

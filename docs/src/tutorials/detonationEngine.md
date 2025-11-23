@@ -150,7 +150,7 @@ function computeBranch(br, nb; δp = 0.005, max_steps = 190)
 		re_make(br.prob, params = (getparams(br)..., up = _p)),
 		getparams(br).Db,
 		copy(sol),
-		jacobian = :AutoDiff)
+		jacobian = BK.AutoDiff())
 	# newton parameters with iterative eigen solver
 	# eig = EigArnoldiMethod(sigma=0.2, which = BifurcationKit.LM(),x₀ = rand(2N ))
 	eig = EigArpack(nev = 10, which = :LM, sigma = 0.4)
@@ -160,7 +160,9 @@ function computeBranch(br, nb; δp = 0.005, max_steps = 190)
 	# we build a guess for the traveling wave with speed -0.9
 	twguess = vcat(sol, -0.9)
 	br_wave = continuation(probTW, twguess, PALC(), opt_cont_br;
-		verbosity = 3, plot = true, bothside = true,
+		# verbosity = 3,
+		plot = true, 
+		bothside = true,
 		record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:N]), s = x[end], amp = amplitude(x[1:N])),
 		plot_solution = (x, p; k...) -> (plotsol!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
 		callback_newton = BK.cbMaxNorm(1e2),
