@@ -168,20 +168,20 @@ Note that in the following code, a generalized eigensolver is automatically crea
 
 ```@example CGL1DWAVE
 amplitude(x) = maximum(x) - minimum(x)
-optn = NewtonPar(tol = 1e-8, verbose = true, max_iterations = 10)
+optn = NewtonPar(tol = 1e-8, verbose = false, max_iterations = 10)
 opt_cont_br = ContinuationPar(p_min = 0.015, p_max = 2.5, newton_options = optn, ds= 0.001, dsmax = 0.1, detect_bifurcation = 3, nev = 10, max_steps = 190, n_inversion = 6)
 
 br_TW = @time continuation(probTW, wave.u, PALC(), opt_cont_br;
 	record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
 	plot_solution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
 	finalise_solution = (z, tau, step, contResult; k...) -> begin
-		amplitude(z.u[n+1:2n]) > 0.01
+		amplitude(z.u[n+1:2n]) > 0.001
 end, bothside = true)
 
-plot(br, br_TW, legend = :bottomright, branchlabel =["","TW"])
+plot(br, br_TW, legend = :bottomright, branchlabel =["", "Traveling Waves"])
 ```
 
-We note that the branch of traveling wave solutions has a Hopf bifurcation point at which point Modulated Traveling waves will emerge. This will be analyzed in the future.
+We note that the branch of traveling wave solutions has a Hopf bifurcation point at which Modulated Traveling waves emerge. This will be analyzed in the future.
 
 
 ## References

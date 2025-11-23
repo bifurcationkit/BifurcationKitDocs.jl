@@ -49,6 +49,9 @@ mutable struct NdBranchPoint{Tv, T, Tevl, Tevr, Tnf} <: BranchPoint
 end
 ```
 
+!!! info "Note"
+    Strictly speaking, this is not a normal form but a reduced equation. However, to keep the API simple, we use the same name especially for `get_normal_form` because it also returns the Hopf/BT/... normal forms which are true normal forms.
+
 ## Using the reduced equation
 Once a branch point has been computed `bp = get_normal_form(...)`, you can do all sort of things. 
 

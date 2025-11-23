@@ -73,6 +73,8 @@ scene = plot(br, br1; branchlabel = ["trivial branch", "bifurcated branch"], leg
 In the previous examples, we need to have $O(p)$ dependency on the parameter $p$. If this is not the case, BifurcationKit can handle $O(p^2)$ dependency on the parameter $p$ although this is not generic. For higher order degeneracy, the user needs to provide the predictor him/herself.
 
 ```@example TUT1c_ABS_EQ_EQ
+using BifurcationKit, Plots
+
 # vector field with degenerate transcritical bifurcation
 Fdegenerate(x, p) = [x[1]^2 - p[1]^2]
 
@@ -81,8 +83,10 @@ par = [-1.0]
 
 # problem (with automatic differentiation)
 prob = BifurcationProblem(Fdegenerate, [1.], par, 1; record_from_solution = (x, p; k...)->x[1])
+
 # compute branch of trivial equilibria
 br = continuation(prob, PALC(), ContinuationPar(n_inversion = 6); normC = norminf)
+
 # perform branch switching on both sides of the bifurcation point
 br1 = continuation(br, 1, bothside = true)
 scene = plot(br, br1; branchlabel = ["trivial branch", "bifurcated branch"], legend = :topleft)

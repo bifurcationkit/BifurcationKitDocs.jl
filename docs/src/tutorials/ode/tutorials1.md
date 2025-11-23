@@ -49,7 +49,7 @@ nothing #hide
 We call the Newton solver:
 
 ```@example TUT1ODE
-prob = BifurcationProblem(F_chan, sol0, par, (@optic _.α),
+prob = ODEBifProblem(F_chan, sol0, par, (@optic _.α),
 	# function to plot the solution
 	plot_solution = (x, p; k...) -> plot!(x; ylabel = "solution", label = "", k...))
 sol = BK.solve(prob, Newton(), optnewton) # hide

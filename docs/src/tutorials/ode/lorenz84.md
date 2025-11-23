@@ -56,7 +56,7 @@ z0 = [2.9787004394953343, -0.03868302503393752,  0.058232737694740085, -0.021052
 
 # bifurcation problem
 record_from_solution_Lor(x, p; k...) = (X = x[1], Y = x[2], Z = x[3], U = x[4])
-prob = BifurcationProblem(Lor, z0, (parlor..., T=0.04, F=3.), (@optic _.F);
+prob = ODEBifProblem(Lor, z0, (parlor..., T=0.04, F=3.), (@optic _.F);
     record_from_solution = record_from_solution_Lor)
 nothing #hide
 ```

@@ -12,7 +12,7 @@ $$\dot x = Ax+g(x)$$
 where $A$ is the infinitesimal generator of a $C_0$-semigroup. We use the same beginning as in [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl):
 
 ```julia
-using Revise, DifferentialEquations
+using Revise
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
 
@@ -60,8 +60,8 @@ function Fcgl!(f, u, p, t = 0.)
 	f .= f .+ NL(u, p)
 end
 
-NL(u, p) = NL!(similar(u), u, p)
-Fcgl(u, p, t = 0.) = Fcgl!(similar(u), u, p, t)
+NL(u, p) = NL!(similar(u .* p.r), u, p)
+Fcgl(u, p, t = 0.) = Fcgl!(similar(u .* p.r), u, p, t)
 
 function Jcgl(u, p, t = 0.)
 	(;r, μ, ν, c3, c5, Δ) = p
@@ -108,11 +108,12 @@ prob = BK.BifurcationProblem(Fcgl, sol0_f, par_cgl, (@optic _.r); J = Jcgl)
 and the ODE problem
 
 ```julia
-f1 = DiffEqArrayOperator(par_cgl.Δ)
+import OrdinaryDiffEq as ODE
+f1 = ODE.MatrixOperator(par_cgl.Δ)
 f2 = NL!
-prob_sp = SplitODEProblem(f1, f2, sol0_f, (0.0, 120.0), (@set par_cgl.r = 1.2), dt = 0.1)
+prob_sp = ODE.SplitODEProblem(f1, f2, sol0_f, (0.0, 120.0), (@set par_cgl.r = 1.2), dt = 0.1)
 # we solve the PDE!!!
-sol = @time DifferentialEquations.solve(prob_sp, ETDRK2(krylov=true); abstol=1e-14, reltol=1e-14)
+sol = @time ODE.solve(prob_sp, ODE.ETDRK2(krylov=true); abstol=1e-14, reltol=1e-14)
 ```
 
 ## Automatic branch switching from the Hopf points
@@ -152,7 +153,7 @@ br_po = continuation(
 	opts_po_cont,
 	# this is how to pass the method to compute the periodic
 	# orbits. We shall use 1 section and the ODE solver ETDRK2
-	ShootingProblem(Mt, prob_sp, ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8, jacobian = BK.FiniteDifferencesMF()) ;
+	ShootingProblem(Mt, prob_sp, ODE.ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8, jacobian = BK.FiniteDifferencesMF()) ;
 	# linear solver for bordered linear system
 	# we combine the 2 solves. It is here faster than BorderingBLS()
 	linear_algo = MatrixFreeBLS(@set ls.N = Mt*2n+2),
@@ -177,7 +178,7 @@ We decide to use Standard Shooting and thus define a Shooting functional
 ```julia
 probSh = ShootingProblem(
 	# we pass the ODEProblem encoding the flow and the time stepper
-	remake(prob_sp, p = (@set par_cgl.r = 1.2)), ETDRK2(krylov = true),
+	remake(prob_sp, p = (@set par_cgl.r = 1.2)), ODE.ETDRK2(krylov = true),
 
 	# this is the phase condition
 	[sol[:, end]];

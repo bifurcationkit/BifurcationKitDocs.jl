@@ -32,7 +32,7 @@ where `prob` is the bifurcation problem. `br` is a branch computed after a call 
     You should not need to call `get_normal_form` except if you need the full information about the branch point.
 
 !!! info "Note"
-    Strictly speaking, this is not a normal form but a reduced equation. However, to keep the API simple, we use the same name especially for `get_normal_form` because it returns the Hopf/BT/... normal forms which are true normal forms.
+    Strictly speaking, this is not a normal form but a reduced equation. However, to keep the API simple, we use the same name especially for `get_normal_form` because it also returns the Hopf/BT/... normal forms which are true normal forms.
 
 ## Predictor
 

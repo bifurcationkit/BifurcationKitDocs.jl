@@ -39,7 +39,7 @@ end
 
 z0 = rand(4)
 par_sl = (k1=0.1631021, k2=1250., k3=0.046875, k4=20., k5=1.104, k6=0.001, k₋₇=0.1175, k7=1.5, k8=0.75)
-prob = BifurcationProblem(SL!, z0, par_sl, (@optic _.k8);)
+prob = ODEBifProblem(SL!, z0, par_sl, (@optic _.k8);)
 
 # record variables for plotting
 function recordFromSolution(x, p; k...) 

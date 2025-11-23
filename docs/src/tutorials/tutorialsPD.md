@@ -8,7 +8,7 @@ Depth = 3
 The purpose of this example is to show how to handle period doubling bifurcations of periodic orbits.
 
 !!! info "Method and performance"
-    We focus on the Shooting method but we could have based the computation of periodic orbits on finite differences instead. Performances of the current tutorial are directly linked to the ones of `DifferentialEquations.jl`.     
+    We focus on the Shooting method but we could have based the computation of periodic orbits on finite differences instead. Performances of the current tutorial are directly linked to the ones of `OrdinaryDiffEq.jl`.     
 
 We focus on the following 1D model (see [^Aragon]):
 
@@ -19,7 +19,7 @@ $$\tag{E}\begin{aligned}
 with Neumann boundary conditions. We start by encoding the model
 
 ```@example PDPDE
-using Revise, ForwardDiff, DifferentialEquations, SparseArrays
+using Revise, ForwardDiff, SparseArrays
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
 
@@ -70,7 +70,7 @@ probBif = BK.BifurcationProblem(Fbr!, solc0, par_br, (@optic _.C) ;J = Jbr,
 
 # parameters for continuation
 eigls = EigArpack(0.5, :LM)
-opt_newton = NewtonPar(eigsolver = eigls, tol=1e-9)
+opt_newton = NewtonPar(eigsolver = eigls, tol = 1e-9)
 opts_br = ContinuationPar(dsmax = 0.04, ds = -0.01, p_min = -1.8,
 	nev = 21, plot_every_step = 50, newton_options = opt_newton, max_steps = 400)
 
@@ -89,13 +89,14 @@ $$\dot x = Ax+g(x)$$
 where $A$ is the infinitesimal generator of a $C_0$-semigroup. We use the exponential-RK scheme `ETDRK2` ODE solver to compute the solution of (E) just after the Hopf point.
 
 ```julia
+import OrdinaryDiffEq as ODE
 # parameters close to the Hopf bifurcation
 par_br_hopf = @set par_br.C = -0.86
 # parameters for the ODEProblem
-f1 = DiffEqArrayOperator(par_br.Δ)
+f1 = ODE.MatrixOperator(par_br.Δ)
 f2 = NL!
-prob_sp = SplitODEProblem(f1, f2, solc0, (0.0, 280.0), @set par_br.C = -0.86)
-sol = @time DifferentialEquations.solve(prob_sp, ETDRK2(krylov=true); abstol=1e-14, reltol=1e-14, dt = 0.1)
+prob_sp = ODE.SplitODEProblem(f1, f2, solc0, (0.0, 280.0), @set par_br.C = -0.86)
+sol = @time ODE.solve(prob_sp, ETDRK2(krylov=true); abstol=1e-14, reltol=1e-14, dt = 0.1)
 ```
 
 We use aBS from the first Hopf point:
@@ -103,7 +104,7 @@ We use aBS from the first Hopf point:
 ```julia
 # define the functional for the standard simple shooting based on the
 # ODE solver ETDRK2.
-probSh = ShootingProblem(prob_sp, ETDRK2(krylov=true),
+probSh = ShootingProblem(prob_sp, ODE.ETDRK2(krylov=true),
   [sol(280.0)]; abstol=1e-14, reltol=1e-12, dt = 0.1,
   lens = (@optic _.C),
   jacobian = BK.FiniteDifferencesMF())

@@ -177,7 +177,7 @@ Let us study the continuation of Hopf and Fold points and show that they merge a
 
 ```@example TUTLangmuir
 # compute branch of Fold points from 7th bifurcation point on br
-sn_codim2 = continuation(br, 7, (@optic _.Δx),
+sn_codim2 = continuation(br, 6, (@optic _.Δx),
 	ContinuationPar(opts_cont, p_min = -2, p_max = 0.12, ds = -0.01, dsmax = 0.01, tol_stability = 1e-8, max_steps = 325, nev=23) ;
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
@@ -211,7 +211,7 @@ We would like to compute the branches of periodic solutions from the Hopf points
 
 ```julia
 # parameters for newton
-opt_po = NewtonPar(tol =  1e-10, verbose = true, max_iterations = 50)
+opt_po = NewtonPar(tol = 1e-10, verbose = true, max_iterations = 50)
 
 # parameters for continuation
 opts_po_cont = ContinuationPar(dsmin = 1e-5, dsmax = 0.35, ds= -0.001,
