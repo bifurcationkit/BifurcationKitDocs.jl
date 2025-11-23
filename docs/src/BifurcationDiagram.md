@@ -59,7 +59,10 @@ diagram = bifurcationdiagram(prob, PALC(),
 )
 	
 # You can plot the diagram like 
-plot(diagram; putspecialptlegend=false, markersize=2, plotfold=false, title = "#branches = $(size(diagram))")
+plot(diagram; putspecialptlegend = false,
+		markersize=2,
+		plotfold=false,
+		title = "#branches = $(size(diagram))")
 ```
 
 This gives
@@ -114,13 +117,16 @@ diagram = bifurcationdiagram(prob, PALC(), 3,
 We can now plot the result:
 
 ```@example BDIAG2
-plot(diagram; putspecialptlegend =false, markersize=2, plotfold=false, title="#branch = $(size(diagram))")
+plot(diagram; putspecialptlegend = false,
+		markersize=2,
+		plotfold=false,
+		title="#branch = $(size(diagram))")
 ```
 
 We can access the different branches with `BK.get_branch(diagram, (1,))`. Alternatively, you can plot a specific branch:
 
 ```@example BDIAG2
-plot(BK.get_branch(diagram, (1,)), putspecialptlegend =false)
+plot(BK.get_branch(diagram, (1,)), putspecialptlegend = false)
 ```
 
 ## Computing a sub-part of the diagram

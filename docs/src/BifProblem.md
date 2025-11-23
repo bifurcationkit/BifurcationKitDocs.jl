@@ -65,3 +65,8 @@ prob = BifurcationProblem(F, zeros(3), par, (@optic _.a))
 prob2 = BifurcationKit.re_make(prob, u0 = rand(3))
 ```
 
+## 🚧🚧 Automatic option setting (work in progress) 🚧🚧
+
+Setting the continuation options can be difficult for new comers. In the case of small ODE, we suggest to use `ODEBifProblem` instead of `BifurcationProblem`. Indeed, in this case, most continuation options will be set up automatically so that very good performance is achieved.
+
+In the case of `BifurcationProblem`, the user has to set up these options manually. This can be useful for large scale problems where the specificities of the problem have to be used.
