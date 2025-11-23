@@ -5,7 +5,7 @@
 
 A simple branch point $(x_0,p_0)$ for the problem $F(x,p)=0$ satisfies $\dim \ker dF(x_0,p_0) = 1$. At such point, we can apply **Lyapunov-Schmidt** reduction to transform the initial problem in large dimensions to a **scalar** polynomial ($\delta p \equiv p-p_0$): 
 
-$$a_{01}\delta p + a_{02}\delta p^2 + z\left(b_{11}\delta p + \frac{b_{20}}{2}z + \frac{b_{30}}{6}z^2\right) = 0 \tag{E}$$
+$$a_{01}\delta p + \frac{a_{02}}{2}\delta p^2 + z\left(b_{11}\delta p + \frac{b_{20}}{2}z + \frac{b_{30}}{6}z^2\right) = 0 \tag{E}$$
 
 whose solutions give access to all solutions in a neighborhood of $(x,p)$.
 

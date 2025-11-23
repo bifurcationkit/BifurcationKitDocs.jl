@@ -7,7 +7,7 @@ Depth = 3
 
 The bifurcations are detected during a call to `br = continuation(prob, alg, contParams::ContinuationPar;kwargs...)` by turning on the following flags:
 
-- `contParams.detect_bifurcation = 2`
+- `contParams.detect_bifurcation >= 2`
 
 The bifurcation points are located by looking at the spectrum **e.g.** by monitoring the unstable eigenvalues. The eigenvalue λ is declared unstable if `real(λ) > contParams.tol_stability`. The located bifurcation points are then returned in `br.specialpoint`.
 
@@ -45,7 +45,7 @@ The user must specify the number of eigenvalues to be computed (like `nev = 10`)
 
 ## Eigensolver
 
-The user must provide an eigensolver by setting `NewtonOptions.eigsolver` where `newton_options` is located in the parameter `::ContinuationPar` passed to continuation. See [`NewtonPar`](@ref) and [`ContinuationPar`](@ref) for more information on the composite type of the options passed to `newton` and `continuation`.
+The user must provide an eigensolver by setting `newton_options.eigsolver` where `newton_options` is located in the parameter `::ContinuationPar` passed to continuation. See [`NewtonPar`](@ref) and [`ContinuationPar`](@ref) for more information on the composite type of the options passed to `newton` and `continuation`.
 
 The eigensolver is highly problem dependent and this is why the user should implement / parametrize its own eigensolver through the abstract type `AbstractEigenSolver` or select one among [List of implemented eigen solvers](@ref).
 
