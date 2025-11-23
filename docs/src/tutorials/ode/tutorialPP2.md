@@ -38,7 +38,7 @@ par_pp2 = (p1 = 1., p2 = 3., p3 = 5., p4 = 3.)
 z0 = zeros(2)
 
 # bifurcation problem
-prob = BifurcationProblem(pp2!, z0, par_pp2,
+prob = ODEBifProblem(pp2!, z0, par_pp2,
 	# specify the continuation parameter
 	(@optic _.p1), record_from_solution = recordFromSolution)
 
@@ -52,8 +52,6 @@ We set up the options or the continuation
 ```@example TUTPP2
 # continuation options
 opts_br = ContinuationPar(p_min = 0.1, p_max = 1.0, dsmax = 0.01,
-	# number of eigenvalues
-	nev = 2,
 	# maximum number of continuation steps
 	max_steps = 1000,)
 
