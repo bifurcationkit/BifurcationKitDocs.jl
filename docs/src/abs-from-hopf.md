@@ -71,17 +71,19 @@ plot(br, br_po)
 ```
 ## From Period-doubling point to curve of periodic orbits
 
+For all cases, an example of use is provided in [Lur'e problem](@ref pdlure).
+
 ### Case of Shooting and Collocation
 
 We provide an automatic branching procedure in this case. In essence, all you have to do is to call
 
 ```julia
 continuation(br::ContResult, ind_PD::Int, _contParams::ContinuationPar;
-    prm = true, detailed = true,
+    prm = Val(true), detailed = Val(true),
     kwargs...)
 ```
 
-The option `prm = true` enforces that the period-doubling normal form is computed using the Poincaré return map ; this is only necessary in case of use of the collocation method. Indeed, in the case of the collocation method, an automatic procedure based on the Iooss normal form has yet to be implemented.
+The option `prm = Val(true)` enforces that the period-doubling normal form is computed using the Poincaré return map ; this is only necessary in case of use of the collocation method. Indeed, in the case of the collocation method, an automatic procedure based on the Iooss normal form has yet to be implemented.
 
 ### Case of Trapezoid method
 
@@ -95,8 +97,6 @@ continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
 	usedeflation = false,
 	kwargs...)
 ```
-
-An example of use is provided in [Lur'e problem](@ref pdlure).
 
 ### Algorithm
 

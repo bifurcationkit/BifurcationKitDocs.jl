@@ -88,8 +88,15 @@ prob = BifurcationProblem(Fdegenerate, [1.], par, 1; record_from_solution = (x, 
 br = continuation(prob, PALC(), ContinuationPar(n_inversion = 6); normC = norminf)
 
 # perform branch switching on both sides of the bifurcation point
+
 br1 = continuation(br, 1, bothside = true)
 scene = plot(br, br1; branchlabel = ["trivial branch", "bifurcated branch"], legend = :topleft)
+```
+
+Just for comparison, we can compute the reduced equation
+
+```@example TUT1c_ABS_EQ_EQ
+bp = get_normal_form(br, 1)
 ```
 
 ## [From non simple branch point to equilibria](@id abs-nonsimple-eq)
