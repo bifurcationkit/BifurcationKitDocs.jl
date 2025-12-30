@@ -95,7 +95,7 @@ These citations are aggregated from [Google Scholar (search)](https://scholar.go
 
 ## Reproducibility
 ```@raw html
-<details><summary>The documentation of BifurcationKit was built using these direct dependencies,</summary>
+<details><summary>📦 The documentation was built using these direct dependencies,</summary>
 ```
 ```@example
 using Pkg # hide
@@ -105,7 +105,7 @@ Pkg.status() # hide
 </details>
 ```
 ```@raw html
-<details><summary>and using this machine and Julia version.</summary>
+<details><summary> ℹ️ version info</summary>
 ```
 ```@example
 using InteractiveUtils # hide
@@ -115,7 +115,7 @@ versioninfo() # hide
 </details>
 ```
 ```@raw html
-<details><summary>A more complete overview of all dependencies and their versions is also provided.</summary>
+<details><summary>📚 complete overview of all dependencies and their versions</summary>
 ```
 ```@example
 using Pkg # hide

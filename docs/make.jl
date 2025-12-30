@@ -109,6 +109,7 @@ makedocs(
 			"Bordered arrays" => "Borderedarrays.md",
 		],
 		"Contributing" => [
+			"How to" => "how_to_contribute.md"
 			"Interfaces" => [
 				"Vector" => "interfaceLS.md",
 				"Linear / eigen Solvers" => "interfaceLS.md",

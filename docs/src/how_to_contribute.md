@@ -1,0 +1,5 @@
+# Contributing
+
+If you think you found a bug or if you have a feature request / suggestion, feel free to open an [issue](https://github.com/bifurcationkit/BifurcationKit.jl/issues). Before opening a pull request, please start an issue or a discussion on the topic. 
+
+Contributions are welcomed, check out [how to contribute to a Github project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project). If it is your first contribution, you can also check [this first contribution tutorial](https://github.com/firstcontributions/first-contributions). You can find first good issues [here](https://github.com/bifurcationkit/BifurcationKit.jl/contribute). You may find other packages to contribute to at the [bifurcationkit organization](https://github.com/bifurcationkit).
