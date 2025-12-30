@@ -21,10 +21,9 @@ This tutorial is also useful in that we show how to start periodic orbits contin
 We start by coding the bifurcation problem.
 
 ```@example STEINMETZ
-using Revise
-using Plots
-using BifurcationKit
-const BK = BifurcationKit
+using Revise, Plots
+import BifurcationKit as BK
+import BifurcationKit: @optic, @reset, norminf
 
 function SL!(du, u, p, t = 0)
 	(;k1, k2, k3, k4, k5, k6, k7, k₋₇, k8) = p
@@ -39,19 +38,21 @@ end
 
 z0 = rand(4)
 par_sl = (k1=0.1631021, k2=1250., k3=0.046875, k4=20., k5=1.104, k6=0.001, k₋₇=0.1175, k7=1.5, k8=0.75)
-prob = ODEBifProblem(SL!, z0, par_sl, (@optic _.k8);)
+bifprob = BK.ODEBifProblem(SL!, z0, par_sl, (@optic _.k8);)
 
 # record variables for plotting
 function recordFromSolution(x, p; k...) 
 	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-	mi, ma = @views extrema(xtt[1,:])
+	mi, ma = @views extrema(xtt[1, :])
 	return (max = ma,
 			min = mi,
-			period = getperiod(p.prob, x, p.p))
+			amplitude = ma - mi,
+			period = BK.getperiod(p.prob, x, p.p))
 end
 
 # plotting function
-function plotSolution(x, p; k...)
+function plotSolution(X, p; k...)
+	x = X isa BK.BorderedArray ? X.u : X
 	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
 	plot!(xtt.t, xtt.u[1:4,:]'; label = "", k...)
 end
@@ -81,25 +82,25 @@ plot(sol_ode)
 We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of $k_8$
 
 ```@example STEINMETZ
-probsh, cish = generate_ci_problem( ShootingProblem(M = 5; jacobian = BK.AutoDiffDenseAnalytical() ), prob, prob_de, sol_ode, 16.; reltol = 1e-11, abstol = 1e-13, parallel = true)
+probsh, cish = BK.generate_ci_problem( BK.ShootingProblem(M = 5; jacobian = BK.AutoDiffDenseAnalytical() ), deepcopy(bifprob), prob_de, sol_ode, 16.; reltol = 1e-11, abstol = 1e-13, parallel = true)
 
-opts_po_cont = ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, n_inversion = 6, nev = 4, max_steps = 40, tol_stability = 1e-3)
-@reset opts_po_cont.newton_options.max_iterations = 10
-br_sh = continuation(deepcopy(probsh), cish, PALC(tangent = Bordered()), opts_po_cont;
-	# verbosity = 3, plot = true,
+opts_po_cont = BK.ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, n_inversion = 6, nev = 4, max_steps = 40, tol_stability = 1e-3, newton_options = BK.NewtonPar(max_iterations = 10))
+br_sh = BK.continuation(deepcopy(probsh), cish, BK.PALC(tangent = BK.Bordered()), opts_po_cont;
+	verbosity = 3, #plot = true,
 	callback_newton = BK.cbMaxNorm(10),
-	argspo...)
+	argspo...
+	)
 scene = plot(br_sh)
 ```
 
 ### Curve of Fold points of periodic orbits
 
 ```@example STEINMETZ
-opts_posh_fold = ContinuationPar(br_sh.contparams, detect_bifurcation = 2, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
+opts_posh_fold = BK.ContinuationPar(br_sh.contparams, detect_bifurcation = 3, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 4e-2, ds = 1e-2)
 @reset opts_posh_fold.newton_options.tol = 1e-12
-fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fold;
+fold_po_sh = BK.continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fold;
 		# verbosity = 2, plot = true,
-		alg = PALC(),
+		alg = BK.PALC(),
 		detect_codim2_bifurcation = 0,
 		start_with_eigen = false,
 		usehessian = true,
@@ -107,16 +108,19 @@ fold_po_sh = @time continuation(deepcopy(br_sh), 2, (@optic _.k7), opts_posh_fol
 		normC = norminf,
 		callback_newton = BK.cbMaxNorm(1e1),
 		)
+```
+
+```@example STEINMETZ
 plot(fold_po_sh)
 ```
 
 ### Curve of NS points of periodic orbits
 ```@example STEINMETZ
-opts_posh_ns = ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 5e-2, ds = 1e-2)
+opts_posh_ns = BK.ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 5e-2, ds = 1e-2)
 @reset opts_posh_ns.newton_options.tol = 1e-11
 @reset opts_posh_ns.newton_options.verbose = true
-ns_po_sh = continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
-		verbosity = 2,
+ns_po_sh = BK.continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
+		# verbosity = 2,
 		# plot = true,
 		detect_codim2_bifurcation = 2,
 		# update_minaug_every_step = 1,
@@ -135,13 +139,13 @@ scene
 ## Computation with collocation
 
 ```@example STEINMETZ
-probcoll, cicoll = generate_ci_problem( PeriodicOrbitOCollProblem(50, 4; 
+probcoll, cicoll = BK.generate_ci_problem( BK.PeriodicOrbitOCollProblem(50, 4; 
 	jacobian = BK.DenseAnalyticalInplace()), 
-	prob, 
+	deepcopy(bifprob), 
 	sol_ode, 
 	16.)
 
-opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0, 
+opts_po_cont = BK.ContinuationPar(p_min = 0., p_max = 2.0, 
 	ds = 0.002, dsmax = 0.05, 
 	n_inversion = 6,
 	nev = 4,
@@ -149,8 +153,10 @@ opts_po_cont = ContinuationPar(p_min = 0., p_max = 2.0,
 	detect_bifurcation = 3,
 	tol_stability = 1e-5)
 
-br_coll = @time continuation(deepcopy(probcoll), deepcopy(cicoll), PALC(), opts_po_cont;
-    argspo...)
+br_coll = @time BK.continuation(deepcopy(probcoll), copy(cicoll), BK.PALC(), opts_po_cont;
+    argspo...,
+	callback_newton = BK.cbMaxNorm(1e1),
+	)
 
 scene = plot(br_coll)
 ```
@@ -158,10 +164,10 @@ scene = plot(br_coll)
 ### Curve of Fold points of periodic orbits
 
 ```@example STEINMETZ
-opts_pocl_fold = ContinuationPar(br_coll.contparams,detect_bifurcation = 1, plot_every_step = 10, dsmax = 4e-2, max_steps = 100, ds = 0.01)
-@reset opts_pocl_fold.newton_options.verbose = true
+opts_pocl_fold = BK.ContinuationPar(br_coll.contparams, detect_bifurcation = 0, plot_every_step = 10, dsmax = 4e-2, max_steps = 100, ds = 0.01)
+@reset opts_pocl_fold.newton_options.verbose = false
 @reset opts_pocl_fold.newton_options.tol = 1e-11
-fold_po_cl = @time continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold;
+fold_po_cl = BK.continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold;
         # verbosity = 3, # plot = true,
         detect_codim2_bifurcation = 2,
         start_with_eigen = false,
@@ -177,12 +183,10 @@ plot(fold_po_cl)
 ### Curve of NS points of periodic orbits
 
 ```@example STEINMETZ
-opts_pocl_ns = ContinuationPar(br_coll.contparams, detect_bifurcation = 0, plot_every_step = 10, dsmax = 4e-2)
-ns_po_cl = continuation(deepcopy(br_coll), 1, (@optic _.k7), opts_pocl_ns;
-        # verbosity = 3, 
-        # plot = true,
-        detect_codim2_bifurcation = 1,
-        start_with_eigen = false,
+opts_pocl_ns = BK.ContinuationPar(br_coll.contparams, detect_bifurcation = 1, dsmax = 4e-2, max_steps = 40)
+ns_po_cl = BK.continuation(deepcopy(br_coll), 1, (@optic _.k7), opts_pocl_ns;
+        verbosity = 3,  plot = true,
+        detect_codim2_bifurcation = 2,
         jacobian_ma = BK.MinAugMatrixBased(),
         normC = norminf,
         callback_newton = BK.cbMaxNorm(1e1),
@@ -197,5 +201,4 @@ scene = plot(ns_po_cl; vars = (:k7, :k8))
 scene = plot(fold_po_cl)
 plot!(ns_po_cl; vars = (:k7, :k8))
 scene
-```
 ```

@@ -127,5 +127,5 @@ deploydocs(;
 	repo = "github.com/bifurcationkit/BifurcationKitDocs.jl.git",
 	push_preview = true, 
 	target = "build", 
-	devbranch="main"
+	devbranch = "main"
 	)

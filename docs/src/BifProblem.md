@@ -20,6 +20,7 @@ as well as user defined functions for
 
 - plotting, `plot_solution`
 - recording (`record_from_solution`) indicators about the solution when this one is too large to be saved at every continuation step.
+- update function `update!`
 
 ### Example
 

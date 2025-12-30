@@ -31,7 +31,11 @@ The continuation of Neimark-Sacker bifurcation points is based on a **Minimally 
 
 You can detect the following codim 2 bifurcation points by using the keyword argument `detect_codim2_bifurcation` in the method `continuation` 
 
-- the detection of Chenciner bifurcation is done by the the computating the NS normal form
+- the detection of Chenciner bifurcation is done by computating the NS normal form
+- the detection of R1 is performed using the test function $\psi_{R1}(p) = \omega$ where $\omega$ is the Neimark-Sacker frequency.
+- the detection of R2 is performed using the test function $\psi_{R2}(p) = 1+\cos\omega$. 
+- the detection of R3 is performed using the test function $\psi_{R3}(p) = 1+2\cos\omega$.
+- the detection of R4 is performed using the test function $\psi_{R4}(p) = \cos\omega$.
 - the detection the other above bifurcation points is done by monitoring the number of eigenvalues $\lambda$ such that $\Re\lambda > \min\limits_{\nu\in\Sigma(dF)}|\Re\nu|$ and $\Im\lambda > \epsilon$ where $\epsilon$ is the Newton tolerance.
 
 ## Setting the jacobian

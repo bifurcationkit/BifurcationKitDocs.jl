@@ -153,17 +153,17 @@ We use finite differences to discretize the problem of finding periodic orbits. 
 
 ```@example TUTODE
 # continuation parameters
-opts_po_cont = ContinuationPar(opts_br, dsmax = 0.1, ds = 0.004, dsmin = 1e-4,
+opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.1, ds = 0.004, dsmin = 1e-4,
 	max_steps = 80, tol_stability = 1e-7)
 
 @reset opts_po_cont.newton_options.tol = 1e-7
 
 Mt = 250 # number of time sections
-br_potrap = continuation(
+br_potrap = BK.continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Trapeze method to locate PO
-	PeriodicOrbitTrapProblem(M = Mt);
+	BK.PeriodicOrbitTrapProblem(M = Mt);
 	δp = 0.001,
 	plot = true,
 	args_po...,
@@ -183,7 +183,7 @@ We can plot some of the previously computed periodic orbits in the plane $(E,x)$
 plot()
 # fetch the saved solutions
 for i_sol in 1:2:40
-	traj = get_periodic_orbit(br_potrap, i_sol)
+	traj = BK.get_periodic_orbit(br_potrap, i_sol)
 	plot!(traj[1,:], traj[2,:], xlabel = "E", ylabel = "x", label = "")
 end
 title!("")

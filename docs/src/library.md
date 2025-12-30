@@ -334,9 +334,5 @@ FloquetQaD
 ```
 
 ```@docs
-guess_from_hopf
-```
-
-```@docs
 get_normal_form
 ```

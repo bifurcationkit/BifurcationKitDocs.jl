@@ -33,7 +33,6 @@ function COm(u, p)
 	(;q1,q2,q3,q4,q5,q6,k) = p
 	x, y, s = u
 	z = 1-x-y-s
-
 	[
 		2q1 * z^2 - 2q5 * x^2 - q3 * x * y,
 		q2 * z - q6 * y - q3 * x * y,
@@ -68,7 +67,7 @@ br = BK.continuation(prob, BK.PALC(), opts_br; normC = norminf)
 
 ```@example TUTCO
 # plot the branch
-scene = plot(br, xlims = (0.8,1.8))
+scene = plot(br, xlims = (0.8, 1.8))
 ```
 
 ## Locus of Fold points as function $k$

@@ -172,7 +172,7 @@ opts_pocoll_fold = BK.ContinuationPar(brpo_fold.contparams, max_steps = 100, p_m
 @reset opts_pocoll_fold.newton_options.tol = 1e-12
 
 fold_po_coll2 = BK.continuation(brpo_fold, 1, (@optic _.ϵ), opts_pocoll_fold;
-		verbosity = 2, plot = true,
+		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = BK.MinAug(),
 		start_with_eigen = false,
@@ -194,8 +194,8 @@ We turn to the computation of the curve of PD points.
 
 ```@example TUTPPREY
 par_pop2 = @set par_pop.b0 = 0.45
-sol2 = DE.solve(DE.remake(prob_de, p = par_pop2, u0 = [0.1,0.1,1,0], tspan=(0,1000)), DE.Vern9())
-sol2 = DE.solve(DE.remake(sol2.prob, tspan = (0,10), u0 = sol2[end]), DE.Vern9())
+sol2 = DE.solve(DE.remake(prob_de, p = par_pop2, u0 = [0.1, 0.1, 1, 0], tspan=(0, 1000)), DE.Vern9())
+sol2 = DE.solve(DE.remake(sol2.prob, tspan = (0, 10), u0 = sol2[end]), DE.Vern9())
 plot(sol2, xlims = (8, 10))
 
 probcoll, ci = BK.generate_ci_problem(BK.PeriodicOrbitOCollProblem(30, 3), BK.re_make(prob_bif, params = sol2.prob.p), sol2, 1.)
@@ -209,6 +209,7 @@ brpo_pd = BK.continuation(prob2, ci, BK.PALC(), BK.ContinuationPar(opts_po_cont,
 opts_pocoll_pd = BK.ContinuationPar(brpo_pd.contparams, max_steps = 40, p_min = 1.e-2, dsmax = 1e-2, ds = -1e-3)
 @reset opts_pocoll_pd.newton_options.tol = 1e-12
 pd_po_coll2 = BK.continuation(brpo_pd, 2, (@optic _.b0), opts_pocoll_pd;
+		# verbosity = 2, plot = true,
 		detect_codim2_bifurcation = 1,
 		start_with_eigen = false,
 		jacobian_ma = BK.MinAug(),

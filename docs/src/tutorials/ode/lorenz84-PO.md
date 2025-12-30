@@ -54,7 +54,7 @@ br = BK.continuation(BK.re_make(prob, params = (parlor..., T=0.04, F=3.)),
 	 	BK.PALC(), opts_br;
 		normC = BK.norminf, bothside = true)
 
-scene = plot(br, plotfold=false, markersize=4, legend=:topleft)
+scene = plot(br, plotfold = false, markersize = 4, legend = :topleft)
 ```
 
 ## Two parameters curves of Fold / Hopf bifurcation
@@ -75,7 +75,7 @@ hp_codim2_1 = BK.continuation(br, 3, (@optic _.T), BK.ContinuationPar(opts_br, d
 	bothside = true,
 	)
 
-plot(sn_codim2, vars=(:F, :T), branchlabel = "SN")
+plot(sn_codim2,    vars=(:F, :T), branchlabel = "SN")
 plot!(hp_codim2_1, vars=(:F, :T), branchlabel = "Hopf1", xlims = (1,2.7), ylims = (-0.06,0.06))
 ```
 
@@ -87,7 +87,8 @@ We compute the branch of Fold of periodic orbits from the Bautin bifurcation (la
 opts_fold_po = BK.ContinuationPar(hp_codim2_1.contparams, dsmax = 0.01, detect_bifurcation = 0, max_steps = 30, detect_event = 0, ds = 0.001, plot_every_step = 10)
 # @reset opts_fold_po.newton_options.verbose = false
 @reset opts_fold_po.newton_options.tol = 1e-8
-fold_po = BK.continuation(hp_codim2_1, 3, opts_fold_po, 
+ind_gh = findfirst(x->x.type == :gh, hp_codim2_1.specialpoint)
+fold_po = BK.continuation(hp_codim2_1, ind_gh, opts_fold_po, 
 		BK.PeriodicOrbitOCollProblem(20, 3, meshadapt = false);
 		normC = BK.norminf,
 		δp = 0.02,
@@ -106,7 +107,8 @@ opts_ns_po = BK.ContinuationPar(hp_codim2_1.contparams, dsmax = 0.02, detect_bif
 @reset opts_ns_po.newton_options.verbose = false
 # @reset opts_ns_po.newton_options.tol = 1e-9
 @reset opts_ns_po.newton_options.max_iterations = 10
-ns_po1 = BK.continuation(hp_codim2_1, 4, opts_ns_po, 
+ind_hh = findfirst(x->x.type == :hh, hp_codim2_1.specialpoint)
+ns_po1 = BK.continuation(hp_codim2_1, ind_hh, opts_ns_po, 
 		BK.PeriodicOrbitOCollProblem(20, 3);
 		normC = BK.norminf,
 		δp = 0.02,
@@ -118,7 +120,7 @@ plot!(ns_po1, vars=(:F, :T), branchlabel = "NS1")
 ```
 
 ```@example LORENZ84V2
-ns_po2 = BK.continuation(hp_codim2_1, 4, opts_ns_po, 
+ns_po2 = BK.continuation(hp_codim2_1, ind_hh, opts_ns_po, 
 		BK.PeriodicOrbitOCollProblem(30, 3);
 		normC = BK.norminf,
 		δp = 0.02,

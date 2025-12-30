@@ -27,7 +27,7 @@ We start with some imports:
 ```@example LORENZ84
 using Revise, Plots
 import BifurcationKit as BK
-import BifurcationKit: @optic#, @reset
+import BifurcationKit: @optic
 
 nothing #hide
 ```
@@ -132,7 +132,7 @@ hp_codim2_1 = BK.continuation(br, 3, (@optic _.T),
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "Folds")
 plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopfs")
-ylims!(-0.7,0.7); xlims!(1,1.3)
+ylims!(-0.7, 0.7); xlims!(1, 1.3)
 ```
 
 ```@example LORENZ84
@@ -161,8 +161,8 @@ hp_from_bt = BK.continuation(sn_codim2, 4,
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "SN")
 plot!(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf1")
-plot!(hp_from_bt, vars=(:X, :U), branchlabel = "Hopf2")
-ylims!(-0.7,0.75); xlims!(0.95,1.3)
+plot!(hp_from_bt,  vars=(:X, :U), branchlabel = "Hopf2")
+ylims!(-0.7, 0.75); xlims!(0.95, 1.3)
 ```
 
 with detailed information
@@ -184,7 +184,7 @@ hp_from_zh = BK.continuation(sn_codim2, 2,
 	)
 
 plot(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf")
-plot!(hp_from_bt, vars=(:X, :U),  branchlabel = "Hopf2")
+plot!(hp_from_bt, vars=(:X, :U), branchlabel = "Hopf2")
 plot!(hp_from_zh, vars=(:X, :U), branchlabel = "Hopf", legend = :topleft)
 plot!(sn_codim2,vars=(:X, :U),)
 ylims!(-0.7,0.75); xlims!(0.95,1.3)
