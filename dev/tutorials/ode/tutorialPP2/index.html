@@ -3,7 +3,8 @@
 u_{1}^{\prime}=3 u_{1}\left(1-u_{1}\right)-u_{1} u_{2}-p_1\left(1-e^{-5 u_{1}}\right) \\
 u_{2}^{\prime}=-u_{2}+3 u_{1} u_{2}
 \end{array}\]</p><p>It is easy to encode the ODE as follows</p><pre><code class="language-julia hljs">using Revise, Plots
-using BifurcationKit
+import BifurcationKit as BK
+import BifurcationKit: @optic#, @reset
 
 # function to record information from a solution
 recordFromSolution(x, p; k...) = (u1 = x[1], u2 = x[2])
@@ -23,49 +24,45 @@ par_pp2 = (p1 = 1., p2 = 3., p3 = 5., p4 = 3.)
 z0 = zeros(2)
 
 # bifurcation problem
-prob = ODEBifProblem(pp2!, z0, par_pp2,
+prob = BK.ODEBifProblem(pp2!, z0, par_pp2,
 	# specify the continuation parameter
 	(@optic _.p1), record_from_solution = recordFromSolution)</code></pre><h2 id="Automatic-bifurcation-diagram-computation"><a class="docs-heading-anchor" href="#Automatic-bifurcation-diagram-computation">Automatic bifurcation diagram computation</a><a id="Automatic-bifurcation-diagram-computation-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-bifurcation-diagram-computation" title="Permalink"></a></h2><p>We set up the options or the continuation</p><pre><code class="language-julia hljs"># continuation options
-opts_br = ContinuationPar(p_min = 0.1, p_max = 1.0, dsmax = 0.01,
+opts_br = BK.ContinuationPar(p_min = 0.1, p_max = 1.0, dsmax = 0.01,
 	# maximum number of continuation steps
-	max_steps = 1000,)</code></pre><p>We are now ready to compute the diagram</p><pre><code class="language-julia hljs">diagram = bifurcationdiagram(prob, PALC(),
+	max_steps = 1000,)</code></pre><p>We are now ready to compute the diagram</p><pre><code class="language-julia hljs">diagram = BK.bifurcationdiagram(prob, BK.PALC(),
 	# very important parameter. It specifies the maximum amount of recursion
 	# when computing the bifurcation diagram. It means we allow computing branches of branches of branches
 	# at most in the present case.
 	3,
-	ContinuationPar(opts_br; ds = -0.001, dsmax = 0.01, n_inversion = 8, detect_bifurcation = 3)
+	BK.ContinuationPar(opts_br; ds = -0.001, dsmax = 0.01, n_inversion = 8, detect_bifurcation = 3),
 	)
 
-scene = plot(diagram; code = (), title=&quot;$(size(diagram)) branches&quot;, legend = false)</code></pre><img src="924e5b2a.svg" alt="Example block output"/><h2 id="Branch-of-periodic-orbits-with-collocation-method"><a class="docs-heading-anchor" href="#Branch-of-periodic-orbits-with-collocation-method">Branch of periodic orbits with collocation method</a><a id="Branch-of-periodic-orbits-with-collocation-method-1"></a><a class="docs-heading-anchor-permalink" href="#Branch-of-periodic-orbits-with-collocation-method" title="Permalink"></a></h2><p>As you can see on the diagram, there is a Hopf bifurcation indicated by a red dot.  Let us compute the periodic orbit branching from the Hopf point.</p><p>We first find the branch</p><pre><code class="language- hljs"># branch of the diagram with Hopf point
-brH = get_branch(diagram, (2,1)).γ
+scene = plot(diagram; code = (), title=&quot;$(size(diagram)) branches&quot;, legend = false)</code></pre><img src="787d4468.svg" alt="Example block output"/><h2 id="Branch-of-periodic-orbits-with-collocation-method"><a class="docs-heading-anchor" href="#Branch-of-periodic-orbits-with-collocation-method">Branch of periodic orbits with collocation method</a><a id="Branch-of-periodic-orbits-with-collocation-method-1"></a><a class="docs-heading-anchor-permalink" href="#Branch-of-periodic-orbits-with-collocation-method" title="Permalink"></a></h2><p>As you can see on the diagram, there is a Hopf bifurcation indicated by a red dot.  Let us compute the periodic orbit branching from the Hopf point.</p><p>We first find the branch</p><pre><code class="language-julia hljs"># branch of the diagram with Hopf point
+brH = BK.get_branch(diagram, (2,2)).γ
 
 # continuation parameters
-opts_po_cont = ContinuationPar(dsmax = 0.01, ds= 0.0001, dsmin = 1e-4,
-	tol_stability = 1e-4, max_steps = 1000, detect_bifurcation = 2)
+opts_po_cont = BK.ContinuationPar(dsmax = 0.01, ds= 0.0001, dsmin = 1e-4,
+	tol_stability = 1e-4, max_steps = 100, detect_bifurcation = 2)
 
-br_po = continuation(
+br_po = BK.continuation(
 	brH, 1, opts_po_cont,
-	PeriodicOrbitOCollProblem(20, 5);
-	plot = true,
+	BK.PeriodicOrbitOCollProblem(20, 5);
+	plot = true, verbosity = 3,
 	record_from_solution = (x, p; k...) -&gt; begin
-		xtt = get_periodic_orbit(p.prob, x, p.p)
+		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
 		return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),
 			period = x[end])
 	end,
-	finalise_solution = (z, tau, step, contResult; prob = nothing, kwargs...) -&gt; begin
-		# limit the period
-		getperiod(prob, z.u, nothing) &lt; 150
-		end,
-	normC = norminf)
+	normC = BK.norminf)
 
 
-plot(diagram); plot!(br_po, branchlabel = &quot;Periodic orbits&quot;, legend = :bottomright)</code></pre><p>Let us now plot an orbit</p><pre><code class="language- hljs"># extract the different components
-orbit = get_periodic_orbit(br_po, 30)
+plot(diagram); plot!(br_po, branchlabel = &quot;Periodic orbits&quot;, legend = :bottomright)</code></pre><img src="a5ca780d.svg" alt="Example block output"/><p>Let us now plot an orbit</p><pre><code class="language-julia hljs"># extract the different components
+orbit = BK.get_periodic_orbit(br_po, 30)
 plot(orbit.t, orbit[1,:]; label = &quot;u1&quot;, markersize = 2)
-plot!(orbit.t, orbit[2,:]; label = &quot;u2&quot;, xlabel = &quot;time&quot;, title = &quot;period = $(orbit.t[end])&quot;)</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+plot!(orbit.t, orbit[2,:]; label = &quot;u2&quot;, xlabel = &quot;time&quot;, title = &quot;period = $(orbit.t[end])&quot;)</code></pre><img src="a144b23a.svg" alt="Example block output"/><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Sunday 30 November 2025 09:27">Sunday 30 November 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Monday 2 February 2026 07:43">Monday 2 February 2026</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
