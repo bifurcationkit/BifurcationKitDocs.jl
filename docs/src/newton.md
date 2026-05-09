@@ -48,7 +48,7 @@ Here is a quick example to show how the basics work. In particular, the problem 
 using BifurcationKit
 F(x, p) = x.^3 .- 1
 x0 = rand(10)
-prob = BifurcationProblem(F, x0, nothing)
+prob = ODEBifProblem(F, x0, nothing)
 sol = BifurcationKit.solve(prob, Newton(), NewtonPar(verbose = true))
 ```
 

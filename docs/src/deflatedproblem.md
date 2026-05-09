@@ -64,7 +64,7 @@ F(x, p) = @. (x-1) * (x-2)
 # already know solution x = 1
 deflationOp = DeflationOperator(2, dot, 0.1, [ones(1)])
 # define a problem, this compute jacobian automatically
-prob = BifurcationProblem(F, zeros(1), nothing)
+prob = ODEBifProblem(F, zeros(1), nothing)
 # call deflated newton
 sol = BifurcationKit.solve(prob, deflationOp, NewtonPar())
 if BifurcationKit.converged(sol)

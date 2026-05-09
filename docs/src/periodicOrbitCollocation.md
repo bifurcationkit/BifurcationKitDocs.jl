@@ -47,13 +47,15 @@ We then introduce the approximation $p_j$ of $x^{(j)}$:
 
 $$\mathcal p_j(\sigma)\equiv \sum\limits_{k=1}^{m+1}\mathcal L_k(\sigma)x_{j,k}$$
 
-and the problem to be solved at the **nodes** $z_l$, $l=1,\cdots,m$:
+and the problem to be solved at the **collocation nodes** $z_l$, $l=1,\cdots,m$:
 
 $$\forall 1\leq l\leq m,\quad 1\leq j\leq N_{tst},\quad \dot p_j(z_l) = T\frac{\tau_{j+1}-\tau_j}{2}\cdot F(p_j(z_l))\tag{$E_j^2$}.$$
 
 The **nodes** $(z_l)$ are associated with a Gauss–Legendre quadrature.
 
 In order to have a unique solution, we need to remove the phase freedom. This is done by imposing a *phase* condition.
+
+> We have $p_j(\sigma_k) = x_{j, k}$
 
 ### Number of unknowns
 
@@ -72,6 +74,12 @@ To ensure uniqueness of the solution to the functional, we use the following pha
 $$\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_0(s)\right\rangle d s =0$$
 
 > During continuation at step $k$, we use $\frac{1}{T} \int_{0}^{T}\left\langle x(s), \dot x_{k-1}(s)\right\rangle d s$
+
+## Precision of the scheme
+
+It is known that the error between the true periodic orbit $\gamma^*$ and the approximated one $\gamma$ scales as
+
+$$\sup\limits_i\|\gamma^*(t_i) - \gamma(t_i) \| = O(h^{2m+1}).$$
 
 ## Discretization of the BVP and jacobian
 
@@ -109,7 +117,7 @@ BifurcationKit.POSolution
 ```
 
 ## Mesh adaptation
-    
+
 The goal of this method[^Russell] is to adapt the mesh $\tau_i$ in order to minimize the error. It is particularly helpful near homoclinic solutions where the period diverges. It can also be useful in order to use a smaller $N_{tst}$.
 
 ## Encoding of the functional
@@ -185,7 +193,7 @@ using BifurcationKit, BenchmarkTools
     dz
 end
 
-prob = BifurcationProblem(auto_cat!, [1.,0,1], (κ = 65., μ = 0.01, σ = 5e-3, δ = 2e-2 ) , (@optic _.μ);
+prob = ODEBifProblem(auto_cat!, [1.,0,1], (κ = 65., μ = 0.01, σ = 5e-3, δ = 2e-2 ) , (@optic _.μ);
         record_from_solution = (x, p; k...) -> (E = x[1], x = x[2], u = x[3]),
         )
 

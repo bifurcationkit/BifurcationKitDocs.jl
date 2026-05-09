@@ -90,15 +90,7 @@ opts_po_cont = BK.ContinuationPar(dsmax = 0.01, ds= 0.0001, dsmin = 1e-4,
 br_po = BK.continuation(
 	brH, 1, opts_po_cont,
 	BK.PeriodicOrbitOCollProblem(20, 5);
-	plot = true, verbosity = 3,
-	record_from_solution = (x, p; k...) -> begin
-		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-		return (max = maximum(xtt[1,:]),
-			min = minimum(xtt[1,:]),
-			period = x[end])
-	end,
 	normC = BK.norminf)
-
 
 plot(diagram); plot!(br_po, branchlabel = "Periodic orbits", legend = :bottomright)
 ```
@@ -109,5 +101,5 @@ Let us now plot an orbit
 # extract the different components
 orbit = BK.get_periodic_orbit(br_po, 30)
 plot(orbit.t, orbit[1,:]; label = "u1", markersize = 2)
-plot!(orbit.t, orbit[2,:]; label = "u2", xlabel = "time", title = "period = $(orbit.t[end])")
+plot!(orbit.t, orbit[2,:]; label = "u2", xlabel = "time", title = "period = $(round(orbit.t[end], digits = 3))")
 ```

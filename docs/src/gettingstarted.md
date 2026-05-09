@@ -18,7 +18,7 @@ as function of $\mu$ by looking at the solutions in the connected component of $
 ```@example GETSTARTED1
 using BifurcationKit, Plots
 F(x, p) = @. p[1] + x - x^3/3
-prob = BifurcationProblem(F, [-2.], [-1.], 1;
+prob = ODEBifProblem(F, [-2.], [-1.], 1;
     record_from_solution = (x,p; k...) -> x[1])
 br = continuation(prob, PALC(), ContinuationPar(p_min = -1., p_max = 1.))
 plot(br)
@@ -31,7 +31,7 @@ where the pieces are described below.
 To solve this numerically, we define a problem type by giving it the equation, the initial condition, the parameters and the parameter axis to solve over:
 
 ```@example GETSTARTED1
-prob = BifurcationProblem(F,
+prob = ODEBifProblem(F,
         [-2.], # initial condition x0
         [-1.], # set of parameters
         1;     # parameter index for continuation
@@ -137,7 +137,7 @@ using BifurcationKit
 Fbp(u, p) = @. u * (p[1] - u)
 
 # bifurcation problem
-prob = BifurcationProblem(Fbp, [0.0], [-0.2],
+prob = ODEBifProblem(Fbp, [0.0], [-0.2],
 	# specify the continuation parameter or its index
 	1, 
 	record_from_solution = (x, p; k...) -> x[1])
@@ -201,7 +201,7 @@ and then we can use this to define a bifurcation problem:
 ```@example GETSTARTED3
 par_sl = (r = 0.1, μ = 0., ν = 1.0, c3 = 1.0)
 u0 = zeros(2)
-prob = BifurcationProblem(Fsl, u0, par_sl, (@optic _.r))
+prob = ODEBifProblem(Fsl, u0, par_sl, (@optic _.r))
 ```
 
 For this simple problem, we detect the existence of periodic orbits by locating a Hopf bifurcation. This is done as in the previous example by continuing the zero solution:

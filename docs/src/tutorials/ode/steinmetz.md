@@ -86,7 +86,7 @@ probsh, cish = BK.generate_ci_problem( BK.ShootingProblem(M = 5; jacobian = BK.A
 
 opts_po_cont = BK.ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, n_inversion = 6, nev = 4, max_steps = 40, tol_stability = 1e-3, newton_options = BK.NewtonPar(max_iterations = 10))
 br_sh = BK.continuation(deepcopy(probsh), cish, BK.PALC(tangent = BK.Bordered()), opts_po_cont;
-	verbosity = 3, #plot = true,
+	# verbosity = 3, plot = true,
 	callback_newton = BK.cbMaxNorm(10),
 	argspo...
 	)
@@ -118,7 +118,6 @@ plot(fold_po_sh)
 ```@example STEINMETZ
 opts_posh_ns = BK.ContinuationPar(br_sh.contparams, detect_bifurcation = 0, max_steps = 35, p_max = 1.9, plot_every_step = 10, dsmax = 5e-2, ds = 1e-2)
 @reset opts_posh_ns.newton_options.tol = 1e-11
-@reset opts_posh_ns.newton_options.verbose = true
 ns_po_sh = BK.continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
 		# verbosity = 2,
 		# plot = true,
@@ -185,7 +184,7 @@ plot(fold_po_cl)
 ```@example STEINMETZ
 opts_pocl_ns = BK.ContinuationPar(br_coll.contparams, detect_bifurcation = 1, dsmax = 4e-2, max_steps = 40)
 ns_po_cl = BK.continuation(deepcopy(br_coll), 1, (@optic _.k7), opts_pocl_ns;
-        verbosity = 3,  plot = true,
+        # verbosity = 3,  plot = true,
         detect_codim2_bifurcation = 2,
         jacobian_ma = BK.MinAugMatrixBased(),
         normC = norminf,

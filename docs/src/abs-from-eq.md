@@ -33,7 +33,7 @@ F(x, p) = [x[1] * (p[1] - x[1])]
 par = [-0.2]
 
 # problem (with automatic differentiation)
-prob = BifurcationProblem(F, [0.], par, 1; record_from_solution = (x, p; k...) -> x[1])
+prob = ODEBifProblem(F, [0.], par, 1; record_from_solution = (x, p; k...) -> x[1])
 
 # compute branch of trivial equilibria and detect a bifurcation point
 br = continuation(prob, PALC(), ContinuationPar())
@@ -56,7 +56,7 @@ F(x, p) = [x[1] * (p[1] - x[1]^2)]
 par = [-0.2]
 
 # problem (with automatic differentiation)
-prob = BifurcationProblem(F, [0.], par, 1; record_from_solution = (x, p; k...) -> x[1])
+prob = ODEBifProblem(F, [0.], par, 1; record_from_solution = (x, p; k...) -> x[1])
 
 # compute branch of trivial equilibria and 
 # detect a bifurcation point with improved precision
@@ -82,7 +82,7 @@ Fdegenerate(x, p) = [x[1]^2 - p[1]^2]
 par = [-1.0]
 
 # problem (with automatic differentiation)
-prob = BifurcationProblem(Fdegenerate, [1.], par, 1; record_from_solution = (x, p; k...)->x[1])
+prob = ODEBifProblem(Fdegenerate, [1.], par, 1; record_from_solution = (x, p; k...)->x[1])
 
 # compute branch of trivial equilibria
 br = continuation(prob, PALC(), ContinuationPar(n_inversion = 6); normC = norminf)
@@ -128,14 +128,13 @@ pard6 = (μ = -0.2, a = 0.6, b = 1.5, c = 2.9)
 
 # problem
 const w = rand(3)
-prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@optic _.μ);
+prob = ODEBifProblem(FbpD6, zeros(3), pard6, (@optic _.μ);
 	record_from_solution = (x, p; k...) -> (n = norminf(x), nw = dot(w , x)))
 
 # continuation options
 opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.02, ds = 0.001, 
 	# parameter interval
 	p_max = 0.4, p_min = -0.2, 
-	nev = 3, 
 	newton_options = NewtonPar(tol = 1e-10, max_iterations = 20), 
 	max_steps = 1000, 
 	n_inversion = 8)

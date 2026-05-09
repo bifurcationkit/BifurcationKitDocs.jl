@@ -89,7 +89,7 @@ opts_fold_po = BK.ContinuationPar(hp_codim2_1.contparams, dsmax = 0.01, detect_b
 @reset opts_fold_po.newton_options.tol = 1e-8
 ind_gh = findfirst(x->x.type == :gh, hp_codim2_1.specialpoint)
 fold_po = BK.continuation(hp_codim2_1, ind_gh, opts_fold_po, 
-		BK.PeriodicOrbitOCollProblem(20, 3, meshadapt = false);
+		BK.PeriodicOrbitOCollProblem(20, 3, meshadapt = true);
 		normC = BK.norminf,
 		δp = 0.02,
 		jacobian_ma = BK.MinAug(),

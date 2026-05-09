@@ -72,7 +72,7 @@ F(x, p) = @. p * x + x^(k+1)/(k+1) + 0.01
 Jac_m(x, p) = diagm(0 => p .+ x.^k)
 
 # bifurcation problem
-prob = BifurcationProblem(F, [0.], 0.5, (@optic _), J = Jac_m)
+prob = ODEBifProblem(F, [0.], 0.5, (@optic _), J = Jac_m)
 
 # continuation options
 opts = BK.ContinuationPar(ds=0.001, max_steps = 140, newton_options = NewtonPar(tol = 1e-8))

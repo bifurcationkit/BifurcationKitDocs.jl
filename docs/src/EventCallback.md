@@ -65,7 +65,7 @@ end
 par = (p1 = -3., p2 = -3., k = 3)
 
 # bifurcation problem
-prob = BifurcationProblem(Feve, -2ones(2), par, (@optic _.p1);
+prob = ODEBifProblem(Feve, -2ones(2), par, (@optic _.p1);
 	record_from_solution = (x, p; k...) -> x[1])
 
 # parameters for the continuation

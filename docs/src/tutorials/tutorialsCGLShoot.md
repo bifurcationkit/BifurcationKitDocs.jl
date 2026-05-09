@@ -178,7 +178,7 @@ We decide to use Standard Shooting and thus define a Shooting functional
 ```julia
 probSh = ShootingProblem(
 	# we pass the ODEProblem encoding the flow and the time stepper
-	remake(prob_sp, p = (@set par_cgl.r = 1.2)), ODE.ETDRK2(krylov = true),
+	BK.remake(prob_sp, p = (@set par_cgl.r = 1.2)), ODE.ETDRK2(krylov = true),
 
 	# this is the phase condition
 	[sol[:, end]];

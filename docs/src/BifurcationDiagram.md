@@ -30,7 +30,7 @@ using BifurcationKit
 Fbp(u, p) = @. -u * (p + u * (2-5u)) * (p -.15 - u * (2+20u))
 
 # bifurcation problem
-prob = BifurcationProblem(Fbp, [0.0], -0.2, 
+prob = ODEBifProblem(Fbp, [0.0], -0.2, 
 	# specify the continuation parameter
 	(@optic _);
 	record_from_solution = (x, p; k...) -> x[1])
@@ -42,13 +42,12 @@ opt_newton = NewtonPar(tol = 1e-9)
 # options for continuation
 opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.005, ds = 0.001,
 	newton_options = opt_newton,
-	nev = 1,
 	# parameter interval
 	p_min = -1.0, p_max = .3,
 	# detect bifurcations with bisection method
 	# we increase here the precision for the detection of
 	# bifurcation points
-	n_inversion = 8)
+	n_inversion = 10)
 
 diagram = bifurcationdiagram(prob, PALC(),
 	# very important parameter. This specifies the maximum amount of recursion
@@ -90,7 +89,7 @@ end
 pard6 = (μ = -0.2, a = 0.3, b = 1.5, c = 2.9)
 
 # problem
-prob = BifurcationProblem(FbpD6, zeros(3), pard6, (@optic _.μ);
+prob = ODEBifProblem(FbpD6, zeros(3), pard6, (@optic _.μ);
 		record_from_solution = (x, p; k...) -> (n = norminf(x)))
 
 # newton options
@@ -102,8 +101,6 @@ opts_br = ContinuationPar(
 	dsmax = 0.005, ds = 0.001, 
 	# parameter interval
 	p_max = 0.4, p_min = -0.25, 
-	# number of eigenvalues to be computed
-	nev = 3, 
 	newton_options = opt_newton, 
 	max_steps = 1000,
 	# increased precision for bifurcation points
@@ -111,6 +108,7 @@ opts_br = ContinuationPar(
 
 diagram = bifurcationdiagram(prob, PALC(), 3,
 	opts_br;
+	δp = 0.01, 
 	normC = norminf)
 ```
 
