@@ -176,7 +176,7 @@ scene = plot(br_hopf)
 
 ## Computation of the branch of periodic orbits (Finite differences)
 
-We now compute the bifurcated branches of periodic solutions from the Hopf points using [Periodic orbits based on Trapezoidal rule](@ref). One has just to pass a [`PeriodicOrbitTrapProblem`](@ref).
+We now compute the bifurcated branches of periodic solutions from the Hopf points using [Periodic orbits based on Trapezoidal rule](@ref). One has just to pass a [`Trapeze`](@ref).
 
 We start by providing a linear solver and some options for the continuation to work
 
@@ -199,7 +199,7 @@ nothing #hide
 ```@example TUTBRUaut
 # number of time slices for the periodic orbit
 M = 51
-probFD = PeriodicOrbitTrapProblem(M = M;
+probFD = Trapeze(M = M;
   # specific method for solving the linear system for newton
   # of periodic orbits with trapeze method.
   # We could use the default one FullLU() (slower here)
@@ -321,7 +321,7 @@ br_po = continuation(
 	# arguments for continuation
 	opts_po_cont,
 	# this is where we tell that we want Parallel Standard Shooting
-	ShootingProblem(Mt, prob_ode, Rodas4P(), parallel = true, jacobian = BK.FiniteDifferencesMF());
+	Shooting(Mt, prob_ode, Rodas4P(), parallel = true, jacobian = BK.FiniteDifferencesMF());
 	# the next option is not necessary
 	# it speeds up the newton iterations
 	# by combining the linear solves of the bordered linear system
@@ -337,7 +337,7 @@ and you should see
 
 ## Computation of the branch of periodic orbits (Poincaré Shooting)
 
-We now turn to another Shooting method, namely the Poincaré one. We can provide this method thanks to the unique functionalities of `DifferentialEquations.jl`. More information is provided at [`PoincareShootingProblem`](@ref) and [Periodic orbits based on the shooting method](@ref) but basically, it is a shooting method between Poincaré sections $\Sigma_i$ (along the orbit) defined by hyperplanes. As a consequence, the dimension of the unknowns is $M_{sh}\cdot(N-1)$ where $N$ is the dimension of the phase space. Indeed, each time slice lives in an hyperplane $\Sigma_i$. Additionally, the period $T$ is not an unknown of the method but rather a by-product. However, the method requires the time stepper to find when the flow hits an hyperplane $\Sigma_i$, something called **event detection**.
+We now turn to another Shooting method, namely the Poincaré one. We can provide this method thanks to the unique functionalities of `DifferentialEquations.jl`. More information is provided at [`PoincareShooting`](@ref) and [Periodic orbits based on the shooting method](@ref) but basically, it is a shooting method between Poincaré sections $\Sigma_i$ (along the orbit) defined by hyperplanes. As a consequence, the dimension of the unknowns is $M_{sh}\cdot(N-1)$ where $N$ is the dimension of the phase space. Indeed, each time slice lives in an hyperplane $\Sigma_i$. Additionally, the period $T$ is not an unknown of the method but rather a by-product. However, the method requires the time stepper to find when the flow hits an hyperplane $\Sigma_i$, something called **event detection**.
 
 We show how to use this method, the code is very similar to the case of the Parallel Standard Shooting:
 
@@ -359,7 +359,7 @@ br_po = continuation(
 	br, 1,
 	# arguments for continuation
 	opts_po_cont,
-	PoincareShootingProblem(Mt, prob_ode, Rodas4P(); jacobian = BK.FiniteDifferencesMF(), update_section_every_step = 0);
+	PoincareShooting(Mt, prob_ode, Rodas4P(); jacobian = BK.FiniteDifferencesMF(), update_section_every_step = 0);
 	# the next option is not necessary
 	# it speeds up the newton iterations
 	# by combining the linear solves of the bordered linear system

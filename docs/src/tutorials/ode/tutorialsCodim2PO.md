@@ -87,7 +87,7 @@ We are now equipped to build a periodic orbit problem from a solution `sol::ODEP
 
 ```@example TUTPPREY
 # function to build probtrap from sol
-probtrap, ci = BK.generate_ci_problem(BK.PeriodicOrbitTrapProblem(M = 150),
+probtrap, ci = BK.generate_ci_problem(BK.Trapeze(M = 150),
 	prob_bif, sol, 2.)
 
 opts_po_cont = BK.ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
@@ -114,7 +114,7 @@ scene = plot(brpo_pd)
 We are now ready to build a periodic orbit problem from a solution `sol::ODEProblem`.
 
 ```@example TUTPPREY
-probsh, cish = BK.generate_ci_problem( BK.ShootingProblem(M = 3),
+probsh, cish = BK.generate_ci_problem( BK.Shooting(M = 3),
 	prob_bif, prob_de, sol, 2.; alg = DE.Vern9(), abstol = 1e-12, reltol = 1e-10)
 
 opts_po_cont = BK.ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-3)
@@ -141,7 +141,7 @@ We do the same as in the previous section but using orthogonal collocation. This
 
 ```@example TUTPPREY
 # this is the function which builds probcoll from sol
-probcoll, ci = BK.generate_ci_problem(BK.PeriodicOrbitOCollProblem(30, 4),
+probcoll, ci = BK.generate_ci_problem(BK.Collocation(30, 4),
 	prob_bif, sol, 2)
 
 opts_po_cont = BK.ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
@@ -199,7 +199,7 @@ sol2 = DE.solve(DE.remake(prob_de, p = par_pop2, u0 = [0.1, 0.1, 1, 0], tspan=(0
 sol2 = DE.solve(DE.remake(sol2.prob, tspan = (0, 10), u0 = sol2.u[end]), DE.Vern9())
 plot(sol2, xlims = (8, 10))
 
-probcoll, ci = BK.generate_ci_problem(BK.PeriodicOrbitOCollProblem(30, 3), BK.re_make(prob_bif, params = sol2.prob.p), sol2, 1.)
+probcoll, ci = BK.generate_ci_problem(BK.Collocation(30, 3), BK.re_make(prob_bif, params = sol2.prob.p), sol2, 1.)
 
 prob2 = @set probcoll.prob_vf.lens = @optic _.ϵ
 brpo_pd = BK.continuation(prob2, ci, BK.PALC(), BK.ContinuationPar(opts_po_cont, dsmax = 5e-3);

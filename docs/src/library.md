@@ -85,25 +85,25 @@ DeflatedProblem
 ### Periodic orbits
 
 ```@docs
-PeriodicOrbitTrapProblem
+Trapeze
 ```
 
 ```@docs
-PeriodicOrbitOCollProblem
+Collocation
 ```
 
 ```@docs
-ShootingProblem
+Shooting
 ```
 
 ```@docs
-PoincareShootingProblem
+PoincareShooting
 ```
 
 ### Waves
 
 ```@docs
-BifurcationKit.TWProblem
+TWModel
 ```
 
 ## [Linear solvers](@id Library-LS)
@@ -148,6 +148,10 @@ BifurcationKit.EigKrylovKit
 
 ```@docs
 BifurcationKit.EigArnoldiMethod
+```
+
+```@docs
+BifurcationKit.EigenMassMatrix
 ```
 
 ## [Floquet solvers](@id Library-FLOQUET)

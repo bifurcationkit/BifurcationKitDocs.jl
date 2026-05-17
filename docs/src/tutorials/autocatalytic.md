@@ -223,7 +223,7 @@ To branch from the Hopf bifurcation point, we just have to pass the mass matrix 
 # note that we pass the parameter massmatrix which
 # allows to solver the DAE
 Mt = 30
-probTP = PeriodicOrbitTrapProblem(M = Mt ;
+probTP = Trapeze(M = Mt ;
 		massmatrix = spdiagm(0 => vcat(ones(2N),0.)),
 		update_section_every_step = 1,
 		# linear solver for the periodic orbit problem

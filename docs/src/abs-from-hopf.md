@@ -22,11 +22,11 @@ continuation(br::ContResult, ind_HOPF::Int, _contParams::ContinuationPar,
 
 We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `prob::AbstractPeriodicOrbitProblem`.
 
-- For [Periodic orbits based on Trapezoidal rule](@ref), you can pass `PeriodicOrbitTrapProblem(M = 51)` where `M` is the number of times slices in the periodic orbit.
+- For [Periodic orbits based on Trapezoidal rule](@ref), you can pass `Trapeze(M = 51)` where `M` is the number of times slices in the periodic orbit.
 
-- For [Periodic orbits based on orthogonal collocation](@ref), you can pass `PeriodicOrbitOCollProblem(M, m)` where `M` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials.
+- For [Periodic orbits based on orthogonal collocation](@ref), you can pass `Collocation(M, m)` where `M` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials.
 
-- For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `ShootingProblem(M, odeprob, Euler())` or `PoincareShootingProblem(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
+- For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `Shooting(M, odeprob, Euler())` or `PoincareShooting(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
 
 > See [Branch switching (Hopf point)](@ref) for the precise method definition
 
@@ -65,7 +65,7 @@ We then compute the branch of periodic solutions using orthogonal collocation (f
 
 ```@example hopf_abs
 br_po = continuation(br, 2, opts,
-        PeriodicOrbitOCollProblem(20, 5)
+        Collocation(20, 5)
         )
 plot(br, br_po)
 ```
@@ -106,7 +106,7 @@ The algorithm proceeds as follows. The normal form of the Period-doubling bifurc
 
 We do not provide (for now) the automatic branching procedure for these bifurcations of periodic orbits. As a consequence, the user is asked to provide the amplitude of the bifurcated solution.
 
-We provide the branching method for the following methods to compute periodic orbits: [`PeriodicOrbitTrapProblem`](@ref), [`PeriodicOrbitOCollProblem`](@ref), [`ShootingProblem`](@ref) and [`PoincareShootingProblem`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching.
+We provide the branching method for the following methods to compute periodic orbits: [`Trapeze`](@ref), [`Collocation`](@ref), [`Shooting`](@ref) and [`PoincareShooting`](@ref). The call is as follows. Please note that a deflation is included in this method to simplify branch switching.
 
 An example of use is provided in [Lur'e problem](@ref pdlure).
 

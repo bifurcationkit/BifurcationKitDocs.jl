@@ -89,7 +89,7 @@ opts_po_cont = BK.ContinuationPar(dsmax = 0.01, ds= 0.0001, dsmin = 1e-4,
 
 br_po = BK.continuation(
 	brH, 1, opts_po_cont,
-	BK.PeriodicOrbitOCollProblem(20, 5);
+	BK.Collocation(20, 5);
 	normC = BK.norminf)
 
 plot(diagram); plot!(br_po, branchlabel = "Periodic orbits", legend = :bottomright)

@@ -128,7 +128,7 @@ with unknowns $u,v,s$. The front is solution of these equations but it is not un
 
 $$0 = \left\langle (u,v), \partial_\xi (u_0,v_0) \right\rangle$$
 
-where $U_0:=(u_0,v_0)$ is some fixed profile. This is encoded in the problem [`TWProblem`](@ref)
+where $U_0:=(u_0,v_0)$ is some fixed profile. This is encoded in the problem [`TWModel`](@ref)
 
 ```@example TUTAUTOCATauto
 using LinearAlgebra
@@ -146,7 +146,7 @@ end
 uold = vcat(u0, (1 .- u0))
 
 # we create a TW problem
-probTW = BK.TWProblem(prob, Advection(par_cat), copy(uold))
+probTW = BK.TWModel(prob, Advection(par_cat), copy(uold))
 nothing #hide
 ```
 
@@ -188,7 +188,7 @@ Having found a front $U^f$, we can continue it as function of the parameter $a$ 
 
 $$\lambda M_a\cdot V = dG(U^f)\cdot V.$$
 
-This is handled automatically when calling `continuation` on a `TWProblem`.
+This is handled automatically when calling `continuation` on a `TWModel`.
 
 ```@example TUTAUTOCATauto
 optn = NewtonPar(tol = 1e-8)

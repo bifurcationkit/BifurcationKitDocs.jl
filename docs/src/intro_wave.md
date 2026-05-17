@@ -57,14 +57,14 @@ $$Jx_1^\bot-\frac{\langle A_{21},Jx_1^\bot\rangle}{\langle A_{21},A_{12}\rangle}
 
 ## Encoding of the functional for the freezed problem
 
-The freezing method is encoded in the composite type [`TWProblem`](@ref) which we loosely refer to as a Travelling Wave (TW) problem. 
+The freezing method is encoded in the composite type [`TWModel`](@ref) which we loosely refer to as a Travelling Wave (TW) problem. 
 
 ## Computation with `newton`
 
 We provide a simplified call to `newton` to locate the freezed solution
 
 ```
-newton(prob::TWProblem, orbitguess, options::NewtonPar; kwargs...)
+newton(prob::TWModel, orbitguess, options::NewtonPar; kwargs...)
 ```
 
 ## Continuation
@@ -72,7 +72,7 @@ newton(prob::TWProblem, orbitguess, options::NewtonPar; kwargs...)
 We also provide a simplified call to `continuation` to continue the freezed solution as function of a parameter:
 
 ```
-continuation(prob::TWProblem, orbitguess, lens::Lens, contParams::ContinuationPar; jacobian = :MatrixFree, kwargs...)
+continuation(prob::TWModel, orbitguess, lens::Lens, contParams::ContinuationPar; jacobian = :MatrixFree, kwargs...)
 ```
 
 Note that in this case, the eigen solver passed in `contParams` is converted into an appropriate generalized eigensolver.

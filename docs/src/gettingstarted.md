@@ -214,11 +214,11 @@ In the result above, we see that a Hopf bifurcation has been detected:
 
 ```- #  2,     hopf at r ≈ -0.00595553 ∈ (-0.00595553,...```
 
-We compute the branch of periodic orbits which is nearby. We thus provide the branch `br`, the index of the special point we want to branch from: 2 in this case and a method `PeriodicOrbitOCollProblem(20, 5)` to compute periodic orbits. You can look at [Periodic orbits computation](@ref) for a list of all methods. Suffice it to say that `PeriodicOrbitOCollProblem` is the default method in the case of ODEs.
+We compute the branch of periodic orbits which is nearby. We thus provide the branch `br`, the index of the special point we want to branch from: 2 in this case and a method `Collocation(20, 5)` to compute periodic orbits. You can look at [Periodic orbits computation](@ref) for a list of all methods. Suffice it to say that `Collocation` is the default method in the case of ODEs.
 
 ```@example GETSTARTED3
 br_po = continuation(br, 2, ContinuationPar(),
-        PeriodicOrbitOCollProblem(20, 5)
+        Collocation(20, 5)
         )
 ```
 
@@ -250,7 +250,7 @@ If you plot the solution during continuation, you see that the right bottom pane
 
 ```@example GETSTARTED3
 br_po = continuation(br, 2, br.contparams,
-        PeriodicOrbitOCollProblem(20, 5);
+        Collocation(20, 5);
         plot = true,
         )
 scene = title!("") #hide
@@ -262,7 +262,7 @@ In order to plot the periodic solution during continuation, you need to supply a
 
 ```@example GETSTARTED3
 br_po = continuation(br, 2, br.contparams,
-        PeriodicOrbitOCollProblem(20, 5);
+        Collocation(20, 5);
         plot = true,
         plot_solution = (x, par; k...) -> begin
                 # par is a Named tuple which contains 

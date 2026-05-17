@@ -205,7 +205,7 @@ The phase of the periodic orbit is set so that the above constraint is satisfied
 Given our initial guess, we create a (family of) problem which encodes the functional associated to finding Periodic orbits based on Trapezoidal rule (see [Periodic orbits based on Trapezoidal rule](@ref) for more information):
 
 ```@example TUTBRUmanual
-poTrap = PeriodicOrbitTrapProblem(
+poTrap = Trapeze(
 	probBif,    		   # pass the bifurcation problem
 	real.(vec_hopf),	 # used to set ϕ, see the phase constraint
 	hopfpt.u,          # used to set uhopf, see the phase constraint
@@ -218,9 +218,9 @@ nothing #hide
 To evaluate the functional at `x`, you call it like a function: `poTrap(x, par)` for the parameter `par`.
 
 !!! note "Using the functional for deflation, Fold of limit cycles..."
-    The functional `poTrap` gives you access to the underlying methods to call a regular `newton`. For example the functional is `x -> poTrap(x, par)` at parameter `par`. The (sparse) Jacobian at `(x,p)` is computed like this `poTrap(Val(:JacFullSparse), x, p)` while the Matrix Free version is `dx -> poTrap((x, p, dx)`. This also allows you to call the newton deflated method (see [Deflated problems](@ref)) or to locate Fold point of limit cycles see [`PeriodicOrbitTrapProblem`](@ref). You can also use preconditioners. In the case of more computationally intense problems (like the 2d Brusselator), this might be mandatory as using LU decomposition for the linear solve will use too much memory. See also the example [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)
+    The functional `poTrap` gives you access to the underlying methods to call a regular `newton`. For example the functional is `x -> poTrap(x, par)` at parameter `par`. The (sparse) Jacobian at `(x,p)` is computed like this `poTrap(Val(:JacFullSparse), x, p)` while the Matrix Free version is `dx -> poTrap((x, p, dx)`. This also allows you to call the newton deflated method (see [Deflated problems](@ref)) or to locate Fold point of limit cycles see [`Trapeze`](@ref). You can also use preconditioners. In the case of more computationally intense problems (like the 2d Brusselator), this might be mandatory as using LU decomposition for the linear solve will use too much memory. See also the example [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl)
 
-For convenience, we provide a simplified newton / continuation methods for periodic orbits. One has just to pass a [`PeriodicOrbitTrapProblem`](@ref).
+For convenience, we provide a simplified newton / continuation methods for periodic orbits. One has just to pass a [`Trapeze`](@ref).
 
 ```@example TUTBRUmanual
 # we use the linear solver LSFromBLS to speed up the computations
@@ -327,7 +327,7 @@ orbitguess_f2 = reduce(hcat, orbitguess2)
 orbitguess_f = vcat(vec(orbitguess_f2), Th) |> vec
 ```
 
-Let us now initiate the Standard Shooting method. To this aim, we need to provide a guess of the periodic orbit at times $T/M_{sh}$ where $T$ is the period of the cycle and $M_{sh}$ is the number of slices along the periodic orbits. If $M_{sh} = 1$, this the Standard Simple Shooting and the Standard Multiple one otherwise. See [`ShootingProblem`](@ref) for more information.
+Let us now initiate the Standard Shooting method. To this aim, we need to provide a guess of the periodic orbit at times $T/M_{sh}$ where $T$ is the period of the cycle and $M_{sh}$ is the number of slices along the periodic orbits. If $M_{sh} = 1$, this the Standard Simple Shooting and the Standard Multiple one otherwise. See [`Shooting`](@ref) for more information.
 
 ```julia
 dM = 2
@@ -359,7 +359,7 @@ We create the parallel standard shooting problem:
 
 ```julia
 # this encodes the functional for the Shooting problem
-probSh = ShootingProblem(
+probSh = Shooting(
 	# we pass the ODEProblem encoding the flow and the time stepper
 	prob, Rodas4P(),
 
@@ -463,7 +463,7 @@ We can observe that simple shooting is faster but the Floquet multipliers are le
 
 ## Continuation of periodic orbits (Poincaré Shooting)
 
-We now turn to another Shooting method, namely the Poincaré one. We can provide this method thanks to the unique functionalities of `DifferentialEquations.jl`. More information is provided at [`PoincareShootingProblem`](@ref) and [Periodic orbits based on the shooting method](@ref) but basically, it is a shooting method between Poincaré sections $\Sigma_i$ (along the orbit) defined by hyperplanes. As a consequence, the dimension of the unknowns is $M_{sh}\cdot(N-1)$ where $N$ is the dimension of the phase space. Indeed, each time slice lives in an hyperplane $\Sigma_i$. Additionally, the period $T$ is not an unknown of the method but rather a by-product. However, the method requires the time stepper to find when the flow hits an hyperplane $\Sigma_i$, something called **event detection**.
+We now turn to another Shooting method, namely the Poincaré one. We can provide this method thanks to the unique functionalities of `DifferentialEquations.jl`. More information is provided at [`PoincareShooting`](@ref) and [Periodic orbits based on the shooting method](@ref) but basically, it is a shooting method between Poincaré sections $\Sigma_i$ (along the orbit) defined by hyperplanes. As a consequence, the dimension of the unknowns is $M_{sh}\cdot(N-1)$ where $N$ is the dimension of the phase space. Indeed, each time slice lives in an hyperplane $\Sigma_i$. Additionally, the period $T$ is not an unknown of the method but rather a by-product. However, the method requires the time stepper to find when the flow hits an hyperplane $\Sigma_i$, something called **event detection**.
 
 
 We show how to use this method, the code is very similar to the case of the Standard Shooting. We first define the functional for Poincaré Shooting Problem
@@ -477,7 +477,7 @@ normals = [Fbru(orbitguess_f2[:,ii], par_hopf)/(norm(Fbru(orbitguess_f2[:,ii], p
 centers = [orbitguess_f2[:,ii] for ii = 1:dM:M]
 
 # functional to hold the Poincare Shooting Problem
-probHPsh = PoincareShootingProblem(
+probHPsh = PoincareShooting(
 	# ODEProblem, ODE solver used to compute the flow
 	prob, Rodas4P(),
 

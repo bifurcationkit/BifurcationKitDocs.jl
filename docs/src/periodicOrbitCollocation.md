@@ -5,7 +5,7 @@ Pages = ["periodicOrbitCollocation.md"]
 Depth = 3
 ```
 
-We compute `Ntst` time slices of a periodic orbit using orthogonal collocation. This is implemented in the structure `PeriodicOrbitOCollProblem`.
+We compute `Ntst` time slices of a periodic orbit using orthogonal collocation. This is implemented in the structure `Collocation`.
 
 !!! tip "Large scale"
     The current implementation is optimized for ODE and for large scale problems for which the jacobian is sparse.
@@ -122,11 +122,11 @@ The goal of this method[^Russell] is to adapt the mesh $\tau_i$ in order to mini
 
 ## Encoding of the functional
 
-The functional is encoded in the composite type [`PeriodicOrbitOCollProblem`](@ref). See the link for more information, in particular on how to access the underlying functional, its jacobian...
+The functional is encoded in the composite type [`Collocation`](@ref). See the link for more information, in particular on how to access the underlying functional, its jacobian...
 
 ## Jacobians
 
-We provide many different jacobians to take advantage of the problem or the dimensionality. These jacobians are available through the argument `jacobian` in the constructor of `PeriodicOrbitOCollProblem`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal linear solvers and jacobians are set up automatically so you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+We provide many different jacobians to take advantage of the problem or the dimensionality. These jacobians are available through the argument `jacobian` in the constructor of `Collocation`. For example, you can pass `jacobian  = FullSparse()`. Note that all the internal linear solvers and jacobians are set up automatically so you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
 1. `DenseAnalytical()`
 The jacobian is computed with an analytical formula, it works for dense matrices. This is the default algorithm.
@@ -163,7 +163,7 @@ These methods allow to detect bifurcations of periodic orbits. It seems to work 
 ## Computation with `newton`
 
 ```@docs
-newton(prob::PeriodicOrbitOCollProblem, orbitguess, options::NewtonPar; kwargs...)
+newton(prob::Collocation, orbitguess, options::NewtonPar; kwargs...)
 ```
 
 We provide a simplified call to `newton` to locate the periodic orbits. `newton` will look for `prob.jacobian` in order to select the requested way to compute the jacobian.
@@ -203,7 +203,7 @@ br = continuation(prob, PALC(tangent=Bordered()), opts_br; plot = false, normC =
 
 ```@example OptimColl
 # collocation method to discretize the periodic orbit
-po_method = PeriodicOrbitOCollProblem(80, 4,
+po_method = Collocation(80, 4,
                 jacobian = BifurcationKit.DenseAnalyticalInplace(),
                 );
 

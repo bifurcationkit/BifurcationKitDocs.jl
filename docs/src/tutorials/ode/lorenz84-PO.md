@@ -89,7 +89,7 @@ opts_fold_po = BK.ContinuationPar(hp_codim2_1.contparams, dsmax = 0.01, detect_b
 @reset opts_fold_po.newton_options.tol = 1e-8
 ind_gh = findfirst(x->x.type == :gh, hp_codim2_1.specialpoint)
 fold_po = BK.continuation(hp_codim2_1, ind_gh, opts_fold_po, 
-		BK.PeriodicOrbitOCollProblem(20, 3, meshadapt = true);
+		BK.Collocation(20, 3, meshadapt = true);
 		normC = BK.norminf,
 		δp = 0.02,
 		jacobian_ma = BK.MinAug(),
@@ -109,7 +109,7 @@ opts_ns_po = BK.ContinuationPar(hp_codim2_1.contparams, dsmax = 0.02, detect_bif
 @reset opts_ns_po.newton_options.max_iterations = 10
 ind_hh = findfirst(x->x.type == :hh, hp_codim2_1.specialpoint)
 ns_po1 = BK.continuation(hp_codim2_1, ind_hh, opts_ns_po, 
-		BK.PeriodicOrbitOCollProblem(20, 3);
+		BK.Collocation(20, 3);
 		normC = BK.norminf,
 		δp = 0.02,
 		# which of the 2 NS curves should we compute?
@@ -121,7 +121,7 @@ plot!(ns_po1, vars=(:F, :T), branchlabel = "NS1")
 
 ```@example LORENZ84V2
 ns_po2 = BK.continuation(hp_codim2_1, ind_hh, opts_ns_po, 
-		BK.PeriodicOrbitOCollProblem(30, 3);
+		BK.Collocation(30, 3);
 		normC = BK.norminf,
 		δp = 0.02,
 		# which of the 2 NS curves should we compute?

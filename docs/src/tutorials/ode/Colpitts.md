@@ -120,7 +120,7 @@ opts_po_cont = BK.ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, p_
 
 # Shooting functional. Note the stringent tolerances used to cope with
 # the extreme parameters of the model
-probSH = BK.ShootingProblem(10, probFreez_ode, ODE.Rodas5P(); reltol = 1e-10, abstol = 1e-13)
+probSH = BK.Shooting(10, probFreez_ode, ODE.Rodas5P(); reltol = 1e-10, abstol = 1e-13)
 
 # automatic branching from the Hopf point
 br_po = BK.continuation(br, 1, opts_po_cont, probSH;

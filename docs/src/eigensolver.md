@@ -63,3 +63,5 @@ Associated to an eigensolver `eig` in `(DefaultEig, EigArnoldiMethod, EigArpack)
 ```julia
     gev(eig, A, B, nev; k...)
 ```
+
+Another way is to rely on `BK.EigenMassMatrix`. See [`EigenMassMatrix `](@ref).

@@ -41,7 +41,7 @@ Depending on the method used for computing the periodic orbits, you have several
 The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the method
 
 ```@docs
-predictor(hp::BifurcationKit.PeriodDoublingPO{ <: ShootingProblem }, δp, 
+predictor(hp::BifurcationKit.PeriodDoublingPO{ <: Shooting }, δp, 
                     ampfactor; 
                     override = false)
 ```

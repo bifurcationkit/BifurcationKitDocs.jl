@@ -222,7 +222,7 @@ orbitguess_f = vcat(vec(orbitguess_f2), Th) |> vec
 We create a problem to hold the functional and compute Periodic orbits based on Trapezoidal rule
 
 ```julia
-poTrap = PeriodicOrbitTrapProblem(
+poTrap = Trapeze(
 # vector field and sparse Jacobian
 	re_make(prob, params = (@set par_cgl.r = r_hopf - 0.01)),
 # parameters for the phase condition
@@ -311,7 +311,7 @@ d1Fcgl(x, p, dx) = ForwardDiff.derivative(t -> Fcgl(x .+ t .* dx, p), 0.)
 # linear solver for solving Jcgl*x = rhs. Needed for Floquet multipliers computation
 ls0 = GMRESIterativeSolvers(N = 2Nx*Ny, reltol = 1e-9, Pl = lu(I + par_cgl.Δ))
 
-poTrapMF = PeriodicOrbitTrapProblem(
+poTrapMF = Trapeze(
 # vector field and sparse Jacobian
 	re_make(prob, params = (@set par_cgl.r = r_hopf - 0.01), J = (x, p) ->  (dx -> d1Fcgl(x, p, dx))),
 # parameters for the phase condition
@@ -427,7 +427,7 @@ We can now define an inplace functional
 ```julia
 ls0 = GMRESIterativeSolvers(N = 2Nx*Ny, reltol = 1e-9)#, Pl = lu(I + par_cgl.Δ))
 
-poTrapMFi = PeriodicOrbitTrapProblem(
+poTrapMFi = Trapeze(
 # vector field and sparse Jacobian
 	probInp,
 # parameters for the phase condition
@@ -701,7 +701,7 @@ function LinearAlgebra.ldiv!(_lu::LUperso, rhs::CUDA.CuArray)
 end
 ```
 
-Finally, for the methods in `PeriodicOrbitTrapProblem` to work, we need to redefine the following method. Indeed, we disable the use of scalar on the GPU to increase the speed.
+Finally, for the methods in `Trapeze` to work, we need to redefine the following method. Indeed, we disable the use of scalar on the GPU to increase the speed.
 
 ```julia
 import BifurcationKit: extractPeriodFDTrap
@@ -720,7 +720,7 @@ probGPU = BifurcationProblem(Fcgl,
 
 # matrix-free problem on the gpu
 ls0gpu = GMRESKrylovKit(rtol = 1e-9)
-poTrapMFGPU = PeriodicOrbitTrapProblem(
+poTrapMFGPU = Trapeze(
 	probGPU,
 	CuArray(real.(eigvec)),
 	CuArray(hopfpt.u),

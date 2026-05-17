@@ -92,7 +92,7 @@ opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, dsmin = 1e-4, max_steps
 
 br_po = BK.continuation(
 	br, 1, opts_po_cont,
-	BK.PeriodicOrbitOCollProblem(40, 4);
+	BK.Collocation(40, 4);
 	plot = true,
 	# linear_algo = BK.COPBLS(),
 	record_from_solution = recordPO,
@@ -145,7 +145,7 @@ opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, newton_options = BK.New
 br_po = BK.continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 10 sections
-	BK.ShootingProblem(15, prob_ode, ODE.Vern9(); parallel = true);
+	BK.Shooting(15, prob_ode, ODE.Vern9(); parallel = true);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -193,7 +193,7 @@ opts_po_cont = BK.ContinuationPar(dsmax = 0.02, dsmin = 1e-4, p_max = 1.1, max_s
 
 br_po = BK.continuation(
 	br, 1, opts_po_cont,
-	BK.PeriodicOrbitTrapProblem(M = 120);
+	BK.Trapeze(M = 120);
 	record_from_solution = recordPO,
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
@@ -205,7 +205,7 @@ br_po = BK.continuation(
 scene = plot(br, br_po)
 ```
 
-Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching for Trapezoid method as we do not have yet the PD normal form computed for `PeriodicOrbitTrapProblem`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
+Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching for Trapezoid method as we do not have yet the PD normal form computed for `Trapeze`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
 
 > This is like in MatCont and Auto-07p here...
 

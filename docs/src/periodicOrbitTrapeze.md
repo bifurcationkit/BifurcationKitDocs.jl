@@ -5,7 +5,7 @@ Pages = ["periodicOrbitTrapeze.md"]
 Depth = 3
 ```
 
-The Trapezoid method allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule	. The method is implemented in the structure `PeriodicOrbitTrapProblem`. The general method is very well exposed in [^Uecker],[^Lust], [^Keller] and we adopt the notations of the first reference.
+The Trapezoid method allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule	. The method is implemented in the structure `Trapeze`. The general method is very well exposed in [^Uecker],[^Lust], [^Keller] and we adopt the notations of the first reference.
 
 We look for periodic orbits as solutions $(x(0),T)$ of
 
@@ -60,7 +60,7 @@ Our code thus provides methods to invert $J_c$ and $A_\gamma$ using a sparse sol
 
 ## Encoding of the functional
 
-The functional is encoded in the composite type [`PeriodicOrbitTrapProblem`](@ref). See the link for more information, in particular on how to access the underlying functional, its jacobian and other matrices related to it like $A_\gamma, J_c$...
+The functional is encoded in the composite type [`Trapeze`](@ref). See the link for more information, in particular on how to access the underlying functional, its jacobian and other matrices related to it like $A_\gamma, J_c$...
 
 ## Preconditioning
 
@@ -68,7 +68,7 @@ We strongly advise you to use a preconditioner to deal with the above linear pro
 
 ## Linear solvers
 
-We provide many different linear solvers to take advantage of the formulations. These solvers are available through the argument `jacobian` in the constructor of `PeriodicOrbitTrapProblem`. For example, you can pass `jacobian  = FullLU()`. Note that all the internal solvers and Jacobians are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+We provide many different linear solvers to take advantage of the formulations. These solvers are available through the argument `jacobian` in the constructor of `Trapeze`. For example, you can pass `jacobian  = FullLU()`. Note that all the internal solvers and Jacobians are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
 
 ### 1. FullLU
 
@@ -132,7 +132,7 @@ The docs for this specific `newton` are located at [`newton`](@ref).
 We also provide a simplified call to `newton` to locate the periodic orbit with a deflation operator.
 
 ```@docs
-newton(probPO::PeriodicOrbitTrapProblem,
+newton(probPO::Trapeze,
 		orbitguess::vectype,
 		defOp::DeflationOperator{Tp, Tdot, T, vectype},
 		options::NewtonPar;
@@ -145,7 +145,7 @@ newton(probPO::PeriodicOrbitTrapProblem,
 Have a look at the [Periodic orbits based on Trapezoidal rule](@ref) example for the Brusselator. We refer to [`continuation`](@ref) for more information regarding the arguments.
 
 ```@docs
-continuation(prob::PeriodicOrbitTrapProblem,
+continuation(prob::Trapeze,
 				orbitguess,
 				alg::BifurcationKit.AbstractContinuationAlgorithm,
 				_contParams::ContinuationPar;

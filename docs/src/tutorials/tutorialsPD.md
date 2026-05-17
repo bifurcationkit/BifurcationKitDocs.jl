@@ -104,7 +104,7 @@ We use aBS from the first Hopf point:
 ```julia
 # define the functional for the standard simple shooting based on the
 # ODE solver ETDRK2.
-probSh = ShootingProblem(prob_sp, ODE.ETDRK2(krylov=true),
+probSh = Shooting(prob_sp, ODE.ETDRK2(krylov=true),
   [sol(280.0)]; abstol=1e-14, reltol=1e-12, dt = 0.1,
   lens = (@optic _.C),
   jacobian = BK.FiniteDifferencesMF())

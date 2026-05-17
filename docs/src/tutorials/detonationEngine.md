@@ -146,7 +146,7 @@ Using this guess, we can continue the traveling wave as function of a parameter.
 function computeBranch(br, nb; δp = 0.005, max_steps = 190)
 	_p, sol = get_guess(br, nb)
 	# traveling wave problem
-	probTW = TWProblem(
+	probTW = TWModel(
 		re_make(br.prob, params = (getparams(br)..., up = _p)),
 		getparams(br).Db,
 		copy(sol),

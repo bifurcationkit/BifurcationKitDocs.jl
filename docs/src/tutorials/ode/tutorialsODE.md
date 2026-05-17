@@ -106,7 +106,7 @@ br_pocoll = @time BK.continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Collocation method to locate PO, with polynomial degree 4
-	BK.PeriodicOrbitOCollProblem(50, 4; meshadapt = true);
+	BK.Collocation(50, 4; meshadapt = true);
 	# regular continuation options
 	plot = true,
 	args_po...)
@@ -136,7 +136,7 @@ br_posh = @time BK.continuation(
 	br, 4, opts_po_cont,
 	# this is where we tell that we want Standard Shooting
 	# with 15 time sections
-	BK.ShootingProblem(15, probsh, ODE.Vern9(), parallel = true);
+	BK.Shooting(15, probsh, ODE.Vern9(), parallel = true);
 	# regular continuation parameters
 	plot = true,
 	args_po...,
@@ -163,7 +163,7 @@ br_potrap = BK.continuation(
 	# we want to branch form the 4th bif. point
 	br, 4, opts_po_cont,
 	# we want to use the Trapeze method to locate PO
-	BK.PeriodicOrbitTrapProblem(M = Mt);
+	BK.Trapeze(M = Mt);
 	δp = 0.001,
 	plot = true,
 	args_po...,

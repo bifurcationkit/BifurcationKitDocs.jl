@@ -82,7 +82,7 @@ plot(sol_ode)
 We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of $k_8$
 
 ```@example STEINMETZ
-probsh, cish = BK.generate_ci_problem( BK.ShootingProblem(M = 5; jacobian = BK.AutoDiffDenseAnalytical() ), deepcopy(bifprob), prob_de, sol_ode, 16.; reltol = 1e-11, abstol = 1e-13, parallel = true)
+probsh, cish = BK.generate_ci_problem( BK.Shooting(M = 5; jacobian = BK.AutoDiffDenseAnalytical() ), deepcopy(bifprob), prob_de, sol_ode, 16.; reltol = 1e-11, abstol = 1e-13, parallel = true)
 
 opts_po_cont = BK.ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, n_inversion = 6, nev = 4, max_steps = 40, tol_stability = 1e-3, newton_options = BK.NewtonPar(max_iterations = 10))
 br_sh = BK.continuation(deepcopy(probsh), cish, BK.PALC(tangent = BK.Bordered()), opts_po_cont;
@@ -138,8 +138,7 @@ scene
 ## Computation with collocation
 
 ```@example STEINMETZ
-probcoll, cicoll = BK.generate_ci_problem( BK.PeriodicOrbitOCollProblem(50, 4; 
-	jacobian = BK.DenseAnalyticalInplace()), 
+probcoll, cicoll = BK.generate_ci_problem( BK.Collocation(50, 4),
 	deepcopy(bifprob), 
 	sol_ode, 
 	16.)
@@ -169,7 +168,6 @@ opts_pocl_fold = BK.ContinuationPar(br_coll.contparams, detect_bifurcation = 0, 
 fold_po_cl = BK.continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold;
         # verbosity = 3, # plot = true,
         detect_codim2_bifurcation = 2,
-        start_with_eigen = false,
         usehessian = true,
         jacobian_ma = BK.MinAug(),
         normC = norminf,

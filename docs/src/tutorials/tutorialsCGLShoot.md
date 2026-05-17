@@ -153,7 +153,7 @@ br_po = continuation(
 	opts_po_cont,
 	# this is how to pass the method to compute the periodic
 	# orbits. We shall use 1 section and the ODE solver ETDRK2
-	ShootingProblem(Mt, prob_sp, ODE.ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8, jacobian = BK.FiniteDifferencesMF()) ;
+	Shooting(Mt, prob_sp, ODE.ETDRK2(krylov = true); abstol = 1e-10, reltol = 1e-8, jacobian = BK.FiniteDifferencesMF()) ;
 	# linear solver for bordered linear system
 	# we combine the 2 solves. It is here faster than BorderingBLS()
 	linear_algo = MatrixFreeBLS(@set ls.N = Mt*2n+2),
@@ -176,7 +176,7 @@ The goal of this section is to show how to use the package in case automatic bra
 We decide to use Standard Shooting and thus define a Shooting functional
 
 ```julia
-probSh = ShootingProblem(
+probSh = Shooting(
 	# we pass the ODEProblem encoding the flow and the time stepper
 	BK.remake(prob_sp, p = (@set par_cgl.r = 1.2)), ODE.ETDRK2(krylov = true),
 
