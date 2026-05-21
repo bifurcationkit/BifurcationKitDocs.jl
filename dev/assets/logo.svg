@@ -10,24 +10,36 @@
    viewBox="0 0 298.87567 300.04239"
    height="300.04239pt"
    width="298.87567pt">
-  <metadata
-     id="metadata846">
+
+  <style>
+    :root { --curve-color: #000000; }
+
+    @media (prefers-color-scheme: dark) {
+      :root { --curve-color: #ffffff; }
+    }
+
+    #path856 {
+      stroke: var(--curve-color) !important;
+    }
+  </style>
+
+  <metadata id="metadata846">
     <rdf:RDF>
-      <cc:Work
-         rdf:about="">
+      <cc:Work rdf:about="">
         <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <defs
-     id="defs844" />
+
+  <defs id="defs844" />
+
   <path
      id="path856"
      d="M 0.28662141,297.22228 C 68.335116,290.3062 83.235631,275.03635 105.78063,265.34252 130.18598,254.84877 252.2503,208.3221 252.96069,166.39732 253.66515,124.82248 89.572581,145.4677 90.019281,87.64231 90.242631,58.729615 245.59426,16.559907 298.15492,2.7414841"
-     style="fill:none;stroke:#000000;stroke-width:5.66929;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="fill:none;stroke:var(--curve-color);stroke-width:5.66929;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+
   <g
      transform="rotate(-33.522579,151.03011,192.5334)"
      id="g854">
