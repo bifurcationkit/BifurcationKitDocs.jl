@@ -10,7 +10,7 @@ Depth = 3
 Plotting is provided by calling recipes to `Plots.jl`. It means that to plot a branch `br`, you just need to call
 
 ```julia
-#]add Plots # You need to install Plots.jl before your first time using it!
+# ] add Plots # You need to install Plots.jl before your first time using it!
 using Plots
 plot(br)
 ```
@@ -128,7 +128,7 @@ scatter(real.(eigvals), imag.(eigvals))
 Plotting is also provided by calling recipes to `Makie.jl`. It means that to plot a branch `br`, you just need to call
 
 ```julia
-#]add GLMakie # You need to install GLMakie.jl before your first time using it!
+# ] add GLMakie # You need to install GLMakie.jl before your first time using it!
 using GLMakie
 BifurcationKit.plot(br)
 ```
