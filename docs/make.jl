@@ -47,13 +47,19 @@ makedocs(
 	    "🧩 Problems" => [
 	        "Bifurcation Problem" => "BifProblem.md",
 	        "DiffEq wrapper" => "diffeq.md",
-	        "Periodic Orbits" => [
-	            "Introduction" => "periodicOrbit.md",
-	            "Trapezoid" => "periodicOrbitTrapeze.md",
-	            "Collocation" => "periodicOrbitCollocation.md",
-	            "Shooting" => "periodicOrbitShooting.md",
-	            ],
-	        "Symmetries / Waves" => [
+        "Periodic Orbits" => [
+            "Introduction" => "periodicOrbit.md",
+            "Trapezoid" => "periodicOrbitTrapeze.md",
+            "Collocation" => "periodicOrbitCollocation.md",
+            "Shooting" => "periodicOrbitShooting.md",
+            ],
+        "Boundary Value Problems" => [
+            "Introduction" => "bvp.md",
+            "Trapezoid" => "bvpTrapeze.md",
+            "Collocation" => "bvpCollocation.md",
+            "Shooting" => "bvpShooting.md",
+            ],
+        "Symmetries / Waves" => [
 	            "Introduction" => "intro_wave.md",
 	            "Eigen Solvers" => "waveEigen.md",
 	            # "Modulated Travelling waves" => "ModulatedTW.md",

@@ -80,20 +80,24 @@ We compute the branch of periodic orbits from the last Hopf bifurcation point (o
 # arguments for periodic orbits
 # one function to record information and one
 # function for plotting
-args_po = (	record_from_solution = (x, p; k...) -> begin
-		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-		return (max = maximum(xtt[1,:]),
-				min = minimum(xtt[1,:]),
-				period = BK.getperiod(p.prob, x, p.p))
-	end,
-	plot_solution = (x, p; k...) -> begin
-		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-		arg = (marker = :d, markersize = 1)
-		plot!(xtt.t, xtt[1,:]; label = "E", arg..., k...)
-		plot!(xtt.t, xtt[2,:]; label = "x", arg..., k...)
-		plot!(xtt.t, xtt[3,:]; label = "u", arg..., k...)
-		plot!(br; subplot = 1, putspecialptlegend = false)
-		end,
+@views function record_from_solution(x, p; k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+	return (max = maximum(xtt[1,:]),
+			min = minimum(xtt[1,:]),
+			period = BK.getperiod(p.prob, x, p.p))
+end
+
+@views function plot_solution(x, p; k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+	arg = (marker = :d, markersize = 1)
+	plot!(xtt.t, xtt[1,:]; label = "E", arg..., k...)
+	plot!(xtt.t, xtt[2,:]; label = "x", arg..., k...)
+	plot!(xtt.t, xtt[3,:]; label = "u", arg..., k...)
+	plot!(br; subplot = 1, putspecialptlegend = false)
+end
+
+args_po = (	;record_from_solution,
+	plot_solution,
 	# we use the supremum norm
 	normC = BK.norminf)
 
