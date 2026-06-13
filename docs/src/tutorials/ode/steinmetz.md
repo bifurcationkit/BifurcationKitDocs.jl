@@ -130,8 +130,8 @@ ns_po_sh = BK.continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
 ```
 
 ```@example STEINMETZ
-scene = plot(ns_po_sh, vars = (:k7, :k8))
-plot!(scene, fold_po_sh)
+scene = plot(ns_po_sh, vars = (:k7, :k8), branchlabel = "NS")
+plot!(scene, fold_po_sh, branchlabel = "Fold-PO")
 scene
 ```
 
@@ -174,7 +174,7 @@ fold_po_cl = BK.continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold
         callback_newton = BK.cbMaxNorm(1e1),
         )
 
-plot(fold_po_cl)
+plot(fold_po_cl, branchlabel = "Fold-PO")
 ```
 
 ### Curve of NS points of periodic orbits
@@ -195,7 +195,7 @@ scene = plot(ns_po_cl; vars = (:k7, :k8))
 ```
 
 ```@example STEINMETZ
-scene = plot(fold_po_cl)
-plot!(ns_po_cl; vars = (:k7, :k8))
+scene = plot(fold_po_cl, branchlabel = "Fold-PO")
+plot!(ns_po_cl; vars = (:k7, :k8), branchlabel = "NS")
 scene
 ```

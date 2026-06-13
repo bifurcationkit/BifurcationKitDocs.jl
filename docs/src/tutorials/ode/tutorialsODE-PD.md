@@ -95,12 +95,7 @@ br_po = BK.continuation(
 	BK.Collocation(40, 4);
 	plot = true,
 	# linear_algo = BK.COPBLS(),
-	record_from_solution = recordPO,
-	plot_solution = (x, p; k...) -> begin
-		plotPO(x, p; k...)
-		# plot previous branch
-		plot!(br, subplot = 1, putbifptlegend = false)
-		end,
+	plot_solution = plotPO,
 	normC = BK.norminf)
 
 scene = plot(br, br_po)
@@ -117,12 +112,7 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = BK.continuation(deepcopy(br_po), 1, BK.ContinuationPar(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
-	plot_solution = (x, p; k...) -> begin
-		plotPO(x, p; k...)
-		## add previous branch
-		plot!(br_po; subplot = 1)
-	end,
-	record_from_solution = recordPO,
+	plot_solution = plotPO,
 	normC = BK.norminf,
 	)
 
@@ -145,7 +135,7 @@ opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, newton_options = BK.New
 br_po = BK.continuation(
 	br, 1, opts_po_cont,
 	# parallel shooting functional with 10 sections
-	BK.Shooting(15, prob_ode, ODE.Vern9(); parallel = true);
+	BK.Shooting(5, prob_ode, ODE.Vern9(); parallel = true, abstol = 1e-10, reltol = 1e-8);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -167,15 +157,14 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = BK.continuation(deepcopy(br_po), 1, 
-	BK.ContinuationPar(br_po.contparams, max_steps = 10, ds = -0.005);
-	plot = true, verbosity = 2,
+	BK.ContinuationPar(br_po.contparams, max_steps = 10, ds = -0.01);
 	plot_solution = (x, p; k...) -> begin
 		plotPO(x, p; k...)
 		# add previous branch
 		plot!(br_po; subplot = 1)
 	end,
 	record_from_solution = recordPO,
-	autodiff_nf = true,
+	# autodiff_nf = true,
 	normC = BK.norminf,
 	callback_newton = BK.cbMaxNorm(10),
 	)

@@ -8,7 +8,7 @@ Depth = 3
 We consider the model [^Balmforth][^Malham] which is also treated in [^Beyn]
 
 $$\begin{array}{l}
-u_{t}=a u_{x x}-u f(v), \quad a>0, u, v: \mathbb{R} \rightarrow \mathbb{R} \\
+u_{t}=a u_{x x}-u f(v), \quad a > 0, u, v: \mathbb{R} \rightarrow \mathbb{R} \\
 v_{t}=v_{x x}+u f(v)
 \end{array}$$
 
@@ -184,29 +184,15 @@ v_{t}=v_{x x}+s\cdot v_x+u f(v)\\
 
 which can be written with a PDE $M_aU_t = G(u)$ with mass matrix $M_a = (Id, Id, 0)$. We have already written the vector field of (MF) in the function `FcatWave`.
 
-Having found a front $U^f$, we can continue it as function of the parameter $a$ and detect instabilities. The stability of the front is linked to the eigenelements $(\lambda, V)$ solution of the generalized eigenvalue problem:
+Having found a front $U^f$, we can continue it as function of the parameter $a$ and detect instabilities. The stability of the front is linked to the eigen-elements $(\lambda, V)$ solution of the generalized eigenvalue problem:
 
 $$\lambda M_a\cdot V = dG(U^f)\cdot V.$$
 
-
-However `BifurcationKit` does not provide a generalized eigenvalue solver for now, so we devise one:
+`BifurcationKit` provides a generalized eigenvalue solver:
 
 ```@example TUTAUTOCAT
-# we need  a specific eigensolver
-struct EigenWave <: BK.AbstractEigenSolver end
-
-# implementation of the solver for the generalized Eigen problem
-function (eig::EigenWave)(Jac, nev; k...)
-	N = size(Jac, 1)
-	B = diagm(vcat(ones(N-1), 0))
-	F = eigen(Array(Jac), B)
-	I = sortperm(F.values, by = real, rev = true)
-	nev2 = min(nev, length(I))
-	J = findall( abs.(F.values[I]) .< 100000)
-	return Complex.(F.values[I[J[1:nev2]]]), Complex.(F.vectors[:, I[J[1:nev2]]]), true, 1
-end
-
-optn = NewtonPar(tol = 1e-8, eigsolver = EigenWave())
+eigsolver = BK.DefaultGEig(; B = diagm(vcat(ones(2N), 0)))
+optn = NewtonPar(;tol = 1e-8, eigsolver)
 opt_cont_br = ContinuationPar(p_min = 0.05, p_max = 1., newton_options = optn, ds= -0.001, plot_every_step = 2, detect_bifurcation = 3, nev = 10, n_inversion = 6)
 br = continuation(probtw, PALC(), opt_cont_br)
 plot(br)

@@ -106,6 +106,21 @@ PoincareShooting
 TWModel
 ```
 
+```@docs
+BifurcationKit.EigenWave
+```
+
+```@docs
+BifurcationKit.GEigenWave
+```
+
+```@docs
+continuation(prob::BifurcationKit.TWModel,
+                    orbitguess, 
+                    alg::BifurcationKit.AbstractContinuationAlgorithm, 
+                    contParams::BifurcationKit.ContinuationPar; kw...)
+```
+
 ## [Linear solvers](@id Library-LS)
 
 ```@docs
@@ -152,6 +167,28 @@ BifurcationKit.EigArnoldiMethod
 
 ```@docs
 BifurcationKit.EigenMassMatrix
+```
+
+## [Generalized Eigen solvers](@id Library-GEIG)
+
+```@docs
+BifurcationKit.gev
+```
+
+```@docs
+BifurcationKit.DefaultGEig
+```
+
+```@docs
+BifurcationKit.GEigArpack
+```
+
+```@docs
+BifurcationKit.GEigKrylovKit
+```
+
+```@docs
+BifurcationKit.GEigArnoldiMethod
 ```
 
 ## [Floquet solvers](@id Library-FLOQUET)
@@ -213,9 +250,7 @@ continuation
 
 ## Continuation algorithms
 
-```@docs
-PALC
-```
+### Tangents / predictors
 
 ```@docs
 Natural
@@ -237,21 +272,26 @@ Polynomial
 Multiple
 ```
 
+### Algorithms
+
+```@docs
+PALC
+```
+
 ```@docs
 BifurcationKit.AutoSwitch
 ```
-
 
 ```@docs
 MoorePenrose
 ```
 
 ```@docs
-BifurcationKit.DefCont
+AsymptoticNumericalMethod.ANM
 ```
 
 ```@docs
-AsymptoticNumericalMethod.ANM
+BifurcationKit.DefCont
 ```
 
 ## Events

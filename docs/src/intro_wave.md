@@ -22,17 +22,15 @@ F(x, p) - \sum\limits_{i=1}^{N_g}\ s_i\cdot T_i\cdot x=0 \\
 
 ## Wave stability
 
-There are several ways to compute the stability of a wave $(x^w,p,s^w)$. From [^Sandstede], this requires to compute the spectrum of
+There are several ways to compute the stability of a wave $(x^w,p,s^w)$. 
 
-$$d_1F(x,p)- \sum\limits_{i=1}^{N_g}\ s_i\cdot T_i\tag{EV}.$$
+- From [^Sandstede], this requires to compute the spectrum of
+$ d_1F(x,p)- \sum\limits_{i=1}^{N_g}\ s_i\cdot T_i$ (EV).
+However, there is (potentially) the zero eigenvalue associated to the eigenvectors $T_i\cdot x^w$. In practice, because the symmetry is discrete numerically, we find a small eigenvalue instead of 0, it can be removed by setting `ContinuationPar.tol_stability`. This is implemented in the solver [`EigenWave`](@ref).
 
-However, there is (potentially) the zero eigenvalue associated to the eigenvectors $T_i\cdot x^w$. In practice, because the symmetry is discrete numerically, we find a small eigenvalue instead of 0.
-
-Another way to compute the same spectrum is to proceed as follows. Using (W) as a definition of the functional $G((x,s),p)\in\mathbb R^{N+1}$, the eigenproblem for computing the stability of a wave $(x^w,s^w)$ is
-
-$$A x = σ Bx\tag{GEV}$$
-
-where $B = diag(1,\cdots,1,0)$ and $A:=dG$. An advantage of (GEV) over (EV) is that the trivial eigenvalues are removed but it comes at an increased cost. We can improved this situation as follows.
+- Another way to compute the same spectrum is to proceed as follows. Using (W) as a definition of the functional $G((x,s),p)\in\mathbb R^{N+1}$, the eigenproblem for computing the stability of a wave $(x^w,s^w)$ is
+$A x = σ Bx$ (GEV)
+where $B = diag(1,\cdots,1,0)$ and $A:=dG$. An advantage of (GEV) over (EV) is that the trivial eigenvalues are removed but it comes at an increased cost. This is implemented in the solver [`GEigenWave`](@ref). We can improve this situation as follows.
 
 ## Case $N_g=1$
 Let us have a look at (GEV) more closely. We need to solve for the eigenvalues $\sigma$ and the eigenvectors $(x_1,c_1)$ solutions of

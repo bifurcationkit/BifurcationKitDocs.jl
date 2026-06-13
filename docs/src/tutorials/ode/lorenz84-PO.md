@@ -128,7 +128,7 @@ ns_po2 = BK.continuation(hp_codim2_1, ind_hh, opts_ns_po,
 		whichns = 2,
 		jacobian_ma = BK.MinAug(),
 		)
-plot!(ns_po2, vars=(:F, :T), branchlabel = "NS2")
+plot!(ns_po2, vars=(:F, :T), branchlabel = "NS2", ylims = (0, 0.06))
 ```
 
 ## References

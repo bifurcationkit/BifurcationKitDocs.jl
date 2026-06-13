@@ -65,18 +65,22 @@ plot(sol)
 We start with two helper functions that record and plot the periodic orbits. The following works for shooting, collocation and trapezoid methods for computing periodic orbits.
 
 ```@example TUTPPREY
-argspo = (record_from_solution = (x, p; k...) -> begin
-		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-		return (max = maximum(xtt[1,:]),
-				min = minimum(xtt[1,:]),
-				period = BK.getperiod(p.prob, x, p.p))
-	end,
-	plot_solution = (x, p; k...) -> begin
-		xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-		plot!(xtt.t, xtt[1,:]; label = "x", k...)
-		plot!(xtt.t, xtt[2,:]; label = "y", k...)
-		# plot!(br; subplot = 1, putspecialptlegend = false)
-	end)
+function record_from_solution(x, p; k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+	return (max = maximum(xtt[1,:]),
+			min = minimum(xtt[1,:]),
+			period = BK.getperiod(p.prob, x, p.p))
+end
+
+function plot_solution(x, p; k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+	plot!(xtt.t, xtt[1,:]; label = "x", k...)
+	plot!(xtt.t, xtt[2,:]; label = "y", k...)
+	# plot!(br; subplot = 1, putspecialptlegend = false)
+end
+
+argspo = (;record_from_solution,
+	plot_solution)
 ```
 
 

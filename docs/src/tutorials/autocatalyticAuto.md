@@ -135,12 +135,12 @@ using LinearAlgebra
 
 # this structure encodes the Lie generator
 struct Advection{T}
-	p::T
+	∂::T
 end
 
 function LinearAlgebra.mul!(f, aD::Advection, U, α, β)
 	rmul!(f, β)
-	applyD_add!(f, U, aD.p, α)
+	applyD_add!(f, U, aD.∂, α)
 end
 
 uold = vcat(u0, (1 .- u0))
@@ -184,7 +184,7 @@ v_{t}=v_{x x}+s\cdot v_x+u f(v)\\
 
 which can be written with a PDE $M_aU_t = G(u)$ with mass matrix $M_a = (Id, Id, 0)$. We have already written the vector field of (MF) in the problem `probTW`.
 
-Having found a front $U^f$, we can continue it as function of the parameter $a$ and detect instabilities. The stability of the front is linked to the eigenelements $(\lambda, V)$ solution of the generalized eigenvalue problem:
+Having found a front $U^f$, we can continue it as function of the parameter $a$ and detect instabilities. The stability of the front is linked to the eigen-elements $(\lambda, V)$ solution of the generalized eigenvalue problem:
 
 $$\lambda M_a\cdot V = dG(U^f)\cdot V.$$
 

@@ -123,7 +123,7 @@ Scene = title!("")
 br
 ```
 
-We have detected 6 Hopf bifurcations. We now study the periodic orbits branching from them.
+We have detected 6 Hopf bifurcations. Furthermore, we now study the periodic orbits branching from them.
 
 ## Computing the branches of Traveling waves
 
@@ -140,7 +140,7 @@ end
 nothing #hide
 ```
 
-Using this guess, we can continue the traveling wave as function of a parameter. Note that in the following code, a generalized eigensolver is automatically created during the call to `continuation` which properly computes the stability of the wave.
+Using this guess, we can continue the traveling wave as function of a parameter. Note that in the following code, an appropriate eigen-solver is automatically created during the call to `continuation` which properly computes the stability of the wave.
 
 ```@example DETENGINE
 function computeBranch(br, nb; δp = 0.005, max_steps = 190)

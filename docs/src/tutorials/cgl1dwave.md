@@ -164,14 +164,15 @@ plot(wave.u[1:end-1]; linewidth = 5, label = "solution")
 plot!(uold, color = :blue, label="guess")
 ```
 
-Note that in the following code, a generalized eigensolver is automatically created during the call to `continuation` which properly computes the stability of the wave.
+Note that in the following code, an appropriate eigen-solver is automatically created during the call to `continuation` which properly computes the stability of the wave.
 
 ```@example CGL1DWAVE
 amplitude(x) = maximum(x) - minimum(x)
-optn = NewtonPar(tol = 1e-8, verbose = false, max_iterations = 10)
-opt_cont_br = ContinuationPar(p_min = 0.015, p_max = 2.5, newton_options = optn, ds= 0.001, dsmax = 0.1, detect_bifurcation = 3, nev = 10, max_steps = 190, n_inversion = 6)
+optn = NewtonPar(tol = 1e-8)
+opt_cont_br = ContinuationPar(p_min = 0.015, p_max = 2.5, newton_options = optn, ds= 0.001, dsmax = 0.05, detect_bifurcation = 3, nev = 10, n_inversion = 6, tol_stability = 1e-3)
 
-br_TW = @time continuation(probTW, wave.u, PALC(), opt_cont_br;
+br_TW = @time continuation(probTW, wave.u, PALC(tangent = Bordered()), opt_cont_br;
+	eigsolver = BK.EigenWave(),
 	record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
 	plot_solution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
 	finalise_solution = (z, tau, step, contResult; k...) -> begin
