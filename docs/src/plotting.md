@@ -135,10 +135,12 @@ BifurcationKit.plot(br)
 
 The keyword arguments to `BifurcationKit.plot` are the same as decribed above in the page. You can also combine diagrams with `BifurcationKit.plot(br1, br2)` or use `BifurcationKit.plot!(ax, br)` to add a branch to an existing plot.
 
+> You can also load `CairoMakie.jl` if you prefer
+
 ### Example
 
-```julia
-using GLMakie, BifurcationKit
+```@example PLOTCAIROBASIC
+using CairoMakie, BifurcationKit
 q = 1/0
 k = 2
 F(x, p) = (@. p + x - x^(k+1)/(k+1))

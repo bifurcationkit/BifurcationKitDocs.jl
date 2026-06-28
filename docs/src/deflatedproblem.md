@@ -14,10 +14,16 @@ The idea proposed in the paper quoted above is to penalize these solutions by lo
 
 $$M(x) = \prod_{i=1}^n\left(\|x - x_i\|^{-2p} + \alpha\right)$$
 
-and $\alpha>0$. Obviously $F$ and $G$ have the same zeros away from the $x_i$s but the factor $M$ penalizes the residual of the Newton iterations of $G$, effectively producing zeros of $F$ different from $x_i$.
+and $\alpha>0$. 
+
+!!! tip "Accumulator"
+    You can replace $\prod$ with $mean$
+
+
+Obviously $F$ and $G$ have the same zeros away from the $x_is$ but the factor $M$ penalizes the residual of the Newton iterations of $G$, effectively producing zeros of $F$ different from $x_i$.
 
 !!! tip "Tip"
-    In some case, you may want to use a custom distance, in place of the squared norm $$\|\cdot\|^2$$. Please see [`DeflationOperator`](@ref) for how to do this.
+    In some case, you may want to use a custom distance, in place of the squared norm $$\|\cdot\|^2$$ Please see [`DeflationOperator`](@ref) for how to do this.
 
 ## Encoding of the functional
 

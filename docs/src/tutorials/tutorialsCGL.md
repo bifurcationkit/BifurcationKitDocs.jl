@@ -167,7 +167,8 @@ br_hopf = @time continuation(
 	normC = norminf,
 	detect_codim2_bifurcation = 2,
 	jacobian_ma = BK.MinAug(), # specific to high dimensions
-	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false))
+	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false)
+	)
 
 plot(br_hopf, branchlabel = "Hopf curve", legend = :topleft)
 ```
@@ -210,30 +211,22 @@ ind_hopf = 1
 M = 30
 
 # periodic orbit initial guess from Hopf point
-r_hopf, Th, orbitguess2, hopfpt, eigvec = guess_from_hopf(br, ind_hopf, opt_newton.eigsolver,
-	# we pass the number of time slices M, the amplitude 22*sqrt(0.1) and phase
-	M, 22*sqrt(0.1); phase = 0.25)
-
-# flatten the initial guess
-orbitguess_f2 = reduce(hcat, orbitguess2)
-orbitguess_f = vcat(vec(orbitguess_f2), Th) |> vec
+nf_hopf = BK.get_normal_form(br, ind_hopf; detailed = Val(false))
+pred = predictor(nf_hopf, 1; ampfactor = 22*sqrt(0.1))
+list_of_time_steps = [pred.orbit(t) for t in LinRange(0, 2pi, M + 1)[1:M]]
+orbitguess_f = vcat(reduce(vcat, list_of_time_steps), pred.period)
+r_hopf = nf_hopf.params.r
 ```
 
 We create a problem to hold the functional and compute Periodic orbits based on Trapezoidal rule
 
 ```julia
-poTrap = Trapeze(
-# vector field and sparse Jacobian
-	re_make(prob, params = (@set par_cgl.r = r_hopf - 0.01)),
-# parameters for the phase condition
-	real.(eigvec),
-	hopfpt.u,
-# number of time slices
-	M,
-# space dimension
-	2n,
-# jacobian of the periodic orbit functional
-  jacobian = BK.FullMatrixFree())
+poTrap = Trapeze(re_make(prob, params = (@set par_cgl.r = r_hopf - 0.01)), 
+                    BK.residual(prob, list_of_time_steps[1], (@set par_cgl.r = r_hopf - 0.01)) |> normalize, 
+                    zeros(2n), 
+                    M, 
+                    2n; jacobian = BK.FullMatrixFree())
+BK.updatesection!(poTrap, orbitguess_f, @set par_cgl.r = r_hopf - 0.01)
 ```
 
 We can use this (family) problem `poTrap` with `newton` on our periodic orbit guess to find a periodic orbit. Hence, one can be tempted to use
@@ -256,7 +249,7 @@ Instead, we use a preconditioner. We build the jacobian once, compute its **inco
 using IncompleteLU
 
 # Sparse matrix representation of the jacobian of the periodic orbit functional
-Jpo = poTrap(Val(:JacFullSparse), orbitguess_f, @set par_cgl.r = r_hopf - 0.01)
+Jpo = BK.po_jacobian_sparse(poTrap, orbitguess_f, @set par_cgl.r = r_hopf - 0.01);
 
 # incomplete LU factorization with threshold
 Precilu = @time ilu(Jpo, τ = 0.005);
@@ -314,16 +307,11 @@ ls0 = GMRESIterativeSolvers(N = 2Nx*Ny, reltol = 1e-9, Pl = lu(I + par_cgl.Δ))
 poTrapMF = Trapeze(
 # vector field and sparse Jacobian
 	re_make(prob, params = (@set par_cgl.r = r_hopf - 0.01), J = (x, p) ->  (dx -> d1Fcgl(x, p, dx))),
-# parameters for the phase condition
-	real.(eigvec),
-	hopfpt.u,
-# number of time slices
-	M,
-# space dimension
+	BK.residual(prob, list_of_time_steps[1], (@set par_cgl.r = r_hopf - 0.01)) |> normalize, 
+	zeros(2n), 
+	M, 
 	2n,
-  ls0,
-# jacobian of the periodic orbit functional
-  jacobian = BK.FullMatrixFree())
+	ls0; jacobian = BK.FullMatrixFree())
 ```
 
 We can now use newton
@@ -430,16 +418,13 @@ ls0 = GMRESIterativeSolvers(N = 2Nx*Ny, reltol = 1e-9)#, Pl = lu(I + par_cgl.Δ)
 poTrapMFi = Trapeze(
 # vector field and sparse Jacobian
 	probInp,
-# parameters for the phase condition
-	real.(eigvec),
-	hopfpt.u,
-# number of time slices
-	M,
-# space dimension
+	BK.residual(prob, list_of_time_steps[1], (@set par_cgl.r = r_hopf - 0.01)) |> normalize, 
+	zeros(2n), 
+	M, 
 	2n,
-  ls0,
-# jacobian of the periodic orbit functional
-  jacobian = BK.FullMatrixFree())
+	ls0; 
+	jacobian = BK.FullMatrixFree(),
+	)
 ```
 and run the `newton` method:
 
@@ -473,7 +458,7 @@ Notice the small speed boost but the reduced allocations. At this stage, further
 We could use another way to "invert" jacobian of the functional based on bordered techniques. We try to use an ILU preconditioner on the cyclic matrix $J_c$ (see [Periodic orbits based on Trapezoidal rule](@ref)) which has a smaller memory footprint:
 
 ```julia
-Jpo2 = poTrap(Val(:JacCyclicSparse), orbitguess_f, @set par_cgl.r = r_hopf - 0.1)
+Jpo2 = BK.jacobian_cyclic_sparse(poTrap, orbitguess_f, @set par_cgl.r = r_hopf - 0.1)
 Precilu = @time ilu(Jpo2, τ = 0.005)
 ls2 = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, N = size(Jpo2, 1), restart = 30, maxiter = 50, Pl = Precilu, log=true)
 
@@ -531,7 +516,7 @@ This gives the following bifurcation diagram:
 ![](cgl2d-po-cont.png)
 
 !!! tip "Improved performances"
-    Although it would be "cheating" for fair comparisons with existing packages, there is a trick to compute the bifurcation diagram without using preconditionners. We will not detail it here but it allows to handle the case `Nx = 200; Ny = 110; M = 30` and above.
+    Although it would be "cheating" for fair comparisons with existing packages, there is a trick to compute the bifurcation diagram without using preconditionners. We will not detail it here, but it allows handling the case `Nx = 200; Ny = 110; M = 30` and above.
 
 We did not change the preconditioner in the previous example as it does not seem needed. Let us show how to do this nevertheless:
 
@@ -539,11 +524,10 @@ We did not change the preconditioner in the previous example as it does not seem
 # callback which will be sent to newton.
 # `iteration` in the arguments refers to newton iterations
 function callbackPO(state; linsolver = ls, prob = poTrap, p = par_cgl, kwargs...)
-	@show ls.N keys(kwargs)
 	# we update the preconditioner every 10 continuation steps
 	if mod(kwargs[:iterationC], 10) == 9 && state.step == 1
 		@info "update Preconditioner"
-		Jpo = poTrap(Val(:JacCyclicSparse), state.x, (@set p.r = state.p))
+		Jpo = BK.jacobian_cyclic_sparse(poTrap, state.x, (@set p.r = state.p))
 		Precilu = @time ilu(Jpo, τ = 0.003)
 		ls.Pl = Precilu
 	end
@@ -577,7 +561,7 @@ We select the Fold point from the branch `br_po` and redefine our linear solver 
 indfold = 1
 foldpt = BK.fold_point(br_po, indfold)
 
-Jpo = poTrap(Val(:JacFullSparse), orbitguess_f, (@set par_cgl.r = foldpt.p))
+Jpo = BK.po_jacobian_sparse(poTrap, foldpt.u, (@set par_cgl.r = foldpt.p))
 Precilu = @time ilu(Jpo, τ = 0.002);
 ls = GMRESIterativeSolvers(verbose = false, reltol = 1e-4, N = size(Jpo, 1), restart = 40, maxiter = 60, Pl = Precilu);
 ```
@@ -587,9 +571,9 @@ We can then use our functional to call `newtonFold` unlike for a regular functio
 ```julia
 # define a bifurcation problem for the fold
 # this will be made automatic in the future
-probFold = BifurcationProblem((x, p) -> BK.residual(poTrap, x, p), foldpt, getparams(br), getlens(br);
-			J = (x, p) -> poTrap(Val(:JacFullSparse), x, p),
-			d2F = (x, p, dx1, dx2) -> d2Fcglpb(z -> BK.residual(poTrap, z, p), x, dx1, dx2))
+probFold = BifurcationProblem((x, p) -> BK.po_residual(poTrap, x, p), foldpt, getparams(br), getlens(br);
+			J = (x, p) -> BK.po_jacobian_sparse(poTrap, x, p),
+			d2F = (x, p, dx1, dx2) -> d2Fcglpb(z -> BK.po_residual(poTrap, z, p), x, dx1, dx2))
 
 outfold = @time BK.newton_fold(
   br_po, indfold; #index of the fold point

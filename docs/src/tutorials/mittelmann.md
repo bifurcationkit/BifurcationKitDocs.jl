@@ -173,7 +173,7 @@ The call for automatic branch switching is the same as in the case of simple bra
 ```@example MITT
 branches = continuation(br, 2,
 	setproperties(opts_br; detect_bifurcation = 3, ds = 0.001, p_min = 0.01, max_steps = 30 ) ;
-  alg = PALC(tangent = Bordered()),
+	alg = PALC(tangent = Bordered()),
 	kwargsC...,
 	nev = 30,
 	)

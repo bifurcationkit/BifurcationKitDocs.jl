@@ -71,23 +71,12 @@ prob = BK.DAEBifProblem(Colpitts!, z0, par_Colpitts, (@optic _.μ); record_from_
 nothing #hide
 ```
 
-We first compute the branch of equilibria. But we need  a generalized eigenvalue solver for this.
+We first compute the branch of equilibria. But we need a generalized eigenvalue solver for this.
 
 ```@example TUTDAE1
-# we need  a specific eigensolver with mass matrix B
-struct EigenDAE{Tb} <: BK.AbstractDirectEigenSolver
-	B::Tb
-end
-
-# compute the eigen elements
-function (eig::EigenDAE)(Jac, nev; k...)
-	F = LA.eigen(Jac, eig.B)
-	I = sortperm(F.values, by = real, rev = true)
-	return Complex.(F.values[I]), Complex.(F.vectors[:, I]), true, 1
-end
-
+eigsolver = BK.EigenMassMatrix(Be, BK.DefaultEig())
 # continuation options
-optn = BK.NewtonPar(tol = 1e-13, max_iterations = 10, eigsolver = EigenDAE(Be))
+optn = BK.NewtonPar(;tol = 1e-13, max_iterations = 10, eigsolver)
 opts_br = BK.ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plot_every_step = 3, max_steps = 1000, newton_options = optn)
 opts_br = @set opts_br.newton_options.verbose = false
 br = BK.continuation(prob, BK.PALC(), opts_br; normC = BK.norminf)
