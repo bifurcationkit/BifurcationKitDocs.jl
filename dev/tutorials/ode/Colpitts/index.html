@@ -47,25 +47,14 @@ z0 = [0.9957,0.7650,19.81,-19.81]
 Be = [-(par_Colpitts.C1+par_Colpitts.C2) par_Colpitts.C2 0 0;par_Colpitts.C2 -par_Colpitts.C2 0 0;par_Colpitts.C1 0 0 0; 0 0 par_Colpitts.L 0]
 
 # we group the differentials together
-prob = BK.DAEBifProblem(Colpitts!, z0, par_Colpitts, (@optic _.μ); record_from_solution = recordFromSolution)</code></pre><p>We first compute the branch of equilibria. But we need  a generalized eigenvalue solver for this.</p><pre><code class="language-julia hljs"># we need  a specific eigensolver with mass matrix B
-struct EigenDAE{Tb} &lt;: BK.AbstractDirectEigenSolver
-	B::Tb
-end
-
-# compute the eigen elements
-function (eig::EigenDAE)(Jac, nev; k...)
-	F = LA.eigen(Jac, eig.B)
-	I = sortperm(F.values, by = real, rev = true)
-	return Complex.(F.values[I]), Complex.(F.vectors[:, I]), true, 1
-end
-
+prob = BK.DAEBifProblem(Colpitts!, z0, par_Colpitts, (@optic _.μ); record_from_solution = recordFromSolution)</code></pre><p>We first compute the branch of equilibria. But we need a generalized eigenvalue solver for this.</p><pre><code class="language- hljs">eigsolver = BK.EigenMassMatrix(Be, BK.DefaultEig())
 # continuation options
-optn = BK.NewtonPar(tol = 1e-13, max_iterations = 10, eigsolver = EigenDAE(Be))
+optn = BK.NewtonPar(;tol = 1e-13, max_iterations = 10, eigsolver)
 opts_br = BK.ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plot_every_step = 3, max_steps = 1000, newton_options = optn)
 opts_br = @set opts_br.newton_options.verbose = false
 br = BK.continuation(prob, BK.PALC(), opts_br; normC = BK.norminf)
 
-scene = plot(br, vars = (:param, :x1))</code></pre><img src="13cdbdfd.svg" alt="Example block output"/><h2 id="Periodic-orbits-with-Multiple-Standard-Shooting"><a class="docs-heading-anchor" href="#Periodic-orbits-with-Multiple-Standard-Shooting">Periodic orbits with Multiple Standard Shooting</a><a id="Periodic-orbits-with-Multiple-Standard-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-with-Multiple-Standard-Shooting" title="Permalink"></a></h2><p>We use shooting to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use <code>DifferentialEquations.jl</code>.</p><p>Thanks to <sup class="footnote-reference"><a id="citeref-Lamour" href="#footnote-Lamour" class="footnote-ref">[Lamour]</a><span class="footnote-preview" id="fn-Lamour"></span></sup>, we can  just compute the Floquet coefficients to get the nonlinear stability of the periodic orbit. Two period doubling bifurcations are detected.</p><p>Note that we use Automatic Branch Switching from a Hopf bifurcation despite the fact the normal form implemented in <code>BifurcationKit.jl</code> is not valid for DAE. For example, it predicts a subcritical Hopf point whereas we see below that it is supercritical. Nevertheless, it provides a</p><pre><code class="language-julia hljs">import OrdinaryDiffEq as ODE
+scene = plot(br, vars = (:param, :x1))</code></pre><h2 id="Periodic-orbits-with-Multiple-Standard-Shooting"><a class="docs-heading-anchor" href="#Periodic-orbits-with-Multiple-Standard-Shooting">Periodic orbits with Multiple Standard Shooting</a><a id="Periodic-orbits-with-Multiple-Standard-Shooting-1"></a><a class="docs-heading-anchor-permalink" href="#Periodic-orbits-with-Multiple-Standard-Shooting" title="Permalink"></a></h2><p>We use shooting to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use <code>DifferentialEquations.jl</code>.</p><p>Thanks to <sup class="footnote-reference"><a id="citeref-Lamour" href="#footnote-Lamour" class="footnote-ref">[Lamour]</a><span class="footnote-preview" id="fn-Lamour"></span></sup>, we can  just compute the Floquet coefficients to get the nonlinear stability of the periodic orbit. Two period doubling bifurcations are detected.</p><p>Note that we use Automatic Branch Switching from a Hopf bifurcation despite the fact the normal form implemented in <code>BifurcationKit.jl</code> is not valid for DAE. For example, it predicts a subcritical Hopf point whereas we see below that it is supercritical. Nevertheless, it provides a</p><pre><code class="language- hljs">import OrdinaryDiffEq as ODE
 
 # this is the ODEProblem used with `DiffEqBase.solve`
 # we  set  the initial conditions
@@ -102,25 +91,7 @@ br_po = BK.continuation(br, 1, opts_po_cont, probSH;
 	# the newton callback is used to reject residual &gt; 1
 	# this is to avoid numerical instabilities from DE.jl
 	callback_newton = BK.cbMaxNorm(1.0),
-	normC = BK.norminf)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: <span class="sgr36"><span class="sgr1">PeriodicOrbitCont from Hopf bifurcation point.</span></span>
- ├─ Number of points: 38
- ├─ Type of vectors: <span class="sgr36"><span class="sgr1">Vector{Float64}</span></span>
- ├─ Parameter <span class="sgr36"><span class="sgr1">μ</span></span> starts at 0.7642229295455084, ends at 0.6351257123774348
- ├─ Algo: <span class="sgr36"><span class="sgr1">PALC [Secant]</span></span>
- └─ Special points:
-
-- #  1, <span class="sgr34"><span class="sgr1">      pd</span></span> at μ ≈ +0.73090686 ∈ (+0.73090686, +0.73162736), |δp|=7e-04, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = ( 1,  1), step =  17
-- #  2, <span class="sgr34"><span class="sgr1">      pd</span></span> at μ ≈ +0.67281702 ∈ (+0.67281702, +0.67355889), |δp|=7e-04, [<span class="sgr32"><span class="sgr1">converged</span></span>], δ = (-1, -1), step =  27
-- #  3, <span class="sgr1">endpoint</span> at μ ≈ +0.63512571,                                                                     step =  37
-</code></pre><p><img src="../Colpitts1.png" alt/></p><p>with detailed information</p><pre><code class="language-julia hljs">show(br)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"> ┌─ Curve type: EquilibriumCont
- ├─ Number of points: 25
- ├─ Type of vectors: Vector{Float64}
- ├─ Parameter μ starts at 0.5, ends at 0.8
- ├─ Algo: PALC [Secant]
- └─ Special points:
-
-- #  1,     hopf at μ ≈ +0.76522293 ∈ (+0.76482814, +0.76522293), |δp|=4e-04, [converged], δ = (-2, -2), step =  21
-- #  2, endpoint at μ ≈ +0.80000000,                                                                     step =  24</code></pre><p>Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation.</p><pre><code class="language- hljs">probFreez_ode = ODE.ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.733)
+	normC = BK.norminf)</code></pre><p><img src="../Colpitts1.png" alt/></p><p>with detailed information</p><pre><code class="language- hljs">show(br)</code></pre><p>Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation.</p><pre><code class="language- hljs">probFreez_ode = ODE.ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.733)
 
 solFreez = @time ODE.solve(probFreez_ode, ODE.Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
 
@@ -133,4 +104,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Rabier"><a class="tag is-link" href="#citeref-Rabier">Rabier</a><blockquote><p>Rabier, Patrick J. “The Hopf Bifurcation Theorem for Quasilinear Differential-Algebraic Equations.” Computer Methods in Applied Mechanics and Engineering 170, no. 3–4 (March 1999): 355–71. https://doi.org/10.1016/S0045-7825(98)00203-5.</p></blockquote></li><li class="footnote" id="footnote-Lamour"><a class="tag is-link" href="#citeref-Lamour">Lamour</a><blockquote><p>Lamour, René, Roswitha März, and Renate Winkler. “How Floquet Theory Applies to Index 1 Differential Algebraic Equations.” Journal of Mathematical Analysis and Applications 217, no. 2 (January 1998): 372–94. https://doi.org/10.1006/jmaa.1997.5714.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Saturday 13 June 2026 09:51">Saturday 13 June 2026</span>. Using Julia version 1.10.11.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-Rabier"><a class="tag is-link" href="#citeref-Rabier">Rabier</a><blockquote><p>Rabier, Patrick J. “The Hopf Bifurcation Theorem for Quasilinear Differential-Algebraic Equations.” Computer Methods in Applied Mechanics and Engineering 170, no. 3–4 (March 1999): 355–71. https://doi.org/10.1016/S0045-7825(98)00203-5.</p></blockquote></li><li class="footnote" id="footnote-Lamour"><a class="tag is-link" href="#citeref-Lamour">Lamour</a><blockquote><p>Lamour, René, Roswitha März, and Renate Winkler. “How Floquet Theory Applies to Index 1 Differential Algebraic Equations.” Journal of Mathematical Analysis and Applications 217, no. 2 (January 1998): 372–94. https://doi.org/10.1006/jmaa.1997.5714.</p></blockquote></li></ul></section></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Sunday 28 June 2026 14:52">Sunday 28 June 2026</span>. Using Julia version 1.10.11.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
