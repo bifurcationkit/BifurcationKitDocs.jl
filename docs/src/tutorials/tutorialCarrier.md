@@ -128,7 +128,7 @@ plot(br)
 
 We obtain the following result which is remarkable because it contains many more disconnected branches which we did not find in the first try.
 
-If we use a smaller parameter step, we get more branches. We don't do it here because the docs run on githiub CI and is ressource limited.
+If we use a smaller parameter step, we get more branches. We don't do it here because the docs run on githiub CI and is resource limited.
 
 ```julia
 br = @time continuation(

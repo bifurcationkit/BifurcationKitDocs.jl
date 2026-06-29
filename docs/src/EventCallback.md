@@ -29,17 +29,7 @@ The set of possible events `DiscreteEvent, ContinuousEvent, SetOfEvents, PairOfE
 
 ## Built-in events
 
-```@docs
-BifurcationKit.SaveAtEvent
-```
 
-```@docs
-BifurcationKit.FoldDetectEvent
-```
-
-```@docs
-BifurcationKit.BifDetectEvent
-```
 
 
 ## Examples

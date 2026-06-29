@@ -9,7 +9,7 @@ The precise definition of the methods is given in [Branch switching (branch poin
 
 ## (Automatic) branch switching of simple bifurcation points
 
-Unlike other continuation softwares (Auto07p, MatCont, pde2path), `BifurcationKit` has methods for automatic branch switching where the user is only asked to provide the parameter distance from a point on the bifurcated branch to the bifurcation point. Let us explain this in more detail using the following figure.
+Unlike other continuation software (Auto07p, MatCont, pde2path), `BifurcationKit` has methods for automatic branch switching where the user is only asked to provide the parameter distance from a point on the bifurcated branch to the bifurcation point. Let us explain this in more detail using the following figure.
 
 ![](abs.png)
 

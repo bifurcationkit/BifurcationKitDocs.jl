@@ -70,7 +70,11 @@ We provide many different linear solvers to take advantage of the formulations o
  The algorithm is based on the one described in [^Sanchez] and [^Waugh]. 
 
 
-We look for periodic orbits solutions of (1) using the hyperplanes $\Sigma_i=\{x\ / \ \langle x-x^c_{I}, n_i\rangle=0\}$ for $i=1,\cdots,M$, centered on $x^c_i$, which intersect transversally an initial periodic orbit guess. We write $\Pi_i:\Sigma_i\to\Sigma_{mod(i+1,M)}$, the Poincaré return map to $\Sigma_{mod(i+1,M)}$. The main idea of the algorithm is to use the fact that the problem is $(N-1)\cdot M$ dimensional if $x_i\in\mathbb R^N$ because each $x_i$ lives in $\Sigma_i$. Hence, one has to constrain the unknowns to these hyperplanes otherwise the Newton algorithm does not converge well.
+We look for periodic orbit solutions of (1) using the hyperplanes
+
+$$\Sigma_i = \{ x \mid \langle x - x_i^c, n_i \rangle = 0 \},\qquad i = 1, \dots, M,$$
+
+which an initial periodic orbit guess intersects transversally.  Let $\Pi_i : \Sigma_i \to \Sigma_{\bmod(i+1,M)}$ denote the Poincaré return map.  The key observation is that when each $x_i \in \mathbb{R}^N$ is constrained to lie in $\Sigma_i$, the problem becomes $(N-1)M$-dimensional rather than $NM$-dimensional.  Enforcing these hyperplane constraints explicitly is therefore necessary for the Newton iteration to converge reliably.
 
 We thus need to parametrize these hyperplanes.
 

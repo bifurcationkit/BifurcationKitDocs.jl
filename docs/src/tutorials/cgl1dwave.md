@@ -155,7 +155,7 @@ uold = copy(orbitguess2[1][1:2n])
 # we create a TW problem
 probTW = TWModel(re_make(prob, params = (par_cgl..., r = r_hopf - 0.01)), par_cgl.Db, uold; jacobian = BK.FullLU())
 
-# refine the guesss
+# refine the guess
 wave = newton(probTW, vcat(uold, 0),
 		NewtonPar(verbose = true, max_iterations = 50),
 	)

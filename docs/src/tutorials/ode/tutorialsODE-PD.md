@@ -79,7 +79,7 @@ end
 function recordPO(x, p; k...)
 	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
 	period = BK.getperiod(p.prob, x, p.p)
-	mn, mx = extrema(xtt[1,:])
+	mn, mx = extrema(xtt[1, :])
 	return (;max = mx, min = mn, period)
 end
 ```
@@ -134,7 +134,7 @@ opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, newton_options = BK.New
 
 br_po = BK.continuation(
 	br, 1, opts_po_cont,
-	# parallel shooting functional with 10 sections
+	# parallel shooting functional with 5 sections
 	BK.Shooting(5, prob_ode, ODE.Vern9(); parallel = true, abstol = 1e-10, reltol = 1e-8);
 	# plot = true,
 	record_from_solution = recordPO,
@@ -172,7 +172,7 @@ br_po_pd = BK.continuation(deepcopy(br_po), 1,
 scene = plot(br, br_po, br_po_pd, title = "Shooting based")
 ```
 
-## Branch of periodic orbits with finite differences
+## Branch of periodic orbits with Trapeze
 
 We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching from the Hopf point as follows
 

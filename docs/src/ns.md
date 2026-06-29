@@ -17,10 +17,10 @@ contain the eigenvalues $e^{\pm i \theta}$ with $\theta$ and
 
 $$e^{i q \theta}-1 \neq 0, \quad q=1,2,3,4 \text { (no strong resonances). }$$
 
-There are two ways to compute the normal form of this bifurcation
+There are two ways to compute the normal form of this bifurcation:
 
-1. using the Poincaré return map [^Kuznetsov]
-2. using the method of [^Iooss], see also [^Kuz2]
+1. using the Poincaré return map [^Kuznetsov],
+2. using the method of [^Iooss], see also [^Kuz2].
 
 You can obtain the normal form of a NS bifurcation using 
 
@@ -40,20 +40,23 @@ Depending on the method used for computing the periodic orbits, you have several
 
 ## Normal form based on Poincaré return map
 
-Given a transversal section $\Sigma$ to $\gamma$ at $\gamma(0)$, the Poincaré return map $\mathcal P$ associates to each point $x\in\Sigma$ close to $\gamma(0)$ the first point $\mathcal P(x,p)\in\Sigma$ where the orbit of (E) with initial condition $x$ intersects again $\Sigma$ at $\mathcal P(x,p)$. Hence, the discrete map $x_{n+1}=\mathcal P(x_n,p)$ has normal form
+Given a transversal section $\Sigma$ to $\gamma$ at $\gamma(0)$, the Poincaré return map $\mathcal P$ associates to each point $x\in\Sigma$ close to $\gamma(0)$ the first point $\mathcal P(x,p)\in\Sigma$ where the orbit of (E) with initial condition $x$ intersects again $\Sigma$. Hence, the discrete map $x_{n+1}=\mathcal P(x_n,p_0)$ has normal form
 
 $$z_{n+1} = z_ne^{i\theta}(1+d|z_n|^2)$$
 
 where[^Kuz2]
 
-$$d=\frac{1}{2} e^{-i \theta}\left\langle v^*, \mathcal{C}(v, v, \bar{v})+2 \mathcal{B}\left(v,\left(I_{n-1}-\mathcal{A}\right)^{-1} \mathcal{B}(v, \bar{v})\right)+\mathcal{B}\left(\bar{v},\left(e^{2 i \theta} I_{n-1}-\mathcal{A}\right)^{-1} \mathcal{B}(v, v)\right)\right\rangle$$
+$$d=\frac{1}{2} e^{-i \theta}\left\langle \zeta^*, \mathcal{C}(\zeta, \zeta, \bar{\zeta})+2 \mathcal{B}\left(\zeta,\left(I_{n-1}-\mathcal{A}\right)^{-1} \mathcal{B}(\zeta, \bar{\zeta})\right)+\mathcal{B}\left(\bar{\zeta},\left(e^{2 i \theta} I_{n-1}-\mathcal{A}\right)^{-1} \mathcal{B}(\zeta, \zeta)\right)\right\rangle$$
 
-where $\mathcal C=d^3\mathcal P(\gamma(0))$, $\mathcal B = d^2\mathcal P(\gamma(0))$ and $\mathcal A = d\mathcal P(\gamma(0))$. Also:
+where $\mathcal C=d_1^3\mathcal P(\gamma(0),p_0)$, $\mathcal B = d_1^2\mathcal P(\gamma(0),p_0)$ and $\mathcal A = d_1\mathcal P(\gamma(0),p_0)$. Also:
 
-$$\mathcal{A} v=e^{i \theta} v, \mathcal{A}^{\mathrm{T}} v^*=e^{-i \theta} v^*, \text { and }\left\langle v^*, v\right\rangle=1$$
+$$\mathcal{A} \zeta=e^{i \theta} \zeta, \mathcal{A}^{\mathrm{T}} \zeta^*=e^{-i \theta} \zeta^*, \text { and }\left\langle \zeta^*, \zeta\right\rangle=1$$
 
 !!! danger "Large scale problems"
     The computation of the normal form is not optimized for Matrix-Free problems (e.g. Monodromy) yet.
+
+!!! info "Collocation case"
+    The monodromy matrix and other flow differentials are computed using finite differences.
 
 ## Normal form based on Iooss method
 

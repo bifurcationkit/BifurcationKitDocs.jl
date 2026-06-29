@@ -278,7 +278,7 @@ We can then plot the branches using `BK.plot(br, br1...)` where green (resp. red
 
 ![](sh3dbranches.png)
 
-There are 19 banches that were discovered. You can plot the solutions on the branches using
+There are 19 branches that were discovered. You can plot the solutions on the branches using
 
 ```julia
 fig = Figure(resolution = (1200, 900))

@@ -294,7 +294,7 @@ AsymptoticNumericalMethod.ANM
 BifurcationKit.DefCont
 ```
 
-## Events
+## [Events](@id Library-Events)
 
 ```@docs
 BifurcationKit.DiscreteEvent
@@ -310,6 +310,18 @@ BifurcationKit.SetOfEvents
 
 ```@docs
 BifurcationKit.PairOfEvents
+```
+
+```@docs
+BifurcationKit.SaveAtEvent
+```
+
+```@docs
+BifurcationKit.FoldDetectEvent
+```
+
+```@docs
+BifurcationKit.BifDetectEvent
 ```
 
 ## Branch switching (branch point)

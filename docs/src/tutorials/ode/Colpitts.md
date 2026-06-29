@@ -38,7 +38,7 @@ import LinearAlgebra as LA
 import BifurcationKit as BK
 import BifurcationKit: @optic, @set, @reset
 
-# function to record information from the soluton
+# function to record information from the solution
 recordFromSolution(x, p; k...) = (u1 = BK.norminf(x), x1 = x[1], x2 = x[2], x3 = x[3], x4 = x[4])
 
 # vector field
