@@ -51,6 +51,11 @@ The available arguments specific to our plotting methods are
 - `plotcirclesbif = false` use circles to plot bifurcation points
 - `applytoX = identity` apply transformation `applytoX` to x-axis
 - `applytoY = identity` apply transformation `applytoY` to y-axis
+- `unstable_plot_type = :dots` use `:dots` line for plotting the unstable part of the branch
+
+for Makie plots:
+
+- `dash_unstable_style = true` use dashed line for plotting the unstable part of the branch
 
 If you have several branches `br1, br2`, you can plot them in the same figure by doing
 
@@ -147,7 +152,8 @@ F(x, p) = (@. p + x - x^(k+1)/(k+1))
 prob = ODEBifProblem(F, [0.8], 1., (@optic _); record_from_solution = (x,p; k...) -> x[1])
 opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, p_min = -1., p_max = 1.)
 br = continuation(prob, PALC(), opts)
-BifurcationKit.plot(br)
+f, ax = BifurcationKit.plot(br)
+f
 ```
 
 ## Plotting eigenvalues

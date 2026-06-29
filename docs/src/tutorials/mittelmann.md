@@ -307,7 +307,7 @@ brdef2 = continuation(
 	kwargsC...)
 ```
 
-thereby providing the following bifurcation diagram with `plot(br,br1,br2,brdef1, brdef2,plotfold=false, putbifptlegend = false)`
+thereby providing the following bifurcation diagram with `plot(br, br1, br2, brdef1, brdef2, plotfold=false, putbifptlegend = false)`
 
 ![](mittlemann6.png)
 

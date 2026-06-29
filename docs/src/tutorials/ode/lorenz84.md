@@ -196,6 +196,18 @@ with detailed information
 hp_from_zh
 ```
 
+## Plotting with Makie.jl
+
+```@example LORENZ84
+using CairoMakie
+f,ax = BK.plot(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf", dash_unstable_style = true)
+BK.plot!(ax, hp_from_bt, vars=(:X, :U), branchlabel = "Hopf2", dash_unstable_style = true)
+BK.plot!(ax, hp_from_zh, vars=(:X, :U), branchlabel = "Hopf", dash_unstable_style = true)
+BK.plot!(ax, sn_codim2,vars=(:X, :U), dash_unstable_style = true)
+Makie.ylims!(ax, -0.7,0.75); Makie.xlims!(ax, 0.95,1.3)
+f
+```
+
 ## References 
 
 [^Kuznetsov]:> Kuznetsov, Yu A., H. G. E. Meijer, W. Govaerts, and B. Sautois. “Switching to Nonhyperbolic Cycles from Codim 2 Bifurcations of Equilibria in ODEs.” Physica D: Nonlinear Phenomena 237, no. 23 (December 2008): 3061–68.
