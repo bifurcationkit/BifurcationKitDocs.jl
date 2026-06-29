@@ -2,7 +2,7 @@ using Pkg
 cd(@__DIR__)
 pkg" activate ."
 pkg" dev AbstractTrees BandedMatrices"
-pkg" add BifurcationKit AsymptoticNumericalMethod DocumenterMermaid BenchmarkTools"
+pkg" add BifurcationKit AsymptoticNumericalMethod DocumenterMermaid BenchmarkTools CairoMakie"
 
 
 using Documenter, BifurcationKit, AsymptoticNumericalMethod
