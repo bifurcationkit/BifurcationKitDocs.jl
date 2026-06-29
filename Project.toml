@@ -9,7 +9,7 @@ BandedMatrices = "aae01518-5342-5314-be14-df237901396f"
 BifurcationKit = "0f109fa4-8a5d-4b75-95aa-f515264e7665"
 
 [compat]
-julia = "1.10"
+julia = "1.12"
 AsymptoticNumericalMethod = "^0.3.1"
 BifurcationKit = "^0.8.0"
 

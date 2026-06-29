@@ -146,13 +146,12 @@ The keyword arguments to `BifurcationKit.plot` are the same as decribed above in
 
 ```@example PLOTCAIROBASIC
 using CairoMakie, BifurcationKit
-q = 1/0
 k = 2
 F(x, p) = (@. p + x - x^(k+1)/(k+1))
 prob = ODEBifProblem(F, [0.8], 1., (@optic _); record_from_solution = (x,p; k...) -> x[1])
 opts = ContinuationPar(dsmax = 0.1, dsmin = 1e-3, ds = -0.001, p_min = -1., p_max = 1.)
 br = continuation(prob, PALC(), opts)
-f, ax = BifurcationKit.plot(br)
+f, ax = BifurcationKit.plot(br, dash_unstable_style = true)
 f
 ```
 
