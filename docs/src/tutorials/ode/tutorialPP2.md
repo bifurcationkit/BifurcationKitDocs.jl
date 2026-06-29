@@ -55,8 +55,6 @@ We set up the options or the continuation
 opts_br = BK.ContinuationPar(p_min = 0.1, p_max = 1.0, dsmax = 0.01,
 	# maximum number of continuation steps
 	max_steps = 1000,)
-
-nothing #hide
 ```
 
 We are now ready to compute the diagram

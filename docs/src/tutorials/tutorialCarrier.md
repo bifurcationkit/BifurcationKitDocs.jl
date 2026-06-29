@@ -119,6 +119,7 @@ br = @time continuation(
 	setproperties(optcont; ds = -0.001, dsmin=1e-5, max_steps = 20000,
 		p_max = 0.7, p_min = 0.05, detect_bifurcation = 0, plot_every_step = 40,
 		newton_options = setproperties(optnew; tol = 1e-9, max_iterations = 100, verbose = false));
+	plot = false,
 	normC = norminf,
   verbosity = 0,
 	)

@@ -23,7 +23,7 @@ To this end, we never form $J^{-1}$ like with `pinv(J)` but solve the linear sys
 
 ## Space of solutions
 
-For the algorithm to be defined, a certain number of operations on `x` need to be available. If you pass `x::AbstractArray`, you should not have any problem. Otherwise, your `x` must comply with the requirements listed in [Requested methods for Custom State](@ref).
+For the algorithm to be defined, a certain number of operations on `x` need to be available. If you pass `x::AbstractArray`, you should not have any problem. Otherwise, your `x` must comply with the requirements listed in [Required methods for custom arrays](@ref Required-Methods).
 
 ## Different Jacobians
 

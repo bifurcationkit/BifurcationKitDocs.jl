@@ -23,7 +23,7 @@ The model is interesting on its own because the branch of periodic solutions con
 
 It is easy to encode the ODE as follows
 
-```@example TUTODE
+```@example TUTODENME
 using Revise, Plots
 import BifurcationKit as BK
 import BifurcationKit: @optic, @reset
@@ -55,7 +55,7 @@ nothing #hide
 
 We first compute the branch of equilibria
 
-```@example TUTODE
+```@example TUTODENME
 # continuation options
 opts_br = BK.ContinuationPar(p_min = -2.0, p_max = -1.)
 
@@ -67,7 +67,7 @@ scene = plot(br, plotfold=false, markersize=4, legend=:topleft)
 
 With detailed information:
 
-```@example TUTODE
+```@example TUTODENME
 br
 ```
 
@@ -76,7 +76,7 @@ br
 
 We compute the branch of periodic orbits from the last Hopf bifurcation point (on the right). We use Orthogonal Collocation to discretize the problem of finding periodic orbits. This is vastly more precise than the following methods because we use mesh adaptation.
 
-```@example TUTODE
+```@example TUTODENME
 # arguments for periodic orbits
 # one function to record information and one
 # function for plotting
@@ -120,7 +120,7 @@ Scene = title!("")
 
 Let us plot the periodic orbit close to the end of the branch
 
-```@example TUTODE
+```@example TUTODENME
 sol = BK.get_periodic_orbit(br_pocoll, 100)
 plot(sol, title = "Periodic orbit", marker = :d, markersize = 1)
 ```
@@ -129,7 +129,7 @@ plot(sol, title = "Periodic orbit", marker = :d, markersize = 1)
 
 We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `DifferentialEquations.jl`. This way of computing periodic orbits should be more precise than the Trapezoid method. We use a particular instance called multiple shooting which is computed in parallel. This is an additional advantage compared to the two other methods.
 
-```@example TUTODE
+```@example TUTODENME
 import OrdinaryDiffEq as ODE
 
 probsh = ODE.ODEProblem(TMvf!, copy(z0), (0, 1), par_tm; abstol = 1e-12, reltol = 1e-10)
@@ -155,7 +155,7 @@ Scene = title!("")
 We then compute the branch of periodic orbits from the last Hopf bifurcation point (on the right).
 We use finite differences to discretize the problem of finding periodic orbits. Obviously, this will be problematic when the period of the limit cycle grows unbounded close to the homoclinic orbit.
 
-```@example TUTODE
+```@example TUTODENME
 # continuation parameters
 opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.1, ds = 0.004, dsmin = 1e-4,
 	max_steps = 80, tol_stability = 1e-7)
@@ -183,7 +183,7 @@ We plot the maximum (resp. minimum) of the limit cycle. We can see that the min 
 
 We can plot some of the previously computed periodic orbits in the plane $(E,x)$ as function of $E_0$:
 
-```@example TUTODE
+```@example TUTODENME
 plot()
 # fetch the saved solutions
 for i_sol in 1:2:40

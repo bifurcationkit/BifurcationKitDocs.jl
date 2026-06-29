@@ -75,7 +75,7 @@ The tutorials prioritize **clarity and simplicity** over maximum performance (wi
 !!! danger "Performance of tutorials"
     Do not get fooled by the small dimensions of the discretization of the PDE in the tutorials. The documentation has to be run on github CI so the machines are not powerful. You can increase the discretization on your computer. 
 
-## Required methods for custom arrays
+## Required methods for custom arrays(@id Required-Methods)
 
 If you use standard arrays, you can skip this section.
 
