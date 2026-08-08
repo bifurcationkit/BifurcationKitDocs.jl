@@ -3,10 +3,12 @@ cd(@__DIR__)
 pkg" activate ."
 pkg" dev AbstractTrees BandedMatrices"
 pkg" add BifurcationKit AsymptoticNumericalMethod DocumenterMermaid BenchmarkTools CairoMakie"
+pkg" add DocumenterCodeBlocks"
 
 
 using Documenter, BifurcationKit, AsymptoticNumericalMethod
 # using DocumenterMermaid
+using DocumenterCodeBlocks
 using DocumenterMermaid
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
@@ -33,6 +35,7 @@ makedocs(
 	sitename = "Bifurcation Analysis in Julia",
 	format = format,
 	authors = "Romain Veltz",
+	plugins = [CodeBlocks()],
 	pages = Any[
 	    "🏠 Home" => "index.md",
 	    "🔭 Overview of capabilities" => "capabilities.md",
