@@ -115,10 +115,10 @@ makedocs(
 	        "Iterator Interface" => "iterator.md",
 	    ],
 	    "⚙️ Options" => [
+	        "Bordered arrays" => "Borderedarrays.md",
 	        "Linear solvers" => "linearsolver.md",
 	        "Bordered linear solvers" => "borderedlinearsolver.md",
 	        "Eigen solvers" => "eigensolver.md",
-	        "Bordered arrays" => "Borderedarrays.md",
 	    ],
 	    "✏️ Contributing" => [
 	        "How to" => "how_to_contribute.md"

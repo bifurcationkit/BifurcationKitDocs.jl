@@ -27,6 +27,7 @@ We start with some imports:
 ```@example LORENZ84
 using Revise, Plots
 import BifurcationKit as BK
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 import BifurcationKit: @optic
 
 nothing #hide

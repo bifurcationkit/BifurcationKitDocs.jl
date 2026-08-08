@@ -185,6 +185,8 @@ xs, ps, stability = continuation(maasch_rule, maasch_jacob, x0, p0;
 Let's plot this
 ```@example educational
 using Plots
+const BK = BifurcationKit # hide
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 colors = [s ? :blue : :red for s in stability]
 p = scatter(ps, [x[1] for x in xs]; color = colors, markerstrokecolor = colors, xlabel = "p", ylabel = "x", label = "")
 ```

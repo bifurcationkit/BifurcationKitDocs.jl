@@ -79,11 +79,12 @@ We provide an automatic branching procedure in this case. In essence, all you ha
 
 ```julia
 continuation(br::ContResult, ind_PD::Int, _contParams::ContinuationPar;
-    prm = Val(true), detailed = Val(true),
+    prm = Val(true), 
+    detailed = Val(true), # compute a detailed normal form
     kwargs...)
 ```
 
-The option `prm = Val(true)` enforces that the period-doubling normal form is computed using the Poincaré return map ; this is only necessary in case of use of the collocation method. Indeed, in the case of the collocation method, an automatic procedure based on the Iooss normal form has yet to be implemented.
+The option `prm = Val(true)` enforces that the period-doubling normal form is computed using the Poincaré return map ; this is only necessary in case of use of the collocation method. Note that you can use `prm = Val(false)` for the collocation method ; see section `Normal form (periodic orbits)`.
 
 ### Case of Trapezoid method
 
@@ -94,7 +95,7 @@ The call is as follows. Please note that a deflation is included in this method 
 ```julia
 continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
 	δp = 0.1, ampfactor = 1, 
-	usedeflation = false,
+	usedeflation = false, # setting to true may help but is more expensive
 	kwargs...)
 ```
 
@@ -112,5 +113,7 @@ An example of use is provided in [Lur'e problem](@ref pdlure).
 
 ```julia
 continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
-	δp = 0.1, ampfactor = 1, usedeflation = false, kwargs...)
+	δp = 0.1, ampfactor = 1,
+    usedeflation = false,
+    kwargs...)
 ```

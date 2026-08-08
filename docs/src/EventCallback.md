@@ -40,6 +40,7 @@ We show how to use the different events. We first set up a problem as usual.
 using Revise, BifurcationKit
 using Plots
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 ####################################################################################################
 # test vector field for event detection
 function Feve(X, p)

@@ -9,7 +9,7 @@ A set of shooting algorithms is provided which are called either *Simple Shootin
 
 We aim at finding periodic orbits for the Cauchy problem 
 
-$$\tag{1} \frac{d x}{d t}=f(x)$$ 
+$$\tag{1} \frac{d x}{d t}=f(x)$$
 
 and we write $\phi^t(x_0)$ the associated flow (or semigroup of solutions).
 
@@ -20,14 +20,13 @@ and we write $\phi^t(x_0)$ the associated flow (or semigroup of solutions).
 ### Simple shooting
 A periodic orbit is found when we have a couple $(x, T)$ such that $\phi^T(x) = x$ and the trajectory is non constant. Therefore, we want to solve the equations $G(x,T)=0$ given by
 
-$$\tag{SS}
-\begin{array}{l}{\phi^T(x)-x=0} \\ {s(x,T)=0}\end{array}.$$
+$$\tag{SS}\begin{array}{l}{\phi^T(x)-x=0} \\ {s(x,T)=0}\end{array}.$$
 
 The section $s(x,T)=0$ is a phase condition to remove the indeterminacy of the point on the limit cycle.
 
 ### Multiple shooting
-This case is similar to the previous one but more sections are used. To this end, we partition the unit interval with $m+1$ points
-$$0=s_{0}<s_{1}<\cdots<s_{m-1}<s_{m}=1$$ and consider the equations $G(x_1,\cdots,x_m,T)=0$
+This case is similar to the previous one but more sections are used. To this end, we partition the unit interval with $m+1$ points $0=s_{0}<s_{1}<\cdots<s_{m-1}<s_{m}=1$
+and consider the equations $G(x_1,\cdots,x_m,T)=0$ given by:
 
 $$\begin{aligned}
 \phi^{\delta s_1T}(x_{1})-x_{2} &=0 \\ 

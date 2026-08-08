@@ -19,6 +19,7 @@ It is easy to encode the ODE as follows
 ```@example TUTPP2
 using Revise, Plots
 import BifurcationKit as BK
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 import BifurcationKit: @optic#, @reset
 
 # function to record information from a solution

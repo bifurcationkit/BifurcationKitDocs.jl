@@ -26,6 +26,7 @@ It is easy to encode the ODE as follows
 ```@example TUTODENME
 using Revise, Plots
 import BifurcationKit as BK
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 import BifurcationKit: @optic, @reset
 
 # vector field

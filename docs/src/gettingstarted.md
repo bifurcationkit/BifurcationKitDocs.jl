@@ -17,6 +17,8 @@ as function of $\mu$ by looking at the solutions in the connected component of $
 
 ```@example GETSTARTED1
 using BifurcationKit, Plots
+const BK = BifurcationKit # hide
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 F(x, p) = @. p[1] + x - x^3/3
 prob = ODEBifProblem(F, [-2.], [-1.], 1;
     record_from_solution = (x,p; k...) -> x[1])
@@ -55,6 +57,7 @@ The solvers can be controlled using the available options `ContinuationPar`. For
 
 ```@example GETSTARTED1
 using Plots
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 opts = ContinuationPar(p_min = -1., p_max = 1., dsmax = 0.25, max_steps = 1000)
 br = continuation(prob, PALC(), opts)
 scene = plot(br)
@@ -111,6 +114,7 @@ While one can directly plot solution time points using the tools given above, co
 ```@example GETSTARTED1
 #]add Plots # You need to install Plots.jl before your first time using it!
 using Plots
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 #plotly() # You can optionally choose a plotting backend
 plot(br)
 scene = plot(br) #hide
@@ -133,6 +137,8 @@ We define a problem type by giving it the equation, the initial condition, the p
 ```@example GETSTARTED2
 using Plots
 using BifurcationKit
+const BK = BifurcationKit # hide
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 Fbp(u, p) = @. u * (p[1] - u)
 
@@ -184,6 +190,8 @@ The ODE is easily written with a function:
 
 ```@example GETSTARTED3
 using BifurcationKit, Plots
+const BK = BifurcationKit # hide
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 function Fsl(X, p)
     (;r, μ, ν, c3) = p

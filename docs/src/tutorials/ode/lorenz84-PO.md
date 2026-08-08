@@ -27,6 +27,7 @@ We recall the problem setting:
 ```@example LORENZ84V2
 using Revise, Plots, LinearAlgebra
 import BifurcationKit as BK
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 import BifurcationKit: @optic, @reset
 
 # vector field

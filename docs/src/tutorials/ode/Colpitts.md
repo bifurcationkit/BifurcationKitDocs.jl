@@ -36,6 +36,7 @@ It is easy to encode the DAE as follows. The mass matrix is defined next.
 using Revise, Plots
 import LinearAlgebra as LA
 import BifurcationKit as BK
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 import BifurcationKit: @optic, @set, @reset
 
 # function to record information from the solution

@@ -8,6 +8,7 @@ This is a simple example in which we aim at solving $\Delta T+\alpha N(T,\beta)=
 using Plots
 import BifurcationKit as BK
 import BifurcationKit: @optic, @set
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 N(x; a = 0.5, b = 0.01) = 1 + (x + a*x^2)/(1 + b*x^2)
 nothing #hide

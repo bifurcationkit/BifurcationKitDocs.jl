@@ -23,6 +23,7 @@ We start by coding the bifurcation problem.
 ```@example STEINMETZ
 using Revise, Plots
 import BifurcationKit as BK
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 import BifurcationKit: @optic, @reset, norminf
 
 function SL!(du, u, p, t = 0)

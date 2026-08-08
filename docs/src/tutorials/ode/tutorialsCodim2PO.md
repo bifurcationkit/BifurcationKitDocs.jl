@@ -21,6 +21,7 @@ This tutorial is useful in that we show how to start periodic orbits continuatio
 ```@example TUTPPREY
 using Revise, Plots
 import BifurcationKit as BK
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 import BifurcationKit: @optic, @set, @reset
 
 function Pop!(du, X, p, t = 0)

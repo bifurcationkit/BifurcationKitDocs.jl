@@ -146,6 +146,7 @@ The keyword arguments to `BifurcationKit.plot` are the same as described above i
 
 ```@example PLOTCAIROBASIC
 using CairoMakie, BifurcationKit
+BifurcationKit.set_plot_backend!(BifurcationKit.BK_Makie()) # hide
 k = 2
 F(x, p) = (@. p + x - x^(k+1)/(k+1))
 prob = ODEBifProblem(F, [0.8], 1., (@optic _); record_from_solution = (x,p; k...) -> x[1])

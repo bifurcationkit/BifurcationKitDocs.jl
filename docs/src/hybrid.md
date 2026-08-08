@@ -12,6 +12,7 @@ We provide an example of use. We define a `BifurcationProblem` as usual and pass
 using Plots
 using BifurcationKit
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 function F(x, p)
 	(;α) = p
