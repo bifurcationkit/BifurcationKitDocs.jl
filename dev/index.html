@@ -16,7 +16,7 @@ Pkg.add(&quot;BifurcationKit&quot;)</code></pre><p>Or in the Julia REPL package 
 ⌅ [d96e819e] Parameters v0.12.3
   [91a5bcdd] Plots v1.41.6
   [295af30f] Revise v3.16.3
-  [0bca4576] SciMLBase v3.46.0
+  [0bca4576] SciMLBase v3.46.1
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays v1.10.0
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre></details><details><summary> ℹ️ version info</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.10.11
@@ -25,10 +25,10 @@ Build Info:
   Official https://julialang.org/ release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
-  CPU: 4 × INTEL(R) XEON(R) PLATINUM 8573C
+  CPU: 4 × Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-15.0.7 (ORCJIT, icelake-client)
+  LLVM: libLLVM-15.0.7 (ORCJIT, icelake-server)
 Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)
 Environment:
   JULIA_DEBUG = Documenter</code></pre></details><details><summary>📚 complete overview of all dependencies and their versions</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl/docs/Manifest.toml`
@@ -59,7 +59,7 @@ Environment:
   [b2a6c25c] BinaryHeaps v1.0.4
   [d1d4a3ce] BitFlags v0.1.10
   [8e7c35d0] BlockArrays v1.10.0
-  [70df07ce] BracketingNonlinearSolve v1.12.4
+  [70df07ce] BracketingNonlinearSolve v1.12.5
   [fa961155] CEnum v0.5.0
   [96374032] CRlibm v1.0.2
   [159f3aea] Cairo v1.1.1
@@ -172,9 +172,9 @@ Environment:
   [23fbe1c1] Latexify v0.16.11
   [0e77f7df] LazilyInitializedFields v1.3.0
   [8cdb02fc] LazyModules v0.3.1
-  [87fe0de2] LineSearch v0.1.13
+  [87fe0de2] LineSearch v0.1.14
   [7a12625a] LinearMaps v3.11.4
-  [7ed4a6bd] LinearSolve v5.9.0
+  [7ed4a6bd] LinearSolve v5.10.0
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [6f1432cf] LoweredCodeUtils v3.8.0
@@ -191,10 +191,10 @@ Environment:
   [46d2c3a1] MuladdMacro v0.2.7
   [77ba4419] NaNMath v1.1.4
   [f09324ee] Netpbm v1.1.1
-  [8913a72c] NonlinearSolve v4.26.0
-  [be0214bd] NonlinearSolveBase v2.42.0
-  [5959db7a] NonlinearSolveFirstOrder v2.3.1
-  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.0
+  [8913a72c] NonlinearSolve v4.26.1
+  [be0214bd] NonlinearSolveBase v2.43.0
+  [5959db7a] NonlinearSolveFirstOrder v2.3.2
+  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.1
   [26075421] NonlinearSolveSpectralMethods v1.8.0
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.17.0
@@ -202,11 +202,11 @@ Environment:
   [4d8831e6] OpenSSL v1.6.1
 ⌅ [bac558e1] OrderedCollections v1.8.2
   [1dea7af3] OrdinaryDiffEq v7.6.0
-  [6ad6398a] OrdinaryDiffEqBDF v2.4.1
-  [bbf590c4] OrdinaryDiffEqCore v4.14.2
+  [6ad6398a] OrdinaryDiffEqBDF v2.4.2
+  [bbf590c4] OrdinaryDiffEqCore v4.14.3
   [50262376] OrdinaryDiffEqDefault v2.4.4
   [4302a76b] OrdinaryDiffEqDifferentiation v3.7.0
-  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.7.0
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.8.0
   [43230ef6] OrdinaryDiffEqRosenbrock v2.6.5
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.1
   [2d112036] OrdinaryDiffEqSDIRK v2.8.2
@@ -224,21 +224,21 @@ Environment:
   [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.6
   [647866c9] PolygonOps v0.1.2
-  [d236fae5] PreallocationTools v1.4.1
+  [d236fae5] PreallocationTools v1.5.0
 ⌅ [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.5.2
   [08abe8d2] PrettyTables v3.4.6
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.0
+  [0c0d3e7f] PureKLU v1.4.1
   [4b34888f] QOI v1.0.2
   [1fd47b50] QuadGK v2.11.3
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v4.3.6
+  [731186ca] RecursiveArrayTools v4.4.0
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
   [05181044] RelocatableFolders v1.0.1
@@ -250,7 +250,7 @@ Environment:
   [5eaf0fd0] RoundingEmulator v0.2.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.24
   [fdea26ae] SIMD v3.7.2
-  [0bca4576] SciMLBase v3.46.0
+  [0bca4576] SciMLBase v3.46.1
   [19f34311] SciMLJacobianOperators v0.1.17
   [a6db7da4] SciMLLogging v2.0.4
   [c0aeaf25] SciMLOperators v1.26.1
@@ -286,11 +286,11 @@ Environment:
   [6aa5eb33] TaylorSeries v0.22.4
   [62fd8b95] TensorCore v0.1.1
   [731e570b] TiffImages v0.11.9
-  [a759f4b9] TimerOutputs v1.1.1
+  [a759f4b9] TimerOutputs v1.2.0
 ⌅ [3bb67fe8] TranscodingStreams v0.9.11
   [981d1d27] TriplotBase v0.1.0
   [781d530d] TruncatedStacktraces v1.4.0
-  [5c2747f8] URIs v1.6.3
+  [5c2747f8] URIs v1.7.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
   [1986cc42] Unitful v1.28.0
@@ -337,7 +337,7 @@ Environment:
   [e7412a2a] Ogg_jll v1.3.6+0
 ⌅ [6cdc7f73] OpenBLASConsistentFPCSR_jll v0.3.29+0
   [18a262bb] OpenEXR_jll v3.4.13+0
-  [9bd350c2] OpenSSH_jll v10.4.1+0
+  [9bd350c2] OpenSSH_jll v10.5.1+0
   [458c3c95] OpenSSL_jll v3.5.7+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
@@ -380,7 +380,7 @@ Environment:
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
   [9a68df92] isoband_jll v0.2.3+0
-  [a4ae2306] libaom_jll v3.13.3+1
+  [a4ae2306] libaom_jll v3.14.1+0
   [0ac62f75] libass_jll v0.17.4+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
@@ -454,4 +454,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="capabilities/">🔭 Overview of capabilities »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 12 August 2026 08:20">Wednesday 12 August 2026</span>. Using Julia version 1.10.11.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="capabilities/">🔭 Overview of capabilities »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 13 August 2026 20:31">Thursday 13 August 2026</span>. Using Julia version 1.10.11.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
