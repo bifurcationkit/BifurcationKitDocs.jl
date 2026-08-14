@@ -1,4 +1,4 @@
-# From codim 2 to equilibria
+# From codim 2 (equilibria) to equilibria
 
 
 ```@contents
@@ -14,11 +14,13 @@ We provide an automatic branch switching method in this case (see for example [E
 ```julia
 continuation(br::ContResult, ind_BT::Int,
 	options_cont::ContinuationPar = br.contparams;
+	alg = getalg(br),
+	δp = nothing, ampfactor::Real = 1,
 	nev = options_cont.nev,
 	detect_codim2_bifurcation::Int = 0,
 	start_with_eigen = false,
-	autodiff = false,
-	Teigvec = getvectortype(br),
+	autodiff_nf = false,
+	Teigvec = _getvectortype(br),
 	scaleζ = norm,
 	kwargs...)
 ```
@@ -34,11 +36,13 @@ We provide an automatic branch switching method in this case (see for example [E
 ```julia
 continuation(br::ContResult, ind_ZH::Int,
 	options_cont::ContinuationPar = br.contparams;
+	alg = getalg(br),
+	δp = nothing, ampfactor::Real = 1,
 	nev = options_cont.nev,
 	detect_codim2_bifurcation::Int = 0,
 	start_with_eigen = false,
-	autodiff = false,
-	Teigvec = getvectortype(br),
+	autodiff_nf = false,
+	Teigvec = _getvectortype(br),
 	scaleζ = norm,
 	kwargs...)
 ```
@@ -54,12 +58,13 @@ We provide an automatic branch switching method in this case (see for example [E
 ```julia
 continuation(br::ContResult, ind_HH::Int,
 	options_cont::ContinuationPar = br.contparams;
+	alg = getalg(br),
 	δp = nothing, ampfactor::Real = 1,
 	nev = options_cont.nev,
 	detect_codim2_bifurcation::Int = 0,
 	start_with_eigen = false,
-	autodiff = false,
-	Teigvec = getvectortype(br),
+	autodiff_nf = false,
+	Teigvec = _getvectortype(br),
 	scaleζ = norm,
 	kwargs...)
 ```

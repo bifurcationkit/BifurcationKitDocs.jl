@@ -34,7 +34,7 @@ You can detect the following codim 2 bifurcation points by using the keyword arg
 
 ## Setting the jacobian
 
-In order to apply the newton algorithm to the Fold functional, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can select the following jacobians for your computations (see below):
+In order to apply the newton algorithm to the Fold functional, one needs to invert the jacobian. This is not completely trivial as one must compute this jacobian and then invert it. You can select the following jacobian for your computations (see below):
 
 - `jacobian_ma = AutoDiff()` [Default]: automatic differentiation is applied to the Fold functional and the matrix is then inverted using the provided linear solver. In particular, the jacobian is formed. This is very well suited for small dimensions  (say < 100)
 - `jacobian_ma = FiniteDifferences()`: same as `jacobian_ma = AutoDiff()` but the jacobian is computed using finite differences.
@@ -47,11 +47,13 @@ To compute the codim 2 curve of Fold points of periodic orbits, one can call [`c
 
 ```@docs
  continuation(br::BifurcationKit.AbstractBranchResult, ind_bif::Int64,
-				lens2::BifurcationKit.AllOpticTypes, options_cont::ContinuationPar = br.contparams ;
-				kwargs...)
+	lens2::AllOpticTypes, options_cont::ContinuationPar = br.contparams;
+	detect_codim2_bifurcation::Int = 0,
+	update_minaug_every_step = 1,
+	kwargs...) where {Tkind <: PeriodicOrbitCont, Tprob <: Union{PeriodicOrbitFunctionalColl, PeriodicOrbitFunctionalSh}}
 ```
 
-where `br` is a branch of periodic orbits and the options are as above except with have an additional parameter axis `lens2` which is used to locate the bifurcation points.
+where `br` is a branch of periodic orbits and the options are as above except that we have an additional parameter axis `lens2` which is used to locate the bifurcation points.
 
 ## References
 

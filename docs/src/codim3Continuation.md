@@ -80,12 +80,11 @@ Once a Bogdanov-Takens point has been detected after a call to `br = continuatio
 outfold = newton(br::AbstractBranchResult, ind_bif::Int;  
 	normN = norm,
 	options = br.contparams.newton_options,
-	bdlinsolver = BorderingBLS(options.linsolver),
-	jacobian_ma = AutoDiff(),
-	start_with_eigen = false, kwargs...)
+	start_with_eigen = false,
+	lens2 = (@optic _), kwargs...)
 ```
 
-For the options parameters, we refer to [newton](@ref).
+For the options parameters, we refer to [Krylov-Newton algorithm](@ref). Note that you can pass a bordered linear solver or a specific jacobian type (`jacobian_ma`) through the option of [`newton_bt`](@ref).
 
 It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. `BifurcationProblem` provides it by default using AD though.
 

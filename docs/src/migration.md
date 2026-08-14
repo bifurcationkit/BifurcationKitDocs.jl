@@ -23,6 +23,7 @@ We rely on `Accessors.jl` instead of `Setfield.jl`. This basically amounts to ch
 - rewrite `get_bif_point_codim2`
 - add callback `cbMaxNormAndΔp`
 - `FloquetWrapper` becomes mutable
+- `getvectortype` becomes `_getvectortype` and `hasstability` becomes `_hasstability`
 
 ## Version 0.3.3
 

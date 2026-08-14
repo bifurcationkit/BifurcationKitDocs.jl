@@ -58,7 +58,7 @@ $$ s(x,T) = T\cdot \langle x-x_\pi, \phi\rangle.$$
 
 ### Encoding of the functional
 
-The functional is encoded in the composite type [`Shooting`](@ref). In particular, the user can pass its own time stepper or one can use the different ODE solvers in  [DifferentialEquations.jl](https://github.com/JuliaDiffEq/DifferentialEquations.jl) which makes it very easy to choose a solver tailored for the a specific problem. See the link [`Shooting`](@ref) for more information ;  for example on how to access the underlying functional, its jacobian...
+The functional is encoded in the composite type [`Shooting`](@ref). In particular, the user can pass its own time stepper or one can use the different ODE solvers in  [DifferentialEquations.jl](https://github.com/JuliaDiffEq/DifferentialEquations.jl) which makes it very easy to choose a solver tailored for a specific problem. See the link [`Shooting`](@ref) for more information ;  for example on how to access the underlying functional, its jacobian...
 
 ### Jacobians
 
@@ -135,21 +135,21 @@ The docs for this specific `newton` are located at [`newton`](@ref).
 We also provide a simplified call to `newton` to locate the periodic orbit with a deflation operator:
 
 ```@docs
-newton(prob::BifurcationKit.AbstractShooting,
+newton(prob::BifurcationKit.AbstractShootingDiscretization,
 				orbitguess,
 				options::NewtonPar;
-				lens::Union{Setfield.Lens, Nothing} = nothing,
+				lens::BifurcationKit.OpticType = nothing,
 				kwargs...)
 ```
 
 and
 
 ```
-newton(prob::BifurcationKit.AbstractShooting,
+newton(prob::BifurcationKit.AbstractShootingDiscretization,
 				orbitguess::vectype,
 				defOp::DeflationOperator{Tp, Tdot, T, vectype},
 				options::NewtonPar{T, S, E};
-				lens::Union{Lens, Nothing} = nothing,
+				lens::OpticType = nothing,
 				kwargs...,
 			) where {T, Tp, Tdot, vectype, S, E}
 ```
@@ -163,11 +163,11 @@ In order to plot the orbit during continuation, one has to recompute the orbit i
 The docs for this specific `continuation` are located at [`continuation`](@ref).
 
 ```@docs
-continuation(probPO::BifurcationKit.AbstractShooting, orbitguess,
+continuation(probPO::BifurcationKit.AbstractShootingDiscretization, orbitguess,
 						alg::BifurcationKit.AbstractContinuationAlgorithm,
 						contParams::ContinuationPar,
 						linear_algo::BifurcationKit.AbstractBorderedLinearSolver;
-						δ = convert(eltype(orbitguess), 1e-8),
+						δ = convert(VI.scalartype(orbitguess), getdelta(probPO)),
 						kwargs...,
 					)
 ```

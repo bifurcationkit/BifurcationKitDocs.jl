@@ -9,8 +9,8 @@ Depth = 3
 
 - Newton-Krylov solver with generic linear / eigen *preconditioned* solver. Idem for the arc-length continuation.
 - Newton-Krylov solver with nonlinear deflation and preconditioner. It can be used for branch switching for example. It is used for deflated continuation.
-- Continuation written as an [iterator](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/iterator/).
-- Monitoring user functions along curves computed by continuation, see [events](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/EventCallback/).
+- Continuation written as an [Iterator Interface](@ref).
+- Monitoring user functions along curves computed by continuation, see [Event Handling](@ref).
 - Continuation methods: PALC, Moore Penrose, Multiple, Polynomial, Deflated continuation, ANM, ...
 - Bifurcation points / events located with bisection.
 - Compatible with GPU
@@ -20,7 +20,7 @@ Depth = 3
 - Automatic branch switching at branch points (**whatever the dimension of the kernel**) to equilibria
 - **Automatic computation of bifurcation diagrams of equilibria**
 - Fold / Hopf continuation based on Minimally Augmented formulation, with Matrix Free / Sparse / Dense Jacobian.
-- Detection of all codim 2 bifurcations of equilibria and computation of the normal forms of Bogdanov-Takens, Bautin, Cusp, Zero-Hopf. (Hopf-Hopf normal form not implemented)
+- Detection of all codim 2 bifurcations of equilibria and computation of the normal forms of Bogdanov-Takens, Bautin, Cusp, Zero-Hopf and Hopf-Hopf.
 - Branching from Bogdanov-Takens / Zero-Hopf / Hopf-Hopf points to Fold / Hopf curve
 
 ## (limited) Capabilities related to maps
@@ -114,12 +114,13 @@ graph LR
     FPO[ Fold Periodic orbit ]
     NS[ Neimark-Sacker \n :ns]
     PD[ Period Doubling \n :pd ]
-    BPC[BPC]
     CH[Chenciner \n :ch]
     GPD[Generalized period doubling \n :gpd]
     BPC[Branch point PO]
     LPPD[Fold-Flip]
     LPNS[Fold-NeimarkSacker]
+    NSNS[Double Neimark-Sacker]
+    PDNS[Period-Doubling / Neimark-Sacker]
     R1[1:1 resonance point\n :R1]
     R2[1:2 resonance point\n :R2]
     R3[1:3 resonance point\n :R3]    

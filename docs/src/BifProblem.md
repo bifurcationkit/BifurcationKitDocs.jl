@@ -32,7 +32,7 @@ params = (a = 1.0, b = 2.0)
 # record a few components / indicators about x 
 myRecord(x,p;k...) = (x1 = x[1], max = maximum(x), nrm = norm(x, Inf))
 
-prob = BifurcationProblem(f, u0, p, (@optic _.a);
+prob = BifurcationProblem(f, u0, params, (@optic _.a);
 	record_from_solution = myRecord
 	)
 ```
@@ -50,6 +50,7 @@ re_make(prob::BifurcationKit.AbstractBifurcationProblem;
 		record_from_solution = prob.record_from_solution,
 		plot_solution = prob.plot_solution,
 		J = missing,
+		Jᵗ = missing,
 		d2F = missing,
 		d3F = missing)
 ```

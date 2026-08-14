@@ -28,7 +28,7 @@ end
     The eigenvalues must be ordered by decreasing real part for the detection of bifurcations to work properly.
 
 !!! warning "Eigenvectors"
-    You have to implement the method `geteigenvector(eigsolver, eigenvectors, i::Int)` for `newtonHopf` to work properly.
+    You have to implement the method `geteigenvector(eigsolver, eigenvectors, i::Int)` for [`newton_hopf`](@ref) to work properly.
 
 ## Methods for computing eigenvalues
 Like for the linear solvers, computing the spectrum of operators $A$ associated to PDE is a highly non trivial task because of the clustering of eigenvalues. Most methods are based on the so-called [power method](https://en.wikipedia.org/wiki/Power_iteration) but this only yields the eigenvalues with largest modulus. In case of the Laplacian operator, this can be disastrous and it is better to apply the power method to $(\sigma I-A)^{-1}$ instead. 

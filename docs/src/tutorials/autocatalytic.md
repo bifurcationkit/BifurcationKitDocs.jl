@@ -209,10 +209,9 @@ To branch from the Hopf bifurcation point, we just have to pass the mass matrix 
 # we compute the periodic solutions using Mt time steps and a Trapezoidal time stepper
 # note that we pass the parameter massmatrix which
 # allows to solver the DAE
-Mt = 30
+Mt = 40
 probTP = Trapeze(M = Mt ;
-		massmatrix = spdiagm(0 => vcat(ones(2N),0.)),
-		update_section_every_step = 1,
+		massmatrix = spdiagm(0 => vcat(ones(2N), 0.)),
 		# linear solver for the periodic orbit problem
 		# OPTIONAL, one could use the default
 		jacobian = BK.BorderedLU())

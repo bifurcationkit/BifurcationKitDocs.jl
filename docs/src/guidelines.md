@@ -56,7 +56,7 @@ We focus on computing the branch of periodic solutions branching from a Hopf poi
 
 Let us consider the case where a branch of periodic orbits $\gamma^{po}$ have been computed (see for example previous section) and several bifurcation points have been detected (branch point, period doubling and Neimark Sacker). We can compute the bifurcated branches from $\gamma^{po}$ automatically.
 
-We do not provide an *automatic* branch switching for those points and for all methods (Shooting, Finite differences). However, for branch points of periodic orbits, you can call [`continuation`](@ref) by passing $\gamma^{po}$ and some simple arguments (amplitude of the periodic orbits) to perform branch switching in a semi-automatic way. For the case of [Periodic orbits based on Trapezoidal rule](@ref), see [From Branch / Period-doubling point of curve of periodic orbits](@ref).
+Automatic branch switching is available for branch points and period-doubling points of periodic orbits, for the Shooting and Collocation methods. For the case of [Periodic orbits based on Trapezoidal rule](@ref), the user is asked to provide the amplitude of the bifurcated periodic orbits, see [From Period-doubling point to curve of periodic orbits](@ref). Note that automatic branch switching is **not available** from Neimark-Sacker points (see [Neimark-Sacker point](@ref)) since the bifurcating object is an invariant torus.
 
 !!! tip "Branch switching"
     Many more branch switching procedures are available. They are all listed in [Branch switching](@ref Branch-switching-page)

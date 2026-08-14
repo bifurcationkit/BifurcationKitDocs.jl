@@ -15,12 +15,15 @@ In order to compute the bifurcated branch of periodic solutions at a Hopf bifurc
 Once you have decided which method to use, you can call the following:
 
 ```julia
-continuation(br::ContResult, ind_HOPF::Int, _contParams::ContinuationPar,
-	prob::AbstractPeriodicOrbitProblem ;
-	δp = nothing, ampfactor = 1, kwargs...)
+continuation(br::AbstractBranchResult, ind_HOPF::Int, _contParams::ContinuationPar,
+	disc::AbstractBoundaryValueDiscretization ;
+	δp = nothing, ampfactor = 1,
+	detailed = Val(true), use_normal_form = true,
+	nev = length(eigenvalsfrombif(br, ind_HOPF)),
+	usedeflation = false, kwargs...)
 ```
 
-We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `prob::AbstractPeriodicOrbitProblem`.
+We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `disc::AbstractBoundaryValueDiscretization`.
 
 - For [Periodic orbits based on Trapezoidal rule](@ref), you can pass `Trapeze(M = 51)` where `M` is the number of times slices in the periodic orbit.
 
@@ -79,12 +82,16 @@ We provide an automatic branching procedure in this case. In essence, all you ha
 
 ```julia
 continuation(br::ContResult, ind_PD::Int, _contParams::ContinuationPar;
-    prm = Val(true), 
-    detailed = Val(true), # compute a detailed normal form
-    kwargs...)
+	δp = _contParams.ds, ampfactor = 1,
+	detailed = Val(true), # compute a detailed normal form
+	prm = Val(getprob(br) isa PeriodicOrbitFunctionalColl ? false : true),
+	use_normal_form = true,
+	usedeflation = false,
+	autodiff_nf = true,
+	kwargs...)
 ```
 
-The option `prm = Val(true)` enforces that the period-doubling normal form is computed using the Poincaré return map ; this is only necessary in case of use of the collocation method. Note that you can use `prm = Val(false)` for the collocation method ; see section `Normal form (periodic orbits)`.
+The option `prm = Val(true)` enforces that the period-doubling normal form is computed using the Poincaré return map. This is only necessary in case of use of the collocation method, for which the default is `prm = Val(false)` (Iooss method). See [Period-doubling point](@ref) for more information about the two normal forms.
 
 ### Case of Trapezoid method
 
@@ -94,7 +101,8 @@ The call is as follows. Please note that a deflation is included in this method 
 
 ```julia
 continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
-	δp = 0.1, ampfactor = 1, 
+	δp = contParams.ds, ampfactor = 1,
+	use_normal_form = true, # the predictor only uses the bifurcating eigenvector
 	usedeflation = false, # setting to true may help but is more expensive
 	kwargs...)
 ```
@@ -112,8 +120,8 @@ We provide the branching method for the following methods to compute periodic or
 An example of use is provided in [Lur'e problem](@ref pdlure).
 
 ```julia
-continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
-	δp = 0.1, ampfactor = 1,
+continuation(br::AbstractBranchResult, ind_BP::Int, contParams::ContinuationPar;
+	δp = contParams.ds, ampfactor = 1,
     usedeflation = false,
     kwargs...)
 ```

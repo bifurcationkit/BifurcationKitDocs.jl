@@ -27,9 +27,13 @@ If you choose `detect_event = 2`, a bisection algorithm is used to locate the ev
 
 The set of possible events `DiscreteEvent, ContinuousEvent, SetOfEvents, PairOfEvents` is detailed in the [Library](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/library/#Events-1).
 
-## Built-in events
+- `SaveAtEvent(positions::NTuple; use_newton = false)`: this is a continuous event which detects when the continuation parameter takes one of the values in `positions`. The corresponding states are then saved in the branch. For example `continuation(args...; event = SaveAtEvent((1., 2., -3.)))`. If `use_newton = true`, a Newton algorithm is used to converge to the event point, which increases the precision of the located event.
 
+- `FoldDetectEvent`: this continuous event implements the detection of Fold points based on the `p`-component of the tangent vector to the continuation curve. It is designed to work with `PALC(tangent = Bordered())` as continuation algorithm. Use it as `continuation(args...; event = FoldDetectEvent)`.
 
+- `BifDetectEvent`: this discrete event implements the detection of bifurcation points along a continuation curve. The detection is based on monitoring the number of unstable eigenvalues; it thus requires the computation of the eigen elements. Use it as `continuation(args...; event = BifDetectEvent)`, in particular when you set `detect_bifurcation = 0` to focus on your own events but still want to record bifurcations.
+
+These events can of course be combined with `SetOfEvents` / `PairOfEvents`, see below.
 
 
 ## Examples

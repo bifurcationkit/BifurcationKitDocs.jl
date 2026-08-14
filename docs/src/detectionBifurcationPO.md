@@ -7,9 +7,9 @@ Depth = 3
 
 The bifurcations are detected during a call to `br = continuation(prob, alg, contParams::ContinuationPar;kwargs...)` by turning on the following flags:
 
-- `contParams.detect_bifurcation = 2`
+- `contParams.detect_bifurcation >= 2`
 
-The bifurcation points are located by looking at the spectrum **e.g.** by monitoring the unstable eigenvalues. The Floquet exponent λ is declared unstable if `real(λ) > contParams.tol_stability`. The located bifurcation points are then returned in `br.specialpoint`. 
+The bifurcation points are located by looking at the Floquet spectrum **e.g.** by monitoring the unstable Floquet exponents. The Floquet exponent λ is declared unstable if `real(λ) > contParams.tol_stability`. The located bifurcation points are then returned in `br.specialpoint`. 
     
 ## Precise detection of bifurcation points using bisection    
 
@@ -33,6 +33,7 @@ The user must specify the number of eigenvalues to be computed (like `nev = 10`)
 ## List of detected bifurcation points
 |Bifurcation|index used|
 |---|---|
+| Fold | fold |
 | Bifurcation point (single eigenvalue stability change, Fold or branch point) | bp |
 | Neimark-Sacker | ns |
 | Period doubling | pd |
@@ -42,31 +43,29 @@ The user must specify the number of eigenvalues to be computed (like `nev = 10`)
 
 The user must provide an eigensolver by setting `newton_options.eigsolver` where `newton_options` is located in the parameter `::ContinuationPar` passed to continuation. See [`NewtonPar`](@ref) and [`ContinuationPar`](@ref) for more information on the composite type of the options passed to `newton` and `continuation`.
 
-The eigensolver is highly problem dependent and this is why the user should implement / parametrize its own eigensolver through the abstract type `AbstractEigenSolver` or select one among [List of implemented eigen solvers](@ref).
-
 !!! danger "Floquet multipliers computation"
     The computation of Floquet multipliers is necessary for the detection of bifurcations of periodic orbits (which is done by analyzing the Floquet exponents obtained from the Floquet multipliers). Hence, the eigensolver needs to compute the eigenvalues with largest modulus (and not with largest real part which is their default behavior). This can be done by changing the option `which = :LM` of the eigensolver. Nevertheless, note that for most implemented eigensolvers in `BifurcationKit`, the proper option is automatically set.   
 
 ## Generic bifurcation
 
-By this we mean a change in the dimension of the Jacobian kernel. The detection of Branch point is done by analysis of the spectrum of the Jacobian.
+By this we mean a change in the number of unstable Floquet exponents (a change in the dimension of the Jacobian kernel). The detection of Branch point is done by analysis of the Floquet spectrum.
 
 The detection is triggered by setting `detect_bifurcation > 1` in the parameter `::ContinuationPar` passed to `continuation`. 
 
 ## Fold bifurcation
 The detection of **Fold** point is done by monitoring  the monotonicity of the parameter.
 
-The detection is triggered by setting `detect_fold = true` in the parameter `::ContinuationPar` passed to `continuation`. When a **Fold** is detected on a branch `br`, a point is added to `br.foldpoint` allowing for later refinement using the function `newton_fold`.
+The detection is triggered by setting `detect_fold = true` in the parameter `::ContinuationPar` passed to `continuation`. When a **Fold** is detected on a branch `br`, a point is added to `br.specialpoint` allowing for later refinement during [Fold continuation](@ref fold-po).
 
 ## Neimark-Sacker bifurcation
 
-The detection of Neimark-Sacker point is done by analysis of the spectrum of the Jacobian.
+The detection of Neimark-Sacker point is done by analysis of the Floquet spectrum.
 
 The detection is triggered by setting `detect_bifurcation > 1` in the parameter `::ContinuationPar` passed to `continuation`. When a **Neimark-Sacker point** is detected, a point is added to `br.specialpoint`.
 
 ## Period-doubling bifurcation
 
-The detection of Period-doubling point is done by analysis of the spectrum of the Jacobian.
+The detection of Period-doubling point is done by analysis of the Floquet spectrum.
 
 The detection is triggered by setting `detect_bifurcation > 1` in the parameter `::ContinuationPar` passed to `continuation`. When a **Period-doubling point** is detected, a point is added to `br.specialpoint`.
 

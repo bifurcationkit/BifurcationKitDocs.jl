@@ -55,7 +55,7 @@ You can detect the following codim 2 bifurcation points by using the option `det
 
 ## Hopf continuation (theory)
 
-The continuation of Fold bifurcation points is based on a **Minimally Augmented** (see [^Govaerts] p. 87) formulation which is an efficient way to detect singularities. The continuation of Hopf points is based on the formulation
+The continuation of Hopf bifurcation points is based on a **Minimally Augmented** (see [^Govaerts] p. 87) formulation which is an efficient way to detect singularities. The continuation of Hopf points is based on the formulation
 
 $$G(u,\omega,p) = (F(u,\omega,p), \Re\sigma(u,\omega,p), \Im\sigma(u,\omega,p))\in\mathbb R^{n+2}\quad\quad (F_h)$$
 
@@ -107,11 +107,11 @@ Once a Fold / Hopf point has been detected after a call to `br = continuation(..
 ```julia
 outfold = newton(br::AbstractBranchResult, ind_bif::Int;  
 	normN = norm, options = br.contparams.newton_options,
-	bdlinsolver = BorderingBLS(options.linsolver),
-	start_with_eigen = false, kwargs...)
+	start_with_eigen = false,
+	lens2 = (@optic _), kwargs...)
 ```
 
-For the options parameters, we refer to [Newton](@ref).
+For the options parameters, we refer to [Krylov-Newton algorithm](@ref). Note that you can pass a bordered linear solver through the option `bdlinsolver`, see [`newton_fold`](@ref) / [`newton_hopf`](@ref).
 
 It is important to note that for improved performances, a function implementing the expression of the **hessian** should be provided. This is by far the fastest. `BifurcationProblem` provides it by default using AD though.
 
@@ -127,7 +127,7 @@ To compute the curve of Fold / Hopf points, one can call [`continuation`](@ref) 
 				kwargs...)
 ```
 
-where the options are as above except with have an additional parameter axis `lens2` which is used to locate the bifurcation points.
+where the options are as above except that we have an additional parameter axis `lens2` which is used to locate the bifurcation points.
 
 
 See [Temperature model](@ref temperature) for an example of use.

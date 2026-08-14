@@ -52,14 +52,14 @@ To compute the codim 2 curve of PD points of periodic orbits, one can call [`con
 ```@docs
 continuation(br::BifurcationKit.AbstractResult{Tkind, Tprob},
                     ind_bif::Int64,
-                    lens2::BifurcationKit.AllOpticTypes,
+                    lens2::AllOpticTypes,
                     options_cont::ContinuationPar = br.contparams ;
                     detect_codim2_bifurcation::Int = 0,
                     update_minaug_every_step = 1,
-                    kwargs...) where {Tkind <: BifurcationKit.PeriodicOrbitCont, Tprob <: BifurcationKit.WrapPOColl}
+                    kwargs...) where {Tkind <: PeriodicOrbitCont, Tprob <: Union{PeriodicOrbitFunctionalColl, PeriodicOrbitFunctionalSh}}
 ```
 
-where `br` is a branch of periodic orbits and the options are as above except with have an additional parameter axis `lens2` which is used to locate the bifurcation points.
+where `br` is a branch of periodic orbits and the options are as above except that we have an additional parameter axis `lens2` which is used to locate the bifurcation points.
 
 ## Algorithmic details
 

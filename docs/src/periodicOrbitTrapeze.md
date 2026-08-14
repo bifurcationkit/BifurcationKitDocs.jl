@@ -72,7 +72,7 @@ We provide many different linear solvers to take advantage of the formulations. 
 
 ### 1. FullLU
 
-When using `jacobianPO = FullLU()`, this triggers the computation of $\mathcal J$ as in (2) at each step of newton/continuation. The Jacobian matrix $\mathcal J$ is stored a SparseArray. This can be quite costly flow large $n$ (see (1)). This Jacobian is often used with the the linear solver `DefaultLS()`.
+When using `jacobian = FullLU()`, this triggers the computation of $\mathcal J$ as in (2) at each step of newton/continuation. The Jacobian matrix $\mathcal J$ is stored a SparseArray. This can be quite costly flow large $n$ (see (1)). This Jacobian is often used with the the linear solver `DefaultLS()`.
 
 ### 2. FullSparseInplace
 Same as `FullLU()` but the Jacobian is allocated only once and updated inplace. This is much faster than `FullLU()` but the sparsity pattern of `dF` must be constant.
@@ -97,7 +97,7 @@ Same as `BorderedLU()` but the Jacobian is allocated only once and updated inpla
 A matrix free linear solver is used but for $\mathcal J_c$ only: it means that `options.linsolver` is used to invert $\mathcal J_c$. 
 
 !!! info "Matrix-Free"
-    These two Matrix-Free options, `MatrixFree()` and `BorderedMatrixFree()`, thus expose different part of the Jacobian $\mathcal J$ in order to use specific preconditioners. For example, an ILU preconditioner on $\mathcal J_c$ could remove the constraints in $\mathcal J$ and lead to poor convergence. Of course, for these last two methods, a preconditioner is likely be required.
+    These two Matrix-Free options, `FullMatrixFree()` and `BorderedMatrixFree()`, thus expose different part of the Jacobian $\mathcal J$ in order to use specific preconditioners. For example, an ILU preconditioner on $\mathcal J_c$ could remove the constraints in $\mathcal J$ and lead to poor convergence. Of course, for these last two methods, a preconditioner is likely be required.
 
 
 ## Floquet multipliers computation
@@ -121,9 +121,9 @@ The state of the art method is based on a Periodic Schur decomposition. It is av
 
 ## Computation with `newton`
 
-We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `linearalgo` to select one of the many ways to deal with the above linear problem. The default solver `linearalgo` is `BorderedLU().
+We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `linear_algo` to select one of the many ways to deal with the above linear problem. The default solver `linear_algo` is `BorderedLU().
 
-Have a look at the [Periodic orbits based on Trapezoidal rule](@ref cgl) example for the Brusselator for a basic example and at [2d Ginzburg-Landau equation](@ref cgl) for a more advanced one.
+Have a look at the [Brusselator](@ref brusauto) example for the Brusselator for a basic example and at [2d Ginzburg-Landau equation](@ref cgl) for a more advanced one.
 
 The docs for this specific `newton` are located at [`newton`](@ref).
 

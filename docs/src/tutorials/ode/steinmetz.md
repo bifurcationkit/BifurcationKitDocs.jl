@@ -7,7 +7,11 @@ Depth = 3
 
 > This example is found in the MatCont ecosystem.
 
-The Steinmetz-Larter model is studied in the MatCont ecosystem because it is a simple example where a Chenciner bifurcation occurs.
+The Steinmetz-Larter model is studied in the MatCont ecosystem because it is a simple example where a Chenciner bifurcation occurs. The article [^della_rossa] reports the bifurcation point:
+
+$$(k_7,k_8)\approx (1.757356,0.9125773)$$
+
+The equations are as follows:
 
 $$\tag{E}\left\{\begin{array}{l}
 \dot{A}=-k_1 A B X-k_3 A B Y+k_7-k_{-7} A, \\
@@ -131,6 +135,10 @@ ns_po_sh = BK.continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
 ```
 
 ```@example STEINMETZ
+BK.get_normal_form(ns_po_sh, 1)
+```
+
+```@example STEINMETZ
 scene = plot(ns_po_sh, vars = (:k7, :k8), branchlabel = "NS")
 plot!(scene, fold_po_sh, branchlabel = "Fold-PO")
 scene
@@ -164,7 +172,6 @@ scene = plot(br_coll)
 
 ```@example STEINMETZ
 opts_pocl_fold = BK.ContinuationPar(br_coll.contparams, detect_bifurcation = 0, plot_every_step = 10, dsmax = 4e-2, max_steps = 100, ds = 0.01)
-@reset opts_pocl_fold.newton_options.verbose = false
 @reset opts_pocl_fold.newton_options.tol = 1e-11
 fold_po_cl = BK.continuation(deepcopy(br_coll), 2, (@optic _.k7), opts_pocl_fold;
         # verbosity = 3, # plot = true,
@@ -192,6 +199,11 @@ ns_po_cl = BK.continuation(deepcopy(br_coll), 1, (@optic _.k7), opts_pocl_ns;
 ```
 
 ```@example STEINMETZ
+BK.get_normal_form(ns_po_cl, 1)
+```
+
+
+```@example STEINMETZ
 scene = plot(ns_po_cl; vars = (:k7, :k8))
 ```
 
@@ -200,3 +212,7 @@ scene = plot(fold_po_cl, branchlabel = "Fold-PO")
 plot!(ns_po_cl; vars = (:k7, :k8), branchlabel = "NS")
 scene
 ```
+
+## References
+
+[^della_rossa]:> Della Rossa, Fabio, Virginie De Witte, Willy Govaerts, and Yuri A. Kuznetsov. 2011. “Numerical Periodic Normalization for Codim 2 Bifurcations of Limit Cycles.” arXiv:1111.4445 [math]. <https://doi.org/10.48550/arXiv.1111.4445>.

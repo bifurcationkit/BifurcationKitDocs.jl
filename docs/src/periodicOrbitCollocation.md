@@ -120,6 +120,39 @@ BifurcationKit.POSolution
 
 The goal of this method[^Russell] is to adapt the mesh $\tau_i$ in order to minimize the error. It is particularly helpful near homoclinic solutions where the period diverges. It can also be useful in order to use a smaller $N_{tst}$.
 
+Mesh adaptation is activated by setting `meshadapt = true`:
+
+```julia
+po_method = Collocation(Ntst, m; meshadapt = true)
+```
+
+During continuation, the mesh $\tau_i$ is then automatically redistributed along the orbit: the numbers `Ntst` (of mesh points) and `Ntst × m` (of collocation nodes) are kept constant but their location concentrates where the solution varies the most (sharp transitions, relaxation oscillations, large period...). This often allows to decrease `Ntst` drastically.
+
+### When is the mesh updated?
+
+The adaptation is performed during `continuation` **after a successful Newton convergence** (and not during bisection), every `update_section_every_step` steps (the same parameter as the one controlling the update of the phase condition). If the adaptation fails, the continuation stops. The following parameters control the adaptation:
+
+- `meshadapt = true` activates the adaptation (`false` by default).
+- `verbose_mesh_adapt = true` prints information about the new mesh and the monitor function.
+- `K = 100` bounds the ratio of the time steps $h_i = T(\tau_{i+1}-\tau_i)$ (see below), the new mesh satisfies $\max_i h_i / \min_i h_i \le K$.
+
+### Error estimate and monitor function
+
+Let $p$ denote the piecewise polynomial approximation of degree $m$ of the orbit and $t_i = T\tau_i$ the (time) mesh points. Since $p^{(m+1)} = 0$, the $(m+1)$-th derivative of the true solution is estimated from the jumps of $p^{(m)}$ across mesh points[^Ascher]. In practice, $p^{(m)}$ is evaluated at the midpoints $v_{i-\frac12} := p^{(m)}\left(\frac{t_{i}+t_{i+1}}{2}\right)$ and a function $s^{(m+1)}$ is built from the differences of these values as in (2.13) of [^Russell]. The **monitor function** is then defined by $\phi_i := s_i^{1/(m+1)}$; if $\max_i \phi_i < 10^{-7}$, no adaptation is performed. To avoid too abrupt variations of the mesh, the monitor function is clamped as $\phi_i \mapsto \max(\phi_i, \max_j\phi_j/K)$ which enforces the bound on $\max_i h_i / \min_i h_i$.
+
+### Equipartition of the mesh
+
+The new mesh is computed by equipartition of the integral of the monitor function[^Ascher]:
+
+$$\int_{0}^{\tilde t_i}\phi(s)\, ds = \frac{i-1}{N_{tst}}\underbrace{\int_{0}^{T}\phi(s)\, ds}_{=\;\theta},\quad i=2,\cdots,N_{tst},$$
+
+with $\tilde t_1=0$, $\tilde t_{N_{tst}+1}=T$. Because $\phi$ is piecewise constant on the intervals, the primitive $\theta$ is piecewise linear and the equipartition is obtained analytically. The new (fraction of period) mesh is then $\tilde\tau_i := \tilde t_i / T$.
+
+After a successful adaptation:
+
+- the solution and the tangent are re-interpolated onto the new mesh and the predictor is updated;
+- `getmesh(coll)` is modified in place. The mesh used to compute a given solution is stored along with it on the branch (see `POSavedSolutionAndState`) so that it can be restored, e.g. when starting a new branch from a bifurcation point.
+
 ## Encoding of the functional
 
 The functional is encoded in the composite type [`Collocation`](@ref). See the link for more information, in particular on how to access the underlying functional, its jacobian...
@@ -322,6 +355,8 @@ This is massive gain (typically from `4.6s` to `180ms` on Apple M2), almost 4x f
 [^Fairgrieve]:> Fairgrieve, Thomas F., and Allan D. Jepson. “O. K. Floquet Multipliers.” SIAM Journal on Numerical Analysis 28, no. 5 (October 1991): 1446–62. https://doi.org/10.1137/0728075.
 
 [^Russell]:> Russell, R. D., and J. Christiansen. “Adaptive Mesh Selection Strategies for Solving Boundary Value Problems.” SIAM Journal on Numerical Analysis 15, no. 1 (February 1978): 59–80. https://doi.org/10.1137/0715004.
+
+[^Ascher]:> Ascher, Uri M., Robert M. M. Mattheij, and Robert D. Russell. Numerical Solution of Boundary Value Problems for Ordinary Differential Equations. Society for Industrial and Applied Mathematics, 1995. https://doi.org/10.1137/1.9781611971231.
 
 [^Lust]:> Lust, Kurt. “Improved Numerical Floquet Multipliers.” International Journal of Bifurcation and Chaos 11, no. 09 (September 2001): 2389–2410. https://doi.org/10.1142/S0218127401003486.
 

@@ -18,6 +18,9 @@ Thanks to the functionality presented in this part, we can compute the bifurcati
 - there is no loop detection. Hence, if the branch $\gamma$ has a component akin to a circle, you may experience a large number of branches
 - if the bifurcation diagram itself has loops (see example below), you may experience a large number of branches
 
+!!! info "Options"
+    The most useful options of [`bifurcationdiagram!`](@ref) are `halfbranch = false` (at Pitchfork / Transcritical points, compute only half of the branch, useful in presence of symmetries), `usedeflation = false` and `verbosediagram = false` (verbose specific to the computation of the diagram). You can also pass `δp` and `ampfactor` to tune the branch switching, see [From equilibria to equilibria](@ref).
+
 !!! warning "Memory"
     The whole diagram is stored in RAM and you should be careful when computing it on GPU. We'll add a file system for this in the future. 
 
@@ -51,8 +54,8 @@ opts_br = ContinuationPar(dsmin = 0.001, dsmax = 0.005, ds = 0.001,
 
 diagram = bifurcationdiagram(prob, PALC(),
 	# very important parameter. This specifies the maximum amount of recursion
-	# when computing the bifurcation diagram. It means we allow computing branches of branches 
-	# at most in the present case.
+	# when computing the bifurcation diagram, i.e. the maximum number of
+	# successive branches emanating from the first one.
 	2,
 	opts_br,
 )

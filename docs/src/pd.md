@@ -26,15 +26,25 @@ You can obtain the normal form of a PD bifurcation using
 pd = get_normal_form(br, ind; prm = Val(false))
 ```
 
-where `prm` indicates whether you want to use the method based on Poincaré return map (PRM) or the one based on Iooss method.
+where `prm` indicates whether you want to use the method based on Poincaré return map (`Val(true)`) or the one based on Iooss method (`Val(false)`). The call returns a point of type `PeriodDoublingPO` from which you can access
+
+- `pd.nf.p` the parameter value at the bifurcation point,
+- `pd.T` the period of the periodic orbit (the period of the bifurcated orbit is $2T$),
+- `pd.ζ`, `pd.ζ★` the right / left eigenvectors,
+- `pd.nf.nf` the coefficients of the normal form.
+
+You can pass `verbose = true` to get more information during the computation and, for the [periodic orbits based on orthogonal collocation](@ref), `detailed = Val(false)` to skip the (costly) computation of the normal form.
 
 ## Which method to use?
 
 Depending on the method used for computing the periodic orbits, you have several possibilities:
 
-- For shooting, you can only the PRM method. Shooting is the preferred way for large scale systems. Note that the PRM method is not very precise numerically.
-- For collocation, you can use PRM and Iooss methods. Note that the Iooss method is the most precise.
+- For shooting, you can only use the PRM method. Shooting is the preferred way for large scale systems. Note that the PRM method is not very precise numerically.
+- For collocation, you can use PRM and Iooss methods. The Iooss method (`prm = Val(false)`, the default) is the most precise.
 - For Trapezoid method, PD normal form is **not yet implemented**.
+
+!!! note "Branch switching"
+    Contrary to the case of [Neimark-Sacker point](@ref), automatic branch switching (`continuation(br, ind)`) **is available** from a PD point: the bifurcating object is again a periodic orbit (with period close to $2T$). An example is provided in [Period doubling in Lur'e problem (PD aBS)](@ref pdlure).
 
 ## Predictor
 
@@ -62,6 +72,8 @@ where $\mathcal C=d_1^3\mathcal P(x_0(0), p_0)$, $\mathcal B = d_1^2\mathcal P(x
 
 $$\mathcal{A} \zeta=-\zeta, \mathcal{A}^{\mathrm{T}} \zeta^*=-\zeta^*$$
 
+The coefficients `a` and `c` are returned in `pd.nf.nf`. The bifurcation is **supercritical** if $c > 0$ and **subcritical** if $c < 0$.
+
 !!! danger "Large scale problems"
     The computation of the normal form is not optimized for Matrix-Free problems (e.g. Monodromy) yet.
 
@@ -84,6 +96,13 @@ $$\left\{\begin{array}{l}
 
 with center manifold correction $H(\tau, \xi, \mu)$ being $2T$ periodic in $\tau$ and $v(\tau)$ is a Floquet eigenvector for the eigenvalue -1.
 
+The coefficients `a₀₁`, `a₂`, `c₁₁` and `c₃` are returned in `pd.nf.nf`. The bifurcation is **supercritical** if $c_3 < 0$ and **subcritical** if $c_3 > 0$.
+
+## See also
+
+- [Detection of bifurcation points of periodic orbits](@ref)
+- [Continuation of Period-doubling (PD) bifurcations of periodic orbits](@ref)
+- [Period doubling in Lur'e problem (PD aBS)](@ref pdlure): computation of the PD normal form (with both methods) and branch switching for all the periodic orbit methods
 
 ## References
 

@@ -13,10 +13,15 @@ Depth = 3
 You can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
-continuation(br::ContResult, ind_bif::Int, optionsCont::ContinuationPar; kwargs...)
+continuation(br::AbstractResult{Tkind, Tprob}, ind_bif::Int, 
+	options_cont::ContinuationPar = br.contparams;
+	δp = nothing, ampfactor::Real = 1,
+	use_normal_form = true,
+	usedeflation::Bool = false,
+	kwargs...)
 ```
 
-where `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled. This call computes the branch bifurcating from the `ind_bif `th bifurcation point in `br`. An example of use is provided in [2d Bratu–Gelfand problem](@ref gelfand).
+where `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled. This call computes the branch bifurcating from the `ind_bif`-th bifurcation point in `br`. An example of use is provided in [2d Bratu–Gelfand problem](@ref gelfand).
 
 ### Algorithm
 - the normal form is computed and non-trivial zeros are used to produce guesses for points on the bifurcated branch.
@@ -104,9 +109,10 @@ bp = get_normal_form(br, 1)
 We provide an automatic branch switching method. The method is to first compute the reduced equation (see [Non-simple branch point](@ref)) and its zeros. These zeros are then seeded as initial guess for [`continuation`](@ref). Hence, you can perform automatic branch switching by calling `continuation` with the following options:
 
 ```julia
-continuation(br::ContResult, 
+continuation(br::AbstractResult{Tkind, Tprob}, 
 	ind_bif::Int,
-	optionsCont::ContinuationPar;
+	options_cont::ContinuationPar = br.contparams;
+	δp = nothing, ampfactor::Real = 1,
 	kwargs...)
 ```
 
@@ -190,6 +196,4 @@ plot(br, brbp...)
 
 ## predictor(s) 
 
-```@docs
-BifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, δp::T; k...) where T
-```	
+The predictor used to find the zeros of the reduced equation is documented in [Non-simple branch point](@ref), see the section *Predictor*.
