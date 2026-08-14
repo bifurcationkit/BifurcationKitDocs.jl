@@ -272,11 +272,11 @@ In order to plot the periodic solution during continuation, you need to supply a
 br_po = continuation(br, 2, br.contparams,
         Collocation(20, 5);
         plot = true,
-        plot_solution = (x, par; k...) -> begin
+        plot_solution = (x, par; iter, state, k...) -> begin
                 # par is a Named tuple which contains 
                 # the problem for computing periodic orbits
                 # and the value of the parameter at the current step
-                sol = get_periodic_orbit(par.prob, x, par.p)
+                sol = get_periodic_orbit(par.prob, x, BK.getparams(iter, state))
                 plot!(sol.t, sol.u'; xlabel = "time", label="", k...)
         end
         )

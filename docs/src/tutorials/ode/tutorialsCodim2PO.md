@@ -1,4 +1,4 @@
-# 🟠 Periodic predator-prey model
+# [🟠 Periodic predator-prey model](@id predator-prey-po)
 
 ```@contents
 Pages = ["tutorialsCodim2PO.md"]
@@ -40,7 +40,7 @@ par_pop = ( K = 1., r = 6.28, a = 12.56, b0 = 0.25, e = 1., d = 6.28, ϵ = 0.2, 
 
 z0 = [0.1,0.1,1,0]
 
-prob_bif = BK.ODEBifProblem(Pop!, z0, par_pop, (@optic _.b0);
+prob_bif = BK.ODEBifProblem(Pop!, z0, par_pop, (@optic _.b0); R01 = BK.FiniteDifferences(),
 	record_from_solution = (x, p; k...) -> (x = x[1], y = x[2], u = x[3]))
 
 opts_br = BK.ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, dsmax = 0.01, n_inversion = 6, nev = 4)
@@ -66,18 +66,18 @@ plot(sol)
 We start with two helper functions that record and plot the periodic orbits. The following works for shooting, collocation and trapezoid methods for computing periodic orbits.
 
 ```@example TUTPPREY
-function record_from_solution(x, p; k...)
-	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+function record_from_solution(x, p; iter, state, k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
 	return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),
-			period = BK.getperiod(p.prob, x, p.p))
+			period = BK.getperiod(p.prob, x, BK.getparams(iter, state)))
 end
 
-function plot_solution(x, p; k...)
-	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-	plot!(xtt.t, xtt[1,:]; label = "x", k...)
-	plot!(xtt.t, xtt[2,:]; label = "y", k...)
-	# plot!(br; subplot = 1, putspecialptlegend = false)
+function plot_solution(x, p; iter, state, k...) # PB avec Fold!!!! ARgs
+    xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
+    plot!(xtt.t, xtt[1,:]; label = "x", k...)
+    plot!(xtt.t, xtt[2,:]; label = "y", k...)
+    # plot!(br; subplot = 1, putspecialptlegend = false)
 end
 
 argspo = (;record_from_solution,
@@ -182,6 +182,7 @@ fold_po_coll2 = BK.continuation(brpo_fold, 1, (@optic _.ϵ), opts_pocoll_fold;
 		jacobian_ma = BK.MinAug(),
 		start_with_eigen = false,
 		bothside = true,
+		usehessian = true,
 		)
 
 fold_po_coll1 = BK.continuation(brpo_fold, 2, (@optic _.ϵ), opts_pocoll_fold;
@@ -199,23 +200,22 @@ plot(fold_po_coll1, fold_po_coll2, branchlabel = ["FOLD1", "FOLD2"])
 We turn to the computation of the curve of PD points.
 
 ```@example TUTPPREY
-par_pop2 = @set par_pop.b0 = 0.45
+par_pop2 = @set par_pop.b0 = 0.5
 sol2 = DE.solve(DE.remake(prob_de, p = par_pop2, u0 = [0.1, 0.1, 1, 0], tspan=(0, 1000)), DE.Vern9())
 sol2 = DE.solve(DE.remake(sol2.prob, tspan = (0, 10), u0 = sol2.u[end]), DE.Vern9())
 plot(sol2, xlims = (8, 10))
 
-probcoll, ci = BK.generate_ci_problem(BK.Collocation(30, 3), BK.re_make(prob_bif, params = sol2.prob.p), sol2, 1.)
+probcoll, ci = BK.generate_ci_problem(BK.Collocation(30, 4; meshadapt=false), BK.re_make(prob_bif, params = sol2.prob.p), sol2, 1.)
 
 prob2 = @set probcoll.prob_vf.lens = @optic _.ϵ
-brpo_pd = BK.continuation(prob2, ci, BK.PALC(), BK.ContinuationPar(opts_po_cont, dsmax = 5e-3);
+brpo_pd = BK.continuation(prob2, ci, BK.PALC(tangent = BK.Bordered()), BK.ContinuationPar(opts_po_cont, dsmax = 5e-3);
 	argspo...,
 	bothside = true,
 	)
 
 opts_pocoll_pd = BK.ContinuationPar(brpo_pd.contparams, max_steps = 40, p_min = 1.e-2, dsmax = 1e-2, ds = -1e-3)
-@reset opts_pocoll_pd.newton_options.tol = 1e-12
-pd_po_coll2 = BK.continuation(brpo_pd, 2, (@optic _.b0), opts_pocoll_pd;
-		# verbosity = 2, plot = true,
+pd_po_coll2 = BK.continuation(deepcopy(brpo_pd), 2, (@optic _.b0), opts_pocoll_pd;
+		verbosity = 3, plot = true,
 		detect_codim2_bifurcation = 1,
 		start_with_eigen = false,
 		jacobian_ma = BK.MinAug(),

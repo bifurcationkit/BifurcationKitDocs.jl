@@ -158,7 +158,7 @@ br = @time continuation(
 	# we form a sparse matrix for the bordered linear problem
 	# and we adjust θ so that the continuation steps are larger
 	PALC(θ = 0.4, bls = MatrixBLS()), opts_cont,
-	plot = true, verbosity = 2,
+	# plot = true, verbosity = 2,
 	normC = normL2)
 
 scene = plot(br, title="N=$N")

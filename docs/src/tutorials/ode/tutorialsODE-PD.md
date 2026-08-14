@@ -69,17 +69,17 @@ We first define a plotting function and a record function which are used for all
 
 ```@example TUTLURE
 # plotting function
-function plotPO(x, p; k...)
-	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+function plotPO(x, p; iter, state, k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
 	plot!(xtt.t, xtt[1,:]; markersize = 2, k...)
 	plot!(xtt.t, xtt[2,:]; k...)
 	plot!(xtt.t, xtt[3,:]; legend = false, k...)
 end
 
 # record function
-function recordPO(x, p; k...)
-	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
-	period = BK.getperiod(p.prob, x, p.p)
+function recordPO(x, p; iter, state, k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
+	period = BK.getperiod(p.prob, x, BK.getparams(iter, state))
 	mn, mx = extrema(xtt[1, :])
 	return (;max = mx, min = mn, period)
 end
@@ -128,15 +128,15 @@ We use a different method to compute periodic orbits: we rely on a fixed point o
 import OrdinaryDiffEq as ODE
 
 # ODE problem for using DifferentialEquations
-prob_ode = ODE.ODEProblem(lur!, prob_bif.u0, (0, 1), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
+prob_ode = ODE.ODEProblem(lur!, prob_bif.u0, (0, 1.), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
 
 # continuation parameters
 opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, newton_options = BK.NewtonPar(tol = 1e-10), tol_stability = 1e-5, n_inversion = 8, max_steps = 100)
 
 br_po = BK.continuation(
 	br, 1, opts_po_cont,
-	# parallel shooting functional with 5 sections
 	BK.Shooting(5, prob_ode, ODE.Vern9(); parallel = true, abstol = 1e-10, reltol = 1e-8);
+	# parallel shooting functional with several sections
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,
@@ -150,7 +150,7 @@ plot(br_po)
 Note that you can compute the PD normal form
 
 ```@example TUTLURE
-BK.get_normal_form(br_po, 1; autodiff = true)
+BK.get_normal_form(br_po, 1; verbose = true)
 ```
 
 We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
@@ -158,15 +158,10 @@ We provide Automatic Branch Switching from the PD point and computing the bifurc
 ```@example TUTLURE
 # aBS from PD
 br_po_pd = BK.continuation(deepcopy(br_po), 1, 
-	BK.ContinuationPar(br_po.contparams, max_steps = 10, ds = -0.01);
-	plot_solution = (x, p; k...) -> begin
-		plotPO(x, p; k...)
-		# add previous branch
-		plot!(br_po; subplot = 1)
-	end,
+	BK.ContinuationPar(br_po.contparams, max_steps = 10, ds = -0.015);
 	record_from_solution = recordPO,
-	# autodiff_nf = true,
 	normC = BK.norminf,
+	# verbosity = 3, plot = true,
 	callback_newton = BK.cbMaxNorm(10),
 	)
 
@@ -185,8 +180,8 @@ br_po = BK.continuation(
 	br, 1, opts_po_cont,
 	BK.Trapeze(M = 120);
 	record_from_solution = recordPO,
-	plot_solution = (x, p; k...) -> begin
-		plotPO(x, p; k...)
+	plot_solution = (x, p; iter, state, k...) -> begin
+		plotPO(x, p; iter, state, k...)
 		## plot previous branch
 		plot!(br, subplot=1, putbifptlegend = false)
 		end,
@@ -203,9 +198,10 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 # aBS from PD
 br_po_pd = BK.continuation(deepcopy(br_po), 1, BK.ContinuationPar(br_po.contparams, max_steps = 70);
 	# plot = true,
+	use_normal_form = false,
 	ampfactor = .2, δp = -0.005,
-	plot_solution = (x, p; k...) -> begin
-		plotPO(x, p; k...)
+	plot_solution = (x, p; iter, state, k...) -> begin
+		plotPO(x, p; iter, state, k...)
 		# add previous branch
 		plot!(br_po; legend=false, subplot=1)
 	end,

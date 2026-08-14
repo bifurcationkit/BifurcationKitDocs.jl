@@ -81,15 +81,15 @@ We compute the branch of periodic orbits from the last Hopf bifurcation point (o
 # arguments for periodic orbits
 # one function to record information and one
 # function for plotting
-@views function record_from_solution(x, p; k...)
-	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+@views function record_from_solution(x, p; iter, state, k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
 	return (max = maximum(xtt[1,:]),
 			min = minimum(xtt[1,:]),
-			period = BK.getperiod(p.prob, x, p.p))
+			period = BK.getperiod(p.prob, x, BK.getparams(iter, state)))
 end
 
-@views function plot_solution(x, p; k...)
-	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+@views function plot_solution(x, p; iter, state, k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
 	arg = (marker = :d, markersize = 1)
 	plot!(xtt.t, xtt[1,:]; label = "E", arg..., k...)
 	plot!(xtt.t, xtt[2,:]; label = "x", arg..., k...)

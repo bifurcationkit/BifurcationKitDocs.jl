@@ -46,19 +46,18 @@ par_sl = (k1=0.1631021, k2=1250., k3=0.046875, k4=20., k5=1.104, k6=0.001, kâ‚‹â
 bifprob = BK.ODEBifProblem(SL!, z0, par_sl, (@optic _.k8);)
 
 # record variables for plotting
-function recordFromSolution(x, p; k...) 
-	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+function recordFromSolution(x, p; iter, state, k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
 	mi, ma = @views extrema(xtt[1, :])
 	return (max = ma,
 			min = mi,
 			amplitude = ma - mi,
-			period = BK.getperiod(p.prob, x, p.p))
+			period = BK.getperiod(p.prob, x, BK.getparams(iter, state)))
 end
 
 # plotting function
-function plotSolution(X, p; k...)
-	x = X isa BK.BorderedArray ? X.u : X
-	xtt = BK.get_periodic_orbit(p.prob, x, p.p)
+function plotSolution(x, p; iter, state, k...)
+	xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
 	plot!(xtt.t, xtt.u[1:4,:]'; label = "", k...)
 end
 
@@ -87,7 +86,7 @@ plot(sol_ode)
 We generate a shooting problem from the computed trajectories and continue the periodic orbits as function of $k_8$
 
 ```@example STEINMETZ
-probsh, cish = BK.generate_ci_problem( BK.Shooting(M = 15; jacobian = BK.AutoDiffDenseAnalytical() ), deepcopy(bifprob), prob_de, sol_ode, 16.; reltol = 1e-11, abstol = 1e-13, parallel = true)
+probsh, cish = BK.generate_ci_problem( BK.Shooting(M = 15; jacobian = BK.AutoDiffDenseAnalytical() ), deepcopy(bifprob), prob_de, sol_ode, 16.; reltol = 1e-10, abstol = 1e-12, parallel = true)
 
 opts_po_cont = BK.ContinuationPar(p_min = 0., p_max = 20.0, ds = 0.002, n_inversion = 6, nev = 4, max_steps = 40, tol_stability = 1e-3, newton_options = BK.NewtonPar(max_iterations = 10))
 br_sh = BK.continuation(deepcopy(probsh), cish, BK.PALC(tangent = BK.Bordered()), opts_po_cont;
