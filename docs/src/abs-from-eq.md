@@ -5,7 +5,7 @@ Pages = ["abs-from-eq.md"]
 Depth = 3
 ```
 
-## From simple branch point to equilibria
+## [From simple branch point to equilibria](@id abs-simple-eq)
 
 > See [Branch switching (branch point)](@ref) for the precise method definition.
 

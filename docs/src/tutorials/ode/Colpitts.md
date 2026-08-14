@@ -150,7 +150,7 @@ probFreez_ode = ODE.ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0
 
 solFreez = @time ODE.solve(probFreez_ode, ODE.Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
 
-scene = plot(solFreez, vars = [2], xlims=(195,200), title="μ = $(probFreez_ode.p.μ)")
+scene = plot(solFreez, idxs = [2], xlims=(195,200), title="μ = $(probFreez_ode.p.μ)")
 ```
 
 and after the bifurcation

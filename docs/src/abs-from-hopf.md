@@ -26,7 +26,7 @@ We refer to [`continuation`](@ref) for more information about the arguments. Her
 
 - For [Periodic orbits based on orthogonal collocation](@ref), you can pass `Collocation(M, m)` where `M` is the number of times slices in the periodic orbit and `m` is the degree of the collocation polynomials.
 
-- For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `Shooting(M, odeprob, Euler())` or `PoincareShooting(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://diffeq.sciml.ai/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
+- For [Periodic orbits based on the shooting method](@ref), you need more parameters. For example, you can pass `Shooting(M, odeprob, Euler())` or `PoincareShooting(M, odeprob, Euler())` where `odeprob::ODEProblem` (see [`DifferentialEquations.jl`](https://docs.sciml.ai/DiffEqDocs/stable/types/ode_types/)) is an ODE problem to specify the Cauchy problem amd `M` is the number of sections.
 
 > See [Branch switching (Hopf point)](@ref) for the precise method definition
 

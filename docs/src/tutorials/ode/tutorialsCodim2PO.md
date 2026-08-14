@@ -97,7 +97,7 @@ probtrap, ci = BK.generate_ci_problem(BK.Trapeze(M = 150),
 
 opts_po_cont = BK.ContinuationPar(opts_br, max_steps = 50, tol_stability = 1e-8)
 brpo_fold = BK.continuation(probtrap, ci, BK.PALC(), opts_po_cont;
-	verbosity = 3, plot = true,
+	# verbosity = 3, plot = true,
 	argspo...
 	)
 

@@ -44,7 +44,7 @@ The detailed information for each one of them is located in the [API](@ref Libra
 !!! note "Other solvers"
     For `KrylovLS`, just pass the required solver, like `cg`.
 
-    It is very straightforward to implement the Conjugate Gradients from [IterativeSolvers.jl](https://juliamath.github.io/IterativeSolvers.jl/dev/linear_systems/cg/) by copying the interface done for `gmres`. Same goes for `minres`,... Not needing them, I did not implement this.
+    It is very straightforward to implement the Conjugate Gradients from [IterativeSolvers.jl](https://docs.juliahub.com/General/IterativeSolvers/stable/) by copying the interface done for `gmres`. Same goes for `minres`,... Not needing them, I did not implement this.
 
 ## Preconditioner
 
