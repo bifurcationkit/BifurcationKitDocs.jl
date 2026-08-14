@@ -33,13 +33,9 @@ for state in iter
 end
 ```
 
-The `state::ContState` has the following description. It is a mutable object which holds the current state of the continuation procedure from which one can step to the next state.
+The `state::ContState` is a mutable object which holds the current state of the continuation procedure from which one can step to the next state. Its description is given in the [Library](@ref).
 
 The for loop stops when `done(iter, state)` returns `false`. The condition which is implemented is basically that the number of iterations should be smaller than `maxIter`, that the parameters should be in `(p_min, p_max)`...
-
-```@docs
-ContState
-```
 
 !!! tip "continuation"
     You can also call `continuation(iter)` to have access to the regular continuation method used throughout the tutorials.

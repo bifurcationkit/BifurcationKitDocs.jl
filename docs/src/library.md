@@ -248,6 +248,16 @@ BifurcationKit.DotTheta
 continuation
 ```
 
+## Iterator
+
+```@docs
+ContIterable
+```
+
+```@docs
+ContState
+```
+
 ## Continuation algorithms
 
 ### Tangents / predictors
