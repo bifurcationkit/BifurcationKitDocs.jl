@@ -33,20 +33,20 @@ Depth = 3
 
 > Custom state means, you can use something else than `AbstractArray`, for example your own `struct`.
 
-|Features|Matrix Free|Custom state| [Tutorial](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/) | GPU |
+|Features|Matrix Free|Custom state| [Tutorial](@ref Tutorials) | GPU |
 |---|---|---|---|---|
-| (Deflated) Krylov-Newton| Yes| Yes| [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/deflatedproblem/)| Yes|
+| (Deflated) Krylov-Newton| Yes| Yes| [Deflated problems](@ref)| Yes|
 | Continuation PALC (Natural, Secant, Tangent, Polynomial) | Yes| Yes |All  | Yes |
-| Deflated Continuation | Yes| Yes| [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialCarrier/#Deflated-Continuation-in-the-Carrier-Problem-1) |Yes  |
-| Bifurcation / Fold / Hopf point detection | Yes| Yes| All / All / [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/#Bifurcation-diagrams-with-periodic-orbits-1) | Yes |
-| Fold Point continuation | Yes| Yes| [PDE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials1/#Temperature-model-(simplest-example-for-equilibria)-1), [PDE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Complex-Ginzburg-Landau-2d-1), [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/lorenz84/#Extended-Lorenz-84-model-(codim-2-BT/ZH-aBS)) | Yes |
-| Hopf Point continuation | Yes| `AbstractArray` | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/lorenz84/#Extended-Lorenz-84-model-(codim-2-BT/ZH-aBS)) ||
-| Branch point / Fold / Hopf normal form | Yes| Yes| [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials3/#Continuation-of-Hopf-points-1) | |
-| Branch switching at Branch points | Yes| `AbstractArray` | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/abs-from-eq/#From-simple-branch-point-to-equilibria) | Yes |
-| **Automatic bifurcation diagram computation of equilibria** | Yes| `AbstractArray` |  [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialPP2/#pp2-example-from-AUTO07p-(aBD-Hopf-aBS)) | |
-| Bogdanov-Takens / Bautin / Cusp / Zero-Hopf / Hopf-Hopf point detection | Yes| Yes | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/lorenz84/#Extended-Lorenz-84-model-(codim-2-BT/ZH-aBS)) | |
-| Bogdanov-Takens / Bautin / Cusp normal forms | Yes| `AbstractArray`| [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/lorenz84/#Extended-Lorenz-84-model-(codim-2-BT/ZH-aBS))| Yes |
-| Branching from Bogdanov-Takens / Zero-Hopf / Hopf-Hopf to Fold / Hopf curve | Yes | `AbstractArray` | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/lorenz84/#Extended-Lorenz-84-model-(codim-2-BT/ZH-aBS))|  |
+| Deflated Continuation | Yes| Yes| [Deflated continuation in the Carrier problem](@ref carrier)|Yes  |
+| Bifurcation / Fold / Hopf point detection | Yes| Yes| All | Yes |
+| Fold Point continuation | Yes| Yes| [Temperature model (codim 2)](@ref temperature), [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl), [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) | Yes |
+| Hopf Point continuation | Yes| `AbstractArray` | [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) ||
+| Branch point / Fold / Hopf normal form | Yes| Yes| [1d Brusselator (automatic)](@ref brusauto) | |
+| Branch switching at Branch points | Yes| `AbstractArray` | [From simple branch point to equilibria](@ref abs-simple-eq) | Yes |
+| **Automatic bifurcation diagram computation of equilibria** | Yes| `AbstractArray` |  [pp2 example from AUTO07p (aBD + Hopf aBS)](@ref pp2) | |
+| Bogdanov-Takens / Bautin / Cusp / Zero-Hopf / Hopf-Hopf point detection | Yes| Yes | [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz) | |
+| Bogdanov-Takens / Bautin / Cusp normal forms | Yes| `AbstractArray`| [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz)| Yes |
+| Branching from Bogdanov-Takens / Zero-Hopf / Hopf-Hopf to Fold / Hopf curve | Yes | `AbstractArray` | [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz)|  |
 
 
 ## Capabilities related to Periodic orbits (PO)
@@ -65,22 +65,22 @@ Depth = 3
 
 > Legend for the table: Standard shooting (SS), Poincaré shooting (PS), Orthogonal collocation (OC), trapezoid (T).
 
-|Features|Method|Matrix Free|Custom state| [Tutorial](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials/) | GPU |
+|Features|Method|Matrix Free|Custom state| [Tutorial](@ref Tutorials) | GPU |
 |---|---|---|---|---|---|
-| Branch switching at Hopf points |SS/PS/OC/T| See each|  | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE-PD/#Period-doubling-in-Lur'e-problem-(PD-aBS)) | |
-| Newton / continuation | T | Yes| `AbstractVector` | [PDE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials3/#Brusselator-1d-(automatic)-1), [PDE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Complex-Ginzburg-Landau-2d-1) | Yes|
-| Newton / continuation |OC| | `AbstractVector` | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE/#Neural-mass-equation-(Hopf-aBS)) | |
-| Newton / continuation |SS| Yes| `AbstractArray` |  [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE-PD/#Period-doubling-in-Lur'e-problem-(PD-aBS)) | Yes|
-| Newton / continuation |PS| Yes| `AbstractArray` |  [PDE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials3/#d-Brusselator-(automatic)) | Yes|
-| Fold, Neimark-Sacker, Period doubling detection |SS/PS/OC/T| See each| `AbstractVector` | [link](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorials3/#d-Brusselator-(automatic))  | |
-| Branch switching at Branch point |SS/PS/OC/T| See each|  | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE-PD/#Period-doubling-in-Lur'e-problem-(PD-aBS)) | |
-| Branch switching at PD point |SS/PS/OC/T| See each|  | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsODE-PD/#Period-doubling-in-Lur'e-problem-(PD-aBS)) | |
-| Continuation of Fold points |SS/PS/OC/T| See each| `AbstractVector` |[ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsCodim2PO/#Periodic-predator-prey-model) [PDE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/tutorialsCGL/#Continuation-of-Fold-of-periodic-orbits) | Yes |
-| Continuation of Period-doubling points |SS/OC| | `AbstractVector` |  [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/tutorialsCodim2PO/#Continuation-of-Fold/PD-of-periodic-orbits-with-Shooting) | |
-| Continuation of Neimark-Sacker points |SS/OC| | `AbstractVector` | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/steinmetz/#Curve-of-NS-points-of-periodic-orbits) | |
-| detection of codim 2 bifurcations of periodic orbits |SS/OC| | `AbstractVector` | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/steinmetz/#Curve-of-NS-points-of-periodic-orbits) | |
-| Branch switching at Bautin point to curve of Fold of periodic orbits |SS/OC| | `AbstractVector` | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/lorenz84-PO/#Lorenz-84-model,-take-2.) | |
-| Branch switching at ZH/HH point to curve of NS of periodic orbits |SS/OC| | `AbstractVector` | [ODE](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/tutorials/ode/lorenz84-PO/#Lorenz-84-model,-take-2.) | |
+| Branch switching at Hopf points |SS/PS/OC/T| See each|  | [Neural mass equation (Hopf aBS)](@ref nmepo) | |
+| Newton / continuation | T | Yes| `AbstractVector` | [1d Brusselator (automatic)](@ref brusauto), [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) | Yes|
+| Newton / continuation |OC| | `AbstractVector` | [Neural mass equation (Hopf aBS)](@ref nmepo) | |
+| Newton / continuation |SS| Yes| `AbstractArray` |  [Period doubling in Lur'e problem (PD aBS)](@ref pdlure) | Yes|
+| Newton / continuation |PS| Yes| `AbstractArray` |  [1d Brusselator (automatic)](@ref brusauto) | Yes|
+| Fold, Neimark-Sacker, Period doubling detection |SS/PS/OC/T| See each| `AbstractVector` | [1d Brusselator (automatic)](@ref brusauto)  | |
+| Branch switching at Branch point |SS/PS/OC/T| See each|  | [Period doubling in Lur'e problem (PD aBS)](@ref pdlure) | |
+| Branch switching at PD point |SS/PS/OC/T| See each|  | [Period doubling in Lur'e problem (PD aBS)](@ref pdlure) | |
+| Continuation of Fold points |SS/PS/OC/T| See each| `AbstractVector` |[Periodic predator-prey model](@ref predator-prey-po) [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) | Yes |
+| Continuation of Period-doubling points |SS/OC| | `AbstractVector` |  [Periodic predator-prey model](@ref predator-prey-po) | |
+| Continuation of Neimark-Sacker points |SS/OC| | `AbstractVector` | [Steinmetz-Larter model](@ref steinmetz) | |
+| detection of codim 2 bifurcations of periodic orbits |SS/OC| | `AbstractVector` | [Steinmetz-Larter model](@ref steinmetz) | |
+| Branch switching at Bautin point to curve of Fold of periodic orbits |SS/OC| | `AbstractVector` | [Lorenz-84 model, take 2](@ref lorenz98-take2) | |
+| Branch switching at ZH/HH point to curve of NS of periodic orbits |SS/OC| | `AbstractVector` | [Lorenz-84 model, take 2](@ref lorenz98-take2) | |
 
 ## Capabilities related to Homoclinic orbits
 
