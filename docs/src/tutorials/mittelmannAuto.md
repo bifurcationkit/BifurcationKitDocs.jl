@@ -21,6 +21,7 @@ We start with some imports:
 using Revise, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 # define the sup norm
 norm2(x) = norm(x) / sqrt(length(x))

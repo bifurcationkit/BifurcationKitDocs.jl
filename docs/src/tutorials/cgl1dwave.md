@@ -17,6 +17,7 @@ with periodic boundary conditions. We discretize the circle $\Omega = (-\pi,\pi)
 using Revise, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 const FD = ForwardDiff
 
 # plotting utilities

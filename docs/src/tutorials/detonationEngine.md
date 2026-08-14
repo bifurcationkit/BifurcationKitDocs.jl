@@ -24,6 +24,7 @@ using Revise, ForwardDiff
 using SparseArrays
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 ω(u, p) = p.k * exp((u - p.uc) / p.α)
 β(u, p) = p.s * p.up / (1 + exp(p.r * (u - p.up)) )

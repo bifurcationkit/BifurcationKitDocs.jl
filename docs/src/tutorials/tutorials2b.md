@@ -63,6 +63,7 @@ which is pre-computed in the composite type `SHLinearOp `. Then, the effect of `
 using AbstractFFTs, FFTW, KrylovKit
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 # the following struct encodes the operator L1
 # Making the linear operator a subtype of BK.AbstractLinearSolver is handy as it will be used

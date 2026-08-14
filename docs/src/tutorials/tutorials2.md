@@ -15,6 +15,7 @@ with Neumann boundary conditions. The full example is in the file `example/SH2d-
 using BifurcationKit, Plots, SparseArrays
 import LinearAlgebra: I, norm
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 # helper function to plot solution
 heatmapsol(x) = heatmap(reshape(x,Nx,Ny)',color=:viridis)

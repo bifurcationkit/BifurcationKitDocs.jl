@@ -26,6 +26,7 @@ with Dirichlet boundary conditions. We discretize the square $\Omega = (0,L_x)\t
 using Revise, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 function Laplacian2D(Nx, Ny, lx, ly)
     hx = 2lx/Nx

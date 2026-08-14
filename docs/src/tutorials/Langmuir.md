@@ -24,6 +24,7 @@ As can be seen in the reference above, the bifurcation diagram is significantly 
 using Revise, SparseArrays
 using BifurcationKit, LinearAlgebra, Plots, ForwardDiff
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 # norms
 normL2(x; r = sqrt(par.Δx / L)) = norm(x, 2) * r

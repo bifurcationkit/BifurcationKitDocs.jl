@@ -17,6 +17,7 @@ We start with some imports:
 using Revise, ForwardDiff
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 # define the sup norm and a L2 norm
 normbratu(x) = norm(x .* w) / sqrt(length(x)) # the weight w is defined below

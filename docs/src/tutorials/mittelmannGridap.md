@@ -21,6 +21,8 @@ using Gridap
 using Gridap.FESpaces
 using GridapBifurcationKit
 using BifurcationKit
+const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 # custom plot function to deal with Gridap
 plotgridap!(x; k...) = (n=isqrt(length(x));heatmap!(reshape(x,n,n); color=:viridis, k...))

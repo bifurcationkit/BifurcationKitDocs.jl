@@ -24,6 +24,7 @@ We start by writing the PDE
 using Revise
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 f1(u, v) = u * u * v
 

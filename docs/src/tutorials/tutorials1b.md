@@ -19,6 +19,7 @@ using ApproxFun, LinearAlgebra
 
 using BifurcationKit, Plots
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 ```
 
 We then need to add some methods not available in `ApproxFun` because the state space is not a subtype of `AbstractArray`:

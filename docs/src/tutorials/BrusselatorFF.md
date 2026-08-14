@@ -24,6 +24,7 @@ using Revise, BifurcationKit
 using Brusselator, Plots, ForwardDiff, LinearAlgebra, Setfield, DiffEqBase
 using FFTW: irfft
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 dev = CPU()					# Device (CPU/GPU)
 

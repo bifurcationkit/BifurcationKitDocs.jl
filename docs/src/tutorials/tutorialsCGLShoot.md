@@ -15,6 +15,7 @@ where $A$ is the infinitesimal generator of a $C_0$-semigroup. We use the same b
 using Revise
 using BifurcationKit, LinearAlgebra, Plots, SparseArrays
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 function Laplacian2D(Nx, Ny, lx, ly)
     hx = 2lx/Nx

@@ -17,6 +17,7 @@ using LinearAlgebra, SparseArrays, BandedMatrices
 
 using BifurcationKit, Plots
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 ```
 
 and a discretization of the problem
@@ -61,7 +62,11 @@ sol0 = -(1 .- par_car.X.^2)
 
 recordFromSolution(x, p; k...) = (x[2]-x[1]) * sum(z->z^2, x)
 
-prob = BifurcationProblem(F_carr, zeros(N), par_car, (@optic _.ϵ); J = Jac_carr, record_from_solution = recordFromSolution)
+prob = BifurcationProblem(F_carr, zeros(N), par_car, (@optic _.ϵ); 
+	J = Jac_carr, 
+	record_from_solution = recordFromSolution, 
+	R01 = BK.FiniteDifferences() # for normal form computation
+	)
 
 optnew = NewtonPar(tol = 1e-8)
 sol = BK.solve(prob, Newton(), optnew, normN = norminf) # hide
@@ -74,7 +79,6 @@ nothing #hide
 We can start by using our Automatic bifurcation method.
 
 ```@example TUTCARRIER
-
 optcont = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= -0.01, p_min = 0.05, plot_every_step = 10, newton_options = NewtonPar(tol = 1e-8), max_steps = 300, nev = 40, n_inversion = 4)
 
 diagram = bifurcationdiagram(prob,

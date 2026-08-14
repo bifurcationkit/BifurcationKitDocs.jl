@@ -18,6 +18,7 @@ import LinearAlgebra: I, norm
 using BifurcationKit
 using Plots
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 ```
 
 We then define a discretization of the problem

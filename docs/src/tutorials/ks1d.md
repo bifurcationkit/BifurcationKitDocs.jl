@@ -26,6 +26,7 @@ using Revise, LinearAlgebra, Plots
 using ForwardDiff
 using BifurcationKit
 const  BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 # we use this library for plotting
 using ApproxFun

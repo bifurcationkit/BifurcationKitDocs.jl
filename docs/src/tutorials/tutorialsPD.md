@@ -22,6 +22,7 @@ with Neumann boundary conditions. We start by encoding the model
 using Revise, ForwardDiff, SparseArrays
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 f(u, v, p) = p.η * (      u + p.a * v - p.C * u * v - u * v^2)
 g(u, v, p) = p.η * (p.H * u + p.b * v + p.C * u * v + u * v^2)

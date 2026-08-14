@@ -23,6 +23,7 @@ using Revise
 using ForwardDiff, SparseArrays
 using BifurcationKit, LinearAlgebra, Plots
 const BK = BifurcationKit
+BK.set_plot_backend!(BK.BK_Plots()) # hide
 
 # supremum norm
 f(u) = u^9 # solutions are positive, so remove the heaviside
