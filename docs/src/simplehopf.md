@@ -43,14 +43,32 @@ with $\mathbf{F}_{ql}$ a $(q+l)$-linear map.
 The normal form (E) is automatically computed as follows
 
 ```julia
-get_normal_form(br::ContResult, ind_bif::Int ;
-	verbose = false, ζs = nothing, lens = getlens(br))::Hopf
+get_normal_form(br, ind_bif;
+	verbose = false, lens = getlens(br),
+	detailed = Val(true),            # full normal form (coefficients a, b)
+	start_with_eigen = Val(true),    # Val(false): kernel basis via bordered systems
+	bls = MatrixBLS(), bls_adjoint = bls)
 ```
 
-where `prob` is a bifurcation problem. `br` is a branch computed after a call to `continuation` with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`get_normal_form`](@ref). The above call returns an object of type `Hopf`.
+`br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters (`nev`, `ζs`, `scaleζ`, ...), we refer to [`get_normal_form`](@ref). The above call returns an object of type `Hopf`.
 
 !!! info "Note"
     You should not need to call `get_normal_form ` except if you need the full information about the branch point.
+
+### Returned object
+
+The call `get_normal_form(br, ind_bif)` returns a `Hopf` point with the following fields
+
+- `x0`, `p`, `params`, `lens`: the bifurcation point, its parameter value, the full parameter set and the parameter axis,
+- `ω`: the imaginary frequency of the Hopf pair,
+- `ζ` (resp. `ζ★`): the complex right (resp. left) eigenvector satisfying $\mathbf J \zeta = i\omega M\zeta$ and $\mathbf J^*\zeta^* = -i\omega M^*\zeta^*$, normalized by `scaleζ` and such that $\langle\zeta^*, \zeta\rangle = 1$,
+- `type`: `:SuperCritical`, `:SubCritical` or `:Singular`, deduced from the sign of `real(nf.b)`,
+- `nf`: a `HopfNormalForm` holding
+  - `nf.a`: the coefficient $a$ in (E), i.e. the linear dependence of the normal form on $p - p_0$,
+  - `nf.b`: the Lyapunov coefficient $l_1$ of (E),
+  - `nf.Ψ001`, `nf.Ψ110`, `nf.Ψ200`: the second order terms of the parametrization of the center manifold (see the equations defining $\Psi_{001}$, $\Psi_{200}$, $\Psi_{110}$ above).
+
+Passing `detailed = Val(false)` skips the computation of the coefficients $a,b$ (they are set to `missing`) and returns only the data needed to start the continuation of the periodic orbit.
 
 ## Predictor
 
@@ -59,6 +77,9 @@ The predictor for a non trivial guess at distance $\delta p$ from the bifurcatio
 ```@docs
 predictor(hp::BifurcationKit.Hopf, ds; verbose = false, ampfactor = 1 )
 ```
+
+!!! tip "Second order predictor"
+    This predictor uses the coefficients `nf.a` and `nf.b`, it thus requires the **detailed** normal form (`detailed = Val(true)`, which is the default).
 
 ## References
 

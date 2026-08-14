@@ -26,17 +26,31 @@ $$l_2:=\frac{1}{12} \operatorname{Re} G_{32}.$$
 The normal form (E) can be automatically computed as follows
 
 ```julia
-get_normal_form(br::ContResult, ind_bif::Int;
-    verbose = false, 
-    ζs = nothing, 
-    lens = getlens(br),
-    kwargs...)
+get_normal_form(br, ind_bif;
+    verbose = false, lens = getlens(br),
+    detailed = Val(true),            # full normal form
+    start_with_eigen = Val(true),    # Val(false): kernel basis via bordered systems
+    bls = MatrixBLS(), bls_adjoint = bls)
 ```
 
-`br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`get_normal_form`](@ref). The result returns an object of type `Bautin`.
+`br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters (`nev`, `ζs`, `scaleζ`, ...), we refer to [`get_normal_form`](@ref). The result returns an object of type `Bautin`.
 
 !!! info "Note"
     You should not need to call `get_normal_form` except if you need the full information about the branch point.
+
+### Returned object
+
+The call `get_normal_form(br, ind_bif)` returns a `Bautin` point with the following fields
+
+- `x0`, `params`, `lens`: the bifurcation point, the full parameter set and the two parameter axes,
+- `ζ` (resp. `ζ★`): the complex right (resp. left) eigenvector of the Hopf pair, normalized by `scaleζ` and such that $\langle \zeta*, \zeta\rangle = 1$,
+- `nf`: a named tuple holding
+  - `ω`: the frequency of the Hopf pair,
+  - `G21`, `G32`: the complex cubic and quintic coefficients of (E),
+  - `l1 = G21/2`, `l2 = real(G32)/12`: the first and second Lyapunov coefficients (the second Lyapunov coefficient is that of (E)),
+  - in detailed mode, the additional data required to branch to the curve of folds of periodic orbits: `h₂₀₀₀, h₁₁₀₀, h₀₀₁₀, h₀₀₀₁` (homological equation terms), `γ₁₁₀, γ₁₀₁, γ₂₁₀, γ₂₀₁` and `α` (unfolding coefficients, see [^Kuznetsov]).
+
+The predictor below relies on the detailed normal form: call `get_normal_form(br, ind_bif; detailed = Val(true))` (the default).
 
 ## Predictor
 

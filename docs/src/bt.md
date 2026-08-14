@@ -63,20 +63,32 @@ To invert the mapping $\mu\to (\alpha_{1}(\mu),\alpha_{2}(\mu),\alpha_{3}(\mu))$
 The normal form (E) can be automatically computed as follows
 
 ```julia
-get_normal_form(br::ContResult, ind_bif::Int;
-    ζs = nothing, 
-    autodiff = true, 
-    detailed = true,
-    kwargs...)
+get_normal_form(br, ind_bif;
+    verbose = false, lens = getlens(br),
+    detailed = Val(true),            # full normal form
+    autodiff = true,                 # use ForwardDiff for the differentiations
+    start_with_eigen = Val(true),    # Val(false): kernel basis via bordered systems
+    bls = MatrixBLS(), bls_adjoint = bls, bls_block = bls)
 ```
 
 `br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The option `detailed` controls the computation of a simplified version of the normal form. `autodiff` controls the use of `ForwardDiff` during the normal form computation.
 
-
-The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`get_normal_form`](@ref). The result returns an object of type `BogdanovTakens`.
+The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters (`nev`, `ζs`, `scaleζ`, ...), we refer to [`get_normal_form`](@ref). The result returns an object of type `BogdanovTakens`.
 
 !!! info "Note"
     You should not need to call `get_normal_form` except if you need the full information about the branch point.
+
+### Returned object
+
+The call `get_normal_form(br, ind_bif)` returns a `BogdanovTakens` point with the following fields
+
+- `x0`, `params`, `lens`: the bifurcation point, the full parameter set and the two parameter axes,
+- `ζ = (; q0, q1)` (resp. `ζ★ = (; p0, p1)`): the real right (resp. left) generalized eigenvectors forming the Jordan chain $\mathbf L q_0 = 0,\ \mathbf L q_1 = q_0$ (resp. $\mathbf L^{T} p_1 = 0,\ \mathbf L^{T} p_0 = p_1$),
+- `nf`: a named tuple holding
+  - `a`, `b`: the quadratic coefficients of (E) computed above,
+  - in detailed mode, the additional coefficients `γ, c, K10, K11, K2, d, e, a1, b1` of the truncated normal form and of the parameter transform $\mu \mapsto (\alpha_1,\alpha_2,\alpha_3)$ (see the two sections above and [^AlHdaibat]) as well as the center manifold terms `H0001, H0010, H0002, H1001, H2000` (homological equations, analogous to the $\Psi$s of the simple Hopf case).
+
+The predictors below rely on the detailed normal form: call `get_normal_form(br, ind_bif; detailed = Val(true))` (the default).
 
 
 ## Predictors
@@ -84,7 +96,7 @@ The above call returns a point with information needed to compute the bifurcated
 The predictor for a non trivial guess at distance $\delta p$ from the bifurcation point is provided by the method
 
 ```@docs
-BifurcationKit.predictor(bt::BifurcationKit.BifurcationKit.BogdanovTakens, ::Val{:HopfCurve}, ds::T; verbose = false, ampfactor = T(1)) where T
+BifurcationKit.predictor(bt::BifurcationKit.BogdanovTakens, ::Val{:HopfCurve}, ds::T; verbose = false, ampfactor = T(1)) where T
 ```
 
 ```@docs

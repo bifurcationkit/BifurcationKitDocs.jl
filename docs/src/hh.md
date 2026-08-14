@@ -18,20 +18,37 @@ $$\left\{\begin{aligned}
 & +O\left(\left\|\left(w_1, \bar{w}_1, w_2, \bar{w}_2\right)\right\|^6\right)
 \end{aligned}\right.\tag{E}$$
 
-> This normal form is usually computed in order to branch from a Hopf-Hopf bifurcation point to curves of Neimark-Sacker bifurcations of periodic orbits (see [^Kuznetsov2]). Not all coefficients in (E) are required for this branching procedure, that is why only a subset of the $G_{ijkl}$ is returned.
+> This normal form is usually computed in order to branch from a Hopf-Hopf bifurcation point to curves of Neimark-Sacker bifurcations of periodic orbits (see [^Kuznetsov2]). Passing `detailed = Val(false)` returns only the data needed for this branching procedure while `detailed = Val(true)` (the default through [`get_normal_form`](@ref)) returns the cubic coefficients $G_{2100}, G_{0021}, G_{1011}, G_{1110}$ of (E) together with the coefficients required by the predictors.
 
 ## Normal form computation
 
 The normal form (E) can be automatically computed as follows
 
 ```julia
-get_normal_form(br::ContResult, ind_bif::Int ; verbose = false, ζs = nothing, lens = getlens(br))
+get_normal_form(br, ind_bif;
+    verbose = false, lens = getlens(br),
+    detailed = Val(true),            # full normal form
+    autodiff = true,                 # use ForwardDiff for the differentiations
+    start_with_eigen = Val(true),    # Val(false): kernel basis via bordered systems
+    bls = MatrixBLS(), bls_adjoint = bls)
 ```
 
-`br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters, we refer to [`get_normal_form`](@ref). The result returns an object of type `HopfHopf`.
+`br` is a branch computed after a call to [`continuation`](@ref) with detection of bifurcation points enabled and `ind_bif` is the index of the bifurcation point on the branch `br`. The above call returns a point with information needed to compute the bifurcated branch. For more information about the optional parameters (`nev`, `ζs`, `scaleζ`, ...), we refer to [`get_normal_form`](@ref). The result returns an object of type `HopfHopf`.
 
 !!! info "Note"
     You should not need to call `get_normal_form` except if you need the full information about the branch point.
+
+### Returned object
+
+The call `get_normal_form(br, ind_bif)` returns a `HopfHopf` point with the following fields
+
+- `x0`, `params`, `lens`: the bifurcation point, the full parameter set and the two parameter axes,
+- `ζ = (; q1, q2)` (resp. `ζ★ = (; p1, p2)`): the two complex eigenvectors of the Hopf pairs (resp. the left vectors), normalized by `scaleζ` and such that $\langle p_i, q_i\rangle = 1$. The pairs are ordered so that $\operatorname{imag}(\lambda_1) \geq \operatorname{imag}(\lambda_2) > 0$,
+- `nf`: a named tuple holding
+  - `ω0`: the frequency recorded by the continuation (i.e. that of the pair from which the Hopf-Hopf point was detected),
+  - `λ1`, `λ2`: the eigenvalues of the two Hopf pairs (with the ordering above),
+  - the cubic coefficients of (E): `G2100`, `G0021` (self couplings) and `G1011`, `G1110` (cross couplings),
+  - the data required by the `:NS` predictor: `γ₁₁₀, γ₁₀₁, γ₂₁₀, γ₂₀₁`, the $2\times 2$ matrix `Γ`, the homological-equation terms `h₁₁₀₀, h₀₀₁₁, h₂₀₀₀, h₀₀₂₀`, the parameter terms `h₀₀₀₀₁₀, h₀₀₀₀₀₁` and the two sets `ns1 = (; dω1, dω2, α)` and `ns2 = (; dω1, dω2, α)`.
 
 ## Predictors
 
@@ -45,11 +62,12 @@ BifurcationKit.predictor(hh::BifurcationKit.HopfHopf, ::Val{:HopfCurve}, ds::T; 
 BifurcationKit.predictor(hh::BifurcationKit.HopfHopf, ::Val{:NS}, ϵ::T; verbose = false, ampfactor = T(1)) where T
 ```
 
+!!! tip "Detailed normal form"
+    The `:NS` predictor gives an approximation of the two curves of Neimark-Sacker points of periodic orbits and requires the **detailed** normal form (`detailed = Val(true)`, the default). The `:HopfCurve` predictor (used to continue the curve of Hopf points) only needs `λ1`, `λ2`, `ω0` and the eigenvectors.
+
 ## References
 
 
 [^Kuznetsov]:> Kuznetsov, Yu. A. “Numerical Normalization Techniques for All Codim 2 Bifurcations of Equilibria in ODE’s.” SIAM Journal on Numerical Analysis 36, no. 4 (January 1, 1999): 1104–24. https://doi.org/10.1137/S0036142998335005.
 
 [^Kuznetsov2]:> Kuznetsov, Yu A., H. G. E. Meijer, W. Govaerts, and B. Sautois. “Switching to Nonhyperbolic Cycles from Codim 2 Bifurcations of Equilibria in ODEs.” Physica D: Nonlinear Phenomena 237, no. 23 (December 2008): 3061–68. https://doi.org/10.1016/j.physd.2008.06.006.
-
-
