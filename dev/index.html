@@ -4,7 +4,7 @@
   [49cd1f3c] AsymptoticNumericalMethod v0.3.1
   [aae01518] BandedMatrices v1.11.0 `~/.julia/dev/BandedMatrices`
   [6e4b80f9] BenchmarkTools v1.8.0
-  [0f109fa4] BifurcationKit v0.8.1
+  [0f109fa4] BifurcationKit v0.8.2
   [52551710] BifurcationKitDocs v0.4.17 `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl`
   [13f3f980] CairoMakie v0.15.13
   [e30172f5] Documenter v1.17.0
@@ -16,7 +16,7 @@
 ⌅ [d96e819e] Parameters v0.12.3
   [91a5bcdd] Plots v1.41.6
   [295af30f] Revise v3.16.3
-⌅ [0bca4576] SciMLBase v3.46.1
+  [0bca4576] SciMLBase v3.47.0
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays v1.10.0
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre></details><details><summary> ℹ️ version info</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.10.11
@@ -54,7 +54,7 @@ Environment:
   [aae01518] BandedMatrices v1.11.0 `~/.julia/dev/BandedMatrices`
   [18cc8868] BaseDirs v1.4.0
   [6e4b80f9] BenchmarkTools v1.8.0
-  [0f109fa4] BifurcationKit v0.8.1
+  [0f109fa4] BifurcationKit v0.8.2
   [52551710] BifurcationKitDocs v0.4.17 `~/work/BifurcationKitDocs.jl/BifurcationKitDocs.jl`
   [b2a6c25c] BinaryHeaps v1.0.4
   [d1d4a3ce] BitFlags v0.1.10
@@ -69,7 +69,7 @@ Environment:
   [4c0bbee4] ChunkCodecLibZlib v1.1.0
   [55437552] ChunkCodecLibZstd v1.0.0
   [da1fd8a2] CodeTracking v3.0.2
-  [944b1d66] CodecZlib v0.7.8
+  [944b1d66] CodecZlib v0.7.9
   [6b39b394] CodecZstd v0.8.7
   [08986516] Collects v1.1.0
   [a2cac450] ColorBrewer v0.4.2
@@ -94,7 +94,7 @@ Environment:
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v1.6.6
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.14.0
+  [2b5f629d] DiffEqBase v7.15.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.20
@@ -193,9 +193,9 @@ Environment:
   [46d2c3a1] MuladdMacro v0.2.7
   [77ba4419] NaNMath v1.1.4
   [f09324ee] Netpbm v1.1.1
-  [8913a72c] NonlinearSolve v4.26.1
-  [be0214bd] NonlinearSolveBase v2.43.0
-  [5959db7a] NonlinearSolveFirstOrder v2.3.2
+  [8913a72c] NonlinearSolve v4.27.0
+  [be0214bd] NonlinearSolveBase v2.45.0
+  [5959db7a] NonlinearSolveFirstOrder v2.4.0
   [9a2c21bd] NonlinearSolveQuasiNewton v1.15.1
   [26075421] NonlinearSolveSpectralMethods v1.8.0
   [510215fc] Observables v0.5.5
@@ -252,10 +252,10 @@ Environment:
   [5eaf0fd0] RoundingEmulator v0.2.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.24
   [fdea26ae] SIMD v3.7.2
-⌅ [0bca4576] SciMLBase v3.46.1
+  [0bca4576] SciMLBase v3.47.0
   [19f34311] SciMLJacobianOperators v0.1.17
   [a6db7da4] SciMLLogging v2.0.4
-  [c0aeaf25] SciMLOperators v1.26.1
+  [c0aeaf25] SciMLOperators v1.27.0
   [431bcebd] SciMLPublic v1.2.4
   [53ae85a6] SciMLStructures v1.10.4
   [7e506255] ScopedValues v1.6.2
@@ -274,7 +274,7 @@ Environment:
   [276daf66] SpecialFunctions v2.8.3
   [860ef19b] StableRNGs v1.0.4
   [cae243ae] StackViews v0.1.2
-  [90137ffa] StaticArrays v1.9.18
+  [90137ffa] StaticArrays v1.9.19
   [1e83bf80] StaticArraysCore v1.4.4
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.12
@@ -308,7 +308,7 @@ Environment:
   [ee1fde0b] Dbus_jll v1.16.2+0
   [5ae413db] EarCut_jll v2.2.4+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-  [2e619515] Expat_jll v2.8.2+0
+  [2e619515] Expat_jll v2.8.3+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
@@ -456,4 +456,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="capabilities/">🔭 Overview of capabilities »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Friday 14 August 2026 15:01">Friday 14 August 2026</span>. Using Julia version 1.10.11.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="capabilities/">🔭 Overview of capabilities »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Saturday 15 August 2026 22:24">Saturday 15 August 2026</span>. Using Julia version 1.10.11.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
