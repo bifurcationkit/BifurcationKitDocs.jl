@@ -9,7 +9,7 @@ pkg" add DocumenterCodeBlocks"
 using Documenter, BifurcationKit, AsymptoticNumericalMethod
 # using DocumenterMermaid
 using DocumenterCodeBlocks
-using DocumenterMermaid
+# using DocumenterMermaid # comment
 # using DocThemeIndigo
 ENV["GKSwstype"] = "100"
 
