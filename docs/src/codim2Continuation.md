@@ -50,7 +50,7 @@ where $a,b$ are chosen in order to have a non-singular matrix $(M_f)$. More prec
 You can detect the following codim 2 bifurcation points by using the option `detect_codim2_bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
 
 - the detection of Cusp (Cusp) is done by the detection of Fold bifurcation points along the curve of Folds by monitoring the parameter component of the tangent.
-- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = \langle a(p),b(p)\rangle$
+- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = a(p)^{\top} M b(p)$, with $M=I_n$ in this (massless) Fold setting so that $\psi_{BT}(p)=\langle a(p),b(p)\rangle$
 - the detection of Zero-Hopf (ZH) is performed by monitoring the number of eigenvalues $\lambda$ such that $\Re\lambda > \min\limits_{\nu\in\Sigma(dF)}|\Re\nu|$ and $\Im\lambda > \epsilon$ where $\epsilon$ is the Newton tolerance.
 
 ## Hopf continuation (theory)
@@ -89,7 +89,7 @@ where $a,b$ are chosen in order to have a non-singular matrix $(M_h)$. More prec
 
 You can detect the following codim 2 bifurcation points by using the option `detect_codim2_bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
 
-- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel],[^Blank] $\psi_{BT}(p) = 	\langle a(p),b(p)\rangle$
+- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel],[^Blank] $\psi_{BT}(p) = a(p)^{\top} M(u,p)\, b(p)$, which reduces to $\langle a(p),b(p)\rangle$ when $M=I_n$
 - the detection of Bautin (GH) is based on the test function $\psi_{GH}(p) = \Re(l_1(p))$ where $l_1$ is the Lyapunov coefficient defined in [Simple Hopf point](@ref).
 - the detection of Zero-Hopf (ZH) is performed by monitoring the eigenvalues.
 - the detection of Hopf-Hopf (HH) is performed by monitoring the eigenvalues.
