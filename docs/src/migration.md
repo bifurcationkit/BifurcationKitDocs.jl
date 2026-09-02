@@ -9,6 +9,23 @@ We only highlight changes that are potentially breaking for the user.
 
 ## Version 0.8.x
 
+Breaking changes are detailed per minor release below.
+
+### Version 0.8.4
+
+- `get_adjoint_basis` is replaced by `_get_kernel_basis_1d_from_eigensolver` / `_get_kernel_basis_1d_from_bls` (resp. the Nd helpers), which now compute the right and left (adjoint) kernel vectors together
+
+### Version 0.8.3
+
+- `detect_codim2_parameters` is renamed `modify_contparams_for_codim2`
+- the `_compute_bordered_vectors` method of the Fold/Hopf/PD/NS MA formulations is split into `__compute_bordered_vectors_fold` / `__compute_bordered_vectors_hopf`
+
+### Version 0.8.2
+
+- no breaking change
+
+### Version 0.8.1
+
 - `update!(prob, x)` becomes `restore_problem!(prob, x, pars)`
 - `getlinsolver` / `getbls` become `get_bordered_linsolver`
 - `OneParamCont`, `TwoParamCont`, `TwoParamPeriodicOrbitCont` become `AbstractOneParamCont`, `AbstractTwoParamCont`, `AbstractTwoParamPeriodicOrbitCont`
