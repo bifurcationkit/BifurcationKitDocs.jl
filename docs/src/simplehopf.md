@@ -18,9 +18,6 @@ More precisely, if $\mathbf{J} \equiv d\mathbf{F}(x_0,p_0)$ and $M \equiv \mathb
 !!! tip "Coefficient $l_1$"
     The coefficient $l_1$ above is called the **Lyapunov** coefficient
 
-!!! warning "Case of DAE"
-    The case of DAE for which $\mathbf M(x,p)\neq Id$ is not implemented yet. It is work in progress.
-
 ### Expression of the coefficients
 
 The coefficients $a,l_1$ above are computed as follows[^Haragus]:
@@ -42,6 +39,10 @@ and where
 $$\mathbf{F}(x,p)-\mathbf{J}x := \sum_{1\leq q+l\leq p}\mathbf{F}_{ql}(x^{(q)},p^{(l)})+o(\|u\|+\|p\|)^p.$$
 
 with $\mathbf{F}_{ql}$ a $(q+l)$-linear map. 
+
+!!! warning "Case of DAE"
+    The above formula are only valid if $\mathbf M(x,p)$ is a constant function independant of $(x,p)$.
+    The case of DAE for which $\mathbf M(x,p)\neq Id$ is not implemented yet. It is work in progress.
 
 ## Normal form computation
 
