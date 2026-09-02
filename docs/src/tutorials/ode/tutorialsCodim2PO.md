@@ -200,7 +200,7 @@ plot(fold_po_coll1, fold_po_coll2, branchlabel = ["FOLD1", "FOLD2"])
 We turn to the computation of the curve of PD points.
 
 ```@example TUTPPREY
-par_pop2 = @set par_pop.b0 = 0.5
+par_pop2 = @set par_pop.b0 = 0.4
 sol2 = DE.solve(DE.remake(prob_de, p = par_pop2, u0 = [0.1, 0.1, 1, 0], tspan=(0, 1000)), DE.Vern9())
 sol2 = DE.solve(DE.remake(sol2.prob, tspan = (0, 10), u0 = sol2.u[end]), DE.Vern9())
 plot(sol2, xlims = (8, 10))
@@ -216,11 +216,13 @@ brpo_pd = BK.continuation(prob2, ci, BK.PALC(tangent = BK.Bordered()), BK.Contin
 opts_pocoll_pd = BK.ContinuationPar(brpo_pd.contparams, max_steps = 40, p_min = 1.e-2, dsmax = 1e-2, ds = -1e-3)
 pd_po_coll2 = BK.continuation(deepcopy(brpo_pd), 2, (@optic _.b0), opts_pocoll_pd;
 		verbosity = 3, plot = true,
-		detect_codim2_bifurcation = 1,
+		detect_codim2_bifurcation = 2,
 		start_with_eigen = false,
+		usehessian = false,
 		jacobian_ma = BK.MinAug(),
 		normC = BK.norminf,
 		bothside = true,
+		callback_newton = BK.cbMaxNorm(1),
 		)
 
 plot(pd_po_coll2, vars = (:ϵ, :b0), branchlabel = "PD")

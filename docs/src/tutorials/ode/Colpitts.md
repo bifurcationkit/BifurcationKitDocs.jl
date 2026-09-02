@@ -118,14 +118,14 @@ br_po = BK.continuation(br, 1, opts_po_cont, probSH;
 	# δp is use to parametrize the first parameter point on the
 	# branch of periodic orbits
 	δp = 0.001,
-	record_from_solution = (u, p; k...) -> begin
-		outt = BK.get_periodic_orbit(p.prob, u, p.p)
+	record_from_solution = (u, p; iter, state, k...) -> begin
+		outt = BK.get_periodic_orbit(p.prob, u, BK.getparams(iter, state))
 		m = maximum(outt[1,:])
-		return (s = m, period = u[end])
+		return (s = m, period = BK.getperiod(p.prob, u, BK.getparams(iter, state)))
 	end,
 	# plotting of a solution
-	plot_solution = (x, p; k...) -> begin
-		outt = BK.get_periodic_orbit(p.prob, x, p.p)
+	plot_solution = (x, p; iter, state, k...) -> begin
+		outt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
 		plot!(outt.t, outt[2, :], subplot = 3)
 		plot!(br, vars = (:param, :x1), subplot = 1)
 	end,
@@ -140,7 +140,7 @@ br_po = BK.continuation(br, 1, opts_po_cont, probSH;
 with detailed information
 
 ```@example TUTDAE1
-show(br)
+show(br_po)
 ```
 
 Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation.
