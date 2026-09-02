@@ -13,6 +13,27 @@ The events are detected during a call to `br = continuation(prob, alg, contParam
 
 The event points are located by looking at the function defining the event (see below). The located event points are then returned in `br.specialpoint`.
 
+!!! warn "Compatibility with the built-in bifurcation detection"
+
+    Event detection (`detect_event`) and the precise built-in bifurcation
+    detection (`detect_bifurcation ≥ 2`) are two different mechanisms that
+    cannot be active simultaneously. The constructor of `ContinuationPar`
+    enforces
+
+    - `detect_bifurcation ≥ 2` only when `detect_event = 0`,
+    - `detect_event ≥ 1` only when `detect_bifurcation ≤ 1`.
+
+    In particular, setting `detect_event > 0` requires `detect_bifurcation ∈ {0, 1}`
+    (an error is raised otherwise). The value `detect_bifurcation = 1` only
+    *computes* the eigen elements without locating bifurcation points and can
+    therefore be combined with events.
+
+    To keep detecting bifurcation points while using your own events, set
+    `detect_bifurcation = 0` and pass the discrete event `BifDetectEvent` to
+    `continuation`, e.g. `continuation(prob, alg, opts; event = BifDetectEvent)`.
+    This requires the computation of the eigen elements (see `BifDetectEvent`
+    below).
+
 ## Precise detection of event points using bisection
 
 Note that the event points detected when `detect_event = 1` are only approximate event points. Indeed, we only signal that, in between two continuation steps which can be large, a (several) event point has been detected. Hence, we only have a rough idea of where the event is located, unless your `ContinuationPar().dsmax` is very small... This can be improved as follows.
