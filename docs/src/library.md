@@ -166,6 +166,10 @@ BifurcationKit.EigArnoldiMethod
 ```
 
 ```@docs
+BifurcationKit.ShiftInvert
+```
+
+```@docs
 BifurcationKit.EigenMassMatrix
 ```
 
