@@ -5,7 +5,7 @@ Pages = ["MooreSpence.md"]
 Depth = 3
 ```
 
-This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `alg = AutoSwitch()` in [`continuation`](@ref). See also [`AutoSwitch`](@ref) for more information.
+This is one of the various continuation methods implemented in `BifurcationKit.jl`. It is set by the option `alg = MoorePenrose()` in [`continuation`](@ref). See also [`MoorePenrose`](@ref) for more information.
 
 For solving
 
@@ -15,11 +15,11 @@ using a Newton algorithm, we miss an equation. Hence, we proceed as follows [^Me
 
 $$\min_{(x,p)} \{ \|(x,p)-(x_1,p_1)\| \text{ such that } F(x,p)=0\} \tag{MS}$$  
 
-It can be interpreted as a PALC in which the hyperplane is adapted at every step.  
+It can be interpreted as a PALC in which the hyperplane is adapted at every step.
 
 ## Predictor
 
-The possible predictors `tangent::AbstractTangentPredictor` are listed in [Predictors - Correctors](@ref). They can be used to create a Moore-Penrose algorithm  like `MoorePenrose(tangent = PALC())`
+The possible predictors `alg::AbstractContinuationAlgorithm` are listed in [Predictors - Correctors](@ref). They can be used to create a Moore-Penrose algorithm like `MoorePenrose(predictor = PALC())`, the default being `predictor = PALC()` whose own tangent (e.g. `Secant()`, `Bordered()`, ...) is used to predict the next point.
 
 ## Corrector
 
@@ -27,14 +27,13 @@ The corrector is the Gauss Newton algorithm applied to (MS).
 
 ## Linear Algebra
 
-
 ### Norm
 
-The option `normC` [`continuation`](@ref) specifies the norm used to evaluate the distance in (MS). The dot product (resp. norm) used in the (iterative) linear solvers is `LinearAlgebra.dot` (resp. `LinearAlgebra.norm`). It can be changed by importing these functions and redefining it. Note that by default, the ``L^2`` norm is used.
+The option `normC` of [`continuation`](@ref) specifies the norm used to evaluate the distance in (MS). The dot product (resp. norm) used in the (iterative) linear solvers is `LinearAlgebra.dot` (resp. `LinearAlgebra.norm`). It can be changed by importing these functions and redefining it. Note that by default, the ``L^2`` norm is used.
 
 ### Linear problem
 
-The linear solver for the linear problem associated to (MS) is set by the option `linear_algo` in [`continuation`](@ref): it is one of [Bordered linear solvers (BLS)](@ref).
+The linear solver for the linear problem associated to (MS) is set by the option `linear_algo` in [`continuation`](@ref) or, more generally, in the constructor `MoorePenrose(; predictor, method, ls)`. It is one of [Bordered linear solvers (BLS)](@ref).
 
 ## Algorithm for solving (MS)
 
@@ -46,9 +45,9 @@ $$y^{k+1} = y^k -d_yF(y^k)^+F(y^k)$$
 where the superscript $^+$ indicates the Moore-Penrose pseudoinverse of rank $N$.
 
 ### Direct case
-In this case, triggered by the option `MoorePenrose(method = BifurcationKit.direct)`, the pseudoinverse is computed with `\`.
+This is the default, triggered by the option `MoorePenrose(method = BifurcationKit.direct)`: the Newton step is obtained by solving the underdetermined linear system $d_yF(y^k)\delta = F(y^k)$ in the least-norm sense, *i.e.* with the backslash operator `\`.
 
-For the option `MoorePenrose(method = BifurcationKit.pInv)`, the pseudoinverse is computed with `pinv`.
+For the option `MoorePenrose(method = BifurcationKit.pInv)`, the pseudoinverse is computed with `pinv`. These two methods are suited for small to moderate dimensional problems.
 
 ### Iterative case
 In this case, triggered by the option `MoorePenrose(method = BifurcationKit.iterative)`, the pseudoinverse is computed with an iterative method described in [^Meijer]:
@@ -70,7 +69,7 @@ F_{y}\left(y_{1}^{j+1}\right) \\
 \end{array}\right), \quad j=0,1,2, \ldots
 \end{array}\right.$$
 
-We initialise $\phi_1^0$ with the tangent.
+We initialise $\phi_1^0$ with the tangent. The linear systems above are solved with the bordered linear solver `ls` passed to the constructor (default `MatrixBLS()` when not specified).
 
 
 ## Step size control

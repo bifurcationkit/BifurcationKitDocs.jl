@@ -3,18 +3,23 @@
 
 At a Hopf branch point $(x_0,p_0)$ for the problem $F(x,p)=0$, the spectrum of the linear operator $dF(x_0,p_0)$ contains two purely imaginary $\pm i\omega,\ \omega > 0$ which are simple. At such point, we can compute the **normal form** to transform the initial Cauchy problem
 
-$$\dot x = \mathbf{F}(x,p)$$
+$$\mathbf{M}(x,p)\cdot\dot x = \mathbf{F}(x,p)$$
 
-in large dimensions to a **complex** polynomial vector field ($\delta p\equiv p-p_0$):
+where $\mathbf{M}(x,p)$ is a mass matrix. For ODE, we have $\mathbf{M}(x,p)=Id$. 
 
-$$\dot z = z\left(a \cdot\delta p + i\omega + l_1|z|^2\right)\quad\text{(E)}$$
+in large dimensions to a **complex** polynomial vector field:
+
+$$\dot z = z\left(a \cdot (p-p_0) + i\omega + l_1|z|^2\right)\quad\text{(E)}$$
 
 whose solutions give access to the solutions of the Cauchy problem in a neighborhood of $(x,p)$.
 
-More precisely, if $\mathbf{J} \equiv d\mathbf{F}(x_0,p_0)$, then we have $\mathbf{J}\zeta = i\omega\zeta$ and $\mathbf{J}\bar\zeta = -i\omega\bar\zeta$ for some complex eigenvector $\zeta$. It can be shown that $x(t) \approx x_0 + 2\Re(z(t)\zeta)$ when $p=p_0+\delta p$.
+More precisely, if $\mathbf{J} \equiv d\mathbf{F}(x_0,p_0)$ and $M \equiv \mathbf{M}(x_0,p_0)$, then we have $\mathbf{J}\zeta = i\omega M\zeta$ and $\mathbf{J}^*\bar\zeta = -i\omega M^*\bar\zeta$ for some complex eigenvector $\zeta$. It can be shown that $x(t) \approx x_0 + 2\Re(z(t)\zeta)$ when $p=p_0+\delta p$.
 
 !!! tip "Coefficient $l_1$"
     The coefficient $l_1$ above is called the **Lyapunov** coefficient
+
+!!! warning "Case of DAE"
+    The case of DAE for which $\mathbf M(x,p)\neq Id$ is not implemented yet. It is work in progress.
 
 ### Expression of the coefficients
 
@@ -28,7 +33,7 @@ where
 
 $$\begin{aligned}
 -\mathbf{J} \Psi_{001} &=\mathbf{F}_{01} \\
-(2 i \omega-\mathbf{J}) \Psi_{200} &=\mathbf{F}_{20}(\zeta, \zeta) \\
+(2 i \omega M-\mathbf{J}) \Psi_{200} &=\mathbf{F}_{20}(\zeta, \zeta) \\
 -\mathbf{J} \Psi_{110} &=2 \mathbf{F}_{20}(\zeta, \bar{\zeta}).
 \end{aligned}$$
 

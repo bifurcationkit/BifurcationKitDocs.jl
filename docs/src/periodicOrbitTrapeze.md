@@ -5,7 +5,7 @@ Pages = ["periodicOrbitTrapeze.md"]
 Depth = 3
 ```
 
-The Trapezoid method allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule	. The method is implemented in the structure `Trapeze`. The general method is very well exposed in [^Uecker],[^Lust], [^Keller] and we adopt the notations of the first reference.
+The Trapezoid method allows to compute periodic orbits by discretizing time using Finite Differences based on a trapezoidal rule. The method is implemented in the structure [`Trapeze`](@ref). The general method is very well exposed in [^Uecker],[^Lust], [^Keller] and we adopt the notations of the first reference.
 
 We look for periodic orbits as solutions $(x(0),T)$ of
 
@@ -19,7 +19,9 @@ $$\frac1T\int_0^T\langle x(s)-x_\pi(s), \phi(s)\rangle ds\approx \frac{1}{m}\sum
 
 for some $x_\pi,\phi$ which are chosen (wisely).
 
-We note `m` the number of time slices of the periodic orbit. By discretizing the above problem, we obtain
+## Discretization
+
+We note `m` (called `M` in the code) the number of time slices of the periodic orbit. The unknown of the discretized problem is the collection of time slices $(x_1,\cdots,x_m)$ together with the period $T$, hence $nm+1$ unknowns in total where $n$ is the dimension of the state space. By discretizing the above problem with the trapezoidal rule and constant time step $h=T/m$, we obtain
 
 $$\begin{array}{l}
 		0= M_a\left(x_{j}-x_{j-1}\right)-\frac{h}{2} \left(F\left(x_{j}\right)+F\left(x_{j-1}\right)\right)\equiv G_j(x),\quad j=1,\cdots,m-1 \\
@@ -27,11 +29,16 @@ $$\begin{array}{l}
 0= x_m-x_1 \equiv G_m(x) \\
 0=\sum\limits_{i=1}^m\langle x_{i} - x_{\pi,i}, \phi_{i}\rangle=0
 \end{array}$$
-where $x_0=x_m$ and $h=T/m$. In view of the Newton method, we study the jacobian of the above system. The Jacobian *w.r.t.* $(x_0,T)$ is given by
 
-$$\mathcal{J}=\left(\begin{array}{cc}{A_1} & {\partial_TG} \\ {\star} & {d}\end{array}\right)\tag{2}$$
+where the first equation $G_1$ involves $x_0$ which is identified with the last time slice, $x_0=x_{m-1}$: it is the trapezoidal step *closing* the loop between the last independent slice $x_{m-1}$ and the first one $x_1$. The equation $G_m$ is the periodicity (closure) condition $x_m=x_1$, and the last equation is the phase condition. In other words, at a solution, the trapezoidal relation for the step $j=m$ (stepping from $x_{m-1}$ to $x_m=x_1$) coincides with $G_1$. The number of equations is $(m-1)n + n + 1 = nm+1$, matching the $nm+1$ unknowns (the $m$ time slices and the period $T$).
 
-where
+## Jacobian and bordered structure
+
+In view of the Newton method, we study the jacobian of the above system. Grouping the time slices into a vector $x=(x_1,\cdots,x_m)\in\mathbb R^{nm}$, the jacobian of the functional *w.r.t.* $(x,T)$ is given by
+
+$$\mathcal{J}=\left(\begin{array}{cc}{A_\gamma} & {\partial_TG} \\ {\star} & {d}\end{array}\right)\tag{2}$$
+
+where the block $A_\gamma$ is the jacobian w.r.t. the time slices only:
 
 $$A_{\gamma}:=\left(\begin{array}{ccccccc}
 {M_{1}} & {0} & {0} & {0} & {\cdots} & {-H_{1}} & {0} \\
@@ -43,9 +50,11 @@ $$A_{\gamma}:=\left(\begin{array}{ccccccc}
 {-\gamma I} & {0} & {\cdots} & {\cdots} & {\cdots} & {0} & {I}
 \end{array}\right)$$
 
-with $M_i := M_a-	\frac h2dF(x_i)$ and $H_i := M_a+\frac h2dF(x_{i-1})$.
+with $M_i := M_a-\frac h2dF(x_i)$ and $H_i := M_a+\frac h2dF(x_{i-1})$. The last block row of $A_\gamma$ encodes the derivative of the closure condition $x_m - \gamma x_1 = 0$ for which $\gamma = 1$ in the case of periodic orbits (the free parameter $\gamma$ is kept in the code because it is convenient for building preconditioners). The column $\partial_TG$ and the row $(\star,d)$ in (2) account for the derivative w.r.t. the period $T$ and the phase condition respectively.
 
-We solve the linear equation $\mathcal J\cdot sol = rhs$ with a bordering strategy (*i.e.* the linear solver is a subtype of `<: AbstractBorderedLinearSolver`) which in turn requires to solve $A_\gamma z=b$ where $z=(x,x_m)$. We also solve this equation with a bordering strategy but this time, it can be simplified as follows. If we write $b=(f,g)$, one gets $J_c x=f$ and $x_m=g+\gamma x_1$ where $x_1$ is the first time slice of $x$ and $J_c$ is the following **cyclic matrix**:
+### Cyclic matrix $J_c$ and bordered elimination
+
+The matrix $A_\gamma$ has a *bordered* shape: it is almost block diagonal, with the sole coupling between the first and last time slices sitting in the top-right corner ($-H_1$) and in the closure block row. It is therefore inverted with a *bordering* strategy (the linear solver is a subtype of `<: AbstractBorderedLinearSolver`). In turn, this requires to solve linear systems involving the **cyclic matrix** $J_c$ obtained from $A_\gamma$ by removing the last block row and last block column:
 
 $$J_c:=\left(\begin{array}{ccccccc}
 {M_{1}} & {0} & {0} & {0} & {\cdots} & {-H_{1}} \\
@@ -56,7 +65,11 @@ $$J_c:=\left(\begin{array}{ccccccc}
 {0} & {\cdots} & {\cdots} & {0} & {-H_{m-1}} & {M_{m-1}} \\
 \end{array}\right)$$
 
+Indeed, solving $A_\gamma z=b$ with $z=(x,x_m)$ and $b=(f,g)$ amounts to solving the smaller system $J_c x=f$ and then recovering $x_m = g + \gamma x_1$ where $x_1$ is the first time slice of $x$.
+
 Our code thus provides methods to invert $J_c$ and $A_\gamma$ using a sparse solver or a Matrix-Free one. A preconditioner can be used.
+
+> The matrix $A_\gamma$ (resp. $J_c$) is returned by the methods `po_jacobian_sparse(trap, u0, par)` (resp. `jacobian_cyclic_sparse(trap, u0, par)`) associated to a [`Trapeze`](@ref) problem.
 
 ## Encoding of the functional
 
@@ -68,23 +81,23 @@ We strongly advise you to use a preconditioner to deal with the above linear pro
 
 ## Linear solvers
 
-We provide many different linear solvers to take advantage of the formulations. These solvers are available through the argument `jacobian` in the constructor of `Trapeze`. For example, you can pass `jacobian  = FullLU()`. Note that all the internal solvers and Jacobians are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.	
+We provide many different linear solvers to take advantage of the formulations. These solvers are available through the argument `jacobian` in the constructor of `Trapeze`. For example, you can pass `jacobian  = FullLU()`. Note that all the internal solvers and Jacobians are set up automatically, you don't need to do anything. However, for the sake of explanation, we detail how this works.
 
 ### 1. FullLU
 
-When using `jacobian = FullLU()`, this triggers the computation of $\mathcal J$ as in (2) at each step of newton/continuation. The Jacobian matrix $\mathcal J$ is stored a SparseArray. This can be quite costly flow large $n$ (see (1)). This Jacobian is often used with the the linear solver `DefaultLS()`.
+When using `jacobian = FullLU()`, this triggers the computation of $\mathcal J$ as in (2) at each step of newton/continuation. The Jacobian matrix $\mathcal J$ is stored as a SparseArray. This can be quite costly for large $n$ (see (1)). This Jacobian is often used with the linear solver `DefaultLS()`.
 
 ### 2. FullSparseInplace
 Same as `FullLU()` but the Jacobian is allocated only once and updated inplace. This is much faster than `FullLU()` but the sparsity pattern of `dF` must be constant.
 
 ### 3. Dense
-Same as `FullSparseInplace()` above but the matrix `dG` is dense. It is also updated inplace. This is useful to study ODE of small dimension.
+Same as `FullSparseInplace()` above but the matrix `dG` is dense. It is also updated inplace. This is useful to study ODE of small dimension. It is the default choice of `jacobian` for `Trapeze`.
 
 ### 4. FullMatrixFree
 A matrix free linear solver is used for $\mathcal J$: note that a preconditioner is very likely required here because of the cyclic shape of $\mathcal J$ which affects negatively the convergence properties of iterative solvers. Note that $\mathcal J$ is never formed in this case.
 
 ### 5. BorderedLU
-For `BorderedLU()`, we take advantage of the bordered shape of the linear solver and use a LU decomposition to invert `dG` using a bordered linear solver. More precisely, the bordered structure of $\mathcal J$ is stored using the internal structure `POTrapJacobianBordered`. Then, $\mathcal J$ is inverted using the custom bordered linear solver `PeriodicOrbitTrapBLS` which is based on the bordering strategy (see [Bordered linear solvers (BLS)](@ref)). This particular solver is based on an explicit formula which only requires to invert $A_\gamma$: this is done by the linear solver `AγLinearSolver`. In a nutshell, we have:
+For `BorderedLU()`, we take advantage of the bordered shape of the linear solver and use a LU decomposition to invert `dG` using a bordered linear solver. More precisely, the bordered structure of $\mathcal J$ is stored using the internal structure `POTrapJacobianBordered`. Then, $\mathcal J$ is inverted using the custom bordered linear solver `PeriodicOrbitTrapBLS` which is based on the bordering strategy described above (see [Bordered linear solvers (BLS)](@ref)). This particular solver is based on an explicit formula which only requires to invert $A_\gamma$: this is done by the linear solver `AγLinearSolver`. In a nutshell, we have:
 
 ```
 PeriodicOrbitTrapBLS = BorderingBLS(solver = AγLinearSolver(), check_precision = false)
@@ -121,15 +134,15 @@ The state of the art method is based on a Periodic Schur decomposition. It is av
 
 ## Computation with `newton`
 
-We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `linear_algo` to select one of the many ways to deal with the above linear problem. The default solver `linear_algo` is `BorderedLU().
+We provide a simplified call to `newton` to locate the periodic orbits. Compared to the regular `newton` function, there is an additional option `linear_algo` to select one of the many ways to deal with the above linear problem. The default value `linear_algo` is a bordered linear solver built from the Newton linear solver, `BorderingBLS(solver = options.linsolver, check_precision = false)`.
 
-Have a look at the [Brusselator](@ref brusauto) example for the Brusselator for a basic example and at [2d Ginzburg-Landau equation](@ref cgl) for a more advanced one.
+Have a look at the [Brusselator](@ref brusauto) example for a basic use and at [2d Ginzburg-Landau equation](@ref cgl) for a more advanced one.
 
 The docs for this specific `newton` are located at [`newton`](@ref).
 
 ## Computation with `newton` and deflation
 
-We also provide a simplified call to `newton` to locate the periodic orbit with a deflation operator.
+We also provide a simplified call to `newton` to locate the periodic orbit with a deflation operator. This is convenient, for example, to prevent the Newton solver from converging to the trivial equilibrium when searching for a bifurcated periodic orbit from a Hopf point.
 
 ```@docs
 newton(probPO::Trapeze,
@@ -159,4 +172,3 @@ continuation(prob::Trapeze,
 [^Lust]:> Lust, Kurt, Numerical Bifurcation Analysis of Periodic Solutions of Partial Differential Equations, PhD thesis, 1997.
 
 [^Keller]:> Keller, Herbert B. “Accurate Difference Methods for Nonlinear Two-Point Boundary Value Problems.” SIAM Journal on Numerical Analysis 11, no. 2 (April 1974): 305–20. https://doi.org/10.1137/0711028.
-
