@@ -70,10 +70,10 @@ $$G(u,p,\omega) = (F_{po}(u,p,\omega), \Re\sigma(u,p,\omega), \Im\sigma(u,p,\ome
 where $F_{po}$ is the functional for locating periodic orbits and the test function $\sigma$ is solution of
 
 $$\left[\begin{array}{cc}
-N(u,p,\omega) & w \\
-v^{\top} & 0
+N(u,p,\omega) & a \\
+b^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
-r \\
+v \\
 \sigma(u,\omega,p)
 \end{array}\right]=\left[\begin{array}{c}
 0_{n} \\

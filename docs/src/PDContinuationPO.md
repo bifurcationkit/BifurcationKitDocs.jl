@@ -31,7 +31,7 @@ The continuation of PD bifurcation points is based on a **Minimally Augmented**[
 You can detect the following codim 2 bifurcation points by using the option `detect_codim2_bifurcation` in the method `continuation` 
 
 - the detection of Generalized Period-Doubling bifurcation is done by computing the PD normal form
-- the detection of the R2 bifurcation is performed using the test function $\psi_{R2}(p) = \langle w(p),v(p)\rangle$ 
+- the detection of the R2 bifurcation is performed using the test function $\psi_{R2}(p) = \langle a(p),b(p)\rangle$ 
 - the detection the other above bifurcation points is done by monitoring the number of eigenvalues $\lambda$ such that $\Re\lambda > \min\limits_{\nu\in\Sigma(dF)}|\Re\nu|$ and $\Im\lambda > \epsilon$ where $\epsilon$ is the Newton tolerance.
 
 ## Setting the jacobian
@@ -70,10 +70,10 @@ $$G(u,p,\omega) = (F_{po}(u,p), \sigma(u,p))\in\mathbb R^{n+1}\quad\quad (\mathc
 where $F_{po}$ is the functional for locating periodic orbits and the test function $\sigma$ is solution of
 
 $$\left[\begin{array}{cc}
-N(u,p) & w \\
-v^{\top} & 0
+N(u,p) & a \\
+b^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
-r \\
+v \\
 \sigma(u,p)
 \end{array}\right]=\left[\begin{array}{c}
 0_{n} \\

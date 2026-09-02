@@ -17,24 +17,24 @@ $$G(u,p) = (F(u,p), g_1(u,p), g_2(u,p))\in\mathbb R^{n+2}\quad\quad (F_{bt})$$
 where the test functions $g_1,g_2$ are solutions of
 
 $$\left[\begin{array}{cc}
-dF(u,p) & w \\
-v^{\top} & 0
+dF(u,p) & a \\
+b^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
 v_1 \\
-g_1(u,p)
+\sigma_1(u,p)
 \end{array}\right]=\left[\begin{array}{c}0_{n} \\1\end{array}\right]\quad\quad (M_{bt})$$
 
 and
 
 $$\left[\begin{array}{cc}
-dF(u,p) & w \\
-v^{\top} & 0
+dF(u,p) & a \\
+b^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
 v_2 \\
-g_2(u,p)
-\end{array}\right]=\left[\begin{array}{c}v_1 \\0\end{array}\right]\quad\quad (M_{bt})$$
+\sigma_2(u,p)
+\end{array}\right]=\left[\begin{array}{c}b_1 \\0\end{array}\right]\quad\quad (M_{bt})$$
 
-and where $w,v$ are chosen in order to have a non-singular matrix $(M_{bt})$. More precisely, $v$ (resp. $w$) should be close to a null vector of `dF(u,p)` (resp. `dF(u,p)'`).
+and where $a,b$ are chosen in order to have a non-singular matrix $(M_{bt})$. More precisely, $b$ (resp. $a$) should be close to a null vector of `dF(u,p)` (resp. `dF(u,p)'`).
 
 > note that there are very simplified calls for this, see **Newton refinement** below. In particular, you don't need to set up the Minimally Augmented problem yourself. This is done in the background.
 

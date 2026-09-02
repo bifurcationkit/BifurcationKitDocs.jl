@@ -31,14 +31,14 @@ $$G(u,p) = (F(u,p), \sigma(u,p))\in\mathbb R^{n+1}\quad\quad (F_f)$$
 where the test function $\sigma$ is solution of
 
 $$\left[\begin{array}{cc}
-dF(u,p) & w \\
-v^{\top} & 0
+dF(u,p) & a \\
+b^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
-r \\
+v \\
 \sigma(u,p)
 \end{array}\right]=\left[\begin{array}{c}0_{n} \\1\end{array}\right]\quad\quad (M_f)$$
 
-where $w,v$ are chosen in order to have a non-singular matrix $(M_f)$. More precisely, $v$ (resp. $w$) should be close to a null vector of `dF(u,p)` (resp. `dF(u,p)'`). During continuation, the vectors $w,v$ are updated so that the matrix $(M_f)$ remains non-singular ; this is controlled with the argument `update_minaug_every_step` (see below).
+where $a,b$ are chosen in order to have a non-singular matrix $(M_f)$. More precisely, $b$ (resp. $a$) should be close to a null vector of `dF(u,p)` (resp. `dF(u,p)'`). During continuation, the vectors $a,b$ are updated so that the matrix $(M_f)$ remains non-singular ; this is controlled with the argument `update_minaug_every_step` (see below).
 
 > note that there are very simplified calls for this, see **Newton refinement** below. In particular, you don't need to set up the Fold Minimally Augmented problem yourself. This is done in the background.
 
@@ -50,40 +50,46 @@ where $w,v$ are chosen in order to have a non-singular matrix $(M_f)$. More prec
 You can detect the following codim 2 bifurcation points by using the option `detect_codim2_bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
 
 - the detection of Cusp (Cusp) is done by the detection of Fold bifurcation points along the curve of Folds by monitoring the parameter component of the tangent.
-- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = \langle w(p),v(p)\rangle$
+- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel] $\psi_{BT}(p) = \langle a(p),b(p)\rangle$
 - the detection of Zero-Hopf (ZH) is performed by monitoring the number of eigenvalues $\lambda$ such that $\Re\lambda > \min\limits_{\nu\in\Sigma(dF)}|\Re\nu|$ and $\Im\lambda > \epsilon$ where $\epsilon$ is the Newton tolerance.
 
 ## Hopf continuation (theory)
 
-The continuation of Hopf bifurcation points is based on a **Minimally Augmented** (see [^Govaerts] p. 87) formulation which is an efficient way to detect singularities. The continuation of Hopf points is based on the formulation
+The continuation of Hopf bifurcation points is based on a **Minimally Augmented** (see [^Govaerts] p. 87) formulation which is an efficient way to detect singularities for the Cauchy problem
+$$M(u, p)\frac{du}{dt} = F(u,p)$$
+where $M$ is a mass matrix. By default, it is $M=I_n$.
+The continuation of Hopf points is based on the formulation
 
 $$G(u,\omega,p) = (F(u,\omega,p), \Re\sigma(u,\omega,p), \Im\sigma(u,\omega,p))\in\mathbb R^{n+2}\quad\quad (F_h)$$
 
 where the test function $\sigma$ is solution of
 
 $$\left[\begin{array}{cc}
-dF(u,p)-i\omega I_n & w \\
-v^{\top} & 0
+dF(u,p)-i\omega M(u,p) & M(u,p)\cdot a \\
+(M(u,p)\cdot b)^{\top} & 0
 \end{array}\right]\left[\begin{array}{c}
-r \\
+v \\
 \sigma(u,\omega,p)
 \end{array}\right]=\left[\begin{array}{c}
 0_{n} \\
 1
 \end{array}\right]\quad\quad (M_h)$$
 
-where $w,v$ are chosen in order to have a non-singular matrix $(M_h)$. More precisely, $w$ (resp. $v$) should be a left (resp. right) approximate null vector of $dF(u,p)-i\omega I_n$. During continuation, the vectors $w,v$ are updated so that the matrix $(M_h)$ remains non-singular ; this is controlled with the argument `update_minaug_every_step ` (see below).
+where $a,b$ are chosen in order to have a non-singular matrix $(M_h)$. More precisely, $a$ (resp. $b$) should be a left (resp. right) approximate null vector of $dF(u,p)-i\omega M(u,p)$. During continuation, the vectors $a,b$ are updated so that the matrix $(M_h)$ remains non-singular ; this is controlled with the argument `update_minaug_every_step ` (see below).
 
 > note that there are very simplified calls to this, see **Newton refinement** below. In particular, you don't need to set up the Hopf Minimally Augmented problem yourself. This is done in the background.
 
 !!! warning "Linear Method"
-    You can pass the bordered linear solver to solve $(M_h)$ using the option `bdlinsolver ` (see below). Note that the choice `bdlinsolver = BorderingBLS()` can lead to singular systems. Indeed, in this case, $(M_h)$ is solved by inverting `dF(u,p)-iω I_n` which is singular at Hopf points.
+    You can pass the bordered linear solver to solve $(M_h)$ using the option `bdlinsolver ` (see below). Note that the choice `bdlinsolver = BorderingBLS()` can lead to singular systems. Indeed, in this case, $(M_h)$ is solved by inverting `dF(u,p)-iω M` which is singular at Hopf points.
+
+!!! danger "Mass matrix $M$"
+    For now, the package only deals with the case $M = I_n$.
 
 ### Detection of codim 2 bifurcation points
 
 You can detect the following codim 2 bifurcation points by using the option `detect_codim2_bifurcation` in the method `continuation`. Under the hood, the detection of these bifurcations is done by using Event detection as explained in [Event Handling](@ref).
 
-- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel],[^Blank] $\psi_{BT}(p) = 	\langle w(p),v(p)\rangle$
+- the detection of Bogdanov-Takens (BT) is performed using the test function[^Bindel],[^Blank] $\psi_{BT}(p) = 	\langle a(p),b(p)\rangle$
 - the detection of Bautin (GH) is based on the test function $\psi_{GH}(p) = \Re(l_1(p))$ where $l_1$ is the Lyapunov coefficient defined in [Simple Hopf point](@ref).
 - the detection of Zero-Hopf (ZH) is performed by monitoring the eigenvalues.
 - the detection of Hopf-Hopf (HH) is performed by monitoring the eigenvalues.
@@ -119,8 +125,8 @@ Even with `jacobian_ma = MinAug()`, the linear systems associated to the vector 
 
 Some options deserve special attention in large dimensions:
 
-- `start_with_eigen = true`: initializes the vectors $w, v$ of the Minimally Augmented formulation from the eigen-elements (right and left eigenvectors) of the bifurcation point stored in `br`. This is **recommended**, especially for Hopf continuation where the left eigenvector of the (possibly non-symmetric) jacobian is not the conjugate of the right one. It is also useful for Fold continuation as it removes the need for an initial bordered solve with random vectors.
-- `update_minaug_every_step`: controls how often the vectors $w, v$ are recomputed so that the matrix $(M_f)$ / $(M_h)$ remains well-conditioned. Keeping the default value `= 1` (update at every continuation step) is strongly recommended; when detecting codim 2 bifurcations, a warning is issued if you set it to `0` because the detection may then be unreliable.
+- `start_with_eigen = true`: initializes the vectors $a, b$ of the Minimally Augmented formulation from the eigen-elements (right and left eigenvectors) of the bifurcation point stored in `br`. This is **recommended**, especially for Hopf continuation where the left eigenvector of the (possibly non-symmetric) jacobian is not the conjugate of the right one. It is also useful for Fold continuation as it removes the need for an initial bordered solve with random vectors.
+- `update_minaug_every_step`: controls how often the vectors $a, b$ are recomputed so that the matrix $(M_f)$ / $(M_h)$ remains well-conditioned. Keeping the default value `= 1` (update at every continuation step) is strongly recommended; when detecting codim 2 bifurcations, a warning is issued if you set it to `0` because the detection may then be unreliable.
 - `compute_eigen_elements`: whether to compute eigenelements along the curve of Fold / Hopf points. It is required for the detection of Zero-Hopf (ZH) / Hopf-Hopf (HH) points, see [Event Handling](@ref).
 
 ## Recap for large dimensions
@@ -205,28 +211,74 @@ continuation_hopf
 
 ## Algorithmic details (Fold)
 
-If we write $(r,\sigma)$ (resp. $(s,\sigma)$) the solution of the (resp. adjoint) problem associated to $(M_f)$, one can show[^Govaerts] that the differential of $\sigma$ with respect to $z$ satisfies:
+Here we detail the computation of the jacobian of the Fold functional $G=(F,\sigma)$ required by the Newton algorithm. During the differentiation, the bordering vectors $a,b$ are **kept fixed** (they are only updated between continuation steps, see [start_with_eigen, update_minaug_every_step & compute_eigen_elements](@ref start-with-eigen)). Let $J(u,p)=\partial_uF(u,p)$ and consider the bordered system
 
-$$\partial_z \sigma + \langle s,\partial_z dF \cdot r\rangle = 0$$
+$$\left[\begin{array}{cc}J(u,p)&a\\ b^{\top}&0\end{array}\right]\left[\begin{array}{c}v\\ \sigma(u,p)\end{array}\right]=\left[\begin{array}{c}0_{n}\\1\end{array}\right],$$
+
+of which $(v,\sigma)$ is the solution. Because the bordered system and its adjoint share the same right-hand side $(0_n,1)$, the second component of the adjoint solution equals the test function, i.e. $\tau=\sigma$: the **adjoint bordered system**
+
+$$\left[\begin{array}{cc}J(u,p)^{\top}&b\\ a^{\top}&0\end{array}\right]\left[\begin{array}{c}w\\ \sigma\end{array}\right]=\left[\begin{array}{c}0_{n}\\1\end{array}\right]\quad\Longleftrightarrow\quad J^{\top}w+b\sigma=0,\quad a^{\top}w=1$$
+
+only determines the vector $w$, close to a null-vector of $J^{\top}$, that is to a left null-vector of $J$. Differentiating the bordered system along a direction $\dot z=(\dot u,\dot p)$, multiplying the first $n$ equations by $w^{\top}$ and using $a^{\top}w=1$ together with $b^{\top}v=1$ (so that $b^{\top}\partial_z v=0$), one can show[^Govaerts] that the differential of $\sigma$ with respect to $z$ satisfies:
+
+$$\partial_z \sigma\cdot\dot z = -w^{\top}\partial_z dF(u,p)[\dot z]\,v \quad\Longleftrightarrow\quad \partial_z \sigma + \langle w,\partial_z dF \cdot v\rangle = 0$$
 
 This allows to compute the jacobian of the Fold functional to use for the Newton algorithm:
 
 $$\left[\begin{array}{cc}
 \partial_{u}F(u,p) & \partial_pF(u,p) \\
-\partial_x\sigma(u,p) & \partial_p\sigma(u,p)
-\end{array}\right].$$
+\partial_u\sigma(u,p) & \partial_p\sigma(u,p)
+\end{array}\right],\qquad
+(\partial_u\sigma)_i=-w^{\top}(\partial_{u_i}J)\,v,\quad
+\partial_p\sigma=-w^{\top}(\partial_pJ)\,v ,$$
+
+for $i=1,\dots,n$. The bottom row requires, on top of the bordered solve giving $v,\sigma$ (which is already needed to evaluate $G$), one **adjoint bordered solve** giving $w$ and the Hessian contractions $(\partial_u\sigma)_i=-\langle w,\partial^2F(u,p)[e_i,v]\rangle$, where $\partial^2F(u,p)[\cdot,\cdot]$ is the second derivative of $F$ with respect to $u$. If no Hessian is available, this row is evaluated with finite differences; in the matrix-free case this is done without ever forming the jacobian.
 
 ## Algorithmic details (Hopf)
 
-We recall that the unknowns are $(x,p,\omega)$. The jacobian of the Hopf functional to use for the Newton algorithm is
+We recall that the unknowns are $(u,p,\omega)$ and that the bordered system $(M_h)$ involves the complex matrix $A(u,p,\omega)=dF(u,p)-i\omega M(u,p)$, where the mass matrix $M=M(u,p)$ now depends on $u$ and $p$ (by default $M=I_n$). Here $(v,\sigma)$ denotes the solution of the bordered system $(M_h)$: its first $n$ components $v$ form an approximate right null-vector of $A$ (i.e. $Av\simeq0$ at the Hopf point) while $\sigma$ is the complex test function used in $(F_h)$. As a consequence, the borders $M(u,p)\,a$ and $(M(u,p)\,b)^{\top}$ of $(M_h)$ also depend on $(u,p)$: contrary to the Fold case, they can no longer be considered constant when differentiating $\sigma$.
+
+As in the Fold case, the second component of the adjoint solution coincides with $\sigma$ (i.e. $\tau=\sigma$), so that the adjoint bordered system
+
+$$\left[\begin{array}{cc}
+A(u,p,\omega)^{\top} & M(u,p)\,b\\
+(M(u,p)\,a)^{\top} & 0
+\end{array}\right]\left[\begin{array}{c}w\\ \sigma\end{array}\right]=\left[\begin{array}{c}0_{n}\\ 1\end{array}\right],$$
+
+i.e. $A^{\top}w+Mb\sigma=0$ and $(Ma)^{\top}w=1$, determines the vector $w$. Differentiating the bordered system along a direction $\dot z$ of the unknowns $(u,p,\omega)$ (the vectors $a,b$ being kept fixed, as in the Fold case) and proceeding as above yields
+
+$$\partial_z\sigma\cdot\dot z = -w^{\top}\partial_z A(u,p,\omega)[\dot z]\,v
+- \sigma\Big( w^{\top}\partial_z M(u,p)[\dot z]\,a + b^{\top}\partial_z M(u,p)[\dot z]^{\top}v\Big),$$
+
+where the term in parentheses gathers the contributions of $\partial_zM$ through the $(u,p)$-dependent borders $Ma$ and $(Mb)^{\top}$. Since $\partial_\omega M=0$ and $\partial_\omega A(u,p,\omega)=-iM(u,p)$, this simplifies to
+
+$$\partial_\omega\sigma = i\,w^{\top} M(u,p)\, v ,$$
+
+while the $u$- and $p$-derivatives of $\sigma$ keep the terms involving $\partial_uM$ and $\partial_pM$:
+
+$$\partial_{u_i}\sigma = -w^{\top}\partial_{u_i}A(u,p,\omega)\,v
+- \sigma\Big( w^{\top}\partial_{u_i}M\,a + b^{\top}(\partial_{u_i}M)^{\top}v\Big) ,\qquad i=1,\dots,n,$$
+
+$$\partial_p\sigma = -w^{\top}\partial_pA(u,p,\omega)\,v
+- \sigma\Big( w^{\top}\partial_pM\,a + b^{\top}(\partial_pM)^{\top}v\Big) .$$
+
+Since the functional $G=(F,\Re\sigma,\Im\sigma)$ uses only the real and imaginary parts of $\sigma$ and since $F$ does not depend on $\omega$, the jacobian of the Hopf functional to use for the Newton algorithm is
 
 $$\left[\begin{array}{ccc}
 \partial_{u}F & \partial_pF & 0 \\
-\partial_x\sigma_r & \partial_p\sigma_r & \partial_\omega\sigma_r\\
-\partial_x\sigma_i & \partial_p\sigma_i & \partial_\omega\sigma_i
-\end{array}\right]$$
+\Re\,\partial_{u}\sigma & \Re\,\partial_{p}\sigma & \Re\,\partial_{\omega}\sigma\\
+\Im\,\partial_{u}\sigma & \Im\,\partial_{p}\sigma & \Im\,\partial_{\omega}\sigma
+\end{array}\right].$$
 
-using a similar formula for $\partial\sigma$ as in the Fold case.
+- **The case $M=I_n$.** When the mass matrix is the identity (the default), $M$ does not depend on $(u,p)$: the borders $Ma$ and $(Mb)^{\top}$ are constant again and the extra terms in $\partial_u\sigma,\partial_p\sigma$ drop out ($\partial_uM=\partial_pM=0$). The formulas then reduce to their Fold counterparts with $dF-i\omega I$ in place of $J$:
+$$\partial_{u_i}\sigma=-w^{\top}\partial_{u_i}dF\,v,\qquad \partial_p\sigma=-w^{\top}\partial_pdF\,v,\qquad \partial_\omega\sigma=i\,w^{\top}v .$$
+
+- **The case of a constant $M$.** The previous remark is a particular case of a constant mass matrix, i.e. $M$ independent of $(u,p)$ but not necessarily the identity. Then $\partial_uM=\partial_pM=0$: the borders $Ma$ and $(Mb)^{\top}$ are constant again, the extra terms drop out and the formulas reduce to their Fold counterparts with $dF-i\omega M$ in place of $J$:
+$$\partial_{u_i}\sigma=-w^{\top}\partial_{u_i}dF\,v,\qquad \partial_p\sigma=-w^{\top}\partial_pdF\,v,\qquad \partial_\omega\sigma=i\,w^{\top}M\,v .$$
+
+- **Scalar case ($n=1$).** All the quantities become scalars and the formulas above can be checked explicitly. Solving the bordered system $(M_h)$ and its adjoint gives $v=1/(bM)$, $w=1/(aM)$ and $\sigma=-A/(abM^{2})$, so that $\sigma+wAv=0$. Differentiating $\sigma$ directly with $a,b$ fixed yields (SCA)
+which is exactly what the formula above predicts: the first term is $-w\partial_pA\,v$ while the border term reads $-\sigma(w\partial_pM\,a+b\partial_pM\,v)=-\sigma\big(\partial_pM/M+\partial_pM/M\big)=2A\,\partial_pM/(abM^{3})$. In particular this border term is $\propto\partial_pM/M$ and only vanishes when $\partial_pM=0$, which justifies keeping the extra $\sigma(\cdots)$ terms when the mass matrix depends on $(u,p)$.
+$$\partial_p\sigma=-\frac{\partial_pA}{abM^{2}}+\frac{2A\,\partial_pM}{abM^{3}}\quad\quad (SCA).$$
 
 ## References
 
