@@ -75,10 +75,6 @@ BifurcationKit.IdentityOperator
 ```
 
 ```@docs
-DAEBifProblem
-```
-
-```@docs
 PDEBifProblem
 ```
 

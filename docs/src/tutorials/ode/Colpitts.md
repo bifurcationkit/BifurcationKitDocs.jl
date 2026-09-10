@@ -76,8 +76,8 @@ nothing #hide
 We first compute the branch of equilibria. But we need a generalized eigenvalue solver for this.
 
 ```@example TUTDAE1
-opts_br = BK.ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.02, n_inversion = 4)
-br = BK.continuation(dae_problem, BK.PALC(), opts_br; normC = BK.norminf)
+opts_br = BK.ContinuationPar(p_min = 0.4, p_max = 0.8, ds = 0.01, dsmax = 0.02, n_inversion = 4)
+br = BK.continuation(dae_problem, BK.AutoSwitch(; alg = BK.PALC(tangent = BK.Bordered())), opts_br; normC = BK.norminf)
 scene = plot(br, vars = (:param, :x1))
 ```
 
@@ -125,6 +125,7 @@ br_po = BK.continuation(br, 1, opts_po_cont,
     start_with_eigen = Val(false),
     record_from_solution = recordPO,
     plot_solution = PlotPO,
+	callback_newton = BK.cbMaxNorm(1),
     normC = BK.norminf
     )
 scene = plot(br_po)
@@ -140,9 +141,7 @@ Note that the Hopf normal form for a DAE with a **constant** mass matrix is now 
 
 ```@example TUTDAE1
 import OrdinaryDiffEq as ODE
-
 # this is the ODEProblem used with `DiffEqBase.solve`
-# we  set  the initial conditions
 prob_dae = ODE.ODEFunction(Colpitts!; mass_matrix = Be)
 probFreez_ode = ODE.ODEProblem(prob_dae, z0, (0, 1), par_Colpitts)
 
@@ -171,12 +170,13 @@ plot(br_po_sh)
 
 ```@example TUTDAE1
 br_po_sh2 = BK.continuation(deepcopy(br_po_sh), 1, 
-	BK.ContinuationPar(opts_po_cont, max_steps = 15);
+    BK.ContinuationPar(opts_po_cont, max_steps = 15);
     record_from_solution = recordPO,
-    δp = -0.004, 
+    use_normal_form = false, ampfactor = 0.01,
+    δp = -0.002, 
     callback_newton = BK.cbMaxNorm(1.0),
     normC = BK.norminf)
-plot(br, vars = (:param, :x1));plot!(br_po_sh, br_po_sh2)
+plot(br, vars = (:param, :x1));plot!(br_po_sh2, br_po_sh)
 ```
 
 Let us show an example of periodic solution on the PD branch:
