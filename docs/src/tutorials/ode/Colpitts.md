@@ -67,7 +67,8 @@ z0 = [0.9957,0.7650,19.81,-19.81]
 Be = [-(par_Colpitts.C1+par_Colpitts.C2) par_Colpitts.C2 0 0;par_Colpitts.C2 -par_Colpitts.C2 0 0;par_Colpitts.C1 0 0 0; 0 0 par_Colpitts.L 0]
 
 # we group the differentials together
-prob = BK.DAEBifProblem(Colpitts!, z0, par_Colpitts, (@optic _.μ); record_from_solution = recordFromSolution)
+prob = BK.ODEBifProblem(Colpitts!, z0, par_Colpitts, (@optic _.μ); record_from_solution = recordFromSolution)
+dae_problem = BK.DAEMassBifProblem(prob, Be)
 
 nothing #hide
 ```
@@ -75,16 +76,59 @@ nothing #hide
 We first compute the branch of equilibria. But we need a generalized eigenvalue solver for this.
 
 ```@example TUTDAE1
-eigsolver = BK.EigenMassMatrix(Be, BK.DefaultEig())
-# continuation options
-optn = BK.NewtonPar(;tol = 1e-13, max_iterations = 10, eigsolver)
-opts_br = BK.ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.01, nev = 4, plot_every_step = 3, max_steps = 1000, newton_options = optn)
-opts_br = @set opts_br.newton_options.verbose = false
-br = BK.continuation(prob, BK.PALC(), opts_br; normC = BK.norminf)
-
+opts_br = BK.ContinuationPar(p_min = -0.4, p_max = 0.8, ds = 0.01, dsmax = 0.02, n_inversion = 4)
+br = BK.continuation(dae_problem, BK.PALC(), opts_br; normC = BK.norminf)
 scene = plot(br, vars = (:param, :x1))
 ```
 
+## Curve of Hopf bifurcations
+
+```@example TUTDAE1
+BK.get_normal_form(br, 1; start_with_eigen = Val(false))
+```
+
+```@example TUTDAE1
+br_hopf = BK.continuation(br, 1, (@optic _.αR),
+		BK.ContinuationPar(BK.getcontparams(br), p_max = 41.5, p_min = 0.1);
+			start_with_eigen = false,
+			bothside = true,
+			callback_newton = BK.cbMaxNorm(1)
+			)
+scene = plot(br_hopf)
+```
+
+## Periodic orbits with Trapezoid method
+
+```@example TUTDAE1
+function recordPO(u, p; iter, state, k...)
+    outt = BK.get_periodic_orbit(p.prob, u, BK.getparams(iter, state))
+    m = maximum(outt[1,:])
+    return (s = m, period = BK.getperiod(p.prob, u, BK.getparams(iter, state)))
+end
+
+function PlotPO(x, p; iter, state, k...)
+    outt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
+    plot!(outt.t, outt[2, :], subplot = 3)
+    plot!(br, vars = (:param, :x1), subplot = 1)
+end
+
+# we lower the tolerance of newton for the periodic orbits
+optnpo = BK.NewtonPar(br.contparams.newton_options; tol = 1e-10)
+@reset optnpo.eigsolver = BK.DefaultEig()
+
+opts_po_cont = BK.ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.003, p_min = 0.2, max_steps = 50, newton_options = optnpo, tol_stability = 1e-3)
+
+# automatic branching from the Hopf point
+br_po = BK.continuation(br, 1, opts_po_cont, 
+    BK.Trapeze(M = 200, jacobian = BK.Dense(), massmatrix = Be),
+    δp = -0.001, 
+    start_with_eigen = Val(false),
+    record_from_solution = recordPO,
+    plot_solution = PlotPO,
+    normC = BK.norminf
+    )
+scene = plot(br_po)
+```
 
 ## Periodic orbits with Multiple Standard Shooting
 
@@ -92,7 +136,7 @@ We use shooting to compute periodic orbits: we rely on a fixed point of the flow
 
 Thanks to [^Lamour], we can  just compute the Floquet coefficients to get the nonlinear stability of the periodic orbit. Two period doubling bifurcations are detected.
 
-Note that we use Automatic Branch Switching from a Hopf bifurcation despite the fact the normal form implemented in `BifurcationKit.jl` is not valid for DAE. For example, it predicts a subcritical Hopf point whereas we see below that it is supercritical. Nevertheless, it provides a
+Note that the Hopf normal form for a DAE with a **constant** mass matrix is now supported (using `start_with_eigen = Val(false)`, see the page [Differential-Algebraic Equations (DAE)](@ref)). The Automatic Branch Switching from the Hopf bifurcation point is therefore based on the correct normal form; for this model the bifurcation is **supercritical**.
 
 ```@example TUTDAE1
 import OrdinaryDiffEq as ODE
@@ -103,64 +147,43 @@ prob_dae = ODE.ODEFunction(Colpitts!; mass_matrix = Be)
 probFreez_ode = ODE.ODEProblem(prob_dae, z0, (0, 1), par_Colpitts)
 
 # we lower the tolerance of newton for the periodic orbits
-optnpo = @set optn.tol = 1e-9
+optnpo = BK.NewtonPar(br.contparams.newton_options; tol = 1e-9)
 @reset optnpo.eigsolver = BK.DefaultEig()
 
-opts_po_cont = BK.ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.0001, p_min = 0.2, max_steps = 50, newton_options = optnpo, nev = 4, tol_stability = 1e-3, plot_every_step = 5)
-
-# Shooting functional. Note the stringent tolerances used to cope with
-# the extreme parameters of the model
-probSH = BK.Shooting(10, probFreez_ode, ODE.Rodas5P(); reltol = 1e-10, abstol = 1e-13)
+opts_po_cont = BK.ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, p_min = 0.2, max_steps = 60, newton_options = optnpo, tol_stability = 1e-3)
 
 # automatic branching from the Hopf point
-br_po = BK.continuation(br, 1, opts_po_cont, probSH;
-	plot = true, verbosity = 3,
-	# δp is use to parametrize the first parameter point on the
-	# branch of periodic orbits
-	δp = 0.001,
-	record_from_solution = (u, p; iter, state, k...) -> begin
-		outt = BK.get_periodic_orbit(p.prob, u, BK.getparams(iter, state))
-		m = maximum(outt[1,:])
-		return (s = m, period = BK.getperiod(p.prob, u, BK.getparams(iter, state)))
-	end,
-	# plotting of a solution
-	plot_solution = (x, p; iter, state, k...) -> begin
-		outt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
-		plot!(outt.t, outt[2, :], subplot = 3)
-		plot!(br, vars = (:param, :x1), subplot = 1)
-	end,
-	# the newton callback is used to reject residual > 1
-	# this is to avoid numerical instabilities from DE.jl
-	callback_newton = BK.cbMaxNorm(1.0),
-	normC = BK.norminf)
+br_po_sh = BK.continuation(br, 1, opts_po_cont,
+    BK.Shooting(10, probFreez_ode, ODE.Rodas5P(); reltol = 1e-9, abstol = 1e-11, parallel = true);
+    δp = -0.001,
+    start_with_eigen = Val(false),
+    record_from_solution = recordPO,
+    plot_solution = PlotPO,
+    # the newton callback is used to reject residual > 1
+    # this is to avoid numerical instabilities from DE.jl
+    callback_newton = BK.cbMaxNorm(1.0),
+    normC = BK.norminf)
+
+plot(br_po_sh)
 ```
 
-![](Colpitts1.png)
-
-with detailed information
+## Branching from period doubling bifurcation
 
 ```@example TUTDAE1
-show(br_po)
+br_po_sh2 = BK.continuation(deepcopy(br_po_sh), 1, 
+	BK.ContinuationPar(opts_po_cont, max_steps = 15);
+    record_from_solution = recordPO,
+    δp = -0.004, 
+    callback_newton = BK.cbMaxNorm(1.0),
+    normC = BK.norminf)
+plot(br, vars = (:param, :x1));plot!(br_po_sh, br_po_sh2)
 ```
 
-Let us show that this bifurcation diagram is valid by showing evidences for the period doubling bifurcation.
+Let us show an example of periodic solution on the PD branch:
 
 ```@example TUTDAE1
-probFreez_ode = ODE.ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.733)
-
-solFreez = @time ODE.solve(probFreez_ode, ODE.Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
-
-scene = plot(solFreez, idxs = [2], xlims=(195,200), title="μ = $(probFreez_ode.p.μ)")
-```
-
-and after the bifurcation
-
-```@example TUTDAE1
-probFreez_ode = ODE.ODEProblem(prob_dae, br.specialpoint[1].x .+ 0.01rand(4), (0., 200.), @set par_Colpitts.μ = 0.72)
-
-solFreez = @time ODE.solve(probFreez_ode, ODE.Rodas4(), progress = true;reltol = 1e-10, abstol = 1e-13)
-
-scene = plot(solFreez, vars = [2], xlims=(195,200), title="μ = $(probFreez_ode.p.μ)")
+sol = BK.get_periodic_orbit(br_po_sh2, 3)
+plot(sol.t, sol[2, :])
 ```
 
 ## References 

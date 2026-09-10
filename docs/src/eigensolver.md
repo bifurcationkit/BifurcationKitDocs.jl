@@ -98,3 +98,5 @@ Associated to an eigensolver `eig` in `(DefaultEig, EigArnoldiMethod, EigArpack)
 where `A` is the Jacobian-like operator, `B` the mass matrix/operator and `nev` the number of requested eigen-elements.
 
 Another way is to rely on `EigenMassMatrix`, which wraps an eigen solver and a mass matrix `B` into a plain eigen solver `EigenMassMatrix(B, eig)`. This is convenient for DAE problems. See [`EigenMassMatrix`](@ref).
+
+For a problem encoded as a [`BifurcationKit.DAEMassBifProblem`](@ref) (constant mass matrix $M$), the call to `continuation` automatically wraps the user eigensolver into [`BifurcationKit.EigenDAE`](@ref), so that the generalized eigen problem $(J, M)$ is solved along the branch (see the page [Differential-Algebraic Equations (DAE)](@ref)). `EigenDAE` is called as `eig(J, M, nev)` with a matrix valued jacobian `J` (operator / matrix-free jacobians are not supported for the generalized problem); the identity mass marker `BifurcationKit.IdentityOperator` reduces it to the plain solve `eig(J, nev)`.

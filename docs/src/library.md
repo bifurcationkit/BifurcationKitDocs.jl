@@ -67,6 +67,14 @@ ODEBifProblem
 ```
 
 ```@docs
+BifurcationKit.DAEMassBifProblem
+```
+
+```@docs
+BifurcationKit.IdentityOperator
+```
+
+```@docs
 DAEBifProblem
 ```
 
@@ -171,6 +179,10 @@ BifurcationKit.ShiftInvert
 
 ```@docs
 BifurcationKit.EigenMassMatrix
+```
+
+```@docs
+BifurcationKit.EigenDAE
 ```
 
 ## [Generalized Eigen solvers](@id Library-GEIG)

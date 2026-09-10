@@ -50,6 +50,7 @@ makedocs(
 	    "🧩 Problems" => [
 	        "Bifurcation Problem" => "BifProblem.md",
 	        "DiffEq wrapper" => "diffeq.md",
+	        "Differential-Algebraic Equations (DAE)" => "dae.md",
         "Periodic Orbits" => [
             "Introduction" => "periodicOrbit.md",
             "Trapezoid" => "periodicOrbitTrapeze.md",

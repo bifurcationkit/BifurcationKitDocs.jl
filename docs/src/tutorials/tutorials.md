@@ -95,6 +95,8 @@ In the next tutorial, we continue solutions (equilibria, Hopf points, periodic o
 
 ## 3. DAE examples
 
+See also the reference page [Differential-Algebraic Equations (DAE)](@ref).
+
 ```@contents
 Pages = ["ode/Colpitts.md"]
 Depth = 1

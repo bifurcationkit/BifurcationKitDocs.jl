@@ -89,7 +89,7 @@ prob2 = BifurcationKit.re_make(prob, u0 = rand(3))
 | Adjoint / jvp / matrix-free paths | `dF(pb, x, p, dx)` (jvp, used by `apply_jacobian`), `jacobian_adjoint`, and the traits `has_adjoint`, `is_symmetric` (non-symmetric problems fall back to `transpose(J)` when `J` is an array) |
 | Fold / Hopf refinement (MA) and codim-2 curves | bordered solves on `J` / `Jᵗ`, `getdelta` for finite differences, `d2F` (or automatic AD/FD when `usehessian = true`) |
 | Normal forms (Hopf, Cusp, Bogdanov–Takens, …) | parameter derivative (`R01`) and the jet `d2F`, `d3F` (ForwardDiff is used when the residual is smooth) |
-| DAE (mass matrix) | `getmassmatrix` (and `is_mass_matrix_constant`) |
+| [DAE](dae.md) (mass matrix) | `getmassmatrix` (and `is_mass_matrix_constant`) |
 | Inplace / GPU (optional) | `residual!`, `jacobian!`, `isinplace` |
 | Plotting / recording (optional) | `plot_solution`, `record_from_solution`, `save_solution`, `update!` |
 

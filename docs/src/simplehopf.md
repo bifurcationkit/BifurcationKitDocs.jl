@@ -41,8 +41,21 @@ $$\mathbf{F}(x,p)-\mathbf{J}x := \sum_{1\leq q+l\leq p}\mathbf{F}_{ql}(x^{(q)},p
 with $\mathbf{F}_{ql}$ a $(q+l)$-linear map. 
 
 !!! warning "Case of DAE"
-    The above formula are only valid if $\mathbf M(x,p)$ is a constant function independant of $(x,p)$.
-    The case of DAE for which $\mathbf M(x,p)\neq Id$ is not implemented yet. It is work in progress.
+
+    The formulas above are valid for a **constant** mass matrix
+    $\mathbf M(x,p) = M$ (independent of $(x,p)$); for $M = Id$ this is the
+    usual ODE Hopf normal form.
+
+    For a DAE with a constant mass matrix $M \neq Id$ (e.g. a
+    [`BifurcationKit.DAEMassBifProblem`](@ref)), the Hopf normal form **is**
+    supported but requires `start_with_eigen = Val(false)`: the right/left
+    eigenvectors are then obtained from bordered linear systems on the pencil
+    $(J - i\omega M)$ and normalized by $\langle \zeta^\star, M\zeta\rangle = 1$.
+    See the page [Differential-Algebraic Equations (DAE)](@ref).
+
+    A mass matrix depending on the state, $\mathbf M = \mathbf M(x,p)$, is
+    **not** supported (an error `Non constant mass matrix not taken into
+    account!` is raised).
 
 ## Normal form computation
 
