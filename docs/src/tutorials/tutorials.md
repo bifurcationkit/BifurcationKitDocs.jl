@@ -133,10 +133,9 @@ Depth = 1
 ```
 
 ## 10. PDEs based on FEM with [Gridap.jl](https://github.com/gridap/Gridap.jl)
-```@contents
-Pages = ["mittelmannGridap.md"]
-Depth = 1
-```
+Based on the package [Gridap.jl](https://github.com/gridap/Gridap.jl) and its [docs](https://bifurcationkit.github.io/GridapBifurcationKit.jl/dev/). 
+
+- 🟢 [2d Bratu model](https://bifurcationkit.github.io/GridapBifurcationKit.jl/dev/tutorials/bratu/#bratu)
 
 ## 11. Symmetries, freezing, waves, fronts
 
