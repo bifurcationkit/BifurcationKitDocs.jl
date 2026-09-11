@@ -82,8 +82,8 @@ where $a,b$ are chosen in order to have a non-singular matrix $(M_h)$. More prec
 !!! warning "Linear Method"
     You can pass the bordered linear solver to solve $(M_h)$ using the option `bdlinsolver ` (see below). Note that the choice `bdlinsolver = BorderingBLS()` can lead to singular systems. Indeed, in this case, $(M_h)$ is solved by inverting `dF(u,p)-iω M` which is singular at Hopf points.
 
-!!! danger "Mass matrix $M$"
-    For now, the package only deals with the case $M = I_n$.
+!!! info "Mass matrix $M$"
+    The package deals with the case $M(x,p)$.
 
 ### Detection of codim 2 bifurcation points
 
@@ -108,6 +108,40 @@ In order to apply the newton algorithm to $F_f$ or $F_h$, one needs to invert th
 
 > When `jacobian_ma = MinAug()` (or `MinAugMatrixBased()`) is used on a non-symmetric problem, the **adjoint** of the jacobian of the vector field is required to build the bordered systems. If you do not provide one (through the option `Jᵗ` of the bifurcation problem, or more generally through `jacobian_adjoint`), it is computed internally using `transpose(J)` which works for `AbstractArray`. For matrix-free jacobians you must provide the adjoint yourself (e.g. the CGL tutorial relies on this for the Hopf continuation, see below). See also the tips in [`newton_fold`](@ref) / [`newton_hopf`](@ref).
 
+### Methods required on the problem
+
+The methods used on the bifurcation problem depend on `jacobian_ma`. Notation:
+`F` = `residual`, `J` = `jacobian`, `Jᵗ` = `jacobian_adjoint`, `d2F` = `d2F`,
+and — for DAE problems only — `M` = `getmassmatrix`, `Mᵗ` = `getmassmatrix_adjoint`
+(otherwise the mass matrix is `M = Iₙ`).
+
+| `jacobian_ma` | Fold | Hopf | Comments |
+|---|---|---|
+| `AutoDiff()` | `F`, `J`, `Jᵗ` | `F`, `J` | default |
+| `FiniteDifferences()` | `F`, `J`, `Jᵗ` | `F`, `J` | not precise |
+| `FiniteDifferencesMF()` | `F`, `J`, `Jᵗ` | `F`, `J` | not precise |
+| `MinAugMatrixBased()` | `F`, `J`, `Jᵗ` | `F`, `J`, `Jᵗ`, `M`, `Mᵗ`, `R01`, `R11` | $\sigma_x$ corresponding to $F$ computed by finite differences |
+| `MinAug()` | `F`, `J`, `Jᵗ`, `d2F` | `F`, `J`, `Jᵗ`, `M`, `Mᵗ`, `R01`, `R11`, `d2F` | |
+
+- `Jᵗ` (`jacobian_adjoint`): only *mandatory* for non-symmetric, matrix-free problems;
+  otherwise it is computed internally with `transpose(J)` (works for `AbstractArray`).
+- `R01` / `R11`: parameter derivatives `∂ₚF` and `∂ₚ(dF·v)`, used by the minimally augmented
+  formulations to build `σₚ`. **Default:** `AutoDiff()` (they can be passed to the problem
+  through the `R01` / `R11` keywords).
+- `M` / `Mᵗ`: `getmassmatrix` / `getmassmatrix_adjoint`. **Default `Mᵗ`:** `adjoint(M)`.
+- `d2F`: used by `MinAug()` when `usehessian = true` and a hessian is available; otherwise
+  it is evaluated by finite differences. `AutoDiff()`, `FiniteDifferences*()` and
+  `MinAugMatrixBased()` do not use `d2F` to build/invert the Jacobian of the MA functional.
+- For a mass matrix depending on `(u, p)`, the mass derivatives `∂ₚ⟨w, M(u,p) v⟩` and
+  `∇ₓ⟨w, M(u,p) v⟩` are additionally required. They are provided through the `MassFunction`
+  stored in `DAEMassBifProblem` (fields `R01` and `∇x`), see `R01_mass_matrix` and
+  `∇_x_mass_matrix`; when `M` is constant, only `M` (and possibly `Mᵗ`) are needed.
+
+The linear solvers are chosen through the options, independently of `jacobian_ma`:
+`options.newton_options.linsolver` inverts the systems with `J` (or `J - iωM`),
+`bdlinsolver` / `bdlinsolver_adjoint` invert the bordered systems $(M_f)$ / $(M_h)$ and
+their adjoints, and for Hopf `linsolve_adjoint` is used for the systems with $(J-i\omega M)^*$.
+
 ## [Linear solvers & preconditioners for large scale](@id ls-large)
 
 Even with `jacobian_ma = MinAug()`, the linear systems associated to the vector field jacobian $J = dF(u,p)$ (or $J-i\omega I$) still have to be solved at each Newton step, see $(M_f)$ / $(M_h)$ above. In large dimensions one must therefore choose carefully
@@ -119,7 +153,7 @@ Even with `jacobian_ma = MinAug()`, the linear systems associated to the vector 
     It can be advantageous to recompute the preconditioner during the continuation, e.g. every few steps, using the `callback_newton` mechanism. See the example [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl).
 
 !!! tip "Hopf and non-symmetric problems"
-    For Hopf continuation the bordered system involves both $J-i\omega I$ and its adjoint. When the jacobian is not symmetric (or is matrix-free), you can pass dedicated solvers through the options `linsolve_adjoint` and `bdlinsolver_adjoint` of `continuation` (see [`continuation_hopf`](@ref)). In the tutorial [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl), the option `start_with_eigen = true` is used for the same reason: the left eigenvector of the jacobian is not the conjugate of the right one.
+    For Hopf continuation the bordered system involves both $J-i\omega M$ and its adjoint. When the jacobian is not symmetric (or is matrix-free), you can pass dedicated solvers through the options `linsolve_adjoint` and `bdlinsolver_adjoint` of `continuation` (see [`continuation_hopf`](@ref)). In the tutorial [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl), the option `start_with_eigen = true` is used for the same reason: the left eigenvector of the jacobian is not the conjugate of the right one.
 
 ## [start_with_eigen, update_minaug_every_step & compute_eigen_elements](@id start-with-eigen)
 
@@ -144,14 +178,15 @@ brfold = continuation(br, ind_bif, lens2, opts;
     # matrix-free evaluation of the jacobian of the Fold / Hopf functional
     jacobian_ma = BK.MinAug(),
     # bordered linear solver for the MA formulation
-    bdlinsolver = BorderingBLS(solver = ls, check_precision = false),
+    bdlinsolver = BorderingBLS(solver = ls, check_precision = true),
     # recommended, esp. for Hopf
-    start_with_eigen = true,
+    start_with_eigen = false,
     # keep the MA vectors up to date
     update_minaug_every_step = 1,
     # detect codim 2 bifurcations (BT, CP, ZH, ...)
     detect_codim2_bifurcation = 2,
-    normC = norminf)
+    normC = norminf # or your own
+    )
 ```
 
 You can find working examples in the tutorials [Temperature model (codim 2)](@ref temperature), [Extended Lorenz-84 model (codim 2 + BT/ZH aBS)](@ref lorenz), [1d Brusselator (automatic)](@ref brusauto), [1d Langmuir–Blodgett transfer model](@ref langmuir) and, for the most advanced matrix-free settings with preconditioners, [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl).
@@ -215,7 +250,7 @@ Here we detail the computation of the jacobian of the Fold functional $G=(F,\sig
 
 $$\left[\begin{array}{cc}J(u,p)&a\\ b^{\top}&0\end{array}\right]\left[\begin{array}{c}v\\ \sigma(u,p)\end{array}\right]=\left[\begin{array}{c}0_{n}\\1\end{array}\right],$$
 
-of which $(v,\sigma)$ is the solution. Because the bordered system and its adjoint share the same right-hand side $(0_n,1)$, the second component of the adjoint solution equals the test function, i.e. $\tau=\sigma$: the **adjoint bordered system**
+of which $(v,\sigma)$ is the solution. Because the bordered system and its adjoint share the same right-hand side $(0_n,1)$, the second component of the adjoint solution $(w,\tau)$ equals the test function, i.e. $\tau=\sigma$: the **adjoint bordered system**
 
 $$\left[\begin{array}{cc}J(u,p)^{\top}&b\\ a^{\top}&0\end{array}\right]\left[\begin{array}{c}w\\ \sigma\end{array}\right]=\left[\begin{array}{c}0_{n}\\1\end{array}\right]\quad\Longleftrightarrow\quad J^{\top}w+b\sigma=0,\quad a^{\top}w=1$$
 
@@ -238,7 +273,7 @@ for $i=1,\dots,n$. The bottom row requires, on top of the bordered solve giving 
 
 We recall that the unknowns are $(u,p,\omega)$ and that the bordered system $(M_h)$ involves the complex matrix $A(u,p,\omega)=dF(u,p)-i\omega M(u,p)$, where the mass matrix $M=M(u,p)$ now depends on $u$ and $p$ (by default $M=I_n$). Here $(v,\sigma)$ denotes the solution of the bordered system $(M_h)$: its first $n$ components $v$ form an approximate right null-vector of $A$ (i.e. $Av\simeq0$ at the Hopf point) while $\sigma$ is the complex test function used in $(F_h)$. As a consequence, the borders $M(u,p)\,a$ and $(M(u,p)\,b)^{\top}$ of $(M_h)$ also depend on $(u,p)$: contrary to the Fold case, they can no longer be considered constant when differentiating $\sigma$.
 
-As in the Fold case, the second component of the adjoint solution coincides with $\sigma$ (i.e. $\tau=\sigma$), so that the adjoint bordered system
+As in the Fold case, the second component of the adjoint solution $(w,\tau)$ coincides with $\sigma$ (i.e. $\tau=\sigma$), so that the adjoint bordered system
 
 $$\left[\begin{array}{cc}
 A(u,p,\omega)^{\top} & M(u,p)\,b\\

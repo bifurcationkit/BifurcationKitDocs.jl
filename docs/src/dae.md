@@ -26,18 +26,17 @@ the state / parameters, $M = M(x,p)$.
 
 | Functionality | Constant $M$ | Non-constant $M(x,p)$ |
 |---|---|---|
-| Equilibrium continuation & Newton | ✔ | ⚠ partial |
-| Stability — generalized eigenvalues $(J, M)$ | ✔ | ⚠ partial |
-| Fold / Hopf location & refinement (`newton_fold`, `newton_hopf`) | ✔ | ✘ |
+| Equilibrium continuation & Newton | ✔ | ✔ |
+| Stability — generalized eigenvalues $(J, M)$ | ✔ | ✔ |
+| Fold / Hopf location & refinement (`newton_fold`, `newton_hopf`) | ✔ | ✔ |
 | Hopf normal form ([`hopf_normal_form`](@ref)) | ✔ | ✘ |
 | Codim 2 curves of Fold / Hopf + BT / Cusp detection | ✔ | ✘ |
 | Detailed codim 2 normal forms (BT, Cusp, Bautin, ZH, HH) | ✘ | ✘ |
-| Periodic orbits — Shooting (SciML `mass_matrix`) | ✔ | ⚠ |
+| Periodic orbits — Shooting (SciML `mass_matrix`) | ✔ | ⚠ (through SciML) |
 | Periodic orbits — [`Trapeze`](@ref) + `massmatrix` | ✔ (dense Floquet; matrix-free in progress) | ✘ |
+| Periodic orbits — [`Collocation`](@ref) + `massmatrix` | ✘ | ✘ |
 
-Here ✔ means supported, ⚠ means only partially supported (the mass matrix is
-evaluated once at the current solution and its derivatives are not taken into
-account), and ✘ means not supported (a clear error is raised).
+Here ✔ means supported, ⚠ means only partially supported, and ✘ means not supported (a clear error is raised).
 
 ## Wrapping a problem with a mass matrix
 
