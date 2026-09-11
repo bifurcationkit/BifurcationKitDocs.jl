@@ -26,6 +26,9 @@ It is important to understand the pros and cons of each method to compute PO in 
 
 In small dimensions, the collocation method is the preferred choice. It is the most precise, the fastest with dedicated linear solvers, time adaptive and feature full.
 
+!!! info "DAE"
+    We will provide methods valid for $M(u,p)\cdot\frac{du}{dt} - F(u,p)$, this is already partly possible with Shooting.
+
 
 ### Trapezoid method
 The Trapezoid method (or the Collocation one) is usually faster than the ones based on Shooting but it requires more memory as it saves the whole orbit. However the main drawback of this method is that the associated linear solver is not "nice", being composed of a cyclic matrix for which no generic Matrix-free preconditioner is known. Hence, the Trapezoid method is **often used with an ILU preconditioner** which is severely constrained by memory. Also, when the period of the cycle is large, finer time discretization (or mesh adaptation which is not yet implemented) must be employed which is also a limiting factor both in term of memory and preconditioning.

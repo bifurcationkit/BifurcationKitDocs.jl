@@ -42,7 +42,10 @@ When $d\equiv dim\ker \partial_xF(x^b,p^b) > 1$, you can still compute automatic
 
 The goal of this part is to study the dynamics of the Cauchy problem
 
-$$\frac{d}{dt}x - F(x,p) = 0. \quad\tag{C}$$
+$$\frac{dx}{dt} - F(x,p) = 0. \quad\tag{C}$$
+
+!!! info "DAE"
+    The aim is to provide bifurcation analysis of $M(x,p)\frac{dx}{dt} = F(x,p)$
 
 The equilibria are time independent solutions of (C) hence satisfying (E). The previous part can be applied to compute curves of equilibria. However, we can do more and look for time dependent solutions as well. 
 
