@@ -133,7 +133,8 @@ Depth = 1
 ```
 
 ## 10. PDEs based on FEM with [Gridap.jl](https://github.com/gridap/Gridap.jl)
-Based on the package [Gridap.jl](https://github.com/gridap/Gridap.jl) and its [docs](https://bifurcationkit.github.io/GridapBifurcationKit.jl/dev/). 
+Based on the package [Gridap.jl](https://github.com/gridap/Gridap.jl) and its [tutorials](https://bifurcationkit.github.io/GridapBifurcationKit.jl/dev/tutorials/tutorials/). 
+Here is one example but there are several other:
 
 - 🟢 [2d Bratu model](https://bifurcationkit.github.io/GridapBifurcationKit.jl/dev/tutorials/bratu/#bratu)
 
