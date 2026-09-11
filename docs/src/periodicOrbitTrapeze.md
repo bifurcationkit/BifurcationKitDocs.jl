@@ -77,7 +77,61 @@ The functional is encoded in the composite type [`Trapeze`](@ref). See the link 
 
 ## Preconditioning
 
-We strongly advise you to use a preconditioner to deal with the above linear problem. See [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) for an example.
+The cyclic / block bi-diagonal shape of $\mathcal J$ and $J_c$ strongly degrades the convergence of Krylov methods. We therefore advise you to use a preconditioner, in particular with the matrix-free options `FullMatrixFree()` and `BorderedMatrixFree()` described in the next section. Three strategies are available, see [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) for an example.
+
+### Block Jacobi preconditioner
+
+`BK.jacobian_block_diag(trap, u0, par)` returns the block diagonal of the jacobian of the functional, *i.e.* the matrix
+
+$$\mathrm{diag}\left(M_a-\frac{Th_1}{2}J(x_1),\cdots,M_a-\frac{Th_{M-1}}{2}J(x_{M-1}), I\right).$$
+
+Its (block) LU factorization is a natural block Jacobi preconditioner, the $N\times N$ blocks being factorized independently. It acts on the full bordered jacobian $\mathcal J$ and can be passed as a left preconditioner `Pl` to a Krylov solver used with `FullMatrixFree()`:
+
+```julia
+Jdiag = BK.jacobian_block_diag(poTrap, orbitguess, par)
+ls = GMRESIterativeSolvers(Pl = lu(Jdiag), ...)
+```
+
+### ILU preconditioners
+
+A generic approach consists in forming the sparse jacobian once and using its incomplete LU factorization as a preconditioner (see the package [IncompleteLU.jl](https://github.com/haampie/IncompleteLU.jl)). Two choices are available:
+
+- Factorize the **full** jacobian $\mathcal J$ obtained with `BK.po_jacobian_sparse(poTrap, orbitguess, par)`. This is used with `jacobian = FullMatrixFree()`.
+- Factorize only the **cyclic part** $J_c$ obtained with `BK.jacobian_cyclic_sparse(poTrap, orbitguess, par)`. This has a smaller memory footprint and is used with `jacobian = BorderedMatrixFree()` together with a bordered linear solver `BorderingBLS(solver = ls)`. Note however that preconditioning $J_c$ only ignores the closure / phase constraints of $\mathcal J$; as explained in the Matrix-Free box of the next section, this may lead to poorer convergence.
+
+```julia
+using IncompleteLU
+
+# full jacobian, or BK.jacobian_cyclic_sparse for the cyclic part only
+Jpo = BK.po_jacobian_sparse(poTrap, orbitguess, par)
+Precilu = ilu(Jpo, τ = 0.005)
+ls = GMRESIterativeSolvers(Pl = Precilu, ...)
+```
+
+### Block-circulant (Fourier) preconditioner
+
+We provide a dedicated preconditioner `BK.POTrapCirculantPrec` for the cyclic matrix $J_c$. The cyclic part of the jacobian is approximated by a block-circulant matrix built from the two frozen $N\times N$ blocks obtained by averaging the jacobian of the vector field $F'$ over the orbit,
+
+$$\bar{M} = M_a - \frac{\bar{h}}{2}\bar{F}', \qquad \bar{H} = M_a + \frac{\bar{h}}{2}\bar{F}',$$
+
+where $\bar h$ is the mean time step. This block-circulant matrix is diagonalized by the discrete Fourier transform in time, with symbol
+
+$$\Lambda_k = \bar{M} - \bar{H}\,e^{-2\pi i (k-1)/m}, \qquad k = 1,\dots,m,$$
+
+so that its inverse is applied with one FFT and $m$ sparse LU solves. The preconditioner is meant to be used with `jacobian = BorderedMatrixFree()` and a preconditioned Krylov solver. It only acts on the cyclic components $x_1,\dots,x_{M-1}$ (of size $N\cdot(M-1)$); the period / phase border is handled exactly by the bordered solver:
+
+```julia
+using FFTW # required, provides the ldiv! methods
+
+P  = BK.POTrapCirculantPrec(poTrap, orbitguess, par; ref = :average, ε = 0)
+ls = GMRESKrylovKit(Pl = P)
+```
+
+The keyword `ref` selects the reference jacobian used to freeze the blocks: `:average` averages $F'$ over the orbit while an integer `ref = i` uses the single time slice $x_i$. The shift `ε` is added to each symbol $\Lambda_k$, which is useful to regularize close-to-singular symbols.
+
+### Updating the preconditioner along a branch
+
+Along a branch, the jacobian of the vector field changes, so it can be useful to refresh the preconditioner from time to time. This is done with the callbacks of `newton` / `continuation`. See the [2d Ginzburg-Landau equation (finite differences, codim 2, Hopf aBS)](@ref cgl) tutorial for a complete example.
 
 ## Linear solvers
 

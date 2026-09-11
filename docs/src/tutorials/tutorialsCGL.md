@@ -13,7 +13,7 @@ Note that we try to be pedagogical here. Hence, we may write "bad" code that we 
 
 
 !!! info "Goal"
-    We do not use automatic branch switching here. The goal is to show how to use the internals of the package to squeeze most of the performances, use tailored options...
+    We do not use automatic branch switching here (which would work!). The goal is to show how to use the internals of the package to squeeze most of the performances, use tailored options...
 
 
 The equations are as follows
@@ -45,7 +45,7 @@ function Laplacian2D(Nx, Ny, lx, ly)
     A = kron(sparse(I, Ny, Ny), D2xsp) + kron(D2ysp, sparse(I, Nx, Nx))
     return A
 end
-nothing #hide
+nothing # hide
 ```
 
 It is then straightforward to write the vector field
@@ -75,7 +75,7 @@ function Fcgl(u, p)
 	mul!(f, p.Δ, u)
 	f .= f .+ NL(u, p)
 end
-nothing #hide
+nothing # hide
 ```
 
 and its jacobian:
@@ -104,7 +104,7 @@ function Jcgl(u, p)
 
 	Δ + spdiagm(0 => jacdiag, n => f1v, -n => f2u)
 end
-nothing #hide
+nothing # hide
 ```
 
 We now define the parameters and the stationary solution:
@@ -122,7 +122,7 @@ sol0 = zeros(2Nx, Ny)
 
 # we make a problem
 prob = BK.BifurcationProblem(Fcgl, vec(sol0), par_cgl, (@optic _.r); J = Jcgl)
-nothing #hide
+nothing # hide
 ```
 
 and we continue it to find the Hopf bifurcation points. We use a Shift-Invert eigensolver.
@@ -204,7 +204,7 @@ The following code is very close to the one explained in the tutorial [1d Brusse
 
 We focus on the first Hopf bifurcation point. Note that, we do not improve the guess for the Hopf bifurcation point, *e.g.* by calling `newtonHopf`, as this is not really needed.
 
-```julia
+```@example CGL2d
 # index of the Hopf point we want to branch from
 ind_hopf = 1
 
@@ -221,12 +221,12 @@ r_hopf = nf_hopf.params.r
 
 We create a problem to hold the functional and compute Periodic orbits based on Trapezoidal rule
 
-```julia
+```@example CGL2d
 poTrap = Trapeze(re_make(prob, params = (@set par_cgl.r = r_hopf - 0.01)), 
                     BK.residual(prob, list_of_time_steps[1], (@set par_cgl.r = r_hopf - 0.01)) |> normalize, 
                     zeros(2n), 
                     M, 
-                    2n; jacobian = BK.FullMatrixFree())
+                    2n; jacobian = BK.FullLU())
 BK.updatesection!(poTrap, orbitguess_f, @set par_cgl.r = r_hopf - 0.01)
 ```
 
@@ -234,7 +234,7 @@ We can use this (family) problem `poTrap` with `newton` on our periodic orbit gu
 
 
 !!! danger "Don't run this!!"
-    It uses too much memory
+    The following uses too much memory because it will compute the LU decomposition of the jacobian of the periodic orbit problem.
 
     ```julia
     opts_po_cont = ContinuationPar(dsmin = 0.0001, dsmax = 0.03, ds= 0.001, p_max = 2.5, max_steps = 250, plot_every_step = 3, newton_options = (@set opt_po.linsolver = DefaultLS()))
@@ -246,59 +246,49 @@ We can use this (family) problem `poTrap` with `newton` on our periodic orbit gu
 
 Instead, we use a preconditioner. We build the jacobian once, compute its **incomplete LU decomposition** (ILU) and use it as a preconditioner.
 
-```julia
-using IncompleteLU
+!!! tip "This would work!"
+    We could use the following preconditioner but it requires the full jacobian to be formed which is still OK for the sizes considered here.
+    ```julia
+    using IncompleteLU
 
-# Sparse matrix representation of the jacobian of the periodic orbit functional
-Jpo = BK.po_jacobian_sparse(poTrap, orbitguess_f, @set par_cgl.r = r_hopf - 0.01);
+    # Sparse matrix representation of the jacobian of the periodic orbit functional
+    Jpo = BK.po_jacobian_sparse(poTrap, orbitguess_f, @set par_cgl.r = r_hopf - 0.01);
 
-# incomplete LU factorization with threshold
-Precilu = @time ilu(Jpo, τ = 0.005);
+    # incomplete LU factorization with threshold
+    Prec = @time ilu(Jpo, τ = 0.005);
 
-# we define the linear solver with left preconditioner Precilu
-ls = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, N = size(Jpo,1), restart = 40, maxiter = 50, Pl = Precilu, log=true)
+    # we define the linear solver with left preconditioner Prec
+    ls = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, N = size(Jpo,1), restart = 40, maxiter = 50, Pl = Prec, log=true)
 
-# we try the linear solver
-ls(Jpo, rand(ls.N))
-```
+    # we try the linear solver
+    ls(Jpo, rand(ls.N))
+    ```
+    This converges in `7` iterations whereas, without the preconditioner, it does not converge after `100` iterations.
 
-This converges in `7` iterations whereas, without the preconditioner, it does not converge after `100` iterations.
+We select another preconditioner which is fast enough to run the tutorial on github CI !!!
 
-We set the parameters for the `newton` solve.
-
-```julia
-opt_po = @set opt_newton.verbose = true
-outpo_f = @time newton(poTrap, orbitguess_f,  (@set opt_po.linsolver = ls); normN = norminf)
-BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], "\n")
-BK.plot_periodic_potrap(outpo_f.u, M, Nx, Ny; ratio = 2);
+```@example CGL2d
+using FFTW # required for POTrapCirculantPrec
+Prec = BK.POTrapCirculantPrec(poTrap, orbitguess_f, (@set par_cgl.r = r_hopf - 0.01), ref=:average)
+# preconditioned linear solver
+ls = KrylovLSInplace(verbose = 0, rtol = 1e-3, atol = 1e-12, memory = 40, itmax = 50, Pl = Prec, ldiv = true, is_inplace = false, n = length(orbitguess_f), m = length(orbitguess_f))
+# ls = GMRESIterativeSolvers(verbose = false, reltol = 1e-3, restart = 40, maxiter = 50, Pl = Prec, log=true)
+# parameters for the `newton` solve.
+opt_po = NewtonPar(tol = 1e-10, eigsolver = eigls, linsolver = ls, verbose = true)
+outpo_f = newton(poTrap, orbitguess_f, (@set opt_po.verbose = false); normN = norminf) # hide
+outpo_f = @time newton(poTrap, orbitguess_f, opt_po; normN = norminf)
+nothing # hide
 ```
 
 which gives
 
-```julia
-┌─────────────────────────────────────────────────────┐
-│ Newton step         residual      linear iterations │
-├─────────────┬──────────────────────┬────────────────┤
-│       0     │       6.5442e-03     │        0       │
-│       1     │       1.4382e-03     │        7       │
-│       2     │       3.7238e-04     │        8       │
-│       3     │       6.4118e-05     │       10       │
-│       4     │       4.2419e-06     │       10       │
-│       5     │       5.6974e-08     │       11       │
-│       6     │       3.1774e-10     │       12       │
-│       7     │       3.1674e-13     │       14       │
-└─────────────┴──────────────────────┴────────────────┘
-  0.793448 seconds (143.31 k allocations: 1.242 GiB, 4.77% gc time)
---> T = 6.532023020978835, amplitude = 0.2684635643839235
+```@example CGL2d
+BK.plot_periodic_potrap(outpo_f.u, M, Nx, Ny; ratio = 2)
 ```
-
-and
-
-![](cgl2d-po-newton.png)
 
 At this point, we are still wasting a lot of resources, because the matrix-free version of the jacobian of the functional uses the jacobian of the vector field `x ->  Jcgl(x, p)`. Hence, it builds `M` sparse matrices for each evaluation!! Let us create a problem which is fully Matrix Free:
 
-```julia
+```@example CGL2d
 # computation of the first derivative using automatic differentiation
 d1Fcgl(x, p, dx) = ForwardDiff.derivative(t -> Fcgl(x .+ t .* dx, p), 0.)
 
@@ -317,27 +307,10 @@ poTrapMF = Trapeze(
 
 We can now use newton
 
-```julia
-outpo_f = @time newton(poTrapMF, orbitguess_f, (@set opt_po.linsolver = ls); normN = norminf)
-BK.converged(outpo_f) && printstyled(color=:red, "--> T = ", outpo_f.u[end], "\n")
-```
-
-which gives
-
-```julia
-┌─────────────────────────────────────────────────────┐
-│ Newton step         residual      linear iterations │
-├─────────────┬──────────────────────┬────────────────┤
-│       0     │       6.5442e-03     │        0       │
-│       1     │       1.4382e-03     │        7       │
-│       2     │       3.7238e-04     │        8       │
-│       3     │       6.4118e-05     │       10       │
-│       4     │       4.2419e-06     │       10       │
-│       5     │       5.6974e-08     │       11       │
-│       6     │       3.1774e-10     │       12       │
-│       7     │       3.1681e-13     │       14       │
-└─────────────┴──────────────────────┴────────────────┘
-  0.607167 seconds (46.11 k allocations: 461.511 MiB, 2.03% gc time)
+```@example CGL2d
+outpo_f = newton(poTrapMF, orbitguess_f,  (@set opt_po.verbose = false); normN = norminf) # hide
+outpo_f = @time newton(poTrapMF, orbitguess_f,  (@set opt_po.linsolver = ls); normN = norminf)
+nothing # hide
 ```
 
 The speedup will increase a lot for larger $N_x, N_y$. Also, for Floquet multipliers computation, the speedup will be substantial.
@@ -346,7 +319,7 @@ The speedup will increase a lot for larger $N_x, N_y$. Also, for Floquet multipl
 
 We show here how to remove most allocations and speed up the computations. This is an **experimental** feature as the Floquet multipliers computation is not yet readily available in this case. To this end, we rewrite the functional using *inplace* formulation and trying to avoid allocations. This can be done as follows:
 
-```julia
+```@example CGL2d
 # compute just the nonlinearity
 function NL!(f, u, p, t = 0.)
 	(;r, μ, ν, c3, c5) = p
@@ -413,7 +386,7 @@ probInp = BifurcationProblem(Fcgl!, vec(sol0), (@set par_cgl.r = r_hopf - 0.01),
 
 We can now define an inplace functional
 
-```julia
+```@example CGL2d
 ls0 = GMRESIterativeSolvers(N = 2Nx*Ny, reltol = 1e-9)#, Pl = lu(I + par_cgl.Δ))
 
 poTrapMFi = Trapeze(
@@ -429,26 +402,10 @@ poTrapMFi = Trapeze(
 ```
 and run the `newton` method:
 
-```julia
-outpo_f = @time newton(poTrapMFi, orbitguess_f, (@set opt_po.linsolver = ls); normN = norminf)
-```
-
-It gives
-
-```julia
-┌─────────────────────────────────────────────────────┐
-│ Newton step         residual      linear iterations │
-├─────────────┬──────────────────────┬────────────────┤
-│       0     │       6.5442e-03     │        0       │
-│       1     │       1.4382e-03     │        7       │
-│       2     │       3.7238e-04     │        8       │
-│       3     │       6.4118e-05     │       10       │
-│       4     │       4.2419e-06     │       10       │
-│       5     │       5.6974e-08     │       11       │
-│       6     │       3.1774e-10     │       12       │
-│       7     │       3.1674e-13     │       14       │
-└─────────────┴──────────────────────┴────────────────┘
-  0.583849 seconds (5.55 k allocations: 151.581 MiB)
+```@example CGL2d
+outpo_f = newton(poTrapMFi, orbitguess_f, (@set opt_po.verbose = false); normN = norminf) # hide
+outpo_f = @time newton(poTrapMFi, orbitguess_f, opt_po);
+nothing # hide
 ```
 
 Notice the small speed boost but the reduced allocations. At this stage, further improvements could target the use of `BlockBandedMatrices.jl` for the Laplacian operator, etc.
@@ -517,7 +474,7 @@ This gives the following bifurcation diagram:
 ![](cgl2d-po-cont.png)
 
 !!! tip "Improved performances"
-    Although it would be "cheating" for fair comparisons with existing packages, there is a trick to compute the bifurcation diagram without using preconditionners. We will not detail it here, but it allows handling the case `Nx = 200; Ny = 110; M = 30` and above.
+    The code above allows handling the case `Nx = 200; Ny = 110; M = 30` easily and above.
 
 We did not change the preconditioner in the previous example as it does not seem needed. Let us show how to do this nevertheless:
 

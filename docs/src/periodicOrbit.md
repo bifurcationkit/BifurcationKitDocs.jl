@@ -31,7 +31,8 @@ In small dimensions, the collocation method is the preferred choice. It is the m
 
 
 ### Trapezoid method
-The Trapezoid method (or the Collocation one) is usually faster than the ones based on Shooting but it requires more memory as it saves the whole orbit. However the main drawback of this method is that the associated linear solver is not "nice", being composed of a cyclic matrix for which no generic Matrix-free preconditioner is known. Hence, the Trapezoid method is **often used with an ILU preconditioner** which is severely constrained by memory. Also, when the period of the cycle is large, finer time discretization (or mesh adaptation which is not yet implemented) must be employed which is also a limiting factor both in term of memory and preconditioning.
+The Trapezoid method (or the Collocation one) is usually faster than the ones based on Shooting but it requires more memory as it saves the whole orbit. However, the main drawback of this method is that the associated linear solver is not "nice", being composed of a cyclic matrix.
+There are two preconditioners: one is matrix-free and the other is **an ILU preconditioner** which is severely constrained by memory. When the period of the cycle is large, finer time discretization (or mesh adaptation which is not yet implemented) must be employed which is also a limiting factor both in terms of memory and preconditioning.
 
 ### Collocation method
 

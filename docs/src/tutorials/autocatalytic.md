@@ -194,7 +194,7 @@ $$\lambda M_a\cdot V = dG(U^f)\cdot V.$$
 ```@example TUTAUTOCAT
 eigsolver = BK.DefaultGEig(; B = diagm(vcat(ones(2N), 0)))
 optn = NewtonPar(;tol = 1e-8, eigsolver)
-opt_cont_br = ContinuationPar(p_min = 0.05, p_max = 1., newton_options = optn, ds= -0.001, plot_every_step = 2, detect_bifurcation = 3, nev = 10, n_inversion = 6)
+opt_cont_br = ContinuationPar(p_min = 0.05, p_max = 1., newton_options = optn, ds= -0.001, nev = 10, n_inversion = 6)
 br = continuation(probtw, PALC(), opt_cont_br)
 plot(br)
 ```
