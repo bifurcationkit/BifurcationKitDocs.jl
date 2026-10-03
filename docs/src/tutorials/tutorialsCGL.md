@@ -180,6 +180,9 @@ with detailed information
 br_hopf
 ```
 
+!!! tip "Improved performances"
+    Note that you can pass a preconditioned iterative linear solver `ls_precond`, for example `BorderingBLS(solver = ls_precond)`. You can also make the call completely matrix-free.
+
 We can now construct the curve of Fold points branching off the Bogdanov-Takens bifurcation we just detected.
 
 ```@example CGL2d
@@ -244,10 +247,8 @@ We can use this (family) problem `poTrap` with `newton` on our periodic orbit gu
 
 **However, the linear system associated to the newton iterations will be solved by forming the sparse jacobian of size $(2N_xN_yM+1)^2$ and the use of `\` (based on LU decomposition). It takes way too much time and memory.**
 
-Instead, we use a preconditioner. We build the jacobian once, compute its **incomplete LU decomposition** (ILU) and use it as a preconditioner.
-
 !!! tip "This would work!"
-    We could use the following preconditioner but it requires the full jacobian to be formed which is still OK for the sizes considered here.
+    We could use the following preconditioner based on an **incomplete LU decomposition** (ILU) but it requires the full jacobian to be formed which is still OK for the sizes considered here. It used to be the basis of this tutorial.
     ```julia
     using IncompleteLU
 
@@ -474,7 +475,7 @@ This gives the following bifurcation diagram:
 ![](cgl2d-po-cont.png)
 
 !!! tip "Improved performances"
-    The code above allows handling the case `Nx = 200; Ny = 110; M = 30` easily and above.
+    We can improve the code in many ways. First, we could use AD for the jacobian with sparsity detection. We could use threading the make the code parallel (just add `@tturbo` before the loops!). Then we could port the code to GPU using `KernelAbstraction.jl`. The code above allows handling the case `Nx = 200; Ny = 110; M = 30` easily and above.
 
 We did not change the preconditioner in the previous example as it does not seem needed. Let us show how to do this nevertheless:
 

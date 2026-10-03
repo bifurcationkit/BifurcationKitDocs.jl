@@ -121,25 +121,21 @@ Using the normal form, one finds standing waves $(A(t),B(t)) = (r_0e^{i\omega t}
 ```@example CGL1DWAVE
 function guessFromHopfO2(branch, ind_hopf, eigsolver, M, A, B = 0.; phase = 0, k = 1.)
 	specialpoint = branch.specialpoint[ind_hopf]
-
 	# parameter value at the Hopf point
-	p_hopf = specialpoint.param
-
+	p = specialpoint.param
 	# frequency at the Hopf point
 	ωH = imag(branch.eig[specialpoint.idx].eigenvals[specialpoint.ind_ev]) |> abs
-
 	# eigenvectors for the eigenvalues iω
 	ζ0 = geteigenvector(eigsolver, br.eig[specialpoint.idx][2], specialpoint.ind_ev)
-	ζ0 ./=  norm(ζ0)
-
 	ζ1 = geteigenvector(eigsolver, br.eig[specialpoint.idx][2], specialpoint.ind_ev - 2)
+
+	ζ0 ./=  norm(ζ0)
 	ζ1 ./=  norm(ζ1)
-
 	orbitguess = [real.(specialpoint.x .+
-	 			A .* ζ0 .* exp(2pi * complex(0, 1) .* (ii/(M-1) - phase)) .+
-				B .* ζ1 .* exp(2pi * complex(0, 1) .* (ii/(M-1) - phase))) for ii in 0:M-1]
+	 			A .* ζ0 .* cis(t - phase) .+
+				B .* ζ1 .* cis(t - phase)) for t in LinRange(0,2pi,M+1)[1:end-1]]
 
-	return (; p = p_hopf, period = 2pi/ωH, guess = orbitguess, x0 = specialpoint.x, ζ0 = ζ0, ζ1 = ζ1)
+	return (; p, period = 2pi/ωH, guess = orbitguess, x0 = specialpoint.x, ζ0 = ζ0, ζ1 = ζ1, ω = ωH)
 end
 nothing #hide
 ```
@@ -147,10 +143,11 @@ nothing #hide
 We can use this function to effectively build a guess for the traveling wave:
 
 ```@example CGL1DWAVE
-M = 50 # number of time slices (plotting purposes)
-r_hopf, Th, orbitguess2, hopfpt, eigvec = guessFromHopfO2(br, 2, opt_newton.eigsolver, M, 1. + 0.0im, 1+0.0im; k = 2.) #TW
+M = 120 # number of time slices (plotting purposes)
+pred = guessFromHopfO2(br, 2, opt_newton.eigsolver, M, 0. + 0.0im, 1+0.0im; phase = 0., k = 2.) #TW
+r_hopf = pred.p; guess_TW = pred.guess
 
-uold = copy(orbitguess2[1][1:2n])
+uold = copy(guess_TW[1][1:2n])
 
 # we create a TW problem
 probTW = TWModel(re_make(prob, params = (par_cgl..., r = r_hopf - 0.01)), par_cgl.Db, uold; jacobian = BK.FullLU())
