@@ -393,6 +393,10 @@ SectionSS
 SectionPS
 ```
 
+```@docs
+BifurcationKit.POTrapCirculantPrec
+```
+
 ## Misc.
 
 ```@docs

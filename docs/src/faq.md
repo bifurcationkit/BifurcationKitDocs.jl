@@ -25,9 +25,9 @@ If you do not want to save to file, you can use following the syntax
 iter = ContIterable(prob, alg, contparams; kwargs...)
 state, = iterate(iter)
 # allocate variable for the result
-contRes = ContResult(it, state)
+contRes = ContResult(iter, state)
 # run computation
-continuation!(it, state, contRes)
+continuation!(iter, state, contRes)
 ```
 
 ### How can I save a solution every n steps, or at specific parameter values?

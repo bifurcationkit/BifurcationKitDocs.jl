@@ -1,12 +1,13 @@
 # Simple Hopf point
 
-
-At a Hopf branch point $(x_0,p_0)$ for the problem $F(x,p)=0$, the spectrum of the linear operator $dF(x_0,p_0)$ contains two purely imaginary $\pm i\omega,\ \omega > 0$ which are simple. At such point, we can compute the **normal form** to transform the initial Cauchy problem
+W consider the  Cauchy problem
 
 $$\mathbf{M}(x,p)\cdot\dot x = \mathbf{F}(x,p)$$
 
-where $\mathbf{M}(x,p)$ is a mass matrix. For ODE, we have $\mathbf{M}(x,p)=Id$. 
+where $\mathbf{M}(x,p)$ is a mass matrix. For an ODE, we have $\mathbf{M}(x,p)=Id$. 
 
+
+At a Hopf branch point $(x_0,p_0)$ for the problem $\mathbf{F}(x,p)=0$, the spectrum of the linear operator $(\mathbf{M}(x_0,p_0),d\mathbf{F}(x_0,p_0))$ contains two purely imaginary $\pm i\omega,\ \omega > 0$ which are simple. At such point, we can compute the **normal form** to transform the Cauchy problem
 in large dimensions to a **complex** polynomial vector field:
 
 $$\dot z = z\left(a \cdot (p-p_0) + i\omega + l_1|z|^2\right)\quad\text{(E)}$$
@@ -48,13 +49,13 @@ with $\mathbf{F}_{ql}$ a $(q+l)$-linear map.
 
     For a DAE with a constant mass matrix $M \neq Id$ (e.g. a
     [`BifurcationKit.DAEMassBifProblem`](@ref)), the Hopf normal form **is**
-    supported but requires `start_with_eigen = Val(false)`: the right/left
+    supported by `BifurcationKit.jl` but requires `start_with_eigen = Val(false)`: the right/left
     eigenvectors are then obtained from bordered linear systems on the pencil
     $(J - i\omega M)$ and normalized by $\langle \zeta^\star, M\zeta\rangle = 1$.
     See the page [Differential-Algebraic Equations (DAE)](@ref).
 
     A mass matrix depending on the state, $\mathbf M = \mathbf M(x,p)$, is
-    **not** supported (an error `Non constant mass matrix not taken into
+    **not** yet supported (an error `Non constant mass matrix not taken into
     account!` is raised).
 
 ## Normal form computation

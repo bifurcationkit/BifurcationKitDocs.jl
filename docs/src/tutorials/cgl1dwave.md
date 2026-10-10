@@ -85,13 +85,17 @@ n = 50
 
 l = pi
 h = 2l/n
+X = [-l + n*h for n=0:(n-1)]
 
 Δ = spdiagm(0 => -2ones(n), 1 => ones(n-1), -1 => ones(n-1) ) / h^2; Δ[1,end] = 1/h^2; Δ[end,1] = 1/h^2
 
 D = spdiagm(1 => ones(n-1), -1 => -ones(n-1)) / (2h); D[1,end] = -1/(2h); D[end, 1] = 1/(2h)
 
 # model parameters
-par_cgl = (r = 0.0, μ = 0.5, ν = 1.0, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, Δ), Db = blockdiag(D, D), δ = 1.0, N = 2n)
+Gᵢ = [spzeros(n, n)   -sparse(I, n, n);
+      sparse(I, n, n) spzeros(n, n)]
+Gx = blockdiag(D, D)
+par_cgl = (r = 0.0, ν = 1.0, μ = 0.5, c3 = -1.0, c5 = 1.0, Δ = blockdiag(Δ, Δ), Gx = Gx, Gᵢ = Gᵢ, N = 2n)
 
 # initial guess
 sol0 = zeros(par_cgl.N)
@@ -145,15 +149,15 @@ We can use this function to effectively build a guess for the traveling wave:
 ```@example CGL1DWAVE
 M = 120 # number of time slices (plotting purposes)
 pred = guessFromHopfO2(br, 2, opt_newton.eigsolver, M, 0. + 0.0im, 1+0.0im; phase = 0., k = 2.) #TW
-r_hopf = pred.p; guess_TW = pred.guess
+r_hopf = pred.p; guess_TW = pred.guess; ω = pred.ω
 
 uold = copy(guess_TW[1][1:2n])
 
 # we create a TW problem
-probTW = TWModel(re_make(prob, params = (par_cgl..., r = r_hopf - 0.01)), par_cgl.Db, uold; jacobian = BK.FullLU())
+probTW = TWModel(re_make(prob, params = (par_cgl..., r = r_hopf - 0.01)), par_cgl.Gx, uold; jacobian = BK.FullLU())
 
 # refine the guess
-wave = newton(probTW, vcat(uold, 0),
+wave = newton(probTW, vcat(uold, ω),
 		NewtonPar(verbose = true, max_iterations = 50),
 	)
 println("norm wave = ", wave.u[1:end-1] |> norminf)
@@ -165,13 +169,14 @@ Note that in the following code, an appropriate eigen-solver is automatically cr
 
 ```@example CGL1DWAVE
 amplitude(x) = maximum(x) - minimum(x)
-optn = NewtonPar(tol = 1e-8)
-opt_cont_br = ContinuationPar(p_min = 0.015, p_max = 2.5, newton_options = optn, ds= 0.001, dsmax = 0.05, nev = 10, n_inversion = 6, tol_stability = 1e-3)
+optn = NewtonPar(tol = 1e-8, eigsolver = EigArnoldiMethod(sigma = 0.5, which = BK.LM()))
+opt_cont_br = ContinuationPar(p_min = 0.015, p_max = 2.5, newton_options = optn, ds= -0.004, dsmax = 0.05, nev = 20, n_inversion = 6, tol_stability = 1e-3)
+BK.updatesection!(probTW, wave_tw.u)
 
 br_TW = @time continuation(probTW, wave.u, PALC(tangent = Bordered()), opt_cont_br;
-	eigsolver = BK.EigenWave(),
+	eigsolver = BK.GEigenWave(),
 	record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
-	plot_solution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
+	plot_solution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br, subplot=1, legend=false)),
 	finalise_solution = (z, tau, step, contResult; k...) -> begin
 			amplitude(z.u[n+1:2n]) > 0.001
 	end, 
@@ -183,6 +188,31 @@ plot(br, br_TW, legend = :bottomright, branchlabel =["", "Traveling Waves"])
 
 We note that the branch of traveling wave solutions has a Hopf bifurcation point at which Modulated Traveling waves emerge. This will be analyzed in the future.
 
+## Computation of the standing wave
+
+```@example CGL1DWAVE
+uold = 0.8vcat(cos.(X), cos.(X))
+
+# we create a SW problem with generator Gᵢ
+probSW = TWModel(re_make(prob, params = (par_cgl..., r = r_hopf - 0.01)), par_cgl.Gᵢ, uold; jacobian = BK.FullLU(), DAE = [false, ], update_section_every_step = 1)
+
+# refine the guess
+wave = newton(probSW, vcat(uold, ω),
+		NewtonPar(verbose = true, max_iterations = 50, tol=1e-10), normN = norminf
+	)
+
+br_SW = @time continuation(probSW, wave.u, PALC(tangent = Secant()), opt_cont_br;
+	eigsolver = BK.EigenWave(),
+	record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
+	plot_solution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
+	finalise_solution = (z, tau, step, contResult; k...) -> begin
+			amplitude(z.u[n+1:2n]) > 0.001
+	end, 
+	bothside = true
+	)
+
+plot(br, br_TW, br_SW, legend = :bottomright, branchlabel =["", "Traveling waves", "Standing waves"])
+```
 
 ## References
 

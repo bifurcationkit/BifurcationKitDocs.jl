@@ -169,7 +169,7 @@ scene = plot(br, br1, br2)
 
 We now show how to perform automatic branch switching at the nonsimple branch points. However, we think it is important that the user is able to use the previous tools in case automatic branch switching fails. This is explained in the next sections.
 
-The call for automatic branch switching is the same as in the case of simple branch points (see above) except that many branches are returned.
+The call for automatic branch switching is the same as in the case of simple branch points (see above) except that many branches are returned as a `Branch` holding a vector of branches.
 
 ```@example MITT
 branches = continuation(br, 2,

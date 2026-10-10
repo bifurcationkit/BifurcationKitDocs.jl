@@ -30,7 +30,7 @@ the state / parameters, $M = M(x,p)$.
 | Stability — generalized eigenvalues $(J, M)$ | ✔ | ✔ |
 | Fold / Hopf location & refinement (`newton_fold`, `newton_hopf`) | ✔ | ✔ |
 | Hopf normal form ([`hopf_normal_form`](@ref)) | ✔ | ✘ |
-| Codim 2 curves of Fold / Hopf + BT / Cusp detection | ✔ | ✘ |
+| Codim 2 curves of Fold / Hopf + BT / Cusp detection | ✔ | ✔ + ✘ |
 | Detailed codim 2 normal forms (BT, Cusp, Bautin, ZH, HH) | ✘ | ✘ |
 | Periodic orbits — Shooting (SciML `mass_matrix`) | ✔ | ⚠ (through SciML) |
 | Periodic orbits — [`Trapeze`](@ref) + `massmatrix` | ✔ (dense Floquet; matrix-free in progress) | ✘ |
