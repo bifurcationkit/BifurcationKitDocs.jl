@@ -114,7 +114,7 @@ indfold = 2
 outfold = newton(
 	#index of the fold point
 	br, indfold)
-BK.converged(outfold) && printstyled(color=:red, "--> We found a Fold Point at α = ", outfold.u.p, ", β = 0.01, from ", br.specialpoint[indfold].param,"\n")
+BK.converged(outfold) && printstyled(color=:red, "--> We found a Fold Point at α = ", outfold.u[end], ", β = 0.01, from ", br.specialpoint[indfold].param,"\n")
 ```
 
 We can finally continue this fold point in the plane $(α, β)$ by performing a Fold Point continuation. In the present case, we find a Cusp point.

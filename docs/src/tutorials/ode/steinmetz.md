@@ -129,7 +129,7 @@ ns_po_sh = BK.continuation(deepcopy(br_sh), 1, (@optic _.k7), opts_posh_ns;
 		# update_minaug_every_step = 1,
 		jacobian_ma = BK.MinAug(),
 		normC = norminf,
-		callback_newton = BK.cbMaxNorm(1e1),
+		callback_newton = BK.cbMaxNorm(1e0),
 		)
 ```
 

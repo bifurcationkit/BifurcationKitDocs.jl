@@ -147,7 +147,7 @@ end
 uold = vcat(u0, (1 .- u0))
 
 # we create a TW problem
-probTW = BK.TWModel(prob, Advection(par_cat), copy(uold))
+probTW = BK.TWModel(prob, Advection(par_cat), copy(uold); update_section_every_step = 0)
 nothing #hide
 ```
 

@@ -68,7 +68,7 @@ br = BK.continuation(prob, BK.PALC(), opts_br; normC = norminf)
 
 ```@example TUTCO
 # plot the branch
-scene = plot(br, xlims = (0.8, 1.8))
+scene = plot(br, xlims = (0.8, 1.2))
 ```
 
 ## Locus of Fold points as function $k$
@@ -78,7 +78,7 @@ scene = plot(br, xlims = (0.8, 1.8))
 
 If we vary the parameter $k$, the previous bifurcation points changes. Let us compute branches for different values of $k$.
 
-```@example LORENZ84
+```@example TUTCO
 _branches = [BK.continuation(BK.re_make(prob, params = @set par_com.k = k),
 				 BK.PALC(), BK.ContinuationPar(opts_br, p_min = 0.6, p_max = 1.5);
 				normC = norminf,

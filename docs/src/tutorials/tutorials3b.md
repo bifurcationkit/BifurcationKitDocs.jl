@@ -156,7 +156,7 @@ We use the bifurcation points guesses located in `br.specialpoint` to turn them 
 ind_hopf = 2
 
 # newton iterations to compute the Hopf point
-hopfpoint = newton(br, ind_hopf; normN = norminf)
+hopfpoint = newton(br, ind_hopf; normN = norminf, jacobian_ma = BK.MinAug())
 BK.converged(hopfpoint) && printstyled(color=:red, "--> We found a Hopf Point at l = ", hopfpoint.u.p[1], ", ω = ", hopfpoint.u.p[2], ", from l = ", br.specialpoint[ind_hopf].param, "\n")
 ```
 
@@ -179,19 +179,12 @@ Here, we perform continuation of periodic orbits branching from the Hopf bifurca
 # number of time slices
 M = 51
 
-l_hopf, Th, orbitguess2, hopfpt, vec_hopf = BK.guess_from_hopf(br, ind_hopf,
-	opts_br_eq.newton_options.eigsolver,
-	M, 2.7; phase = 0.25)
-
-nothing #hide
-```
-We wish to make two remarks at this point. The first is that an initial guess is composed of a space time solution and of the guess for the period `Th` of the solution. Note that the argument `2.7` is a guess for the amplitude of the orbit.
-
-```@example TUTBRUmanual
-# orbit initial guess from guess_from_hopf, is not a vector, so we reshape it
-orbitguess_f2 = reduce(vcat, orbitguess2)
-orbitguess_f = vcat(vec(orbitguess_f2), Th) |> vec
-
+# periodic orbit initial guess from Hopf point
+nf_hopf = BK.get_normal_form(br, ind_hopf; detailed = Val(false))
+pred = predictor(nf_hopf, 1; ampfactor = 22*sqrt(0.1))
+list_of_time_steps = [pred.orbit(t) for t in LinRange(0, 2pi, M + 1)[1:M]]
+orbitguess_f = vcat(reduce(vcat, list_of_time_steps), pred.period)
+l_hopf = nf_hopf.params.l
 nothing #hide
 ```
 
@@ -208,11 +201,11 @@ Given our initial guess, we create a (family of) problem which encodes the funct
 ```@example TUTBRUmanual
 poTrap = Trapeze(
 	probBif,    		   # pass the bifurcation problem
-	real.(vec_hopf),	 # used to set ϕ, see the phase constraint
-	hopfpt.u,          # used to set uhopf, see the phase constraint
+	zero(hopfpt.x0),	 # used to set ϕ, see the phase constraint
+	hopfpt.x0,          # used to set uhopf, see the phase constraint
 	M, 2n;             # number of time slices
-	jacobian = BK.FullSparseInplace()) # jacobian of PO functional			      
-
+	jacobian = BK.FullSparseInplace()) # jacobian of PO functional
+BK.updatesection!(poTrap, orbitguess_f, @set par_bru.l = l_hopf + 0.01)
 nothing #hide 	
 ```
 
@@ -321,27 +314,26 @@ M = 5
 # index of the Hopf point in the branch br
 ind_hopf = 1
 
-l_hopf, Th, orbitguess2, hopfpt, vec_hopf = BK.guess_from_hopf(br, ind_hopf,
-	opts_br_eq.newton_options.eigsolver, M, 22*0.075)
-#
-orbitguess_f2 = reduce(hcat, orbitguess2)
-orbitguess_f = vcat(vec(orbitguess_f2), Th) |> vec
+nf_hopf = BK.get_normal_form(br, ind_hopf; detailed = Val(false))
+pred = predictor(nf_hopf, 1; ampfactor = 22*sqrt(0.1))
+list_of_time_steps = [pred.orbit(t) for t in LinRange(0, 2pi, M + 1)[1:M]]
+orbitguess_f = vcat(reduce(vcat, list_of_time_steps), pred.period)
+l_hopf = nf_hopf.params.l
 ```
 
 Let us now initiate the Standard Shooting method. To this aim, we need to provide a guess of the periodic orbit at times $T/M_{sh}$ where $T$ is the period of the cycle and $M_{sh}$ is the number of slices along the periodic orbits. If $M_{sh} = 1$, this the Standard Simple Shooting and the Standard Multiple one otherwise. See [`Shooting`](@ref) for more information.
 
 ```julia
 dM = 2
-orbitsection = Array(orbitguess_f2[:, 1:dM:M])
 
 # the last component is an estimate of the period of the cycle.
-initpo = vcat(vec(orbitsection), 3.0)
+initpo = @set orbitguess_f[end] = 3.
 ```
 
 Finally, we need to build a problem which encodes the Shooting functional. This done as follows where we first create the time stepper. For performance reasons, we rely on `SparseDiffTools `
 
 ```julia
-using OrdinaryDiffEq, SparseArrays
+using OrdinaryDiffEq, SparseArrays, OrdinaryDiffEqRosenbrock
 
 FOde(f, x, p, t) = Fbru!(f, x, p)
 
@@ -365,7 +357,7 @@ probSh = Shooting(
 	prob, Rodas4P(),
 
 	# this is for the phase condition, you can pass your own section as well
-	[orbitguess_f2[:,ii] for ii=1:dM:M];
+	[reshape(orbitguess_f[1:end-1],M,2n)[:,ii] for ii=1:dM:M];
 
 	# enable threading
 	parallel = true,

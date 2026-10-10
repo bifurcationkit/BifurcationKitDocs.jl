@@ -157,11 +157,11 @@ uold = copy(guess_TW[1][1:2n])
 probTW = TWModel(re_make(prob, params = (par_cgl..., r = r_hopf - 0.01)), par_cgl.Gx, uold; jacobian = BK.FullLU())
 
 # refine the guess
-wave = newton(probTW, vcat(uold, ω),
+wave_tw = newton(probTW, vcat(uold, ω),
 		NewtonPar(verbose = true, max_iterations = 50),
 	)
-println("norm wave = ", wave.u[1:end-1] |> norminf)
-plot(wave.u[1:end-1]; linewidth = 5, label = "solution")
+println("norm wave = ", wave_tw.u[1:end-1] |> norminf)
+plot(wave_tw.u[1:end-1]; linewidth = 5, label = "solution")
 plot!(uold, color = :blue, label="guess")
 ```
 
@@ -173,7 +173,7 @@ optn = NewtonPar(tol = 1e-8, eigsolver = EigArnoldiMethod(sigma = 0.5, which = B
 opt_cont_br = ContinuationPar(p_min = 0.015, p_max = 2.5, newton_options = optn, ds= -0.004, dsmax = 0.05, nev = 20, n_inversion = 6, tol_stability = 1e-3)
 BK.updatesection!(probTW, wave_tw.u)
 
-br_TW = @time continuation(probTW, wave.u, PALC(tangent = Bordered()), opt_cont_br;
+br_TW = @time continuation(probTW, wave_tw.u, PALC(tangent = Bordered()), opt_cont_br;
 	eigsolver = BK.GEigenWave(),
 	record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
 	plot_solution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br, subplot=1, legend=false)),
@@ -197,11 +197,11 @@ uold = 0.8vcat(cos.(X), cos.(X))
 probSW = TWModel(re_make(prob, params = (par_cgl..., r = r_hopf - 0.01)), par_cgl.Gᵢ, uold; jacobian = BK.FullLU(), DAE = [false, ], update_section_every_step = 1)
 
 # refine the guess
-wave = newton(probSW, vcat(uold, ω),
+wave_sw = newton(probSW, vcat(uold, ω),
 		NewtonPar(verbose = true, max_iterations = 50, tol=1e-10), normN = norminf
 	)
 
-br_SW = @time continuation(probSW, wave.u, PALC(tangent = Secant()), opt_cont_br;
+br_SW = @time continuation(probSW, wave_sw.u, PALC(tangent = Secant()), opt_cont_br;
 	eigsolver = BK.EigenWave(),
 	record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:n]), s = x[end], amp = amplitude(x[1:n])),
 	plot_solution = (x, p; k...) -> (plot!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),

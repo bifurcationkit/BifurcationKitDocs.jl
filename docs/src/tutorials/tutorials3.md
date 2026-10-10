@@ -150,8 +150,8 @@ We use the guesses of the bifurcation points located in `br.specialpoint` to tur
 ind_hopf = 2
 
 # newton iterations to compute the Hopf point
-hopfpoint = newton(br, ind_hopf; normN = norminf)
-BK.converged(hopfpoint) && printstyled(color=:red, "--> We found a Hopf Point at l = ", hopfpoint.u.p[1], ", ω = ", hopfpoint.u.p[2], ", from l = ", br.specialpoint[ind_hopf].param, "\n")
+hopfpoint = newton(br, ind_hopf; normN = norminf, jacobian_ma = BK.MinAug())
+BK.converged(hopfpoint) && printstyled(color=:red, "--> We found a Hopf Point at l = ", hopfpoint.u.p[1], ", ω = ", hopfpoint.u.p[end], ", from l = ", br.specialpoint[ind_hopf].param, "\n")
 ```
 
 We now perform a Hopf continuation with respect to the parameters `l, β`
@@ -163,7 +163,7 @@ We now perform a Hopf continuation with respect to the parameters `l, β`
 optcdim2 = ContinuationPar(dsmin = 0.001, dsmax = 0.05, ds= 0.01, p_max = 6.5, p_min = 0.0, newton_options = opt_newton, detect_bifurcation = 0)
 
 br_hopf = continuation(br, ind_hopf, (@optic _.β),
-	optcdim2, verbosity = 2,
+	optcdim2,
 	# detection of codim 2 bifurcations with bisection
 	detect_codim2_bifurcation = 2,
 	# we update the Hopf problem at every continuation step
