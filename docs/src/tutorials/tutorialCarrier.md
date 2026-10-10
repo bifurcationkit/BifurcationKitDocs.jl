@@ -63,9 +63,10 @@ sol0 = -(1 .- par_car.X.^2)
 recordFromSolution(x, p; k...) = (x[2]-x[1]) * sum(z->z^2, x)
 
 prob = BifurcationProblem(F_carr, zeros(N), par_car, (@optic _.ϵ); 
-	J = Jac_carr, 
+	J = Jac_carr,
 	record_from_solution = recordFromSolution, 
-	R01 = BK.FiniteDifferences() # for normal form computation
+	R01 = BK.FiniteDifferences(), # for normal form computation
+	R02 = BK.FiniteDifferences()  # idem
 	)
 
 optnew = NewtonPar(tol = 1e-8)
