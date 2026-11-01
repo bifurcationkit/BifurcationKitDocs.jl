@@ -82,7 +82,7 @@ If we vary the parameter $k$, the previous bifurcation points changes. Let us co
 _branches = [BK.continuation(BK.re_make(prob, params = @set par_com.k = k),
 				 BK.PALC(), BK.ContinuationPar(opts_br, p_min = 0.6, p_max = 1.5);
 				normC = norminf,
-				bothside = true)
+				bothside = Val(true))
 			for k in LinRange(0.4, 0.45, 60)	
 				];
 plot()
@@ -110,7 +110,7 @@ sn_codim2 = BK.continuation(br, 2, (@optic _.k),
 	BK.ContinuationPar(opts_br, p_max = 2.2, ds = -0.001, dsmax = 0.05);
 	normC = norminf,
 	# compute both sides of the initial condition
-	bothside = true,
+	bothside = Val(true),
 	# detection of codim 2 bifurcations
 	detect_codim2_bifurcation = 2,
 	)
@@ -130,7 +130,7 @@ hp_codim2 = BK.continuation(br, 1, (@optic _.k),
 	# detection of codim 2 bifurcations
 	detect_codim2_bifurcation = 2,
 	# compute both sides of the initial condition
-	bothside = true,
+	bothside = Val(true),
 	)
 
 # plotting

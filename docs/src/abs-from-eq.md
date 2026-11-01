@@ -44,7 +44,7 @@ prob = ODEBifProblem(F, [0.], par, 1; record_from_solution = (x, p; k...) -> x[1
 br = continuation(prob, PALC(), ContinuationPar())
 	
 # perform branch switching on both sides of the bifurcation point
-br1 = continuation(br, 1; bothside = true )
+br1 = continuation(br, 1; bothside = Val(true) )
 
 scene = plot(br, br1; branchlabel = ["trivial branch", "bifurcated branch"], legend = :topleft)
 ```
@@ -68,7 +68,7 @@ prob = ODEBifProblem(F, [0.], par, 1; record_from_solution = (x, p; k...) -> x[1
 br = continuation(prob, PALC(), ContinuationPar(n_inversion = 6))
 	
 # perform branch switching on both sides of the bifurcation point
-br1 = continuation(br, 1; bothside = true )
+br1 = continuation(br, 1; bothside = Val(true) )
 
 scene = plot(br, br1; branchlabel = ["trivial branch", "bifurcated branch"], legend = :topleft)
 ```
@@ -94,7 +94,7 @@ br = continuation(prob, PALC(), ContinuationPar(n_inversion = 6); normC = normin
 
 # perform branch switching on both sides of the bifurcation point
 
-br1 = continuation(br, 1, bothside = true)
+br1 = continuation(br, 1, bothside = Val(true))
 scene = plot(br, br1; branchlabel = ["trivial branch", "bifurcated branch"], legend = :topleft)
 ```
 
@@ -152,13 +152,13 @@ You can now branch from the `nd` point
 
 ```@example TUT2_ABS_EQ_EQ
 br2 = continuation(br, 1, opts_br; δp = 0.01)
-plot(br, br2..., vars = (:param, :n))
+plot(br, br2, vars = (:param, :n))
 ```
 
 For a better visualization, we can use the vector `w` defined above.
 
 ```@example TUT2_ABS_EQ_EQ
-plot(br, br2..., vars = (:param, :nw))
+plot(br, br2, vars = (:param, :nw))
 ```
 
 ## Assisted branching from non-simple bifurcation point
@@ -191,7 +191,7 @@ These points can then be used to continue the different branches:
 ```@example TUT2_ABS_EQ_EQ
 brbp = BifurcationKit.multicontinuation(br, bp, pts.before, pts.after, opts_br)
 
-plot(br, brbp...)
+plot(br, brbp)
 ```
 
 ## predictor(s) 

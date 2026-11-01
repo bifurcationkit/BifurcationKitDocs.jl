@@ -231,7 +231,7 @@ prob = ODEBifProblem(auto_cat!, [1.,0,1], (κ = 65., μ = 0.01, σ = 5e-3, δ = 
         )
 
 opts_br = ContinuationPar(p_min = -0.0, p_max = .19, ds = 0.04, dsmax = 0.1, n_inversion = 8, detect_bifurcation = 3, max_bisection_steps = 25, nev = 3)
-br = continuation(prob, PALC(tangent=Bordered()), opts_br; plot = false, normC = norminf, bothside = true)
+br = continuation(prob, PALC(tangent=Bordered()), opts_br; plot = false, normC = norminf, bothside = Val(true))
 ```
 
 ```@example OptimColl
@@ -296,7 +296,7 @@ prob = BifurcationProblem(auto_cat!, [1.,0,1], (κ = 65., μ = 0.01, σ = 5e-3, 
         J! = auto_cat_jac!,
         )
 
-br = continuation(prob, PALC(tangent=Bordered()), opts_br; plot = false, normC = norminf, bothside = true)
+br = continuation(prob, PALC(tangent=Bordered()), opts_br; plot = false, normC = norminf, bothside = Val(true))
 
 br_po = @benchmark continuation(
     br, 3, opts_po_cont,

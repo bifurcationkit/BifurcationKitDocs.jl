@@ -58,7 +58,7 @@ opts_br = BK.ContinuationPar(p_min = -4.0, p_max = -0.9)
 br = BK.continuation(prob, BK.PALC(), opts_br;
 	# we want to compute both sides of the branch of the initial
 	# value of E0 = -2
-	bothside = true)
+	bothside = Val(true))
 
 scene = plot(br, legend=:topleft)
 ```
@@ -79,7 +79,7 @@ opts_br = BK.ContinuationPar(p_min = -4.0, p_max = -0.9,
 br = BK.continuation(prob, BK.PALC(), opts_br;
 	# we want to compute both sides of the branch of the initial
 	# value of E0 = -2
-	bothside = true)
+	bothside = Val(true))
 
 scene = plot(br, plotfold=true)
 ```

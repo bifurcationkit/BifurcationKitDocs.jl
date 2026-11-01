@@ -195,7 +195,7 @@ brfold = continuation(br_hopf, indbt, setproperties(br_hopf.contparams; detect_b
 	callback_newton = BK.cbMaxNorm(1e5),
 	bdlinsolver = BorderingBLS(solver = DefaultLS(), check_precision = false),
 	jacobian_ma = BK.MinAug(), # !! specific to high dimensions
-	bothside = true, normC = norminf)
+	bothside = Val(true), normC = norminf)
 
 plot(br_hopf, branchlabel = "Hopf"); plot!(brfold, legend = :topleft, branchlabel = "Fold")
 ```

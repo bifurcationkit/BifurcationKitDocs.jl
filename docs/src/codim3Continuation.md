@@ -57,13 +57,13 @@ par = (β1 = 0.01, β2 = -0.3, a = -1., b = 1.)
 prob  = BifurcationProblem(Fbt, [0.01, 0.01], par, (@optic _.β1))
 opts_br = ContinuationPar(p_max = 0.5, p_min = -0.5, detect_bifurcation = 3, nev = 2)
 
-br = continuation(prob, PALC(), opts_br; bothside = true)
+br = continuation(prob, PALC(), opts_br; bothside = Val(true))
 
 # compute branch of Hopf points
 hopf_codim2 = continuation(br, 3, (@optic _.β2), ContinuationPar(opts_br, max_steps = 40) ;
 	detect_codim2_bifurcation = 2,
 	update_minaug_every_step = 1,
-	bothside = true,
+	bothside = Val(true),
 	)
 
 # refine BT point

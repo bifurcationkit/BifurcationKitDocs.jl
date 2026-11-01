@@ -183,7 +183,7 @@ branches = continuation(br, 2,
 You can plot the branches using
 
 ```@example MITT
-scene = plot(br, branches...)
+scene = plot(br, branches)
 ```
 
 ## Analysis at the 2d-branch points (manual)

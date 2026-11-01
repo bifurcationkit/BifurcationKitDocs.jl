@@ -181,7 +181,7 @@ fold_po_coll2 = BK.continuation(brpo_fold, 1, (@optic _.ϵ), opts_pocoll_fold;
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = BK.MinAug(),
 		start_with_eigen = false,
-		bothside = true,
+		bothside = Val(true),
 		usehessian = true,
 		)
 
@@ -190,7 +190,7 @@ fold_po_coll1 = BK.continuation(brpo_fold, 2, (@optic _.ϵ), opts_pocoll_fold;
 		detect_codim2_bifurcation = 2,
 		jacobian_ma = BK.MinAug(),
 		start_with_eigen = false,
-		bothside = true,
+		bothside = Val(true),
 		usehessian = true,
 		)
 
@@ -210,7 +210,7 @@ probcoll, ci = BK.generate_ci_problem(BK.Collocation(30, 4; meshadapt=false), BK
 prob2 = @set probcoll.prob_vf.lens = @optic _.ϵ
 brpo_pd = BK.continuation(prob2, ci, BK.PALC(tangent = BK.Bordered()), BK.ContinuationPar(opts_po_cont, dsmax = 5e-3);
 	argspo...,
-	bothside = true,
+	bothside = Val(true),
 	)
 
 opts_pocoll_pd = BK.ContinuationPar(brpo_pd.contparams, max_steps = 40, p_min = 1.e-2, dsmax = 1e-2, ds = -1e-3)
@@ -221,7 +221,7 @@ pd_po_coll2 = BK.continuation(deepcopy(brpo_pd), 2, (@optic _.b0), opts_pocoll_p
 		usehessian = false,
 		jacobian_ma = BK.MinAug(),
 		normC = BK.norminf,
-		bothside = true,
+		bothside = Val(true),
 		callback_newton = BK.cbMaxNorm(1),
 		)
 

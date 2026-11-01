@@ -77,7 +77,7 @@ opts_br = BK.ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.15
 # compute the branch of solutions
 br = BK.continuation(prob, BK.PALC(), opts_br;
 	normC = BK.norminf,
-	bothside = true)
+	bothside = Val(true))
 
 scene = plot(br, plotfold = false, markersize = 4, legend = :topleft)
 ```
@@ -128,7 +128,7 @@ hp_codim2_1 = BK.continuation(br, 3, (@optic _.T),
 	# we save the different components for plotting
 	record_from_solution = record_from_solution_Lor,
 	# compute both sides of the initial condition
-	bothside = true,
+	bothside = Val(true),
 	)
 
 plot(sn_codim2, vars=(:X, :U), branchlabel = "Folds")

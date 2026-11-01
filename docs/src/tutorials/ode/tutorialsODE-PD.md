@@ -105,7 +105,7 @@ scene = plot(br, br_po)
 Note that you can compute the PD normal form
 
 ```@example TUTLURE
-BK.get_normal_form(br_po, 1)
+pdnf = BK.get_normal_form(br_po, 1; prm=Val(true))
 ```
 
 We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
@@ -198,7 +198,7 @@ Two period doubling bifurcations were detected. We shall now compute the branch 
 # aBS from PD
 br_po_pd = BK.continuation(deepcopy(br_po), 1, BK.ContinuationPar(br_po.contparams, max_steps = 70);
 	# plot = true,
-	use_normal_form = false,
+	normal_form_kwargs = (detailed = Val(false),),
 	ampfactor = .2, δp = -0.005,
 	plot_solution = (x, p; iter, state, k...) -> begin
 		plotPO(x, p; iter, state, k...)

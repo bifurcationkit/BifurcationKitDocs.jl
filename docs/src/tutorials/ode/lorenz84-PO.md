@@ -53,7 +53,7 @@ opts_br = BK.ContinuationPar(p_min = -1.5, p_max = 3.0, ds = 0.002, dsmax = 0.05
 @reset opts_br.newton_options.tol = 1e-12
 br = BK.continuation(BK.re_make(prob, params = (parlor..., T=0.04, F=3.)),
 	 	BK.PALC(), opts_br;
-		normC = BK.norminf, bothside = true)
+		normC = BK.norminf, bothside = Val(true))
 
 scene = plot(br, plotfold = false, markersize = 4, legend = :topleft)
 ```
@@ -67,13 +67,13 @@ sn_codim2 = BK.continuation(br, 5, (@optic _.T), BK.ContinuationPar(opts_br, p_m
 	# plot = true,
 	normC = BK.norminf,
 	detect_codim2_bifurcation = 2,
-	bothside = false,
+	bothside = Val(false),
 	)
 
 hp_codim2_1 = BK.continuation(br, 3, (@optic _.T), BK.ContinuationPar(opts_br, ds = -0.001, dsmax = 0.02, dsmin = 1e-4, n_inversion = 8, detect_bifurcation = 1) ;
 	normC = BK.norminf,
 	detect_codim2_bifurcation = 2,
-	bothside = true,
+	bothside = Val(true),
 	)
 
 plot(sn_codim2,    vars=(:F, :T), branchlabel = "SN")

@@ -97,6 +97,6 @@ The left figure is the norm of the solution as function of the parameter $p=\alp
 What if we want to compute to continue both ways in one call?
 
 ```@example TUT1ODE
-br = BK.continuation(prob, BK.PALC(), optcont; bothside = true)
+br = BK.continuation(prob, BK.PALC(), optcont; bothside = Val(true))
 plot(br)
 ```

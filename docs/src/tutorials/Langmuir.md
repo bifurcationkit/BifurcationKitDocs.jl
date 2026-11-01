@@ -185,7 +185,7 @@ sn_codim2 = continuation(br, 6, (@optic _.Δx),
 	# we update the Fold problem at every continuation step
 	update_minaug_every_step = 1,
 	# compute both sides of the initial condition
-	bothside = true,
+	bothside = Val(true),
 	# we invert the Fold linear problem using Min. Aug.
 	jacobian_ma = BK.MinAug(),
 	)

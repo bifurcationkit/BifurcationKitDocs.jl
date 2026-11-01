@@ -93,7 +93,7 @@ Using the argument `finalise_solution` in `continuation`. Simply make this funct
 
 ### How do I compute both sides of a branch?
 
-Instead of using two calls to `continuation`, you can pass the keyword `bothside=true` to `continuation`
+Instead of using two calls to `continuation`, you can pass the keyword `bothside = Val(true)` to `continuation`
 
 ### How do I compute period orbits for non-autonomous problems?
 

@@ -91,7 +91,7 @@ BK.get_normal_form(br, 1; start_with_eigen = Val(false))
 br_hopf = BK.continuation(br, 1, (@optic _.αR),
 		BK.ContinuationPar(BK.getcontparams(br), p_max = 41.5, p_min = 0.1);
 			start_with_eigen = false,
-			bothside = true,
+			bothside = Val(true),
 			callback_newton = BK.cbMaxNorm(1)
 			)
 scene = plot(br_hopf)
@@ -172,7 +172,7 @@ plot(br_po_sh)
 br_po_sh2 = BK.continuation(deepcopy(br_po_sh), 1, 
     BK.ContinuationPar(opts_po_cont, max_steps = 15);
     record_from_solution = recordPO,
-    use_normal_form = false, ampfactor = 0.01,
+    normal_form_kwargs = (detailed = Val(false),), ampfactor = 0.01,
     δp = -0.002, 
     callback_newton = BK.cbMaxNorm(1.0),
     normC = BK.norminf)

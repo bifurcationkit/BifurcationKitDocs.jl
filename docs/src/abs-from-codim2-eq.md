@@ -15,15 +15,14 @@ We provide an automatic branch switching method in this case (see for example [E
 continuation(br::ContResult, ind_BT::Int,
 	options_cont::ContinuationPar = br.contparams;
 	alg = getalg(br),
-	δp = nothing, ampfactor::Real = 1,
-	nev = options_cont.nev,
+	δp = nothing,
 	detect_codim2_bifurcation::Int = 0,
-	start_with_eigen = false,
-	autodiff_nf = false,
-	Teigvec = _getvectortype(br),
-	scaleζ = norm,
+	update_minaug_every_step = 1,
+	normal_form_kwargs = (),
 	kwargs...)
 ```
+
+The keyword `normal_form_kwargs` is a `NamedTuple` passed to [`get_normal_form`](@ref), for example `normal_form_kwargs = (detailed = Val(false),)`.
 
 where `ind_BT` is the index of the BT point in `br`. Note that the BT has been detected during Fold or Hopf continuation. Calling the above method thus switches from Fold continuation to Hopf continuation (and vice-versa) automatically with the same parameter axis.
 
@@ -37,15 +36,14 @@ We provide an automatic branch switching method in this case (see for example [E
 continuation(br::ContResult, ind_ZH::Int,
 	options_cont::ContinuationPar = br.contparams;
 	alg = getalg(br),
-	δp = nothing, ampfactor::Real = 1,
-	nev = options_cont.nev,
+	δp = nothing,
 	detect_codim2_bifurcation::Int = 0,
-	start_with_eigen = false,
-	autodiff_nf = false,
-	Teigvec = _getvectortype(br),
-	scaleζ = norm,
+	update_minaug_every_step = 1,
+	normal_form_kwargs = (),
 	kwargs...)
 ```
+
+The keyword `normal_form_kwargs` is a `NamedTuple` passed to [`get_normal_form`](@ref), for example `normal_form_kwargs = (detailed = Val(false),)`.
 
 where `ind_ZH` is the index of the ZH point in `br`. Note that the ZH has been detected during Fold or Hopf continuation. Calling the above method thus switches from Fold continuation to Hopf continuation (and vice-versa) automatically with the same parameter axis.
 
@@ -59,15 +57,14 @@ We provide an automatic branch switching method in this case (see for example [E
 continuation(br::ContResult, ind_HH::Int,
 	options_cont::ContinuationPar = br.contparams;
 	alg = getalg(br),
-	δp = nothing, ampfactor::Real = 1,
-	nev = options_cont.nev,
+	δp = nothing,
 	detect_codim2_bifurcation::Int = 0,
-	start_with_eigen = false,
-	autodiff_nf = false,
-	Teigvec = _getvectortype(br),
-	scaleζ = norm,
+	update_minaug_every_step = 1,
+	normal_form_kwargs = (),
 	kwargs...)
 ```
+
+The keyword `normal_form_kwargs` is a `NamedTuple` passed to [`get_normal_form`](@ref), for example `normal_form_kwargs = (detailed = Val(false),)`.
 
 where `ind_HH` is the index of the HH point in `br`. Note that the HH has been detected during Hopf continuation. Calling the above method thus switches from Hopf continuation to another Hopf branch automatically with the same parameter axis.
 

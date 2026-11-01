@@ -17,9 +17,11 @@ continuation(br::HopfCont, ind_BAUTIN::Int,
     disc::AbstractBoundaryValueDiscretization ;
     δp = nothing, ampfactor::Real = 1,
     detect_codim2_bifurcation::Int = 0,
-    autodiff = true,
+    normal_form_kwargs = (),
     kwargs...)
 ``` 
+
+The keyword `normal_form_kwargs` is a `NamedTuple` passed to [`get_normal_form`](@ref), for example `normal_form_kwargs = (detailed = Val(false),)`.
 
 where `disc` is a method to discretize periodic orbits, either [Periodic orbits based on orthogonal collocation](@ref) or [Periodic orbits based on the shooting method](@ref) (see [From Hopf point to periodic orbits](@ref) for more information). Note that the Bautin point must have been detected during Hopf point continuation.
 
@@ -39,9 +41,11 @@ continuation(br::TwoParamCont, ind_ZH::Int,
     disc::AbstractBoundaryValueDiscretization ;
     δp = nothing, ampfactor::Real = 1,
     detect_codim2_bifurcation::Int = 0,
-    autodiff = true,
+    normal_form_kwargs = (),
     kwargs...)
 ``` 
+
+The keyword `normal_form_kwargs` is a `NamedTuple` passed to [`get_normal_form`](@ref), for example `normal_form_kwargs = (detailed = Val(false),)`.
 
 where `disc` is a method to discretize periodic orbits, either [Periodic orbits based on orthogonal collocation](@ref) or [Periodic orbits based on the shooting method](@ref) (see [From Hopf point to periodic orbits](@ref) for more information). Note that the ZH point can have been detected during Fold or Hopf point continuation.
 
@@ -60,9 +64,11 @@ continuation(br::TwoParamCont, ind_HH::Int,
     δp = nothing, ampfactor::Real = 1, 
     whichns = 1,
     detect_codim2_bifurcation::Int = 0,
-    autodiff = true,
+    normal_form_kwargs = (),
     kwargs...)
 ``` 
+
+The keyword `normal_form_kwargs` is a `NamedTuple` passed to [`get_normal_form`](@ref), for example `normal_form_kwargs = (detailed = Val(false),)`.
 
 where `disc` is a method to discretize periodic orbits, either [Periodic orbits based on orthogonal collocation](@ref) or [Periodic orbits based on the shooting method](@ref) (see [From Hopf point to periodic orbits](@ref) for more information). Note that the HH point must have been detected during Hopf point continuation.
 The option `whichns` which belongs to {1,2} controls which NS curve you want to compute. 

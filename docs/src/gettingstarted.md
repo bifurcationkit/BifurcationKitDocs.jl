@@ -215,7 +215,7 @@ prob = ODEBifProblem(Fsl, u0, par_sl, (@optic _.r))
 For this simple problem, we detect the existence of periodic orbits by locating a Hopf bifurcation. This is done as in the previous example by continuing the zero solution:
 
 ```@example GETSTARTED3
-br = continuation(prob, PALC(), ContinuationPar(), bothside = true)
+br = continuation(prob, PALC(), ContinuationPar(), bothside = Val(true))
 ```
 
 In the result above, we see that a Hopf bifurcation has been detected: 

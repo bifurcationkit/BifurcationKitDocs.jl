@@ -163,7 +163,7 @@ function computeBranch(br, nb; δp = 0.005, max_steps = 190)
 	br_wave = continuation(probTW, twguess, PALC(), opt_cont_br;
 		# verbosity = 3,
 		plot = true, 
-		bothside = true,
+		bothside = Val(true),
 		record_from_solution = (x, p; k...) -> (u∞ = maximum(x[1:N]), s = x[end], amp = amplitude(x[1:N])),
 		plot_solution = (x, p; k...) -> (plotsol!(x[1:end-1];k...);plot!(br,subplot=1, legend=false)),
 		callback_newton = BK.cbMaxNorm(1e2),

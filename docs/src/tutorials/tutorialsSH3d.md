@@ -269,12 +269,12 @@ br1 = @time continuation(br, 3, setproperties(optcont; save_sol_every_step = 10,
 	# to set initial point on the branch
 	δp = 0.01,
 	# remove display of deflated newton iterations
-	verbosedeflation = false,
+	deflated_newton_kwargs = (verbosedeflation = false,),
 	alg = PALC(tangent = Bordered(), bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
 	normC = norminf)
 ```
 
-We can then plot the branches using `BK.plot(br, br1...)` where green (resp. red) means stable (resp. unstable) solution.
+We can then plot the branches using `BK.plot(br, br1)` where green (resp. red) means stable (resp. unstable) solution.
 
 ![](sh3dbranches.png)
 

@@ -180,7 +180,7 @@ br_TW = @time continuation(probTW, wave_tw.u, PALC(tangent = Bordered()), opt_co
 	finalise_solution = (z, tau, step, contResult; k...) -> begin
 			amplitude(z.u[n+1:2n]) > 0.001
 	end, 
-	bothside = true
+	bothside = Val(true)
 	)
 
 plot(br, br_TW, legend = :bottomright, branchlabel =["", "Traveling Waves"])
@@ -208,7 +208,7 @@ br_SW = @time continuation(probSW, wave_sw.u, PALC(tangent = Secant()), opt_cont
 	finalise_solution = (z, tau, step, contResult; k...) -> begin
 			amplitude(z.u[n+1:2n]) > 0.001
 	end, 
-	bothside = true
+	bothside = Val(true)
 	)
 
 plot(br, br_TW, br_SW, legend = :bottomright, branchlabel =["", "Traveling waves", "Standing waves"])

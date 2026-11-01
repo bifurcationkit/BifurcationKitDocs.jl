@@ -18,10 +18,12 @@ Once you have decided which method to use, you can call the following:
 continuation(br::AbstractBranchResult, ind_HOPF::Int, _contParams::ContinuationPar,
 	disc::AbstractBoundaryValueDiscretization ;
 	δp = nothing, ampfactor = 1,
-	detailed = Val(true), use_normal_form = true,
-	nev = length(eigenvalsfrombif(br, ind_HOPF)),
+	bif_prob = getprob(br),
+	normal_form_kwargs = (),
 	usedeflation = false, kwargs...)
 ```
+
+The keyword `normal_form_kwargs` is a `NamedTuple` passed to [`hopf_normal_form`](@ref), for example `normal_form_kwargs = (detailed = Val(false),)` or `normal_form_kwargs = (start_with_eigen = Val(false),)`.
 
 We refer to [`continuation`](@ref) for more information about the arguments. Here, we just say a few words about how we can specify `disc::AbstractBoundaryValueDiscretization`.
 
@@ -61,7 +63,7 @@ par_sl = (r = 0.1, μ = 0., ν = 1.0, c3 = 1.0)
 u0 = zeros(2)
 prob = ODEBifProblem(Fsl, u0, par_sl, (@optic _.r))
 opts = ContinuationPar()
-br = continuation(prob, PALC(), opts, bothside = true)
+br = continuation(prob, PALC(), opts, bothside = Val(true))
 ```
 
 We then compute the branch of periodic solutions using orthogonal collocation (for example):
@@ -83,15 +85,12 @@ We provide an automatic branching procedure in this case. In essence, all you ha
 ```julia
 continuation(br::ContResult, ind_PD::Int, _contParams::ContinuationPar;
 	δp = _contParams.ds, ampfactor = 1,
-	detailed = Val(true), # compute a detailed normal form
-	prm = Val(getprob(br) isa PeriodicOrbitFunctionalColl ? false : true),
-	use_normal_form = true,
+	normal_form_kwargs = (),
 	usedeflation = false,
-	autodiff_nf = true,
 	kwargs...)
 ```
 
-The option `prm = Val(true)` enforces that the period-doubling normal form is computed using the Poincaré return map. This is only necessary in case of use of the collocation method, for which the default is `prm = Val(false)` (Iooss method). See [Period-doubling point](@ref) for more information about the two normal forms.
+The keyword `normal_form_kwargs` is passed to `get_normal_form`. For example, `normal_form_kwargs = (prm = Val(true),)` enforces that the period-doubling normal form is computed using the Poincaré return map. This is only necessary in case of use of the collocation method, for which the default is `prm = Val(false)` (Iooss method). Use `normal_form_kwargs = (detailed = Val(false),)` to skip the computation of the normal form coefficients. See [Period-doubling point](@ref) for more information about the two normal forms.
 
 ### Case of Trapezoid method
 
@@ -102,7 +101,7 @@ The call is as follows. Please note that a deflation is included in this method 
 ```julia
 continuation(br::AbstractBranchResult, ind_PD::Int, contParams::ContinuationPar;
 	δp = contParams.ds, ampfactor = 1,
-	use_normal_form = true, # the predictor only uses the bifurcating eigenvector
+	normal_form_kwargs = (), # e.g. (detailed = Val(false),) to use the bifurcating eigenvector
 	usedeflation = false, # setting to true may help but is more expensive
 	kwargs...)
 ```

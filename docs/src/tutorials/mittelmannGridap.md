@@ -163,11 +163,11 @@ br3 = continuation(br, 2,
 	setproperties(opts; ds = 0.005, dsmax = 0.05, max_steps = 140, detect_bifurcation = 0);
 	verbosity = 0, plot = true,
 	usedeflation = true,
-	verbosedeflation = false,
+	deflated_newton_kwargs = (verbosedeflation = false,),
 	callback_newton = BifurcationKit.cbMaxNorm(100),
 	)
 
-plot(br, br1, br2, br3...)
+plot(br, br1, br2, br3)
 ```
 
 ![](fig3gridap.png)
