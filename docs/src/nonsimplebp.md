@@ -83,16 +83,3 @@ BifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, δp::T;
                     normN = norminf,
                     optn::NewtonPar = NewtonPar(max_iterations = maxiter, verbose = verbose)) where T
 ```
-
-```@docs
-BifurcationKit.predictor(bp::BifurcationKit.NdBranchPoint, ::Val{:exhaustive}, δp::T;
-                verbose::Bool = false,
-                ampfactor = T(1),
-                nbfailures = 30,
-                maxiter = 100,
-                perturb = identity,
-                J = nothing,
-                igs = nothing,
-                normN = norminf,
-                optn::NewtonPar = NewtonPar(max_iterations = maxiter, verbose = verbose)) where T
-```

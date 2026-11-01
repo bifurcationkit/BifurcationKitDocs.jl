@@ -67,8 +67,8 @@ d2F_sh(u, p, dx1, dx2) = (2 .* p.ν .* dx2 .- 6 .* dx2 .* u) .* dx1
 d3F_sh(u, p, dx1, dx2, dx3) = (-6 .* dx2 .* dx3) .* dx1
 
 # these types are useful to switch to GPU
-TY = Float64
-AF = Array{TY}
+const TY = Float64
+const AF = Array{TY}
 ```
 
 ## Plotting with Makie
@@ -101,7 +101,7 @@ Z = -lz .+ 2lz/(Nz) * collect(0:Nz-1)
 sol0 = [(cos(x) .* cos(y )) for x in X, y in Y, z in Z]
 sol0 .= sol0 .- minimum(vec(sol0))
 sol0 ./= maximum(vec(sol0))
-sol0 .*= 1.7
+sol0 .*= 1.2
 
 # parameters for PDE
 Δ, D2x = Laplacian3D(Nx, Ny, Nz, lx, ly, lz);
@@ -129,14 +129,14 @@ Hence, `cholesky` is the big winner but it requires a positive matrix so let's s
 As said in the introduction, the LU linear solver does not scale well with dimension $N$. Hence, we do something else. We note that the matrix $L_1$ is hermitian positive and use it as a preconditioner. Thus, we pre-factorize it using a Cholesky decomposition:
 
 ```julia
-Pr = cholesky(Symmetric(L1));
+Prec = cholesky(Symmetric(L1));
 using SuiteSparse
-# we need this "hack" to be able to use Pr as a preconditioner.
-LinearAlgebra.ldiv!(o::Vector, P::SuiteSparse.CHOLMOD.Factor{Float64}, v::Vector) = o .= (P \ v)
+# we need this "hack" to be able to use Prec as a preconditioner.
+LinearAlgebra.ldiv!(o::Vector{Float64}, P::SparseArrays.CHOLMOD.Factor{Float64, Int64}, v::Vector{Float64}) = o .= (P \ v)
 
 # rtol must be small enough to pass the Fold points and to get precise eigenvalues
 # we know that the jacobian is symmetric so we tell the solver
-ls = GMRESKrylovKit(verbose = 0, rtol = 1e-9, maxiter = 150, Pl = Pr)
+ls = GMRESKrylovKit(verbose = 0, rtol = 1e-9, maxiter = 150, ishermitian = true, Pl = Prec)
 ```
 
 Let's try this on a Krylov-Newton computation to refine the guess `sol0`:
@@ -144,7 +144,7 @@ Let's try this on a Krylov-Newton computation to refine the guess `sol0`:
 ```julia
 prob = BifurcationProblem(F_sh, AF(vec(sol0)), par, (@optic _.l),
 	J = (x, p) -> (dx -> dF_sh(x, p, dx)),
-	plot_solution = (ax, x, p; ax1) -> contour3dMakie(ax, x),
+	plot_solution = (ax, x, p; ax1=nothing, iter, state) -> contour3dMakie!(ax, x),
 	issymmetric = true, # so we dont need to provide the adjoint (normal form)
 	record_from_solution = (x, p; k...) -> (n2 = norm(x), n8 = norm(x, 8)))
 
@@ -222,15 +222,16 @@ We are now ready to perform continuation and detection of bifurcation points:
 
 ```julia
 optcont = ContinuationPar(dsmin = 0.0001, dsmax = 0.005, ds= -0.001, p_max = 0.15,
-	p_min = -.1, newton_options = setproperties(optnew; tol = 1e-9, max_iterations = 15),
-	max_steps = 146, detect_bifurcation = 3, nev = 15, n_inversion = 4, plot_every_step = 1)
+	p_min = -.1, newton_options = NewtonPar(optnew; tol = 1e-9, max_iterations = 15),
+	max_steps = 150, detect_bifurcation = 3, nev = 15, n_inversion = 6, plot_every_step = 1)
 
 br = continuation( re_make(prob, u0 = zeros(N)),
   # we use a particular bordered linear solver to
   # take advantage of our specific linear solver
-  PALC(bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
+  PALC(tangent = Bordered(), bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
   optcont;
-  normC = x -> norm(x, Inf),
+  normC = norminf,
+  event = BK.FoldDetectEvent,
   plot = true, verbosity = 3)
 ```
 
@@ -263,14 +264,14 @@ We get the following plot during computation:
 We can use [Branch switching](https://bifurcationkit.github.io/BifurcationKitDocs.jl/dev/intro-abs/) to compute the different branches emanating from the bifurcation points. For example, the following code will perform automatic branch switching from the last bifurcation point of `br`. Note that this bifurcation point is 3d.
 
 ```julia
-br1 = @time continuation(br, 3, setproperties(optcont; save_sol_every_step = 10,
-	detect_bifurcation = 0, p_max = 0.1, plot_every_step = 5, dsmax = 0.02);
+br1 = @time continuation(br, 3, ContinuationPar(optcont;
+	detect_bifurcation = 0, p_max = 0.1, plot_every_step = 5, dsmax = 0.01, ds = 0.001);
 	plot = true, verbosity = 3,
 	# to set initial point on the branch
-	δp = 0.01,
-	# remove display of deflated newton iterations
-	deflated_newton_kwargs = (verbosedeflation = false,),
-	alg = PALC(tangent = Bordered(), bls = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
+	δp = 0.005,
+	# display deflated newton iterations
+	deflated_newton_kwargs = (verbosedeflation = true,),
+	normal_form_kwargs = (scaleζ = norminf, bls_block = BorderingBLS(solver = optnew.linsolver, check_precision = false)),
 	normC = norminf)
 ```
 
