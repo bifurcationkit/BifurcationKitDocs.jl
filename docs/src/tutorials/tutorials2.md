@@ -127,7 +127,7 @@ We are now ready to compute the branches:
 ```julia
 optcont = ContinuationPar(p_max = 0.0, p_min = -1.0,
 	dsmin = 0.0001, dsmax = 0.005, ds= -0.001, 
-	newton_options = setproperties(optnewton; tol = 1e-9,
+	newton_options = NewtonPar(optnewton; tol = 1e-9,
 	eigsolver = EigArpack(0.1, :LM)),
 	nev = 40)
 
@@ -141,36 +141,38 @@ Note that we can get some information about the branch as follows. The `[converg
 
 ```julia
 julia> br
- ┌─ Curve type: EquilibriumCont
- ├─ Number of points: 98
- ├─ Type of vectors: Vector{Float64}
- ├─ Parameter l starts at -0.1, ends at 0.0
- ├─ Algo: PALC
- └─ Special points:
+┌─ Curve type: EquilibriumCont
+├─ Number of points: 99
+├─ Type of vectors: Vector{Float64}
+├─ Parameter l starts at -0.1, ends at -0.0
+├─ Algo: PALC [Secant]
+├─ Return code: BoundaryHit
+└─ Special points:
 
-If `br` is the name of the branch,
-ind_ev = index of the bifurcating eigenvalue e.g. `br.eig[idx].eigenvals[ind_ev]`
-
-- #  1,       bp at l ≈ -0.21554729 ∈ (-0.21554729, -0.21554481), |δp|=2e-06, [converged], δ = ( 1,  0), step =  35, eigenelements in eig[ 36], ind_ev =   1
-- #  2,       bp at l ≈ -0.21551019 ∈ (-0.21551494, -0.21551019), |δp|=5e-06, [converged], δ = ( 1,  0), step =  36, eigenelements in eig[ 37], ind_ev =   2
-- #  3,       bp at l ≈ -0.21498022 ∈ (-0.21505410, -0.21498022), |δp|=7e-05, [converged], δ = ( 1,  0), step =  38, eigenelements in eig[ 39], ind_ev =   3
-- #  4,       bp at l ≈ -0.21287212 ∈ (-0.21295316, -0.21287212), |δp|=8e-05, [converged], δ = ( 1,  0), step =  41, eigenelements in eig[ 42], ind_ev =   4
-- #  5,       bp at l ≈ -0.20989694 ∈ (-0.21012690, -0.20989694), |δp|=2e-04, [converged], δ = ( 1,  0), step =  43, eigenelements in eig[ 44], ind_ev =   6
-- #  6,       bp at l ≈ -0.20683673 ∈ (-0.20687197, -0.20683673), |δp|=4e-05, [converged], δ = ( 1,  0), step =  45, eigenelements in eig[ 46], ind_ev =   7
-- #  7,       bp at l ≈ -0.20682087 ∈ (-0.20682308, -0.20682087), |δp|=2e-06, [converged], δ = ( 1,  0), step =  46, eigenelements in eig[ 47], ind_ev =   8
-- #  8,       bp at l ≈ -0.19968465 ∈ (-0.20040489, -0.19968465), |δp|=7e-04, [converged], δ = ( 1,  0), step =  49, eigenelements in eig[ 50], ind_ev =   9
-- #  9,       bp at l ≈ -0.18874190 ∈ (-0.18918387, -0.18874190), |δp|=4e-04, [converged], δ = ( 1,  0), step =  53, eigenelements in eig[ 54], ind_ev =  10
-- # 10,       bp at l ≈ -0.18097123 ∈ (-0.18109194, -0.18097123), |δp|=1e-04, [converged], δ = ( 1,  0), step =  56, eigenelements in eig[ 57], ind_ev =  11
-- # 11,       bp at l ≈ -0.14527574 ∈ (-0.14531247, -0.14527574), |δp|=4e-05, [converged], δ = (-1,  0), step =  65, eigenelements in eig[ 66], ind_ev =  11
-- # 12,       bp at l ≈ -0.13844755 ∈ (-0.13874721, -0.13844755), |δp|=3e-04, [converged], δ = (-1,  0), step =  67, eigenelements in eig[ 68], ind_ev =  10
-- # 13,       bp at l ≈ -0.11133440 ∈ (-0.11141358, -0.11133440), |δp|=8e-05, [converged], δ = (-1,  0), step =  73, eigenelements in eig[ 74], ind_ev =   9
-- # 14,       nd at l ≈ -0.08965981 ∈ (-0.08982220, -0.08965981), |δp|=2e-04, [converged], δ = (-2,  0), step =  78, eigenelements in eig[ 79], ind_ev =   8
-- # 15,       bp at l ≈ -0.07003255 ∈ (-0.07134810, -0.07003255), |δp|=1e-03, [converged], δ = (-1,  0), step =  82, eigenelements in eig[ 83], ind_ev =   6
-- # 16,       bp at l ≈ -0.06080467 ∈ (-0.06212463, -0.06080467), |δp|=1e-03, [converged], δ = (-1,  0), step =  84, eigenelements in eig[ 85], ind_ev =   5
-- # 17,       bp at l ≈ -0.05304226 ∈ (-0.05320751, -0.05304226), |δp|=2e-04, [converged], δ = (-1,  0), step =  86, eigenelements in eig[ 87], ind_ev =   4
-- # 18,       bp at l ≈ -0.02465608 ∈ (-0.02531351, -0.02465608), |δp|=7e-04, [converged], δ = (-1,  0), step =  92, eigenelements in eig[ 93], ind_ev =   3
-- # 19,       bp at l ≈ -0.00506953 ∈ (-0.00636490, -0.00506953), |δp|=1e-03, [converged], δ = (-1,  0), step =  96, eigenelements in eig[ 97], ind_ev =   2
-- # 20, endpoint at l ≈ +0.00000000,
+┌────┬────────────┬─────────────┬────────────────────────────┬───────────┬─────────────┬──────────┬──────┐
+│ Nb │    type    │      l      │          interval          │ precision │   status    │    δ     │ step │
+├────┼────────────┼─────────────┼────────────────────────────┼───────────┼─────────────┼──────────┼──────┤
+│  1 │         bp │ -0.21554729 │ (-0.21554729, -0.21554729) │     4e-12 │   converged │ ( 1,  0) │   35 │
+│  2 │         bp │ -0.21551458 │ (-0.21551465, -0.21551458) │     7e-08 │   converged │ ( 1,  0) │   36 │
+│  3 │         bp │ -0.21502097 │ (-0.21502557, -0.21502097) │     5e-06 │   converged │ ( 1,  0) │   38 │
+│  4 │         bp │ -0.21289922 │ (-0.21289922, -0.21289922) │     5e-09 │   converged │ ( 1,  0) │   41 │
+│  5 │         bp │ -0.21002292 │ (-0.21002382, -0.21002292) │     9e-07 │   converged │ ( 1,  0) │   43 │
+│  6 │         bp │ -0.20685181 │ (-0.20685402, -0.20685181) │     2e-06 │   converged │ ( 1,  0) │   45 │
+│  7 │         bp │ -0.20682192 │ (-0.20682220, -0.20682192) │     3e-07 │   converged │ ( 1,  0) │   46 │
+│  8 │         bp │ -0.19982489 │ (-0.19982772, -0.19982489) │     3e-06 │   converged │ ( 1,  0) │   49 │
+│  9 │         bp │ -0.18885667 │ (-0.18885711, -0.18885667) │     4e-07 │   converged │ ( 1,  0) │   53 │
+│ 10 │         bp │ -0.18103950 │ (-0.18103962, -0.18103950) │     1e-07 │   converged │ ( 1,  0) │   56 │
+│ 11 │         bp │ -0.14531089 │ (-0.14531118, -0.14531089) │     3e-07 │   converged │ (-1,  0) │   65 │
+│ 12 │         bp │ -0.13846995 │ (-0.13847054, -0.13846995) │     6e-07 │   converged │ (-1,  0) │   67 │
+│ 13 │         bp │ -0.11138035 │ (-0.11138283, -0.11138035) │     2e-06 │   converged │ (-1,  0) │   73 │
+│ 14 │         bp │ -0.08976815 │ (-0.08976847, -0.08976815) │     3e-07 │   converged │ (-1,  0) │   78 │
+│ 15 │         bp │ -0.07080174 │ (-0.07080206, -0.07080174) │     3e-07 │   converged │ (-1,  0) │   82 │
+│ 16 │         bp │ -0.06123674 │ (-0.06123739, -0.06123674) │     6e-07 │   converged │ (-1,  0) │   84 │
+│ 17 │         bp │ -0.05307216 │ (-0.05308249, -0.05307216) │     1e-05 │   converged │ (-1,  0) │   86 │
+│ 18 │         bp │ -0.02471150 │ (-0.02471663, -0.02471150) │     5e-06 │   converged │ (-1,  0) │   92 │
+│ 19 │         bp │ -0.00632334 │ (-0.00632840, -0.00632334) │     5e-06 │   converged │ (-1,  0) │   96 │
+│ 20 │   endpoint │ -0.00000000 │                            │           │             │          │   98 │
+└────┴────────────┴─────────────┴────────────────────────────┴───────────┴─────────────┴──────────┴──────┘
 ```
 
 We get the following plot during computation:

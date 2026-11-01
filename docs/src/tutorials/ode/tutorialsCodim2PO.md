@@ -73,7 +73,7 @@ function record_from_solution(x, p; iter, state, k...)
 			period = BK.getperiod(p.prob, x, BK.getparams(iter, state)))
 end
 
-function plot_solution(x, p; iter, state, k...) # PB avec Fold!!!! ARgs
+function plot_solution(x, p; iter, state, k...)
     xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
     plot!(xtt.t, xtt[1,:]; label = "x", k...)
     plot!(xtt.t, xtt[2,:]; label = "y", k...)
