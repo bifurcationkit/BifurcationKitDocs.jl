@@ -44,7 +44,7 @@ We first compute the branch of equilibria
 
 ```@example TUTLURE
 # continuation options
-opts_br = BK.ContinuationPar(p_min = -1.4, p_max = 1.8, nev = 3)
+opts_br = BK.ContinuationPar(p_min = -1.4, p_max = 1.8, n_inversion = 6)
 
 # computation of the branch
 br = BK.continuation(prob_bif, BK.PALC(), opts_br)
@@ -89,7 +89,7 @@ Continuation of periodic orbits from the Hopf point:
 
 ```@example TUTLURE
 # continuation parameters
-opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, dsmin = 1e-4, max_steps = 80, tol_stability = 1e-4, plot_every_step = 20)
+opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, max_steps = 80, tol_stability = 1e-4, plot_every_step = 20)
 
 br_po = BK.continuation(
 	br, 1, opts_po_cont,
@@ -105,7 +105,7 @@ scene = plot(br, br_po)
 Note that you can compute the PD normal form
 
 ```@example TUTLURE
-pdnf = BK.get_normal_form(br_po, 1; prm=Val(true))
+pdnf = BK.get_normal_form(br_po, 1)
 ```
 
 We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:

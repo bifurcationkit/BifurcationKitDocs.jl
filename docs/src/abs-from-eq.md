@@ -16,7 +16,6 @@ You can perform automatic branch switching by calling `continuation` with the fo
 continuation(br::AbstractResult{Tkind, Tprob}, ind_bif::Int, 
 	options_cont::ContinuationPar = br.contparams;
 	δp = nothing, ampfactor::Real = 1,
-	use_normal_form = true,
 	usedeflation::Bool = false,
 	kwargs...)
 ```
