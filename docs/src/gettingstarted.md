@@ -20,8 +20,8 @@ using BifurcationKit, Plots
 const BK = BifurcationKit # hide
 BK.set_plot_backend!(BK.BK_Plots()) # hide
 F(x, p) = @. p[1] + x - x^3/3
-prob = ODEBifProblem(F, [-2.], [-1.], 1;
-    record_from_solution = (x,p; k...) -> x[1])
+record_from_solution(x, p; k...) = (x[1],)
+prob = ODEBifProblem(F, [-2.], [-1.], 1; record_from_solution)
 br = continuation(prob, PALC(), ContinuationPar(p_min = -1., p_max = 1.))
 plot(br)
 scene = plot(br) #hide
@@ -264,21 +264,23 @@ br_po = continuation(br, 2, br.contparams,
 scene = title!("") #hide
 ```
 
-(Note that the bottom panel is a plot of the eigenvalues of the jacobian in the complex plane at the current continuation step. )
+Note that the bottom panel is a plot of the eigenvalues of the jacobian in the complex plane at the current continuation step.
 
 In order to plot the periodic solution during continuation, you need to supply a `periodic_solution` to `continuation`. This is not done by default because in some cases, obtaining the solution is costly (*e.g.* for Shooting methods). Based on the previous paragraph, it is straightforward to implement this plotting function:
 
 ```@example GETSTARTED3
+function plotPO(x, par; iter, state, k...)
+    # par is a Named tuple which contains 
+    # the problem for computing periodic orbits
+    # and the value of the parameter at the current step
+    sol = get_periodic_orbit(BK.getprob(iter), x, BK.getparams(iter, state))
+    plot!(sol.t, sol.u'; xlabel = "time", label="", k...)
+end
+
 br_po = continuation(br, 2, br.contparams,
         Collocation(20, 5);
         plot = true,
-        plot_solution = (x, par; iter, state, k...) -> begin
-                # par is a Named tuple which contains 
-                # the problem for computing periodic orbits
-                # and the value of the parameter at the current step
-                sol = get_periodic_orbit(par.prob, x, BK.getparams(iter, state))
-                plot!(sol.t, sol.u'; xlabel = "time", label="", k...)
-        end
+        plot_solution = plotPO,
         )
 scene = title!("") #hide
 ```

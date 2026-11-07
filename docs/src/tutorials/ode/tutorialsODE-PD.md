@@ -126,6 +126,7 @@ We use a different method to compute periodic orbits: we rely on a fixed point o
 
 ```@example TUTLURE
 import OrdinaryDiffEq as ODE
+using OrdinaryDiffEqRosenbrock
 
 # ODE problem for using DifferentialEquations
 prob_ode = ODE.ODEProblem(lur!, prob_bif.u0, (0, 1.), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
@@ -135,8 +136,8 @@ opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, newton_options = BK.New
 
 br_po = BK.continuation(
 	br, 1, opts_po_cont,
-	BK.Shooting(5, prob_ode, ODE.Vern9(); parallel = true, abstol = 1e-10, reltol = 1e-8);
 	# parallel shooting functional with several sections
+	BK.Shooting(3, prob_ode, Vern9(); parallel = true, abstol = 1e-12, reltol = 1e-10);
 	# plot = true,
 	record_from_solution = recordPO,
 	plot_solution = plotPO,

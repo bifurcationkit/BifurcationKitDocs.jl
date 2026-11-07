@@ -27,8 +27,6 @@ pd = get_normal_form(br, ind; prm = Val(true))
 
 where `prm` indicates whether you want to use the method based on Poincaré return map (PRM) or the one based on Iooss method.
 
-!!! warning "BP nf computation"
-    The method of [^Iooss] is not implemented.
 
 ## Predictor
 
@@ -47,7 +45,7 @@ If `override = true`, then the predictor is simply `x0 .+ ampfactor .* e` for th
 Depending on the method used for computing the periodic orbits, you have several possibilities:
 
 - For shooting, you can only the PRM method. Shooting is the preferred way for large scale systems. Note that the PRM method is not very precise numerically.
-- For collocation, you can use PRM and Iooss methods. Note that the Iooss method is the most precise. **This is not yet implemented.**
+- For collocation, you can use PRM and Iooss methods. Note that the Iooss method is the most precise.
 - For Trapezoid method, the normal form is **not yet implemented**.
 
 ## Normal form based on Poincaré return map
@@ -58,6 +56,28 @@ $$x_{n+1} = x_n + a_{10}\delta p + a_{11}\delta p x + a_{02}x^2 + a_{03}x^3$$
 
 !!! danger "Large scale problems"
     The computation of the normal form is not optimized for Matrix-Free problems (e.g. Monodromy) yet.
+
+!!! info "Collocation case"
+    The monodromy matrix and other flow differentials are computed using finite differences.
+
+## Normal form based on Iooss method
+
+This is based on [^Iooss],[^Kuz2]. Suppose that the $T$ periodic orbit $x_0(\tau)$ has a bifurcation for a parameter value $p_0$.
+Locally, the orbits can be represented by $p-p_0:=\mu$ and
+
+$$x(\tau) = x_0(\tau)+\xi v(\tau)+H(\tau, \xi, \mu)$$
+
+where 
+
+$$\left\{\begin{array}{l}
+\frac{d \tau}{d t}=1+(a_{01} +a_{11}\xi)\cdot(p-p_0)+a_2 \xi^2+\cdots \\
+\frac{d \xi}{d \tau}=c_{01}+c_{11}\cdot(p-p_0)\xi+c_2\xi^2+c_3 \xi^3+\cdots
+\end{array}\right.$$
+
+with center manifold correction $H(\tau, \xi, \mu)$ being $T$ periodic in $\tau$ and $v(\tau)$ is a Floquet eigenvector for the eigenvalue 1.
+
+The coefficients are returned in `pd.nf.nf`.
+
 
 ## References
 

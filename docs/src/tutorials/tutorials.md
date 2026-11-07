@@ -38,21 +38,21 @@ Depth = 1
 ```
 
 ### Periodic orbits
-We provide some examples focused on the computation of periodic orbits.
-Here is one where we present the different ways to compute periodic orbits. 
+These tutorials focus on the computation of periodic orbits.
+The next tutorial shows the different ways to compute periodic orbits. 
 
 ```@contents
 Pages = ["ode/tutorialsODE.md"]
 Depth = 1
 ```
 
-Here is one for aBS from **period-doubling** bifurcations of periodic orbits
+The next tutorial shows aBS from **period-doubling or branch** bifurcations of periodic orbits. It also shows how to compute **automatic bifurcation diagrams** involving periodic orbits.
 ```@contents
 Pages = ["ode/tutorialsODE-PD.md"]
 Depth = 1
 ```
 
-In the next tutorial, we show how to refine a periodic orbit guess obtained from numerical simulation. We also show how to perform **continuation of PD/NS** points using Shooting or Collocation. 
+The next tutorial shows how to refine a periodic orbit guess obtained from numerical simulation. It also shows how to perform **continuation of PD/NS** points using Shooting or Collocation. 
 
 ```@contents
 Pages = ["ode/tutorialsCodim2PO.md"]
@@ -66,7 +66,7 @@ Pages = ["ode/steinmetz.md",]
 Depth = 1
 ```
 
-In the next tutorial, we showcase aBS from Bautin/HH to curve of Fold/NS of periodic orbits.
+In the next tutorial, we showcase aBS from **Bautin / HH** to curve of Fold/NS of periodic orbits.
 
 ```@contents
 Pages = ["ode/lorenz84-PO.md",]

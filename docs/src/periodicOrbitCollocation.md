@@ -249,11 +249,9 @@ opts_po_cont = ContinuationPar(dsmax = 0.03,
 
 
                             newton_options = NewtonPar(tol = 1e-9,  max_iterations = 4), 
-                            nev = 3, 
                             tol_stability = 1e-3, 
                             detect_bifurcation = 3,
                             plot_every_step = 20,
-                            save_sol_every_step = 1,
                             detect_fold = false,
                             n_inversion = 6)
 
@@ -291,7 +289,7 @@ The first optimization is to pass an inplace jacobian of the vector field. Right
     J
 end
 
-prob = BifurcationProblem(auto_cat!, [1.,0,1], (κ = 65., μ = 0.01, σ = 5e-3, δ = 2e-2 ) , (@optic _.μ);
+prob = ODEBifProblem(auto_cat!, [1.,0,1], (κ = 65., μ = 0.01, σ = 5e-3, δ = 2e-2 ) , (@optic _.μ);
         record_from_solution = (x, p; k...) -> (E = x[1], x = x[2], u = x[3]),
         J! = auto_cat_jac!,
         )
