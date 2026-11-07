@@ -65,17 +65,17 @@ If you pass a `finalise_solution` function to [`continuation`](@ref), the follow
 
 ### 3. Record from solution
 
-You can pass your own function to [`continuation`](@ref). In the particular case of periodic orbits, the method is called like `record_from_solution(x, opt; iter, state, k...)` where `opt.prob` is the current state of the continuation problem and `opt.p` the current parameters. You can then obtain the current periodic orbit using (see above)
+You can pass your own function to [`continuation`](@ref). In the particular case of periodic orbits, the method is called like `record_from_solution(x, p; iter, state, k...)` where `p` the current parameter value. You can then obtain the current periodic orbit using (see above)
 
 ```julia
-xtt = get_periodic_orbit(opt.prob, x, getparams(iter, state))
+xtt = get_periodic_orbit(BK.getprob(iter), x, BK.getparams(iter, state))
 ```
 
-where we used `getparams(iter, state)` to get the parameters at the current continuation step, which is more robust than `opt.p` as the latter may not contain the full parameters during codim 2 continuation for example. 
+where we used `getparams(iter, state)` to get the parameters at the current continuation step, which is more robust than `p` as the latter may not contain the full parameters during codim 2 continuation for example. 
 
 ### 4. Plot solution
 
-Similarly to `record_from_solution`, the method is called like `plot_solution(x, opt; iter, state, k...)` where `opt.prob` is the current state of the continuation problem. To get the periodic orbit (and the current parameters), one can use `get_periodic_orbit(opt.prob, x, getparams(iter, state))`.
+Similarly to `record_from_solution`, the method is called like `plot_solution(x, p; iter, state, k...)`. To get the periodic orbit (and the current parameters), one can use `get_periodic_orbit(BK.getprob(iter), x, BK.getparams(iter, state))`.
 
 ### 5. Most precise method for Floquet coefficients
 The state of the art method is based on a Periodic Schur decomposition. It is available through the package [PeriodicSchurBifurcationKit.jl](https://github.com/bifurcationkit/PeriodicSchurBifurcationKit.jl). For more information, have a look at `FloquetPQZ`.
