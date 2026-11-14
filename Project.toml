@@ -1,7 +1,7 @@
 name = "BifurcationKitDocs"
 uuid = "52551710-5366-4f3f-95cc-710bcb964a3f"
 authors = ["romain.veltz@inria.fr <rveltz> and contributors"]
-version = "0.4.17"
+version = "0.4.18"
 
 [deps]
 AsymptoticNumericalMethod = "49cd1f3c-f820-4280-87fa-ee13bfe9a539"

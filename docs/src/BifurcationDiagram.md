@@ -175,9 +175,10 @@ function AbstractTrees.printnode(io::IO, node::BK.BifDiagNode)
     p = _bp_param(bp)
     # print(io, "branch [ind_bp $(node.code), level $(node.level)] from $(BK.type(bp))")
     print(io, "branch [")
-    printstyled(io, "#bp $(node.code), level $(node.level)", color = :magenta, bold = true)
+    printstyled(io, "level $(node.level)", color = :magenta, bold = true)
     print(io, "] from ")
     printstyled(io, "$(BK.type(bp))", color = :green, bold = true)
+	printstyled(io, " [bp-$(node.code)]", color = :magenta, bold = true)
     ismissing(p) || print(io, " at p = $(p)")
 end
 

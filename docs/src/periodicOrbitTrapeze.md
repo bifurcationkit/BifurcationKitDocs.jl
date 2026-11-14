@@ -52,6 +52,9 @@ $$A_{\gamma}:=\left(\begin{array}{ccccccc}
 
 with $M_i := M_a-\frac h2dF(x_i)$ and $H_i := M_a+\frac h2dF(x_{i-1})$. The last block row of $A_\gamma$ encodes the derivative of the closure condition $x_m - \gamma x_1 = 0$ for which $\gamma = 1$ in the case of periodic orbits (the free parameter $\gamma$ is kept in the code because it is convenient for building preconditioners). The column $\partial_TG$ and the row $(\star,d)$ in (2) account for the derivative w.r.t. the period $T$ and the phase condition respectively.
 
+!!! info "DAE Case"
+    We find $M(x_j)(dx_j-dx_{j-1}) + (dM(x_j)\cdot dx_j)(x_j-x_{j-1})-\frac h2(dF(x_j)dx_j + dF(x_{j-1})dx_{j-1})$
+
 ### Cyclic matrix $J_c$ and bordered elimination
 
 The matrix $A_\gamma$ has a *bordered* shape: it is almost block diagonal, with the sole coupling between the first and last time slices sitting in the top-right corner ($-H_1$) and in the closure block row. It is therefore inverted with a *bordering* strategy (the linear solver is a subtype of `<: AbstractBorderedLinearSolver`). In turn, this requires to solve linear systems involving the **cyclic matrix** $J_c$ obtained from $A_\gamma$ by removing the last block row and last block column:

@@ -1,217 +1,304 @@
-# [🟡 Period doubling in Lur'e problem (PD aBS)](@id pdlure)
+# [🟡 Branch points and period doubling of periodic orbits (aBS)](@id pdlure)
 
 ```@contents
 Pages = ["tutorialsODE-PD.md"]
 Depth = 3
 ```
 
-The following model is an adaptive control system of Lur’e type. It is an example from the MatCont library.
+We consider the following three-dimensional vector field
 
-$$\left\{\begin{array}{l}
-\dot{x}=y \\
-\dot{y}=z \\
-\dot{z}=-\alpha z-\beta y-x+x^{2}
-\end{array}\right.$$
+$$\left\{\begin{aligned}
+r\dot{x} &= {-(\beta+\nu)x + \beta y - a_3 x^3 + b_3(y-x)^3},\\
+\dot{y} &= \beta x - (\beta+\gamma)y - z - b_3(y-x)^3,\\
+\dot{z} &= y,
+\end{aligned}\right.$$
 
-The model is interesting because there is a period doubling bifurcation and we want to show the branch switching capabilities of `BifurcationKit.jl` in this case. We provide 3 different ways to compute the periodic orbits and highlight their pro / cons.
+with parameters $\nu,\beta,\gamma,r,a_3,b_3$. We use $\nu$ as the continuation parameter. This model presents a Hopf bifurcation from the trivial equilibrium as well as branch points (fold / pitchfork) of periodic orbits. It is a nice test case to show **automatic branch switching (aBS)** for periodic orbits, both from a branch point and from a period-doubling point.
 
-It is easy to encode the ODE as follows
+It is easy to encode the vector field as follows
 
-```@example TUTLURE
-using Revise, Plots
+```@example TUTFREIRE
+using Revise, CairoMakie
 import BifurcationKit as BK
-BK.set_plot_backend!(BK.BK_Plots()) # hide
-import BifurcationKit: @optic
+BK.set_plot_backend!(BK.BK_Makie()) # hide
 
-recordFromSolution(x, p; k...) = (u1 = x[1], u2 = x[2])
-
-function lur!(dz, u, p, t = 0)
-	(;α, β) = p
+function tor!(du, u, p, t = 0)
+	(;nu, beta, gamma, r, a3, b3) = p
 	x, y, z = u
-	dz[1] = y
-	dz[2] =	z
-	dz[3] = -α * z - β * y - x + x^2
-	dz
+	du[1] = ( -(beta + nu) * x + beta * y - a3 * x^3 + b3 * (y - x)^3 ) / r
+	du[2] =   beta * x - (beta + gamma) * y - z - b3 * (y - x)^3
+	du[3] = y
+	return du
 end
 
-# bifurcation problem
-prob_bif = BK.ODEBifProblem(lur!, zeros(3), (α = -1.0, β = 1.0), (@optic _.α);
-    record_from_solution = recordFromSolution)
+par_tor = (nu = -0.9, beta = 0.5, gamma = -0.6, r = 0.6, a3 = 0.328578, b3 = 0.933578)
+
+prob = BK.ODEBifProblem(tor!, zeros(3), par_tor, (BK.@optic _.nu);
+	record_from_solution = (x, p; k...) -> (x = x[1], y = x[2], z = x[3]))
+
 nothing #hide
 ```
 
-We first compute the branch of equilibria
+## Branch of equilibria
 
-```@example TUTLURE
-# continuation options
-opts_br = BK.ContinuationPar(p_min = -1.4, p_max = 1.8, n_inversion = 6)
+We first compute the branch of equilibria w.r.t. $\nu$.
 
-# computation of the branch
-br = BK.continuation(prob_bif, BK.PALC(), opts_br)
-
-scene = plot(br)
+```@example TUTFREIRE
+opts_br = BK.ContinuationPar(p_min = -1.0, p_max = 0.0, n_inversion = 8, ds = 0.001)
+br = BK.continuation(prob, BK.PALC(), opts_br; normC = BK.norminf,)
+f, ax = BK.plot(br, dash_unstable_style = true)
+f
 ```
 
-With detailed information:
+We detect a Hopf bifurcation (index 1) from which we shall compute a branch of periodic orbits, and a branch point of equilibria. We next define the recording and plotting functions used below.
 
-```@example TUTLURE
-br
+```@example TUTFREIRE
+function recordPO(x, p; iter, state, k...)
+	probpo = BK.getprob(iter)
+	par = BK.getparams(iter, state)
+	xtt = BK.get_periodic_orbit(probpo, x, par)
+	return (max = maximum(xtt[1, :]),
+		min = minimum(xtt[1, :]),
+		period = BK.getperiod(probpo, x, par))
+end
+
+function plotPO(ax, x, p; iter, state, k...)
+	probpo = BK.getprob(iter)
+	par = BK.getparams(iter, state)
+	xtt = BK.get_periodic_orbit(probpo, x, par)
+	lines!(ax, xtt.t, xtt[1, :]; label = "x", k...)
+	lines!(ax, xtt.t, xtt[2, :]; label = "y", k...)
+	lines!(ax, xtt.t, xtt[3, :]; label = "z", k...)
+end
+
+argspo = (record_from_solution = recordPO,  plot_solution = plotPO)
+
+nothing #hide
 ```
-
-We note the Hopf bifurcation point which we shall investigate now.
 
 ## Periodic orbits with orthogonal collocation
 
-We compute the branch of periodic orbits from the Hopf bifurcation point.
-We rely on a the state of the art method for computing periodic orbits of ODE: orthogonal collocation.
+We compute the branch of periodic orbits from the Hopf bifurcation point using orthogonal collocation.
 
-We first define a plotting function and a record function which are used for all cases below:
+We now compute the branch of periodic orbits:
 
-```@example TUTLURE
-# plotting function
-function plotPO(x, p; iter, state, k...)
-	xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
-	plot!(xtt.t, xtt[1,:]; markersize = 2, k...)
-	plot!(xtt.t, xtt[2,:]; k...)
-	plot!(xtt.t, xtt[3,:]; legend = false, k...)
-end
+```@example TUTFREIRE
+opts_po_cont = BK.ContinuationPar(opts_br, ds = 0.001, dsmax = 0.015,
+	tol_stability = 1e-9, p_min = -0.7)
 
-# record function
-function recordPO(x, p; iter, state, k...)
-	xtt = BK.get_periodic_orbit(p.prob, x, BK.getparams(iter, state))
-	period = BK.getperiod(p.prob, x, BK.getparams(iter, state))
-	mn, mx = extrema(xtt[1, :])
-	return (;max = mx, min = mn, period)
-end
+prob_po = BK.Collocation(30, 4; meshadapt = false, jacobian = BK.DenseAnalytical())
+
+br_po = BK.continuation(br, 1, opts_po_cont, prob_po;
+	alg = BK.PALC(tangent = BK.Bordered()),
+	argspo...,
+	normC = BK.norminf,
+	linear_algo = BK.COPBLS())
+
+f, ax = BK.plot(br_po, dash_unstable_style = true)
+f
 ```
 
-Continuation of periodic orbits from the Hopf point:
+The branch of periodic orbits presents several branch points. The first one is a fold of periodic orbits, the second one is a pitchfork.
 
-```@example TUTLURE
-# continuation parameters
-opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, max_steps = 80, tol_stability = 1e-4, plot_every_step = 20)
+### Normal form of the branch points
 
-br_po = BK.continuation(
-	br, 1, opts_po_cont,
-	BK.Collocation(40, 4);
-	plot = true,
-	# linear_algo = BK.COPBLS(),
-	plot_solution = plotPO,
+!!! tip "Skip the normal form computation"
+    You can skip this in a first read. This is not needed in what follows.
+
+We compute the normal form of the two first branch points using the Iooss method (`prm = Val(false)`).
+
+```@example TUTFREIRE
+bp_fold = BK.get_normal_form(br_po, 1; prm = Val(false))
+```
+
+The second branch point is a pitchfork:
+
+```@example TUTFREIRE
+bp_pf = BK.get_normal_form(br_po, 2; prm = Val(false))
+```
+
+### Automatic branch switching from a branch point
+
+Since the second branch point is a pitchfork, automatic branch switching is available. We simply continue from the second branch point:
+
+```@example TUTFREIRE
+br_po2 = BK.continuation(deepcopy(br_po), 2;
+	δp = 0.001,
+	record_from_solution = recordPO,
 	normC = BK.norminf)
 
-scene = plot(br, br_po)
+f, ax = BK.plot(br_po, br_po2, branchlabel = ["BP branch", "aBS from BP"], dash_unstable_style = true)
+f
 ```
 
-Note that you can compute the PD normal form
+The bifurcated branch contains a Neimark-Sacker point and a period-doubling point.
 
-```@example TUTLURE
-pdnf = BK.get_normal_form(br_po, 1)
+### Automatic branch switching from a period-doubling point
+
+We now branch from the period-doubling point detected on the previous branch. 
+
+!!! tip "Skip the normal form computation"
+    You can skip this in a first read. This is not needed in what follows.
+
+We can compute its normal form just for fun...
+
+```@example TUTFREIRE
+ipd = findfirst(sp -> sp.type == :pd, br_po2.specialpoint)
+bp_pd = BK.get_normal_form(br_po2, ipd)
 ```
 
-We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
+Let's branch:
 
-```@example TUTLURE
-# aBS from PD
-br_po_pd = BK.continuation(deepcopy(br_po), 1, BK.ContinuationPar(br_po.contparams, max_steps = 100, dsmax = 0.02, plot_every_step = 10, ds = 0.005);
-	plot_solution = plotPO,
-	normC = BK.norminf,
-	)
+```@example TUTFREIRE
+br_po_pd = BK.continuation(deepcopy(br_po2), ipd;
+	δp = 0.0005,
+	record_from_solution = recordPO,
+	normC = BK.norminf)
 
-scene = plot(br_po, br_po_pd, title = "Collocation based")
+f, ax = BK.plot(br_po2, br_po_pd, branchlabel = ["BP branch", "aBS from PD"], dash_unstable_style = true)
+f
 ```
 
-## Periodic orbits with Parallel Standard Shooting
+## Periodic orbits with standard shooting
 
-We use a different method to compute periodic orbits: we rely on a fixed point of the flow. To compute the flow, we use `OrdinaryDiffEq.jl`. This way of computing periodic orbits should be less precise than the previous one. We rely on parallel multiple shooting. Finally, please note the close similarity to the code of the previous part. As before, we first rely on Hopf **aBS**.
+We now compute the branch of periodic orbits with standard shooting. For shooting, the normal form of branch points and period-doubling points is computed from the Poincaré return map.
 
-```@example TUTLURE
+```@example TUTFREIRE
 import OrdinaryDiffEq as ODE
-using OrdinaryDiffEqRosenbrock
 
-# ODE problem for using DifferentialEquations
-prob_ode = ODE.ODEProblem(lur!, prob_bif.u0, (0, 1.), prob_bif.params; abstol = 1e-12, reltol = 1e-10)
+prob_ode = ODE.ODEProblem(tor!, zeros(3), (0, 1), par_tor; abstol = 1e-12, reltol = 1e-10)
+prob_sh = BK.Shooting(3, prob_ode, ODE.Vern9(); parallel = true)
 
-# continuation parameters
-opts_po_cont = BK.ContinuationPar(opts_br, dsmax = 0.03, newton_options = BK.NewtonPar(tol = 1e-10), tol_stability = 1e-5, n_inversion = 8, max_steps = 100)
+opts_po_sh = BK.ContinuationPar(opts_br, ds = -0.001, dsmax = 0.01, tol_stability = 1e-4, p_min = -0.7)
 
-br_po = BK.continuation(
-	br, 1, opts_po_cont,
-	# parallel shooting functional with several sections
-	BK.Shooting(3, prob_ode, Vern9(); parallel = true, abstol = 1e-12, reltol = 1e-10);
-	# plot = true,
-	record_from_solution = recordPO,
-	plot_solution = plotPO,
-	# limit the residual, useful to help DifferentialEquations
-	callback_newton = BK.cbMaxNorm(10),
-	normC = BK.norminf)
-
-plot(br_po)
-```
-
-Note that you can compute the PD normal form
-
-```@example TUTLURE
-BK.get_normal_form(br_po, 1; verbose = true)
-```
-
-We provide Automatic Branch Switching from the PD point and computing the bifurcated branch is as simple as:
-
-```@example TUTLURE
-# aBS from PD
-br_po_pd = BK.continuation(deepcopy(br_po), 1, 
-	BK.ContinuationPar(br_po.contparams, max_steps = 10, ds = -0.015);
+br_po_sh = BK.continuation(br, 1, opts_po_sh, prob_sh;
 	record_from_solution = recordPO,
 	normC = BK.norminf,
-	# verbosity = 3, plot = true,
-	callback_newton = BK.cbMaxNorm(10),
-	)
+	δp = 0.001)
 
-scene = plot(br, br_po, br_po_pd, title = "Shooting based")
+f, ax = BK.plot(br_po_sh, dash_unstable_style = true)
+f
 ```
 
-## Branch of periodic orbits with Trapeze
+!!! tip "Skip the normal form computation"
+    You can skip this in a first read. This is not needed in what follows.
 
-We use finite differences to discretize the problem for finding periodic orbits. We appeal to automatic branch switching from the Hopf point as follows
+For information, the normal form of the second branch point (a pitchfork) is computed with the Poincaré return map method (`prm = Val(true)`, the default for shooting):
 
-```@example TUTLURE
-# continuation parameters
-opts_po_cont = BK.ContinuationPar(dsmax = 0.02, dsmin = 1e-4, p_max = 1.1, max_steps = 80, tol_stability = 1e-4)
+```@example TUTFREIRE
+bp_pf_sh = BK.get_normal_form(br_po_sh, 2)
+```
 
-br_po = BK.continuation(
-	br, 1, opts_po_cont,
-	BK.Trapeze(M = 120);
+### Automatic branch switching from a branch point
+We branch from this branch point:
+
+```@example TUTFREIRE
+br_po_sh_bp = BK.continuation(deepcopy(br_po_sh), 2;
+	δp = 0.0005,
 	record_from_solution = recordPO,
-	plot_solution = (x, p; iter, state, k...) -> begin
-		plotPO(x, p; iter, state, k...)
-		## plot previous branch
-		plot!(br, subplot=1, putbifptlegend = false)
-		end,
 	normC = BK.norminf)
 
-scene = plot(br, br_po)
+f, ax = BK.plot(br_po_sh, br_po_sh_bp, branchlabel = ["BP branch", "aBS from BP"], dash_unstable_style = true)
+f
 ```
 
-Two period doubling bifurcations were detected. We shall now compute the branch of periodic orbits from these PD points. We do not provide Automatic Branch Switching for Trapezoid method as we do not have yet the PD normal form computed for `Trapeze`. Hence, it takes some trial and error to find the `ampfactor` of the PD branch.
+### Automatic branch switching from a period-doubling point
+The bifurcated branch has a Neimark-Sacker point and a period-doubling point. We branch from the period-doubling point:
 
-> This is like in MatCont and Auto-07p here...
+```@example TUTFREIRE
+ipd_sh = findfirst(sp -> sp.type == :pd, br_po_sh_bp.specialpoint)
 
-```@example TUTLURE
-# aBS from PD
-br_po_pd = BK.continuation(deepcopy(br_po), 1, BK.ContinuationPar(br_po.contparams, max_steps = 70);
-	# plot = true,
-	normal_form_kwargs = (detailed = Val(false),),
-	ampfactor = .2, δp = -0.005,
-	plot_solution = (x, p; iter, state, k...) -> begin
-		plotPO(x, p; iter, state, k...)
-		# add previous branch
-		plot!(br_po; legend=false, subplot=1)
-	end,
+br_po_sh_pd = BK.continuation(deepcopy(br_po_sh_bp), ipd_sh;
+	δp = 0.0005, ampfactor = 0.5,
 	record_from_solution = recordPO,
-	normC = BK.norminf
-	)
-Scene = title!("")
+	callback_newton = BK.cbMaxNorm(1.0),
+	normC = BK.norminf)
+
+f, ax = BK.plot(br_po_sh_bp, br_po_sh_pd, branchlabel = ["BP branch", "aBS from PD"], dash_unstable_style = true)
+f
 ```
 
-```@example TUTLURE
-plot(br, br_po, br_po_pd, title = "Trapezoid based")
+## Periodic orbits with the trapezoid method
+
+Finally, we use the trapezoid method. For this discretisation, the normal form of the branch point is not fully implemented: only the eigenvectors are computed and branch switching requires a manual choice of `δp` and `ampfactor`.
+
+```@example TUTFREIRE
+prob_trap = BK.Trapeze(M = 100; jacobian = BK.Dense())
+opts_po_trap = BK.ContinuationPar(opts_br, ds = -0.001, dsmax = 0.01, tol_stability = 1e-4, p_min = -0.7)
+
+br_po_trap = BK.continuation(br, 1, opts_po_trap, prob_trap;
+	record_from_solution = recordPO,
+	normC = BK.norminf,
+	δp = 0.001)
+
+f, ax = BK.plot(br_po_trap, dash_unstable_style = true)
+f
+```
+
+The normal form of the second branch point only returns the eigenvectors:
+
+```@example TUTFREIRE
+bp_trap = BK.get_normal_form(br_po_trap, 2; detailed = Val(true))
+```
+
+Since automatic branch switching is not available for `Trapeze`, we provide the amplitude and parameter increment manually:
+
+```@example TUTFREIRE
+br_po_trap_bp = BK.continuation(deepcopy(br_po_trap), 2;
+	δp = -0.001,
+	ampfactor = 0.01,
+	normal_form_kwargs = (detailed = Val(false), ),
+	record_from_solution = recordPO,
+	normC = BK.norminf)
+
+f, ax = BK.plot(br_po_trap, br_po_trap_bp; branchlabel = ["BP branch", "manual BP switching"], dash_unstable_style = true)
+f
+```
+
+The bifurcated branch has a Neimark-Sacker point and a period-doubling point. The normal form of the period-doubling point is available but its coefficients are not yet implemented for `Trapeze`:
+
+```@example TUTFREIRE
+BK.get_normal_form(br_po_trap_bp, 2; detailed = Val(true))
+```
+
+```@example TUTFREIRE
+br_po_trap_pd = BK.continuation(deepcopy(br_po_trap_bp), 2;
+	δp = -0.001,
+	ampfactor = 0.01,
+	normal_form_kwargs = (detailed = Val(false), ),
+	record_from_solution = recordPO,
+	normC = BK.norminf)
+
+f, ax = BK.plot(br_po_trap_pd, br_po_trap_bp; dash_unstable_style = true)
+f
+```
+
+## Automatic bifurcation diagram of periodic orbits
+
+Finally, we compute the automatic bifurcation diagram of periodic orbits starting from `br_po`. The function `bifurcationdiagram` recursively branches at branch points and period-doubling points. We use a filter to avoid branches with a too large period.
+
+```@example TUTFREIRE
+function filter_bp(_, _, pt)
+	return BK.saved_solution(pt.x)[end] < 20 # limit period
+end
+
+bd_po = @time BK.bifurcationdiagram(deepcopy(br_po.prob), deepcopy(br_po), 4,
+	BK.ContinuationPar(BK.getcontparams(br_po2);
+		dsmax = 0.005, p_min = -0.7, max_steps = 100);
+	normC = BK.norminf,
+	bothside = Val(true),
+	verbosediagram = true,
+	δp = 0.000125,
+	normal_form_kwargs = (prm = Val(false),),
+	filter_bif_points = filter_bp,
+	callback_newton = BK.cbMaxNorm(10),
+	linear_algo = BK.COPBLS(),
+	)
+
+nothing #hide
+```
+
+```@example TUTFREIRE
+f, ax = BK.plot(bd_po, dash_unstable_style = true)
+f
 ```
