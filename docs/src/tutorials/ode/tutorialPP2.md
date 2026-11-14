@@ -20,7 +20,7 @@ It is easy to encode the ODE as follows
 using Revise, Plots
 import BifurcationKit as BK
 BK.set_plot_backend!(BK.BK_Plots()) # hide
-import BifurcationKit: @optic#, @reset
+import BifurcationKit: @optic
 
 # function to record information from a solution
 recordFromSolution(x, p; k...) = (u1 = x[1], u2 = x[2])

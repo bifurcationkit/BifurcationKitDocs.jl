@@ -94,7 +94,9 @@ $$\left\{\begin{array}{l}
 \frac{d \xi}{d \tau}=c_{11}\cdot(p-p_0)\xi+c_3 \xi^3+\cdots
 \end{array}\right.$$
 
-with center manifold correction $H(\tau, \xi, \mu)$ being $2T$ periodic in $\tau$ and $v(\tau)$ is a Floquet eigenvector for the eigenvalue -1.
+with center manifold correction $H(\tau, \xi, \mu)$ being $2T$ periodic in $\tau$ and $v(\tau)$ is a Floquet eigenvector for the eigenvalue -1, *i.e.*
+
+$$ \left(-\frac{d}{dt}+A(t) \right)v = 0,\quad v(0) + v(T) = 0$$
 
 The coefficients `a₀₁`, `a₂`, `c₁₁` and `c₃` are returned in `pd.nf.nf`. The bifurcation is **supercritical** if $c_3 < 0$ and **subcritical** if $c_3 > 0$.
 

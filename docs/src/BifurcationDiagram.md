@@ -7,9 +7,14 @@ Depth = 2
  
 Thanks to the functionality presented in this part, we can compute the bifurcation diagram of a system recursively and **fully automatically**. More precisely, the function [`bifurcationdiagram`](@ref) allows to:
 
-- compute a branch $\gamma$ of equilibria
+- compute a branch $\gamma$
 - detect all bifurcations on the branch
 - recursively compute the branches emanating from branch points on $\gamma$.
+
+> We thus compute (part of) the connected component of $\gamma$.
+
+!!! tip "Periodic orbit"
+    You can also make this computation when $\gamma$ is a curve of periodic orbits. This will make a recursion through BP/PD points.
 
 ## Pitfalls
  
@@ -151,8 +156,30 @@ using AbstractTrees
 
 AbstractTrees.children(node::BK.BifDiagNode) = node.child
 
-## Things that make printing prettier
-AbstractTrees.printnode(io::IO, node::BifDiagNode) = print(io, "$(node.code) [ $(node.level)]")
+function _bp_param(bifpoint)
+    isnothing(bifpoint) && return missing
+    hasproperty(bifpoint, :p) && return bifpoint.p
+    if hasproperty(bifpoint, :nf)
+        nf = bifpoint.nf
+        !isnothing(nf) && hasproperty(nf, :p) && return nf.p
+    end
+    return missing
+end
+
+function AbstractTrees.printnode(io::IO, node::BK.BifDiagNode)
+    bp = BK.from(node)
+    if isnothing(bp)
+        print(io, "root [level $(node.level)]")
+        return
+    end
+    p = _bp_param(bp)
+    # print(io, "branch [ind_bp $(node.code), level $(node.level)] from $(BK.type(bp))")
+    print(io, "branch [")
+    printstyled(io, "#bp $(node.code), level $(node.level)", color = :magenta, bold = true)
+    print(io, "] from ")
+    printstyled(io, "$(BK.type(bp))", color = :green, bold = true)
+    ismissing(p) || print(io, " at p = $(p)")
+end
 
 print_tree(diagram)
 ```

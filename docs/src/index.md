@@ -64,6 +64,10 @@ In Julia, we have the following tools:
 - [Bifurcations.jl](https://github.com/tkf/Bifurcations.jl) which is unmaintained.
 - [NumericalContinuation.jl](https://github.com/dawbarton/NumericalContinuation.jl) by David Barton.
 
+For dynamical systems, the Julia ecosystem is particularly strong:
+- [SciML](https://sciml.ai)
+- [JuliaDynamics](https://github.com/JuliaDynamics)
+
 ## 🚀 A word on performance
 
 The tutorials prioritize **clarity and simplicity** over maximum performance (with exceptions like the [2d Ginzburg-Landau equation](@ref cgl) and [Langmuir–Blodgett model](@ref langmuir)). These examples can be optimized further for specific use cases. The intricacies of PDEs make efficient code highly problem-dependent, and users should leverage the specific characteristics of their problems.

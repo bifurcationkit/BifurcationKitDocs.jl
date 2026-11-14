@@ -201,10 +201,10 @@ hp_from_zh
 
 ```@example LORENZ84
 using CairoMakie
-f,ax = BK.plot(hp_codim2_1, vars=(:X, :U), branchlabel = "Hopf", dash_unstable_style = true)
-BK.plot!(ax, hp_from_bt, vars=(:X, :U), branchlabel = "Hopf2", dash_unstable_style = true)
-BK.plot!(ax, hp_from_zh, vars=(:X, :U), branchlabel = "Hopf", dash_unstable_style = true)
-BK.plot!(ax, sn_codim2,vars=(:X, :U), dash_unstable_style = true)
+f, ax = BK.plot(hp_codim2_1, hp_from_bt, hp_from_zh, sn_codim2, 
+	vars=(:X, :U), 
+	branchlabel = ["Hopf", "Hopf2", "Hopf", "Fold"], 
+	dash_unstable_style = true)
 Makie.ylims!(ax, -0.7,0.75); Makie.xlims!(ax, 0.95,1.3)
 f
 ```
